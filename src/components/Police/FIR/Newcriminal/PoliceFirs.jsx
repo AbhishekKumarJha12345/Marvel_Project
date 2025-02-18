@@ -5,7 +5,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 // Register the necessary chart components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const PoliceFirs = () => {
+const PoliceFirs = ({apidata}) => {
   // Data for the Pie Chart
   const data = {
     labels: [
@@ -18,7 +18,7 @@ const PoliceFirs = () => {
     ],
     datasets: [
       {
-        data: [221008, 207273, 94, 71107, 35480, 34.30], // Corresponding values for each section
+        data: [apidata ?apidata.total_no_fir_registered_under_bns_ipc:"", apidata ?apidata.no_of_fir_registered_under_bns:"", apidata ?apidata.percentage_of_fir_under_bns_against_total_firs:"", apidata ?apidata.no_of_chargesheets_filed_under_bns:"", apidata ?apidata.no_of_chargesheets_not_filed_within_the_stipulated_time:"", apidata ?apidata.percentage_of_chargesheets_filed_on_the_basis_of_firs_under_bns:""], // Corresponding values for each section
         backgroundColor: ['#FF5733', '#33FF57', '#3357FF', '#FF8C00', '#DAF7A6', '#900C3F'], // Different colors for each section
         borderColor: ['#FF5733', '#33FF57', '#3357FF', '#FF8C00', '#DAF7A6', '#900C3F'], // Border colors to match
         borderWidth: 1,
@@ -52,7 +52,7 @@ const PoliceFirs = () => {
   };
 
   return (
-    <div className="bg-white p-6 mx-auto rounded-lg w-[60%] h-[500px]">
+    <div className=" p-9 mx-auto rounded-lg w-[100%] h-[500px]">
       <h1 className="text-4xl font-bold mb-8">FIRs New Criminal Laws</h1>
       <div className="h-full">
         <Pie data={data} options={options} />

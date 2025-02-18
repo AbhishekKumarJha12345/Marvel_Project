@@ -88,8 +88,8 @@ useEffect(() => {
     "science"               : <div className="content"><h1 className="heading">Forensic Science Department</h1><Dashboard1 /></div>,
     "prosecution"           : <div className="content"><h1 className="heading">Prosecution Visits</h1><CriminalPages /></div>,
     "correctionalservices"  : <div className="content"><h1 className="heading">Correctional services</h1><Correctionalservicetab /></div>,
-    "chargesheet"           : <div className="content"><Firchargesheets /></div>,
     "newcriminal"           : <div className="content"><FirNewcriminal /></div>,
+    "chargesheet"           : <div className="content"><Firchargesheets  /></div>,
     "zerofir"               : <div className="content"><FirZero /></div>,
     "efir"                  : <div className="content"><Efir /></div>,
   };

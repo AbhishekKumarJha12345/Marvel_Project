@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PoliceChargeSheet from './PoliceChargeSheet'
 import Chargesheet from './Firstchargesheet';
 import Chargesheetstatus from './Chargesheetstatus'
+import axiosInstance from '../../../../utils/axiosInstance';
 
 
 function Firchargesheets() {
@@ -10,6 +11,20 @@ function Firchargesheets() {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
+  const [trainingData,setTrainingData]=useState('')
+const getTrainingData = async()=>{
+  try{
+    const response =await axiosInstance.get('/live_data?type=fir_2')
+    console.log(response.data,'FIR2 Data ----------')
+    setTrainingData(response.data.data_dict)
+
+  }catch(error){
+    console.log(error)
+  }
+}
+useEffect(() => {
+  getTrainingData();
+}, []);
 
   return (
     <div>
@@ -34,8 +49,8 @@ function Firchargesheets() {
         {activeTab === 'home' ? (
           <div className="col-6">
           <div className="card shadow-sm bg-white">
-            <div className="card-body">
-              <PoliceChargeSheet />
+            <div className="card-body" style={{paddingBottom:"5rem"}}>
+              <PoliceChargeSheet apidata={trainingData}/>
             </div>
           </div>
         </div>

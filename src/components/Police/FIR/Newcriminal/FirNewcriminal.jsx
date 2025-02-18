@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PoliceFirs from './PoliceFirs';
 import FirstFirdata from './FirstFirdata'
 import Firnewoffence from './Firnewoffences'
+import axiosInstance from '../../../../utils/axiosInstance';
 
 
 function FirNewcriminal() {
@@ -10,7 +11,20 @@ function FirNewcriminal() {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
+  const [trainingData,setTrainingData]=useState('')
+const getTrainingData = async()=>{
+  try{
+    const response =await axiosInstance.get('/live_data?type=fir_1')
+    console.log(response.data,'FIR1 Data ----------')
+    setTrainingData(response.data.data_dict)
 
+  }catch(error){
+    console.log(error)
+  }
+}
+useEffect(() => {
+  getTrainingData();
+}, []);
   return (
     <div>
       <div className="flex space-x-4 border-b border-gray-300">
@@ -29,12 +43,12 @@ function FirNewcriminal() {
       </div>
 
       {/* Tab Content */}
-      <div className="mt-4">
+      <div className="mt-1">
         {activeTab === 'home' ? (
          <div class="col-6">
-         <div class="card shadow-sm bg-white">
-           <div class="card-body">
-             <PoliceFirs />
+         <div class="card">
+           <div class="card-body" style={{paddingBottom:"5rem"}}>
+             <PoliceFirs apidata={trainingData}/>
            </div>
          </div>
        </div>

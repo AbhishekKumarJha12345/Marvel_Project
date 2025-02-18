@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ZeroFir from './ZeroFir';
 import Zerofiroutside from './ZeroFIRoutside';
 import ZeroFirinside from './ZeroFIRinNcl';
 import Receivedfromotherstates from './ReceivedfromOtherstates'
 import Transferredtootherstates from './Transferedotherstates'
+import axiosInstance from '../../../../utils/axiosInstance';
 
 function FirZero() {
   const [activeTab, setActiveTab] = useState('home');
@@ -11,6 +12,20 @@ function FirZero() {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
+  const [trainingData,setTrainingData]=useState('')
+  const getTrainingData = async()=>{
+    try{
+      const response =await axiosInstance.get('/live_data?type=fir_3')
+      console.log(response.data,'FIR3 Data ----------')
+      setTrainingData(response.data.data_dict)
+  
+    }catch(error){
+      console.log(error)
+    }
+  }
+  useEffect(() => {
+    getTrainingData();
+  }, []);
 
   return (
     <div>
