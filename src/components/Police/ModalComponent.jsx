@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   Dialog,
@@ -17,19 +16,38 @@ import {
 } from "@mui/material";
 import { CloudUpload, Close } from "@mui/icons-material";
 import axiosInstance from "../../utils/axiosInstance";
-const ModalComponent = ({ open, onClose }) => {
+const ModalComponent = ({ open,type, onClose }) => {
   const [selectedOption, setSelectedOption] = useState("training");
   const [selectedFileType, setSelectedFileType] = useState(""); // Police or Workshop
-  const initial ={
+  const initial = {
     // type:selectedOption,
     rank: "",
-    trained_officers:"",
+    trained_officers: "",
     available_officers: "",
     percentage: "",
     training_workshops: "",
     e_academy_online: "",
     master_trainers: "",
+    // fir_1 fields
+    total_no_fir_registered_under_bns_ipc: "",
+    no_of_fir_registered_under_bns: "",
+    percentage_of_fir_under_bns_against_total_firs: "",
+    no_of_chargesheets_filed_under_bns: "",
+    no_of_chargesheets_not_filed_within_the_stipulated_time: "",
+    percentage_of_chargesheets_filed_on_the_basis_of_firs_under_bns: "",
+    // fir_2 fields
+    total_charge_sheeted: "",
+    convicted: "",
+    acquitted: "",
+    pending: "",
+    // fir_3 fields
+    act: "",
+    section: "",
+    total_registered: "",
+    chargesheeted: "",
+    under_investigation: "",
   };
+  
   const [formData, setFormData] = useState(initial);
 
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -78,23 +96,24 @@ const ModalComponent = ({ open, onClose }) => {
       // Append current date
       const currentDate = new Date().toISOString().split("T")[0];
       formDataToSend.append("date", currentDate);
-      formDataToSend.append("type", selectedOption);
+      if(type==='police') formDataToSend.append("type", selectedOption);
 
+      if(['fir_1','fir_2','fir_3'].includes(type)) {console.log('type',type); formDataToSend.append("type", type)}
     
       // Append files if any
       if (uploadedFiles.length > 0) {
-        formDataToSend.append('type',selectedFileType)
+        // formDataToSend.append('type',selectedFileType)
         uploadedFiles.forEach((file) => {
           formDataToSend.append("files", file);
         });
       }
     
       // Debugging: Log FormData contents before sending
-      console.log("FormData Contents:");
-      for (let pair of formDataToSend.entries()) {
-        console.log(pair[0] + ": " + pair[1]);
-      }
-      console.log("FormData Type:", formDataToSend instanceof FormData ? "FormData" : typeof formDataToSend);
+      // console.log("FormData Contents:");
+      // for (let pair of formDataToSend.entries()) {
+      //   console.log(pair[0] + ": " + pair[1]);
+      // }
+      // console.log("FormData Type:", formDataToSend instanceof FormData ? "FormData" : typeof formDataToSend);
 
 
       // Send all data in one request
@@ -127,89 +146,245 @@ const ModalComponent = ({ open, onClose }) => {
 
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h6">Upload Details</Typography>
-          <IconButton onClick={onClose}>
-            <Close />
-          </IconButton>
+    <>
+
+  <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" borderRadius='30px'>
+    <DialogTitle backgroundColor='#2d3748' color='white' marginBottom='30px'>
+      <Box display="flex" justifyContent="space-between" alignItems="center" >
+        <Typography variant="h6"><strong>Form Details</strong></Typography>
+        <IconButton onClick={onClose}>
+          <Close style={{color:'white',fontWeight:'bold'}} />
+        </IconButton>
+      </Box>
+    </DialogTitle>
+
+    <DialogContent marginTop='10px'>
+      {/* Button Group */}
+      {type === "police"&&<Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+      <Button
+  variant={selectedOption === "training" ? "contained" : "outlined"}
+  color="primary"
+  onClick={() => handleOptionChange({ target: { value: "training" } })}
+  sx={{
+    marginRight: 2,
+    backgroundColor: selectedOption === "training" ? "#2d3748" : "transparent", // Background color
+    color: selectedOption === "training" ? "white" : "inherit", // Text color
+    "&:hover": {
+      backgroundColor: selectedOption === "training" ? "#2d3748" : "transparent", // Keep background color on hover if selected
+    },
+  }}
+>
+  Training Form
+</Button>
+
+<Button
+  variant={selectedOption === "workshop" ? "contained" : "outlined"}
+  color="primary"
+  onClick={() => handleOptionChange({ target: { value: "workshop" } })}
+  sx={{
+    backgroundColor: selectedOption === "workshop" ? "#2d3748" : "transparent", // Background color
+    color: selectedOption === "workshop" ? "white" : "inherit", // Text color
+    "&:hover": {
+      backgroundColor: selectedOption === "workshop" ? "#2d3748" : "transparent", // Keep background color on hover if selected
+    },
+  }}
+>
+  Workshop Form
+</Button>
+
+      </Box>}
+
+      {/* Conditionally render fields based on selected option */}
+      {type === "police"&&selectedOption === "training" && (
+        <Box display="flex" flexDirection="column" gap={2}>
+          <TextField
+            label="Rank"
+            name="rank"
+            value={formData.rank}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Available Officers"
+            name="available_officers"
+            value={formData.available_officers}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Trained Officers"
+            name="trained_officers"
+            value={formData.trained_officers}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Percentage"
+            name="percentage"
+            value={formData.percentage}
+            onChange={handleChange}
+            fullWidth
+          />
         </Box>
-      </DialogTitle>
+      )}
 
-      <DialogContent>
-        {/* Radio Options */}
-        <RadioGroup
-          row
-          value={selectedOption}
-          onChange={handleOptionChange}
-          sx={{ mb: 2, justifyContent: "center" }}
-        >
-          <FormControlLabel value="training" control={<Radio />} label="Police Form" />
-          <FormControlLabel value="workshop" control={<Radio />} label="Workshop Form" />
-          <FormControlLabel value="file" control={<Radio />} label="Upload File" />
-        </RadioGroup>
+      {type === "police"&&selectedOption === "workshop" && (
+        <Box display="flex" flexDirection="column" gap={2}>
+          <TextField
+            label="No. of Training Workshops Conducted"
+            name="training_workshops"
+            value={formData.training_workshops}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Through E-Academy Online"
+            name="e_academy_online"
+            value={formData.e_academy_online}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="No. of Master Trainers"
+            name="master_trainers"
+            value={formData.master_trainers}
+            onChange={handleChange}
+            fullWidth
+          />
+        </Box>
+      )}
 
-        {/* Police Form */}
-        {selectedOption === "training" && (
-          <Box display="flex" flexDirection="column" gap={2}>
-            <TextField label="Rank" name="rank" value={formData.rank} onChange={handleChange} fullWidth />
-            <TextField label="Available Officers" name="available_officers" value={formData.available_officers} onChange={handleChange} fullWidth />
-            <TextField label="Trained Officers" name="trained_officers" value={formData.trained_officers} onChange={handleChange} fullWidth />
-            <TextField label="Percentage" name="percentage" value={formData.percentage} onChange={handleChange} fullWidth />
-          </Box>
-        )}
+      {/* Fields for fir_1 */}
+      {type === "fir_1" && (
+        <Box display="flex" flexDirection="column" gap={2} marginTop='10px'>
+          <TextField
+            label="Total No. of FIR Registered Under BNS IPC"
+            name="total_no_fir_registered_under_bns_ipc"
+            value={formData.total_no_fir_registered_under_bns_ipc}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="No. of FIR Registered Under BNS"
+            name="no_of_fir_registered_under_bns"
+            value={formData.no_of_fir_registered_under_bns}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Percentage of FIR Under BNS Against Total FIRs"
+            name="percentage_of_fir_under_bns_against_total_firs"
+            value={formData.percentage_of_fir_under_bns_against_total_firs}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="No. of Chargesheets Filed Under BNS"
+            name="no_of_chargesheets_filed_under_bns"
+            value={formData.no_of_chargesheets_filed_under_bns}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="No. of Chargesheets Not Filed Within the Stipulated Time"
+            name="no_of_chargesheets_not_filed_within_the_stipulated_time"
+            value={formData.no_of_chargesheets_not_filed_within_the_stipulated_time}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Percentage of Chargesheets Filed on the Basis of FIRs Under BNS"
+            name="percentage_of_chargesheets_filed_on_the_basis_of_firs_under_bns"
+            value={formData.percentage_of_chargesheets_filed_on_the_basis_of_firs_under_bns}
+            onChange={handleChange}
+            fullWidth
+          />
+        </Box>
+      )}
+      {/* Fields for fir_2 */}
+      {type === "fir_2" && (
+        <Box display="flex" flexDirection="column" gap={2} marginTop='10px'>
+          <TextField
+            label="Total Charge Sheeted"
+            name="total_charge_sheeted"
+            value={formData.total_charge_sheeted}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Convicted"
+            name="convicted"
+            value={formData.convicted}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Acquitted"
+            name="acquitted"
+            value={formData.acquitted}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Pending"
+            name="pending"
+            value={formData.pending}
+            onChange={handleChange}
+            fullWidth
+          />
+        </Box>
+      )}
 
-        {/* Workshop Form */}
-        {selectedOption === "workshop" && (
-          <Box display="flex" flexDirection="column" gap={2}>
-            <TextField label="No. of Training Workshops Conducted" name="training_workshops" value={formData.training_workshops} onChange={handleChange} fullWidth />
-            <TextField label="Through E-Academy Online" name="e_academy_online" value={formData.e_academy_online} onChange={handleChange} fullWidth />
-            <TextField label="No. of Master Trainers" name="master_trainers" value={formData.master_trainers} onChange={handleChange} fullWidth />
-          </Box>
-        )}
+      {/* Fields for fir_3 */}
+      {type === "fir_3" && (
+        <Box display="flex" flexDirection="column" gap={2} marginTop='10px'>
+          <TextField
+            label="Act"
+            name="act"
+            value={formData.act}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Section"
+            name="section"
+            value={formData.section}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Total Registered"
+            name="total_registered"
+            value={formData.total_registered}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Chargesheeted"
+            name="chargesheeted"
+            value={formData.chargesheeted}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Under Investigation"
+            name="under_investigation"
+            value={formData.under_investigation}
+            onChange={handleChange}
+            fullWidth
+          />
+        </Box>
+      )}
 
-        {/* File Upload with File Type Selection */}
-        {selectedOption === "file" && (
-          <>
-            {/* Select File Type */}
-            <Box display="flex" alignItems="center" gap={2} mb={2}>
-              <Typography variant="body1" fontWeight="bold">Select File Type:</Typography>
-              <Select
-                value={selectedFileType}
-                onChange={(e) => setSelectedFileType(e.target.value)}
-                displayEmpty  
-                fullWidth
-              >
-                <MenuItem value="">Choose File Type</MenuItem>
-                <MenuItem value="police">Police</MenuItem>
-                <MenuItem value="workshop">Workshop</MenuItem>
-              </Select>
-            </Box>
-
-            {/* File Upload */}
-            <Box
-              mt={2}
-              p={2}
-              border="2px dashed #ccc"
-              borderRadius="8px"
-              textAlign="center"
-              sx={{ cursor: "pointer", backgroundColor: "#f9f9f9" }}
-              onClick={() => document.getElementById("file-upload").click()}
-            >
-              <CloudUpload fontSize="large" color="primary" />
-              <Typography variant="body1" mt={1}>Drag & Drop or Click to Upload</Typography>
-              <input
-                id="file-upload"
-                type="file"
-                multiple
-                hidden
-                onChange={handleFileUpload}
-              />
-            </Box>
-
-            {/* File Preview */}
-            {uploadedFiles.length > 0 && (
+      {/* File Upload Box */}
+      {/* {selectedOption !== "" && (
+        <Box mt={2} p={2} border="2px dashed #ccc" borderRadius="8px" textAlign="center" sx={{ cursor: "pointer", backgroundColor: "#f9f9f9" }} onClick={() => document.getElementById("file-upload").click()}>
+          <CloudUpload fontSize="large" color="primary" />
+          <Typography variant="body1" mt={1}>Drag & Drop or Click to Upload</Typography>
+          <input id="file-upload" type="file" multiple hidden onChange={handleFileUpload} />
+        </Box>
+      )}
+      {uploadedFiles.length > 0 && (
               <Box mt={2}>
                 <Typography variant="body2" fontWeight="bold">Uploaded Files:</Typography>
                 {uploadedFiles.map((file, index) => (
@@ -221,18 +396,72 @@ const ModalComponent = ({ open, onClose }) => {
                   </Box>
                 ))}
               </Box>
-            )}
-          </>
-        )}
+      )} */}
+      <>
+  {/* File Upload Box */}
+  <Box
+    mt={2}
+    p={2}
+    border="2px dashed #ccc"
+    borderRadius="8px"
+    textAlign="center"
+    sx={{ cursor: "pointer", backgroundColor: "#f9f9f9", position: "relative" }}
+    onClick={() => document.getElementById("file-upload").click()}
+  >
+    {/* File Upload Icon */}
+    <CloudUpload fontSize="large" color="#2d3748" />
 
-        {/* Submit Button */}
-        <Box display="flex" justifyContent="flex-end" mt={3}>
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
-            Submit
-          </Button>
+    {/* Text Below the Icon */}
+    <Typography variant="body1" mt={1}>Drag & Drop or Click to Upload</Typography>
+
+    {/* File Upload Disclaimer Below the Icon */}
+    <Typography variant="body2" color="textSecondary" sx={{ marginTop: "10px" }}>
+      <strong>File Size Limit: </strong> Maximum file size is 10MB. <br />
+      {/* <strong>Sensitive Data:</strong> Please avoid uploading sensitive or private information. */}
+    </Typography>
+
+    {/* Hidden File Input */}
+    <input
+      id="file-upload"
+      type="file"
+      multiple
+      hidden
+      onChange={handleFileUpload}
+    />
+  </Box>
+
+  {/* Accepted File Types Below the Upload Box */}
+  <Box mt={1}>
+    <Typography variant="body2" color="textSecondary">
+      <strong>Accepted File Types:</strong> csv,zip
+    </Typography>
+  </Box>
+
+  {/* File Preview */}
+  {uploadedFiles.length > 0 && (
+    <Box mt={2}>
+      <Typography variant="body2" fontWeight="bold">Uploaded Files:</Typography>
+      {uploadedFiles.map((file, index) => (
+        <Box key={index} display="flex" justifyContent="space-between" alignItems="center" mt={1} p={1} border="1px solid #ddd" borderRadius="4px">
+          <Typography variant="body2">{file.name}</Typography>
+          <IconButton size="small" onClick={() => removeFile(index)}>
+            <Close fontSize="small" />
+          </IconButton>
         </Box>
-      </DialogContent>
-    </Dialog>
+      ))}
+    </Box>
+  )}
+</>
+
+
+      <Box display="flex" justifyContent="flex-end" mt={3}>
+        <Button variant="contained" style={{backgroundColor:'#2d3748' ,color:'white'}} onClick={handleSubmit}>
+          Submit
+        </Button>
+      </Box>
+    </DialogContent>
+  </Dialog>
+    </>
   );
 };
 

@@ -1,12 +1,14 @@
-import React from 'react';
+import {React,useState} from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-
+import ModalComponent from '../../ModalComponent';
 // Register the necessary chart components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const PoliceChargeSheet = ({apidata}) => {
   // Data for the Donut Chart
+      const [showModal, setShowModal] = useState(false);
+  
   const data = {
     labels: [
       'Total Charge Sheeted',
@@ -29,7 +31,7 @@ const PoliceChargeSheet = ({apidata}) => {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top',
+        position: 'bottom',
       },
       tooltip: {
         callbacks: {
@@ -44,12 +46,29 @@ const PoliceChargeSheet = ({apidata}) => {
   };
 
   return (
-    <div className="p-9 mx-auto rounded-lg w-[100%] h-[500px]">
-      <h1 className="text-4xl font-bold mb-8">Charge Sheet Status</h1>
-      <div className="h-full">
-        <Doughnut data={data} options={options} />
-      </div>
+    <div className="bg-white p-6 mx-auto rounded-lg w-[60%]">
+    <div className="flex justify-between items-center mb-8">
+      <h1 className="text-4xl font-bold">Charge Sheet Status</h1>
+      <button
+        className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+        style={{ backgroundColor: '#2d3748' }}
+        onClick={() => {
+          console.log("Open modal");
+          setShowModal(true);
+        }}
+      >
+        Add On
+      </button>
     </div>
+    
+    <div className="h-[300px] w-[300px] mx-auto">
+      <Doughnut data={data} options={options} />
+    </div>
+  
+    <ModalComponent open={showModal} type='fir_2' onClose={() => setShowModal(false)} />
+  </div>
+  
+    
   );
 };
 
