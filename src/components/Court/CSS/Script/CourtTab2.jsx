@@ -48,13 +48,13 @@ const COLORS = ['#0088FE', '#FF8042'];
 
 const CourtTab2 = () => {
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>eSummons & Digital Case Records Dashboard</h1>
-      <div style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}>
+    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto">
+      <h1 className="text-2xl font-bold mb-6">eSummons & Digital Case Records Dashboard</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
         {/* Adoption Rate Line Chart */}
-        <div style={{ width: '45%', marginBottom: '30px' }}>
-          <h3>Adoption Rate of eSummons & Digital Case Records</h3>
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h3 className="text-xl font-semibold mb-4">Adoption Rate of eSummons & Digital Case Records</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={adoptionData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -68,8 +68,8 @@ const CourtTab2 = () => {
         </div>
 
         {/* eSummons Delivered Electronically Bar Chart */}
-        <div style={{ width: '45%', marginBottom: '30px' }}>
-          <h3>Percentage of Court Summons Delivered Electronically</h3>
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h3 className="text-xl font-semibold mb-4">Percentage of Court Summons Delivered Electronically</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={summonsData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -83,8 +83,8 @@ const CourtTab2 = () => {
         </div>
 
         {/* Updated Pie Chart for Compliance */}
-        <div style={{ width: '45%', marginBottom: '30px' }}>
-          <h3>Data Security Compliance</h3>
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h3 className="text-xl font-semibold mb-4">Data Security Compliance</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Tooltip />
@@ -98,8 +98,8 @@ const CourtTab2 = () => {
         </div>
 
         {/* Updated Pie Chart for Accessibility */}
-        <div style={{ width: '45%', marginBottom: '30px' }}>
-          <h3>Accessibility Compliance</h3>
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h3 className="text-xl font-semibold mb-4">Accessibility Compliance</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Tooltip />

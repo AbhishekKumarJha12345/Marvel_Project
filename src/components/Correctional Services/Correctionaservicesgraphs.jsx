@@ -8,7 +8,7 @@ import VideoConferencingFacilities from './VideoConferencingFacilities'
 function Correctionaservicesgraphs() {
   return (
     <div>
-      <div className="grid grid-cols-2 gap-4" style={{backgroundColor:"#f4f4f4",margin:"0"}}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <ComplianceSection />
         <ComplianceSection479 />
         <CorrectionalInstitutions />

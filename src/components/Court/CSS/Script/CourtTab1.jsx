@@ -25,13 +25,13 @@ const caseStatusData = [
 
 const CourtTab1 = () => {
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Court System Dashboard</h1>
-      <div style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}>
+    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto">
+      <h1 className="text-2xl font-bold mb-6">Court System Dashboard</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
         {/* Pie Chart */}
-        <div style={{ width: '45%', marginBottom: '30px' }}>
-          <h3>Case Status Distribution</h3>
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h3 className="text-xl font-semibold mb-4">Case Status Distribution</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie data={caseStatusData} dataKey="value" nameKey="name" outerRadius={100} fill="#8884d8">
@@ -45,8 +45,8 @@ const CourtTab1 = () => {
         </div>
 
         {/* Line Chart */}
-        <div style={{ width: '45%', marginBottom: '30px' }}>
-          <h3>Cases Processed Over Time</h3>
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h3 className="text-xl font-semibold mb-4">Cases Processed Over Time</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={caseData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -62,8 +62,8 @@ const CourtTab1 = () => {
         </div>
 
         {/* Area Chart */}
-        <div style={{ width: '45%', marginBottom: '30px' }}>
-          <h3>Average Resolution Time Over Time</h3>
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h3 className="text-xl font-semibold mb-4">Average Resolution Time Over Time</h3>
           <ResponsiveContainer width="100%" height={300}>
             <AreaChart data={caseData}>
               <CartesianGrid strokeDasharray="3 3" />

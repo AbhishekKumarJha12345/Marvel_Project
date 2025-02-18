@@ -24,8 +24,8 @@ const Carousel = () => {
   };
 
   return (
-    <div style={{ width: "80%", margin: "auto", paddingTop: "20px" }}>
-      <h2 style={{ textAlign: "center" }}>Image Carousel</h2>
+    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto">
+      <h2 className="text-2xl font-bold mb-6" >Image Carousel</h2>
       <Slider {...settings}>
         {[Picture1, Picture2, Picture3, Picture4, Picture5, Picture6].map(
           (image, index) => (
