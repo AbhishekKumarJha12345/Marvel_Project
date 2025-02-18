@@ -48,7 +48,7 @@ function Mainnavbar() {
       </div>
 
       <div className="flex items-center space-x-6 ">
-        <div className="relative">
+        {/* <div className="relative">
       <button
         onClick={() => toggleDropdown("language")}
         className="flex items-center space-x-2 text-gray-700 hover:text-blue-500"
@@ -74,7 +74,7 @@ function Mainnavbar() {
           ))}
         </div>
       )}
-    </div>
+    </div> */}
 
 
         {/* Messages Dropdown */}

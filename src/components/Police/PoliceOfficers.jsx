@@ -1,18 +1,36 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import axiosInstance from '../../utils/axiosInstance';
 
 // Register required chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const PoliceOfficers = () => {
+
+
+  const [trainingData,setTrainingData]=useState('')
+const getTrainingData = async()=>{
+  try{
+    const response =await axiosInstance.get('/live_data')
+    console.log(response.data,'Trainig data response ----------')
+    setTrainingData(response.data.latest_trainings)
+
+  }catch(error){
+    console.log(error)
+  }
+}
+useEffect(() => {
+  getTrainingData();
+}, []);
+  console.log(trainingData,'training props data------')
   // Data for the bar graph
   const data = {
-    labels: ['Police Officers(PSI to SP/DCP)', 'Police Personnel(PC to ASI)'], // Labels for the two roles
+    labels: [trainingData?trainingData[0].rank :"", trainingData ?trainingData[1].rank:""], // Labels for the two roles
     datasets: [
       {
         label: 'Available Officers',
-        data: [13247, 152363], // Available Officers for AP and TS
+        data: [trainingData?trainingData[0].available_officers:"",trainingData?trainingData[0].trained_officers:""], // Available Officers for AP and TS
         backgroundColor: '#4CAF50', // Green color for Available Officers
         borderColor: '#388E3C', // Darker green border
         borderWidth: 1,
@@ -20,7 +38,7 @@ const PoliceOfficers = () => {
       },
       {
         label: 'Total Trained Officers',
-        data: [12234, 137901], // Total Trained Officers for AP and TS
+        data: [trainingData?trainingData[1].available_officers:"",trainingData?trainingData[1].trained_officers:""], // Total Trained Officers for AP and TS
         backgroundColor: '#2196F3', // Blue color for Trained Officers
         borderColor: '#1976D2', // Darker blue border
         borderWidth: 1,

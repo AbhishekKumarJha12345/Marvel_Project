@@ -1,11 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import axiosInstance from '../../utils/axiosInstance';
 
 // Register the necessary chart components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const MasterTrainers = () => {
+
+
+
+  const [trainingData,setTrainingData]=useState('')
+  const getTrainingData = async()=>{
+    try{
+      const response =await axiosInstance.get('/live_data')
+      console.log(response.data,'Trainig data response ----------')
+      setTrainingData(response.data.latest_workshop)
+  
+    }catch(error){
+      console.log(error)
+    }
+  }
+  useEffect(() => {
+    getTrainingData();
+  }, []);
   // Data for the Pie Chart
   const data = {
     labels: [
@@ -15,7 +33,7 @@ const MasterTrainers = () => {
     ],
     datasets: [
       {
-        data: [1647, 50434, 635], // Corresponding values for each section
+        data: [trainingData?trainingData.training_workshops:"", trainingData?trainingData.e_academy_online:"", trainingData?trainingData.master_trainers:""], // Corresponding values for each section
         backgroundColor: ['#FF5733', '#33FF57', '#3357FF'], // Different colors for each section
         borderColor: ['#FF5733', '#33FF57', '#3357FF'], // Border colors to match
         borderWidth: 1,
