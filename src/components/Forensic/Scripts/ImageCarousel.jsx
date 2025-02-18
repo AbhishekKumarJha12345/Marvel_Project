@@ -3,15 +3,13 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-
-
 const images = [
-  "./../../../public/images/image0.png",
-  "./../../../public/images/image1.png",
-  "./../../../public/images/image2.png",
-  "./../../../public/images/image3.png",
-  "./../../../public/images/image4.png",
-  "./../../../public/images/image5.png",
+  "/images/image0.png",
+  "/images/image1.png",
+  "/images/image2.png",
+  "/images/image3.png",
+  "/images/image4.png",
+  "/images/image5.png",
 ];
 
 const ImageCarousel = () => {
