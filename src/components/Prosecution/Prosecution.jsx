@@ -142,7 +142,7 @@ const [filters, setFilters] = useState({ role: "", posts: "", date: "" });
             ))}
           </div>
         </div>
-        <p onClick={() =>{console.log('set'); setShowModal(true)}}>open modal</p>
+        {/* <p onClick={() =>{console.log('set'); setShowModal(true)}}>open modal</p> */}
     <ModalComponent open={showModal} onClose={() => setShowModal(false)} />
         {/* <div style={styles.pagination}>
           <Form.Select
