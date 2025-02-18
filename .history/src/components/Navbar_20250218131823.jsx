@@ -4,8 +4,8 @@ import { AiTwotoneThunderbolt } from "react-icons/ai";
 import { TbTable } from "react-icons/tb";
 import { Home, FileText } from "lucide-react";
 import MasterTrainers from './Police/MasterTrainers';
-import Dashboard1 from './Forensic/Scripts/Dashboard1';
-import CriminalPages from './Prosecution/Criminalpages';
+import Dashboard1 from './Forensic/Scripts/Dashboard1'
+import CriminalPages from './Prosecution/Criminalpages'
 import PoliceOfficers from './Police/PoliceOfficers';  
 import Carousel from './Police/Carousel';
 import Forensicvisits from './Police/Forensicvisits';
@@ -20,8 +20,8 @@ export default function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [activeContent, setActiveContent] = useState(null);
   const [activeSubMenu, setActiveSubMenu] = useState(null);
+  const [activeContent, setActiveContent] = useState(null);
   const [activeContentawareness, setActiveContentawareness] = useState(null);
   const [activeContentforensic, setActiveContentforensic] = useState(null);
   const [activeContentProsecution, setActiveContentProsecution] = useState(null);
@@ -39,10 +39,7 @@ export default function Dashboard() {
     setActiveContentCourt(null);
     setActiveForensic(null);
     setActiveServices(null);
-    setIsOpen(false); // Close main dropdown
-    setActiveSubMenu(null); // Close subdropdown
   };
-  
 
   const dropdownRef = useRef(null);
 
@@ -54,15 +51,11 @@ export default function Dashboard() {
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev);
   };
+
   const toggleSubMenu = (index) => {
-    if (activeSubMenu === index) {
-      setActiveSubMenu(null);
- // Close if the same submenu is clicked again
-    } else {
-      setActiveSubMenu(index); // Open new submenu and close others
-    }
+    setActiveSubMenu(index === activeSubMenu ? null : index);
   };
-  
+
   const handleTrainingClick = () => {
     resetContent();
     setActiveContent('training');
@@ -102,7 +95,7 @@ export default function Dashboard() {
     document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);        
     };
   }, []);
 

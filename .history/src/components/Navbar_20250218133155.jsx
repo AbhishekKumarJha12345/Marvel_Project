@@ -4,8 +4,8 @@ import { AiTwotoneThunderbolt } from "react-icons/ai";
 import { TbTable } from "react-icons/tb";
 import { Home, FileText } from "lucide-react";
 import MasterTrainers from './Police/MasterTrainers';
-import Dashboard1 from './Forensic/Scripts/Dashboard1';
-import CriminalPages from './Prosecution/Criminalpages';
+import Dashboard1 from './Forensic/Scripts/Dashboard1'
+import CriminalPages from './Prosecution/Criminalpages'
 import PoliceOfficers from './Police/PoliceOfficers';  
 import Carousel from './Police/Carousel';
 import Forensicvisits from './Police/Forensicvisits';
@@ -20,8 +20,8 @@ export default function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [activeContent, setActiveContent] = useState(null);
   const [activeSubMenu, setActiveSubMenu] = useState(null);
+  const [activeContent, setActiveContent] = useState(null);
   const [activeContentawareness, setActiveContentawareness] = useState(null);
   const [activeContentforensic, setActiveContentforensic] = useState(null);
   const [activeContentProsecution, setActiveContentProsecution] = useState(null);
@@ -102,7 +102,7 @@ export default function Dashboard() {
     document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);        
     };
   }, []);
 
