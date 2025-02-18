@@ -48,12 +48,13 @@ const EFIRsChart = () => {
         },
       },
     },
+    maintainAspectRatio: false, // Ensures the chart doesn't shrink when resizing
   };
 
   return (
-    <div className="bg-white p-6 mx-auto rounded-lg w-[60%] h-[500px]">
+    <div className="bg-white p-6 mx-auto rounded-lg w-[80%] h-[600px]"> {/* Increased width and height */}
       <h1 className="text-4xl font-bold mb-8">eFIRs Overview</h1>
-      <div className="h-[250px]">
+      <div className="h-[500px]"> {/* Increased height for the chart container */}
         <Bar data={data} options={options} />
       </div>
     </div>

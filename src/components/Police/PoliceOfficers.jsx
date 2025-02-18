@@ -50,6 +50,7 @@ useEffect(() => {
   // Custom tooltip content (percentage display for each group)
   const options = {
     responsive: true,
+    maintainAspectRatio: false, // Ensures full width usage
     plugins: {
       legend: {
         position: 'top',
@@ -82,12 +83,12 @@ useEffect(() => {
   };
 
   return (
-    <div className="bg-white p-6 mx-auto rounded-lg w-[60%] h-[500px]">
-    <h1 className="text-4xl font-bold mb-8">Police Officers</h1>
-    <div className="h-[250px]">
-      <Bar data={data} options={options} />
+    <div className="bg-white p-6 rounded-lg w-full h-[500px] text-center">
+      <h1 className="text-4xl font-bold mb-8">Police Officers</h1>
+      <div className="h-[400px] w-full">
+        <Bar data={data} options={options} />
+      </div>
     </div>
-  </div>
   );
 };
 

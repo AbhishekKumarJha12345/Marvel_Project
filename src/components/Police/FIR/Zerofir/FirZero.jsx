@@ -38,7 +38,14 @@ function FirZero() {
 
       {/* Tab Content */}
       <div className="mt-4">
-        {activeTab === 'home' && <ZeroFir />}
+        {activeTab === 'home' && <div className="col-6">
+  <div className="card shadow-sm bg-white">
+    <div className="card-body">
+      <ZeroFir />
+    </div>
+  </div>
+</div>
+}
         {activeTab === 'newCriminals' && (
           <div>
             <h2 className="text-2xl font-bold">Zero FIR</h2>

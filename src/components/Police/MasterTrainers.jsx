@@ -47,8 +47,16 @@ const MasterTrainers = () => {
     plugins: {
       legend: {
         position: 'top',
+        labels: {
+          boxWidth: 20,
+        },
       },
       tooltip: {
+        displayColors: false,
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        titleAlign: 'center',
+        bodyAlign: 'center',
+        padding: 10,
         callbacks: {
           label: function (tooltipItem) {
             const label = tooltipItem.label || '';
@@ -61,13 +69,14 @@ const MasterTrainers = () => {
   };
 
   return (
-    <div className="bg-white p-6  mx-auto rounded-lg w-[60%] h-[500px]">
-    <h1 className="text-4xl font-bold mb-8">Master Trainers</h1>
-    <div className="h-[250px]">
-      <Pie data={data} options={options} />
+    <div className="bg-white p-6 rounded-lg w-full h-[500px] flex flex-col items-center">
+      <h1 className="text-4xl font-bold mb-4">Master Trainers</h1>
+      <div className="flex flex-col lg:flex-row w-full justify-center items-center">
+        <div className="w-full lg:w-2/3 h-[400px] p-3 d-flex justify-center items-center">
+          <Pie data={data} options={options} />
+        </div>
+      </div>
     </div>
-  </div>
-  
   );
 };
 

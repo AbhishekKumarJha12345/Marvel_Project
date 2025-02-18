@@ -116,7 +116,7 @@ useEffect(() => {
                     <button className="sub-dropdown-item" onClick={() => handleSectionClick('efir')}>E FIR</button>
                   </div>
                 )}
-                <button className="dropdown-item" onClick={() => handleSectionClick('awareness/campaign')}>Awareness/Campaign</button>
+                {/* <button className="dropdown-item" onClick={() => handleSectionClick('awareness/campaign')}>Awareness/Campaign</button> */}
                 <button className="dropdown-item" onClick={() => handleSectionClick('forensic/visits')}>Forensic Visits</button>
               </div>
             )}

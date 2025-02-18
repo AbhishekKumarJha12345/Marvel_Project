@@ -71,7 +71,7 @@ const VanAvailability = () => {
       cell: (row) => (
         <button
           onClick={() => handleOpenModal(row)}
-          className="bg-blue-500 text-white py-1 px-4 rounded-lg hover:bg-blue-600"
+          className="bg-grey text-black py-1 px-4 rounded-lg hover:bg-white"
         >
           View Facility
         </button>
