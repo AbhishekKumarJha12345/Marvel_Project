@@ -97,7 +97,8 @@ const ModalComponent = ({ open,type, onClose }) => {
       const currentDate = new Date().toISOString().split("T")[0];
       formDataToSend.append("date", currentDate);
       if(type==='police') formDataToSend.append("type", selectedOption);
-      if(['fir_1,fir_2,fir_3,'].includes(type)) formDataToSend.append("type", type)
+
+      if(['fir_1','fir_2','fir_3'].includes(type)) {console.log('type',type); formDataToSend.append("type", type)}
     
       // Append files if any
       if (uploadedFiles.length > 0) {
@@ -108,11 +109,11 @@ const ModalComponent = ({ open,type, onClose }) => {
       }
     
       // Debugging: Log FormData contents before sending
-      console.log("FormData Contents:");
-      for (let pair of formDataToSend.entries()) {
-        console.log(pair[0] + ": " + pair[1]);
-      }
-      console.log("FormData Type:", formDataToSend instanceof FormData ? "FormData" : typeof formDataToSend);
+      // console.log("FormData Contents:");
+      // for (let pair of formDataToSend.entries()) {
+      //   console.log(pair[0] + ": " + pair[1]);
+      // }
+      // console.log("FormData Type:", formDataToSend instanceof FormData ? "FormData" : typeof formDataToSend);
 
 
       // Send all data in one request
@@ -148,7 +149,7 @@ const ModalComponent = ({ open,type, onClose }) => {
     <>
 
   <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" borderRadius='30px'>
-    <DialogTitle backgroundColor='#2d3748' color='white' marginBottom='10px'>
+    <DialogTitle backgroundColor='#2d3748' color='white' marginBottom='30px'>
       <Box display="flex" justifyContent="space-between" alignItems="center" >
         <Typography variant="h6"><strong>Form Details</strong></Typography>
         <IconButton onClick={onClose}>
@@ -160,21 +161,37 @@ const ModalComponent = ({ open,type, onClose }) => {
     <DialogContent marginTop='10px'>
       {/* Button Group */}
       {type === "police"&&<Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-        <Button
-          variant={selectedOption === "training" ? "contained" : "outlined"}
-          color="primary"
-          onClick={() => handleOptionChange({ target: { value: "training" } })}
-          sx={{ marginRight: 2 }}
-        >
-          Training Form
-        </Button>
-        <Button
-          variant={selectedOption === "workshop" ? "contained" : "outlined"}
-          color="primary"
-          onClick={() => handleOptionChange({ target: { value: "workshop" } })}
-        >
-          Workshop Form
-        </Button>
+      <Button
+  variant={selectedOption === "training" ? "contained" : "outlined"}
+  color="primary"
+  onClick={() => handleOptionChange({ target: { value: "training" } })}
+  sx={{
+    marginRight: 2,
+    backgroundColor: selectedOption === "training" ? "#2d3748" : "transparent", // Background color
+    color: selectedOption === "training" ? "white" : "inherit", // Text color
+    "&:hover": {
+      backgroundColor: selectedOption === "training" ? "#2d3748" : "transparent", // Keep background color on hover if selected
+    },
+  }}
+>
+  Training Form
+</Button>
+
+<Button
+  variant={selectedOption === "workshop" ? "contained" : "outlined"}
+  color="primary"
+  onClick={() => handleOptionChange({ target: { value: "workshop" } })}
+  sx={{
+    backgroundColor: selectedOption === "workshop" ? "#2d3748" : "transparent", // Background color
+    color: selectedOption === "workshop" ? "white" : "inherit", // Text color
+    "&:hover": {
+      backgroundColor: selectedOption === "workshop" ? "#2d3748" : "transparent", // Keep background color on hover if selected
+    },
+  }}
+>
+  Workshop Form
+</Button>
+
       </Box>}
 
       {/* Conditionally render fields based on selected option */}
@@ -239,7 +256,7 @@ const ModalComponent = ({ open,type, onClose }) => {
 
       {/* Fields for fir_1 */}
       {type === "fir_1" && (
-        <Box display="flex" flexDirection="column" gap={2}>
+        <Box display="flex" flexDirection="column" gap={2} marginTop='10px'>
           <TextField
             label="Total No. of FIR Registered Under BNS IPC"
             name="total_no_fir_registered_under_bns_ipc"
@@ -286,7 +303,7 @@ const ModalComponent = ({ open,type, onClose }) => {
       )}
       {/* Fields for fir_2 */}
       {type === "fir_2" && (
-        <Box display="flex" flexDirection="column" gap={2}>
+        <Box display="flex" flexDirection="column" gap={2} marginTop='10px'>
           <TextField
             label="Total Charge Sheeted"
             name="total_charge_sheeted"
@@ -320,7 +337,7 @@ const ModalComponent = ({ open,type, onClose }) => {
 
       {/* Fields for fir_3 */}
       {type === "fir_3" && (
-        <Box display="flex" flexDirection="column" gap={2}>
+        <Box display="flex" flexDirection="column" gap={2} marginTop='10px'>
           <TextField
             label="Act"
             name="act"
@@ -392,7 +409,7 @@ const ModalComponent = ({ open,type, onClose }) => {
     onClick={() => document.getElementById("file-upload").click()}
   >
     {/* File Upload Icon */}
-    <CloudUpload fontSize="large" color="primary" />
+    <CloudUpload fontSize="large" color="#2d3748" />
 
     {/* Text Below the Icon */}
     <Typography variant="body1" mt={1}>Drag & Drop or Click to Upload</Typography>

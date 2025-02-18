@@ -33,7 +33,7 @@ const PoliceFirs = () => {
     responsive: true,
     plugins: {
       legend: {
-        position: 'right',
+        position: 'bottom',
       },
       tooltip: {
         callbacks: {
@@ -68,7 +68,7 @@ const PoliceFirs = () => {
       Add On
     </button>
   </div>
-  <div className="h-[600px] w-[700px]"> {/* Reduced height of chart */}
+  <div className="h-[500px] w-[500px]"> {/* Reduced height of chart */}
     <Pie data={data} options={options} />
   </div>
   <ModalComponent open={showModal} type='fir_1'  onClose={() => setShowModal(false)} />
