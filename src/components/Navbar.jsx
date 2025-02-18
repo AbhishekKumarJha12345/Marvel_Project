@@ -6,7 +6,7 @@ import { Home, FileText } from "lucide-react";
 import MasterTrainers from './Police/MasterTrainers';
 import Dashboard1 from './Forensic/Scripts/Dashboard1';
 import CriminalPages from './Prosecution/Criminalpages';
-import PoliceOfficers from './Police/PoliceOfficers';  
+import PoliceOfficers from './Police/PoliceOfficers';
 import Carousel from './Police/Carousel';
 import Forensicvisits from './Police/Forensicvisits';
 import Dashboard2 from './Court/CSS/Script/Dashboard2'
@@ -23,8 +23,14 @@ import BalanceIcon from '@mui/icons-material/Balance';
 import FluorescentIcon from '@mui/icons-material/Fluorescent';
 import logo from '../assets/logo.png'
 
+import training from '../assets/police/training.svg'
+import forensicvisit from '../assets/police/forinsic_visit.svg'
+import fir from '../assets/police/fir.svg'
+import awareness from '../assets/police/awareness.svg'
 
-export default function Dashboard() {
+
+export default function Dashboard({ users }) {
+
   const [isOpen, setIsOpen] = useState(false);
   const [activeSubMenu, setActiveSubMenu] = useState(null);
   const [activeSection, setActiveSection] = useState(null); // Unified state for all sections
@@ -67,113 +73,189 @@ export default function Dashboard() {
     };
   }, []);
 
-const [trainingData,setTrainingData]=useState('')
-const getTrainingData = async()=>{
-  try{
-    const response =await axiosInstance.get('/live_data')
-    console.log(response.data,'Trainig data response ----------')
-    setTrainingData(response.data)
+  const [trainingData, setTrainingData] = useState('')
+  const getTrainingData = async () => {
+    try {
+      const response = await axiosInstance.get('/live_data')
+      console.log(response.data, 'Trainig data response ----------')
+      setTrainingData(response.data)
 
-  }catch(error){
-    console.log(error)
+    } catch (error) {
+      console.log(error)
+    }
   }
-}
-useEffect(() => {
-  // getTrainingData();
-}, []);
+  useEffect(() => {
+    // getTrainingData();
+  }, []);
 
   const contentMap = {
-    "training"              : <div className="content"><h1 className="heading">Police - Training</h1><PoliceOfficers /><MasterTrainers /></div>,
-    "awareness/campaign"    : <div className="content"><h1 className="heading">Awareness Campaigns</h1><Carousel /></div>,
-    "forensic/visits"       : <div className="content"><h1 className="heading">Forensic Visits</h1><Forensicvisits /></div>,
-    "court"                 : <div className="content"><h1 className="heading">Court Visits</h1><Dashboard2 /></div>,
-    "science"               : <div className="content"><h1 className="heading">Forensic Science Department</h1><Dashboard1 /></div>,
-    "prosecution"           : <div className="content"><h1 className="heading">Prosecution Visits</h1><CriminalPages /></div>,
-    "correctionalservices"  : <div className="content"><h1 className="heading">Correctional services</h1><Correctionalservicetab /></div>,
-    "newcriminal"           : <div className="content"><FirNewcriminal /></div>,
-    "chargesheet"           : <div className="content"><Firchargesheets  /></div>,
-    "zerofir"               : <div className="content"><FirZero /></div>,
-    "efir"                  : <div className="content"><Efir /></div>,
+    "training": <div className="content"><h1 className="heading">Police - Training</h1><PoliceOfficers /><MasterTrainers /></div>,
+    "awareness/campaign": <div className="content"><h1 className="heading">Awareness Campaigns</h1><Carousel /></div>,
+    "forensic/visits": <div className="content"><h1 className="heading">Forensic Visits</h1><Forensicvisits /></div>,
+    "court": <div className="content"><h1 className="heading">Court Visits</h1><Dashboard2 /></div>,
+    "science": <div className="content"><h1 className="heading">Forensic Science Department</h1><Dashboard1 /></div>,
+    "prosecution": <div className="content"><h1 className="heading">Prosecution Visits</h1><CriminalPages /></div>,
+    "correctionalservices": <div className="content"><h1 className="heading">Correctional services</h1><Correctionalservicetab /></div>,
+    "newcriminal": <div className="content"><FirNewcriminal /></div>,
+    "chargesheet": <div className="content"><Firchargesheets /></div>,
+    "zerofir": <div className="content"><FirZero /></div>,
+    "efir": <div className="content"><Efir /></div>,
   };
 
   return (
     <div className="dashboard">
       <div className="navbar">
         <ul className="nav-items">
-          {/* Police Section */}
-          <div className="nav_main" ref={dropdownRef}>
-            <button className={`nav-link ${isOpen ? "active" : ""}`} onClick={toggleDropdown}>
-              <BiCube size={25} /> Police
-            </button>
 
-            {isOpen && (
-              <div className="dropdown">
-                <button className="dropdown-item" onClick={() => handleSectionClick('training')}>Training</button>
-                <button className="dropdown-item" onClick={() => toggleSubMenu(1)}>FIR's</button>
-                {activeSubMenu === 1 && (
-                  <div className="sub-dropdown">
-                    <button className="sub-dropdown-item" onClick={() => handleSectionClick('newcriminal')}>A New Criminal Law</button>
-                    <button className="sub-dropdown-item" onClick={() => handleSectionClick('chargesheet')}>Charge Sheet</button>
-                    <button className="sub-dropdown-item" onClick={() => handleSectionClick('zerofir')}>Zero FIR</button>
-                    <button className="sub-dropdown-item" onClick={() => handleSectionClick('efir')}>E FIR</button>
+
+          {(users === 'chief secretary' || users === 'police') && (
+
+
+            users === "chief secretary" ? (
+              <div className="nav_main" ref={dropdownRef}>
+                <button className={`nav-link ${isOpen ? "active" : ""}`} onClick={toggleDropdown}>
+                  <BiCube size={25} /> Police
+                </button>
+
+                {isOpen && (
+                  <div className="dropdown">
+                    <button className="dropdown-item" onClick={() => handleSectionClick("training")}>
+                      Training
+                    </button>
+                    <button className="dropdown-item" onClick={() => toggleSubMenu(1)}>FIR's</button>
+
+                    {activeSubMenu === 1 && (
+                      <div className="sub-dropdown">
+                        <button className="sub-dropdown-item" onClick={() => handleSectionClick("newcriminal")}>
+                          A New Criminal Law
+                        </button>
+                        <button className="sub-dropdown-item" onClick={() => handleSectionClick("chargesheet")}>
+                          Charge Sheet
+                        </button>
+                        <button className="sub-dropdown-item" onClick={() => handleSectionClick("zerofir")}>
+                          Zero FIR
+                        </button>
+                        <button className="sub-dropdown-item" onClick={() => handleSectionClick("efir")}>
+                          E FIR
+                        </button>
+                      </div>
+                    )}
+                    <button className="dropdown-item" onClick={() => handleSectionClick("awareness/campaign")}>
+                      Awareness/Campaign
+                    </button>
+                    <button className="dropdown-item" onClick={() => handleSectionClick("forensic/visits")}>
+                      Forensic Visits
+                    </button>
                   </div>
                 )}
-                {/* <button className="dropdown-item" onClick={() => handleSectionClick('awareness/campaign')}>Awareness/Campaign</button> */}
-                <button className="dropdown-item" onClick={() => handleSectionClick('forensic/visits')}>Forensic Visits</button>
               </div>
-            )}
-          </div>
+            )
+              :
+              (
 
-          <div className="nav-divider"></div>
+                <div className="nav_main" style={{ display: "flex" }}>
+                  <button className={`nav-link ${activeSection?.section === 'training' ? 'active' : ''}`} onClick={() => handleSectionClick("training")}><img src={training} alt="Training Icon" className="nav-icon" /> Training</button>
+                  <div className="nav-divider"></div>
+                  <button className={`nav-link ${['newcriminal', 'chargesheet', 'zerofir', 'efir'].includes(activeSection?.section) ? 'active' : ''}`} onClick={() => toggleSubMenu(1)}> <img src={fir} alt="Training Icon" className="nav-icon" /> FIR's ▾ </button>
+                  <div className="nav-divider"></div>
 
-          {/* Prosecution Section */}
-          <li className={`nav-link ${activeSection?.section === 'prosecution' ? 'active' : ''}`} onClick={() => handleSectionClick('prosecution')}>
-            {/* <Home /> Prosecution */}
-            <GavelIcon /> Prosecution
-          </li>
+                  {activeSubMenu === 1 && (
+                    <div className="dropdown" style={{ top: "140px", left: "7rem" }}>
 
-          <div className="nav-divider"></div>
+                      <div className="sub-dropdown">
+                        <button className="sub-dropdown-item" onClick={() => handleSectionClick("newcriminal")}>
+                          A New Criminal Law
+                        </button>
+                        <button className="sub-dropdown-item" onClick={() => handleSectionClick("chargesheet")}>
+                          Charge Sheet
+                        </button>
+                        <button className="sub-dropdown-item" onClick={() => handleSectionClick("zerofir")}>
+                          Zero FIR
+                        </button>
+                        <button className="sub-dropdown-item" onClick={() => handleSectionClick("efir")}>
+                          E FIR
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
-          {/* Court Section */}
-          <li className={`nav-link ${activeSection?.section === 'court' ? 'active' : ''}`} onClick={() => handleSectionClick('court')}>
-            {/* <TbTable size={25} /> Court */}
-            <BalanceIcon size={25} /> Court
-          </li>
+                  <button className={`nav-link ${activeSection?.section === 'awareness/campaign' ? 'active' : ''}`} onClick={() => handleSectionClick("awareness/campaign")}>
+                    <img src={awareness} alt="Training Icon" className="nav-icon" />
+                    Awareness/Campaign
+                  </button>
 
-          <div className="nav-divider"></div>
+                  <div className="nav-divider"></div>
 
-          {/* Correctional Services Section */}
-          <li className={`nav-link ${activeSection?.section === 'correctionalservices' ? 'active' : ''}`} onClick={() => handleSectionClick('correctionalservices')}>
-            {/* <AiTwotoneThunderbolt /> Correctional Services */}
-            <FluorescentIcon /> Correctional Services
-          </li>
 
-          <div className="nav-divider"></div>
+                  <button className={`nav-link ${activeSection?.section === 'forensic/visits' ? 'active' : ''}`} onClick={() => handleSectionClick("forensic/visits")}><img src={forensicvisit} alt="Training Icon" className="nav-icon" />  Forensic Visits</button>
+                </div>
 
-          {/* Forensic Science Section */}
-          <li className={`nav-link ${activeSection?.section === 'science' ? 'active' : ''}`} onClick={() => handleSectionClick('science')}>
-            {/* <TbTable size={25} /> Forensic Science Department */}
-            <BiotechIcon size={25} /> Forensic Science Department
-          </li>
 
-          {/* <div className="nav-divider"></div> */}
+              )
 
-          {/* Admin Section */}
-          {/* <li className="nav-link">
-            <FileText /> Admin
-          </li> */}
+          )}
+
+          {users === 'chief secretary' ? <div className="nav-divider"></div> : null}
+
+
+          {(users === 'chief secretary' || users === 'prosecution') && (
+            <li className={`nav-link ${activeSection?.section === 'prosecution' ? 'active' : ''}`} onClick={() => handleSectionClick('prosecution')}>
+              {/* <Home /> Prosecution */}
+              <GavelIcon /> Prosecution
+            </li>
+          )}
+
+          {users === 'chief secretary' ? <div className="nav-divider"></div> : null}
+
+
+          {(users === 'chief secretary' || users === 'court') && (
+            <li className={`nav-link ${activeSection?.section === 'court' ? 'active' : ''}`} onClick={() => handleSectionClick('court')}>
+              {/* <TbTable size={25} /> Court */}
+              <BalanceIcon size={25} /> Court
+            </li>
+          )}
+
+          {users === 'chief secretary' ? <div className="nav-divider"></div> : null}
+
+
+          {(users === 'chief secretary' || users === 'correctionalservices') && (
+            <li className={`nav-link ${activeSection?.section === 'correctionalservices' ? 'active' : ''}`} onClick={() => handleSectionClick('correctionalservices')}>
+              {/* <AiTwotoneThunderbolt /> Correctional Services */}
+              <FluorescentIcon /> Correctional Services
+            </li>
+          )}
+
+
+          {users === 'chief secretary' ? <div className="nav-divider"></div> : null}
+
+
+          {(users === 'chief secretary' || users === 'forensic') && (
+
+            <li className={`nav-link ${activeSection?.section === 'science' ? 'active' : ''}`} onClick={() => handleSectionClick('science')}>
+              {/* <TbTable size={25} /> Forensic Science Department */}
+              <BiotechIcon size={25} /> Forensic Science Department
+            </li>
+          )}
+
+
         </ul>
       </div>
 
-      {/* Conditionally render the content */}
-      {contentMap[activeSection?.section] || 
-      <div style={{height:"74vh",marginTop:"3rem",display:"flex",flexDirection:"column",gap:"1rem",alignItems:"center"}}>
-        <h2 style={{fontSize:"29px",fontWeight:"500"}}>ICJS-Interoperable Criminal Justice System</h2>
-        <p style={{fontSize:"18px"}}>MAHARASHTRA RESEARCH & VIGILANCE MARVEL
-        FOR ENHANCED LAW ENFORCEMENT LIMITED</p>
-        <img src={logo} alt="Logo" style={{width:"40rem"}} />
 
-      </div>
+      {
+        users === 'chief secretary' ? contentMap[activeSection?.section] || (
+
+          <div style={{ height: "74vh", marginTop: "3rem", display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center" }}>
+            <h2 style={{ fontSize: "29px", fontWeight: "500" }}>ICJS-Interoperable Criminal Justice System</h2>
+            <p style={{ fontSize: "18px" }}>MAHARASHTRA RESEARCH & VIGILANCE MARVEL
+              FOR ENHANCED LAW ENFORCEMENT LIMITED</p>
+            <img src={logo} alt="Logo" style={{ width: "40rem" }} />
+
+          </div>) : contentMap[activeSection?.section] || (users === "police" ? contentMap["training"]
+            : users === "court" ? contentMap["court"]
+              : users === "forensic" ? contentMap["science"]
+                : users === "prosecution" ? contentMap["prosecution"]
+                  : contentMap["correctionalservices"])
       }
     </div>
   );
