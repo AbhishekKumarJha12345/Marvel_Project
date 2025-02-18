@@ -1,26 +1,41 @@
-import React from 'react';
-import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import React from "react";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
 // Register required chart components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const CorrectionalInstitutions = () => {
   // Data for the bar graph (grouped by different categories related to correctional institutions)
   const data = {
     labels: [
-        'Correctional Institutions', // Shortened from 'No. of Correctional Institutions'
-        'Inmate Population', // Shortened from 'Current Inmate Population'
-        'Admission (NCL)', // Shortened from 'Admission as per NCL'
-        'Inmates % (NCL)' // Shortened from 'Percentage of inmates inside Correctional Institutions as per NCL'
-      ],
-      
+      "Correctional Institutions", // Shortened from 'No. of Correctional Institutions'
+      "Inmate Population", // Shortened from 'Current Inmate Population'
+      "Admission (NCL)", // Shortened from 'Admission as per NCL'
+      "Inmates % (NCL)", // Shortened from 'Percentage of inmates inside Correctional Institutions as per NCL'
+    ],
+
     datasets: [
       {
-        label: 'Data',
+        label: "Data",
         data: [60, 39564, 11221, 28.4], // Data for each label
-        backgroundColor: ['#FF5733', '#2196F3', '#FFEB3B', '#4CAF50'], // Different colors for each bar
-        borderColor: ['#D84315', '#1976D2', '#FBC02D', '#388E3C'],
+        backgroundColor: ["#FF5733", "#2196F3", "#FFEB3B", "#4CAF50"], // Different colors for each bar
+        borderColor: ["#D84315", "#1976D2", "#FBC02D", "#388E3C"],
         borderWidth: 1,
         barThickness: 50,
       },
@@ -32,8 +47,8 @@ const CorrectionalInstitutions = () => {
     responsive: true,
     plugins: {
       legend: {
-        display: true,  // Show the legend with color blocks
-        position: 'top', // Position the legend at the top of the chart
+        display: true, // Show the legend with color blocks
+        position: "top", // Position the legend at the top of the chart
         labels: {
           generateLabels: (chart) => {
             const labels = chart.data.labels;
@@ -72,10 +87,20 @@ const CorrectionalInstitutions = () => {
   };
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-md">
-      <h1 className="text-xl font-semibold mb-4">Correctional Institutions</h1>
-      <div className="h-[250px]">
-        <Bar data={data} options={options} />
+    <div className="bg-white p-4 rounded-xl shadow-md w-[100%] h-[100%] mx-auto">
+      {/* Left-aligned heading */}
+      <h1 className="text-xl font-semibold mb-4 text-left">
+        Correctional Institutions
+      </h1>
+
+      {/* Centering the Bar Chart */}
+      <div className="flex justify-center">
+        <div className="w-[400px] h-[250px] flex justify-center items-center">
+          <Bar
+            data={data}
+            options={{ ...options, maintainAspectRatio: false }}
+          />
+        </div>
       </div>
     </div>
   );
