@@ -26,6 +26,8 @@ const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#A569BD"];
 const Home = () => {
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto">
+      <h1 className="text-2xl font-bold mb-6">Prosecution Dashboard</h1>
+
       {/* Pie and Donut Charts in One Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Pie Chart */}

@@ -28,8 +28,10 @@ const ForensicStrengtheningInitiatives = () => {
         Forensic Strengthening Initiatives
       </h2>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
       {/* Recruitment Efforts with Pie Chart */}
-      <div className="p-5 bg-gray-100 rounded-lg mb-6 w-full">
+      <div className="bg-white p-4 rounded-xl shadow-md">
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
             <UserPlus size={24} className="text-blue-600" />
@@ -58,7 +60,7 @@ const ForensicStrengtheningInitiatives = () => {
       </div>
 
       {/* Cyber Forensic Tools with Bar Chart */}
-      <div className="p-5 bg-gray-100 rounded-lg mb-6 w-full">
+      <div className="bg-white p-4 rounded-xl shadow-md">
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
             <ShieldCheck size={24} className="text-green-600" />
@@ -89,7 +91,7 @@ const ForensicStrengtheningInitiatives = () => {
       </div>
 
       {/* Operational Efficiency - Gauge Chart */}
-      <div className="p-5 bg-gray-100 rounded-lg w-full">
+      <div className="bg-white p-4 rounded-xl shadow-md">
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
             <TrendingUp size={24} className="text-purple-600" />
@@ -112,6 +114,7 @@ const ForensicStrengtheningInitiatives = () => {
         </div>
 
         <p className="text-sm text-gray-500 mt-1">Target: 95% Compliance</p>
+      </div>
       </div>
     </div>
   );

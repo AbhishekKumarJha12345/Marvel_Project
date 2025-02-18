@@ -9,7 +9,7 @@ import Trainingtocorrectional from './Trainingtocorrectional';
 
 const tabData = [
   { label: 'Home', component: <Correctionaservicesgraphs /> },
-  { label: 'Mobile Forensic Vans Deployment', component: <Trainingtocorrectional /> },
+  { label: 'Services', component: <Trainingtocorrectional /> },
 ];
 
 function CustomTabPanel({ children, value, index }) {
