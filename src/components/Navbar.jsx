@@ -21,6 +21,8 @@ import GavelIcon from '@mui/icons-material/Gavel';
 import BiotechIcon from '@mui/icons-material/Biotech';
 import BalanceIcon from '@mui/icons-material/Balance';
 import FluorescentIcon from '@mui/icons-material/Fluorescent';
+import logo from '../assets/logo.png'
+
 
 export default function Dashboard() {
   const [isOpen, setIsOpen] = useState(false);
@@ -154,7 +156,7 @@ useEffect(() => {
             <BiotechIcon size={25} /> Forensic Science Department
           </li>
 
-          <div className="nav-divider"></div>
+          {/* <div className="nav-divider"></div> */}
 
           {/* Admin Section */}
           {/* <li className="nav-link">
@@ -164,7 +166,15 @@ useEffect(() => {
       </div>
 
       {/* Conditionally render the content */}
-      {contentMap[activeSection?.section] || null}
+      {contentMap[activeSection?.section] || 
+      <div style={{height:"74vh",marginTop:"3rem",display:"flex",flexDirection:"column",gap:"1rem",alignItems:"center"}}>
+        <h2 style={{fontSize:"29px",fontWeight:"500"}}>Integrated Criminal Justice System</h2>
+        <p style={{fontSize:"18px"}}>MAHARASHTRA RESEARCH & VIGILANCE MARVEL
+        FOR ENHANCED LAW ENFORCEMENT LIMITED</p>
+        <img src={logo} alt="Logo" style={{width:"40rem"}} />
+
+      </div>
+      }
     </div>
   );
 }
