@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  FormControl,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -12,7 +13,8 @@ import {
   MenuItem,
   Box,
   Typography,
-  IconButton,
+  IconButton,InputLabel,FormHelperText
+  
 } from "@mui/material";
 import { CloudUpload, Close } from "@mui/icons-material";
 import axiosInstance from "../../utils/axiosInstance";
@@ -196,36 +198,74 @@ const ModalComponent = ({ open,type, onClose }) => {
 
       {/* Conditionally render fields based on selected option */}
       {type === "police"&&selectedOption === "training" && (
+       
         <Box display="flex" flexDirection="column" gap={2}>
-          <TextField
-            label="Rank"
-            name="rank"
-            value={formData.rank}
-            onChange={handleChange}
-            fullWidth
-          />
-          <TextField
-            label="Available Officers"
-            name="available_officers"
-            value={formData.available_officers}
-            onChange={handleChange}
-            fullWidth
-          />
-          <TextField
-            label="Trained Officers"
-            name="trained_officers"
-            value={formData.trained_officers}
-            onChange={handleChange}
-            fullWidth
-          />
-          <TextField
-            label="Percentage"
-            name="percentage"
-            value={formData.percentage}
-            onChange={handleChange}
-            fullWidth
-          />
-        </Box>
+  {/* <TextField
+    label="Rank"
+    name="rank"
+    value={formData.rank}
+    onChange={handleChange}
+    fullWidth
+  /> */}
+  <FormControl fullWidth>
+    {/* <InputLabel id="rank-label">Rank</InputLabel> */}
+    <FormHelperText>Select Rank</FormHelperText> {/* Optional helper text */}
+
+    <Select
+      labelId="rank-label"
+      value={formData.rank} // Bind to form data
+      name="rank" // Name of the dropdown
+      onChange={handleChange} // Handle change function
+    >
+      <MenuItem value="constable">police officers(psi to dsp)</MenuItem>
+      <MenuItem value="sergeant">police personnel(pc to asi)</MenuItem>
+      {/* <MenuItem value="inspector">Inspector</MenuItem>
+      <MenuItem value="sub_inspector">Sub Inspector</MenuItem> */}
+    </Select>
+  </FormControl>
+  <TextField
+    label="Available Officers"
+    name="available_officers"
+    value={formData.available_officers}
+    onChange={handleChange}
+    fullWidth
+  />
+  <TextField
+    label="Trained Officers"
+    name="trained_officers"
+    value={formData.trained_officers}
+    onChange={handleChange}
+    fullWidth
+  />
+  <TextField
+    label="Percentage"
+    name="percentage"
+    value={formData.percentage}
+    onChange={handleChange}
+    fullWidth
+  />
+
+  {/* First Dropdown for Rank */}
+  
+
+  {/* Second Dropdown for Department */}
+  {/* <FormControl fullWidth>
+    <InputLabel id="department-label">Department</InputLabel>
+    <Select
+      labelId="department-label"
+      value={formData.department} // Bind to form data
+      name="department" // Name of the dropdown
+      onChange={handleChange} // Handle change function
+    >
+      <MenuItem value="admin">Admin</MenuItem>
+      <MenuItem value="criminal_investigation">Criminal Investigation</MenuItem>
+      <MenuItem value="cyber_security">Cyber Security</MenuItem>
+      <MenuItem value="traffic">Traffic</MenuItem>
+    </Select>
+    <FormHelperText>Select Department</FormHelperText>
+  </FormControl> */}
+</Box>
+
       )}
 
       {type === "police"&&selectedOption === "workshop" && (
@@ -376,27 +416,6 @@ const ModalComponent = ({ open,type, onClose }) => {
         </Box>
       )}
 
-      {/* File Upload Box */}
-      {/* {selectedOption !== "" && (
-        <Box mt={2} p={2} border="2px dashed #ccc" borderRadius="8px" textAlign="center" sx={{ cursor: "pointer", backgroundColor: "#f9f9f9" }} onClick={() => document.getElementById("file-upload").click()}>
-          <CloudUpload fontSize="large" color="primary" />
-          <Typography variant="body1" mt={1}>Drag & Drop or Click to Upload</Typography>
-          <input id="file-upload" type="file" multiple hidden onChange={handleFileUpload} />
-        </Box>
-      )}
-      {uploadedFiles.length > 0 && (
-              <Box mt={2}>
-                <Typography variant="body2" fontWeight="bold">Uploaded Files:</Typography>
-                {uploadedFiles.map((file, index) => (
-                  <Box key={index} display="flex" justifyContent="space-between" alignItems="center" mt={1} p={1} border="1px solid #ddd" borderRadius="4px">
-                    <Typography variant="body2">{file.name}</Typography>
-                    <IconButton size="small" onClick={() => removeFile(index)}>
-                      <Close fontSize="small" />
-                    </IconButton>
-                  </Box>
-                ))}
-              </Box>
-      )} */}
       <>
   {/* File Upload Box */}
   <Box
