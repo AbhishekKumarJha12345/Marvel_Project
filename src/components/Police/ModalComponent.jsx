@@ -217,8 +217,8 @@ const ModalComponent = ({ open,type, onClose }) => {
       name="rank" // Name of the dropdown
       onChange={handleChange} // Handle change function
     >
-      <MenuItem value="constable">police officers(psi to dsp)</MenuItem>
-      <MenuItem value="sergeant">police personnel(pc to asi)</MenuItem>
+      <MenuItem value="police officers(psi to dsp)">Police Officers(PSI to DSP)</MenuItem>
+      <MenuItem value="police personnel(pc to asi)">Police Personnel(PC to ASI)</MenuItem>
       {/* <MenuItem value="inspector">Inspector</MenuItem>
       <MenuItem value="sub_inspector">Sub Inspector</MenuItem> */}
     </Select>
