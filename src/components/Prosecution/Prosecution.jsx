@@ -31,7 +31,7 @@ const [filters, setFilters] = useState({ role: "", posts: "", date: "" });
       margin: "10px",
       padding: "15px",
       borderRadius: "10px",
-      boxShadow: "2px 2px 10px rgba(0, 0, 0, 0.1)",
+      boxShadow: "2px 6px 10px rgba(0, 0, 0, 0.1)",
       transition: "transform 0.3s ease-in-out",
     },
     cardHover: {
@@ -96,7 +96,7 @@ const [filters, setFilters] = useState({ role: "", posts: "", date: "" });
 
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto">
-      <h1 className="text-2xl font-bold mb-6">Features</h1>
+      {/* <h1 className="text-2xl font-bold mb-6">Features</h1> */}
       <div style={styles.cardContainer}>
         <Card style={styles.card}>
           <Card.Body>
