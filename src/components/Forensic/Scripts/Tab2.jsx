@@ -12,7 +12,7 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
-import ImageCarousel from "./ImageCarousel"; // Import ImageCarousel
+import ImageCarousel from "./ImageCarousel"; 
 import VanAvailability from "./VanAvailability";
 
 // Dummy data
@@ -44,17 +44,17 @@ export default function Tab2() {
 
 
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto" style={{ fontFamily: "Work Sans" }}>
+    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto" style={{ fontFamily: "Work Sans", maxWidth:'90.7vw' }}>
       <h1 className="text-2xl font-bold mb-6">Mobile Forensic Vans Dashboard</h1>
 
       {/* Image Carousel Over Van Availability */}
-      <div className="relative z-10 mb-6">
+      <div className="relative mb-6">
         <ImageCarousel />
       </div>
 
       {/* Van Availability Table */}
 
-      <div className="relative z-10 mb-6">
+      <div className="relative mb-6">
         <VanAvailability />
       </div>
 
