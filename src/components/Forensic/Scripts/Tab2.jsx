@@ -58,7 +58,7 @@ export default function Tab2() {
     if (vanDeploymentData?.status_counts) {
       // Directly use status_counts, no need to use Object.entries for an array.
       setPieChartData(
-        vanDeploymentData && vanDeploymentData.length>0 &&vanDeploymentData.status_counts.map((entry) => ({
+        vanDeploymentData?.status_counts?.map((entry) => ({
           name: entry.name
             .replace(/_/g, " ")
             .replace(/\b\w/g, (char) => char.toUpperCase()), // Format names
