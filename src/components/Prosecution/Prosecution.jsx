@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card, Button, Table, Pagination, Form } from "react-bootstrap";
 import DataTable from "react-data-table-component"; 
 import "tailwindcss/tailwind.css";
-
+import ModalComponent from '../Police/ModalComponent'
 const data = [
   { role: "Assistant Public Prosecutor", posts: 491, date: "2025-02-01" },
   { role: "Additional Public Prosecutor", posts: 244, date: "2025-03-15" },
@@ -13,6 +13,8 @@ const data = [
 
 
 const Prosecution = () => {
+  const [showModal, setShowModal] = useState(false);
+
 const [filters, setFilters] = useState({ role: "", posts: "", date: "" });
   const [filteredData, setFilteredData] = useState(data);
 
@@ -138,6 +140,29 @@ const [filters, setFilters] = useState({ role: "", posts: "", date: "" });
                 className="p-2 border border-gray-300 rounded-md w-full text-sm"
               />
             ))}
+          </div>
+        </div>
+        <p onClick={() =>{console.log('set'); setShowModal(true)}}>open modal</p>
+    <ModalComponent open={showModal} onClose={() => setShowModal(false)} />
+        {/* <div style={styles.pagination}>
+          <Form.Select
+            value={rowsPerPage}
+            onChange={(e) => {
+              setRowsPerPage(Number(e.target.value));
+              setCurrentPage(1);
+            }}
+            style={styles.formSelect}
+          >
+            {rowsPerPageOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </Form.Select>
+
+          <div>
+            Page {currentPage} of {totalPages}
+>>>>>>> dhanu
           </div>
         </div>
 
