@@ -82,7 +82,7 @@ const VanAvailability = () => {
   return (
     <div className="mt-5">
       <h2 className="text-center text-2xl font-semibold mb-4">Mobile Forensic Vans Dashboard</h2>
-      <div className="p-6 w-[98%] mx-auto bg-white shadow-lg rounded-lg">
+      <div className="bg-white p-4 rounded-xl shadow-md">
         {/* Filters */}
         <div className="mb-4">
           <div className="grid grid-cols-4 gap-2">
