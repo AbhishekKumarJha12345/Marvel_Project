@@ -12,11 +12,23 @@ import { BiCube } from "react-icons/bi";
 import { TbTable } from "react-icons/tb";
 import MasterTrainers from './Police/MasterTrainers';
 import Dashboard1 from './Forensic/Scripts/Dashboard1'
+import CriminalPages from './Prosecution/Criminalpages'
 import PoliceOfficers from './Police/PoliceOfficers';  
 import Carousel from './Police/Carousel';
 import Forensicvisits from './Police/Forensicvisits';
 // import CourtTab1 from './Court/CSS/'
 import Dashboard2 from './Court/CSS/Script/Dashboard2'
+// import Firchargesheets from './FIR/Chargesheets/Firchargesheets';
+import Firchargesheets from './Police/FIR/Chargesheets/Firchargesheets';
+
+import Efir from './Police/FIR/Efir/Efir';
+import FirNewcriminal from './Police/FIR/Newcriminal/FirNewcriminal';
+import FirZero from './Police/FIR/Zerofir/FirZero';
+import Correctionalservicetab from "./Correctional Services/Correctionalservicetab";
+// import Correctionalservicetab from "./";
+
+
+
 export default function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -25,16 +37,48 @@ export default function Dashboard() {
   const [activeContent, setActiveContent] = useState(null);
   const [activeContentawareness, setActiveContentawareness] = useState(null);
   const [activeContentforensic, setActiveContentforensic] = useState(null);
+  const [activeContentProsecution, setActiveContentProsecution] = useState(null);
+
   const [activeContentCourt, setActiveContentCourt] = useState(null);
   const [activeContentScience, setActiveContentScience] = useState(null); // New state for tracking content
-   // New state for tracking content
-   // New state for tracking content
-   // New state for tracking content
-   // New state for tracking content
+  const [activeForensic, setActiveForensic] = useState(null);
+  const [activeServices, setActiveServices] = useState(null);  
+  // const [activeContentFIR, setActiveContentFIR] = useState(null);
+
+
+  const resetContent = () => {
+    setActiveContent(null);
+    setActiveContentawareness(null);
+    setActiveContentProsecution(null);
+    setActiveContentforensic(null);
+    setActiveContentScience(null);
+    setActiveContentCourt(null);
+    setActiveForensic(null);
+    setActiveServices(null);
+    // setActiveContentFIR(null);
+    };
   const dropdownRef = useRef(null);
   const slides = ["Slide 1", "Slide 2", "Slide 3"];
   const [activeSlide, setActiveSlide] = useState(0);
+  // const handleTrainingClick = () => {
+  //   resetContent();
+  //   setActiveContent('training');
+  // };
 
+  // const handleCauroselClick = () => {
+  //   resetContent();
+  //   setActiveContentawareness('awareness/campaign');
+  // };
+
+  // const handleForensicClick = () => {
+  //   resetContent();
+  //   setActiveForensic('forensicvisits');
+  // };
+
+  const handleServicesClick = () => {
+    resetContent();
+    setActiveServices('correctionalservices');
+  };
   // Toggle main dropdown
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev);
@@ -47,39 +91,31 @@ export default function Dashboard() {
 
   // Set the active content when the "Training" button is clicked
   const handleTrainingClick = () => {
+    resetContent();
     setActiveContent('training'); 
-    setActiveContentawareness(null);
-    setActiveContentforensic(null);
-    setActiveContentCourt(null);
-    setActiveContentScience(null);
     
-    // You can use any identifier here like 'training'
   };
   const handleCauroselClick = () => {
+    resetContent();
     setActiveContentawareness('awareness/campaign'); 
-    setActiveContent(null);// You can use any identifier here like 'training'
   };
 
   const handleForensicClick = () => {
-    setActiveContentawareness(null);  // Reset awareness content
+    resetContent();
     setActiveContentforensic('forensic/visits');
-    setActiveContentCourt(null);
-    setActiveContentScience(null);
-    setActiveContent(null); // Set forensic content as active handleCourtClick
+  };
+  const handleProsecutionClick = () => {
+    resetContent();
+    setActiveContentProsecution('prosecution');
   };
   const handleCourtClick = () => {
-    setActiveContentawareness(null);  // Reset awareness content
+    resetContent();
+    // setActiveContentProsecution(null);// Reset awareness content
     setActiveContentCourt('court');
-    setActiveContentScience(null);
-    setActiveContent(null); 
-    setActiveContentforensic(null);// Set forensic content as active handleScienceClick
   };
   const handleScienceClick = () => {
-    setActiveContentawareness(null);  // Reset awareness content
+    resetContent();
     setActiveContentScience('science');
-    setActiveContent(null); 
-    setActiveContentCourt(null);
-    setActiveContentforensic(null);// Set forensic content as active handleScienceClick
   };
 
   useEffect(() => {
@@ -125,14 +161,46 @@ export default function Dashboard() {
                     FIR'S 
                   </button>
                   {activeSubMenu === 1 && (
-                    <div className="absolute left-full top-10 ml-1 w-[200px] bg-gray-100 text-black rounded shadow-md p-2">
-                      <button className="block w-full text-left py-1 px-2 hover:text-blue-500">A New Criminal Law</button>
-                      <button className="block w-full text-left py-1 px-2 hover:text-blue-500">Charge Sheet</button>
-                      <button className="block w-full text-left py-1 px-2 hover:text-blue-500">Zero FIR</button>
-                      <button className="block w-full text-left py-1 px-2 hover:text-blue-500">E FIR</button>
-                    </div>
-                  )}
-                  <button className="block w-full text-left py-1 px-2 hover:text-blue-500" onClick={handleCauroselClick} >Awareness/Campaign</button>
+                  <div className="absolute left-full top-10 ml-1 w-[200px] bg-gray-100 text-black rounded shadow-md p-2">
+                    <button
+                      className="block w-full text-left py-1 px-2 hover:text-blue-500"
+                      onClick={() => {
+                        resetContent();
+                        setActiveContent("newcriminal");
+                      }}
+                    >
+                      A New Criminal Law
+                    </button>
+                    <button
+                      className="block w-full text-left py-1 px-2 hover:text-blue-500"
+                      onClick={() => {
+                        resetContent();
+                        setActiveContent("chargesheet");
+                      }}
+                    >
+                      Charge Sheet
+                    </button>
+                    <button
+                      className="block w-full text-left py-1 px-2 hover:text-blue-500"
+                      onClick={() => {
+                        resetContent();
+                        setActiveContent("zerofir");
+                      }}
+                    >
+                      Zero FIR
+                    </button>
+                    <button
+                      className="block w-full text-left py-1 px-2 hover:text-blue-500"
+                      onClick={() => {
+                        resetContent();
+                        setActiveContent("efir");
+                      }}
+                    >
+                      E FIR
+                    </button>
+                  </div>
+                )}
+                  <button className="block w-full text-left py-1 px-2 hover:text-blue-500" onClick={handleCauroselClick}>Awareness/Campaign</button>
                   {/* <button className="block w-full text-left py-1 px-2 hover:text-blue-500">Forensic Visits</button> */}
                   <button className="block w-full text-left py-1 px-2 hover:text-blue-500" onClick={handleForensicClick}>Forensic Visits</button>
 
@@ -143,7 +211,7 @@ export default function Dashboard() {
             <div className="border-l-2 border-gray-500 h-full"></div>
 
             {/* Prosecution Section */}
-            <li className="flex items-center gap-2">
+            <li className="flex items-center gap-2" onClick={handleProsecutionClick}>
               <Home /> Prosecution
             </li>
 
@@ -155,7 +223,7 @@ export default function Dashboard() {
             </li>
 
             <div className="border-l-2 border-gray-500 h-full"></div>
-            <li className="flex items-center gap-2">
+            <li className="flex items-center gap-2" onClick={handleServicesClick}>
               <AiTwotoneThunderbolt /> Correctional Services 
             </li>
             <div className="border-l-2 border-gray-500 h-full"></div>
@@ -210,10 +278,12 @@ export default function Dashboard() {
     </>
   </div>
 )}
+{/* activeContentProsecution */}
+
 {activeContentCourt === 'court' && (
   <div className="grid grid-cols-24 gap-5 p-4">
     <>
-      <h1 className="col-span-24 text-center text-4xl font-bold mb-8">Court Visits</h1>
+      {/* <h1 className="col-span-24 text-center text-4xl font-bold mb-8">Court Visits</h1> */}
       <div className="col-span-24">
         <Dashboard2 />
       </div>
@@ -224,13 +294,54 @@ export default function Dashboard() {
 {activeContentScience === 'science' && (
   <div className="grid grid-cols-24 gap-5 p-4">
     <>
-      <h1 className="col-span-24 text-center text-4xl font-bold mb-8">Forensic Visits</h1>
+      {/* <h1 className="col-span-24 text-center text-4xl font-bold mb-8">Forensic Visits</h1> */}
       <div className="col-span-24">
         <Dashboard1 />
       </div>
     </>
   </div>
 )}
+{activeContentProsecution === 'prosecution' && (
+  <div className="grid grid-cols-24 gap-5 p-4">
+    <>
+      {/* <h1 className="col-span-24 text-center text-4xl font-bold mb-8">Prosecution Visits</h1> */}
+      <div className="col-span-24">
+        <CriminalPages/>  
+      </div>
+    </>
+  </div>
+)}
+{activeServices === 'correctionalservices' && (
+        <div className="grid grid-cols-24 gap-5 p-4">
+          {/* <h1 className="col-span-24 text-center text-4xl font-bold mb-8">Correctional Services</h1> */}
+          <Correctionalservicetab />
+        </div>
+      )}
+      {activeContent === "chargesheet" && (
+        <div className="p-6">
+          {/* <h1 className="text-center text-4xl font-bold mb-8">FIR - Charge Sheets</h1> */}
+          <Firchargesheets />
+        </div>
+      )}
+      {activeContent === "newcriminal" && (
+        <div className="p-6">
+          {/* <h1 className="text-center text-4xl font-bold mb-8">New Criminal</h1> */}
+          <FirNewcriminal />
+        </div>
+      )}
+      {activeContent === "zerofir" && (
+        <div className="p-6">
+          {/* <h1 className="text-center text-4xl font-bold mb-8">Zero FIR</h1> */}
+          <FirZero />
+        </div>
+      )}
+      {activeContent === "efir" && (
+        <div className="p-6">
+          {/* <h1 className="text-center text-4xl font-bold mb-8">E FIR</h1> */}            
+          <Efir />
+        </div>
+      )}
+
 
       
     </div>

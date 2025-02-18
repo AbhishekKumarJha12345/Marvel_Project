@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import PoliceFirs from './PoliceFirs';
-import FirstFirdata from './FirstFirdata'
-import Firnewoffence from './Firnewoffences'
+import Correctionaservicesgraphs from './Correctionaservicesgraphs';
+import Trainingtocorrectional from './Trainingtocorrectional';
+import Awareness from './AwarenessCampaign'
 
 
-function FirNewcriminal() {
+function Correctionalservicetab() {
   const [activeTab, setActiveTab] = useState('home');
 
   const handleTabChange = (tab) => {
@@ -13,6 +13,7 @@ function FirNewcriminal() {
 
   return (
     <div>
+    
       <div className="flex space-x-4 border-b border-gray-300">
         <button
           onClick={() => handleTabChange('home')}
@@ -24,7 +25,7 @@ function FirNewcriminal() {
           onClick={() => handleTabChange('newCriminals')}
           className={`py-2 px-4 text-lg font-medium ${activeTab === 'newCriminals' ? 'border-b-2 border-[#03045E] text-[#03045E]'  : 'text-gray-500 hover:text-blue-500'}`}
         >
-          New Criminals
+          Correctional Srevices
         </button>
       </div>
 
@@ -32,14 +33,12 @@ function FirNewcriminal() {
       <div className="mt-4">
         {activeTab === 'home' ? (
           <div>
-            <PoliceFirs />
+          <Correctionaservicesgraphs />
           </div>
         ) : (
           <div>
-            <h2 className="text-2xl font-bold">New Criminals</h2>
-         <FirstFirdata/>
-
-         <Firnewoffence/>
+            <Trainingtocorrectional />
+            <Awareness />
           </div>
         )}
       </div>
@@ -47,4 +46,4 @@ function FirNewcriminal() {
   );
 }
 
-export default FirNewcriminal;
+export default Correctionalservicetab;

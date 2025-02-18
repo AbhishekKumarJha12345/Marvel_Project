@@ -13,7 +13,7 @@ const initialData = [
 
 
 const FirstFirdata = () => {
-  const [filters, setFilters] = useState({ firNo: "", state: "", psName: "", date: "", date: "", fir: "" });
+  const [filters, setFilters] = useState({ firNo: "", state: "", city: "", psName: "", date: "", fir: "" });
   const [filteredData, setFilteredData] = useState(initialData);
 
   const handleFilter = (event, key) => {
