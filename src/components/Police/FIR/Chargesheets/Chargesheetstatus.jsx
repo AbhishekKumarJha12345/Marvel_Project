@@ -1,26 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import "tailwindcss/tailwind.css";
 
-const initialData = [
-  { id: 1, name: "John Doe", email: "john@example.com", role: "Admin", date: "2024-01-01", firType: "FIR" },
-  { id: 2, name: "Jane Smith", email: "jane@example.com", role: "User", date: "2024-01-02", firType: "Charge Sheet" },
-  { id: 3, name: "Alice Johnson", email: "alice@example.com", role: "Editor", date: "2024-02-15", firType: "FIR" },
-  { id: 4, name: "Bob Brown", email: "bob@example.com", role: "Viewer", date: "2024-03-10", firType: "Charge Sheet" },
-  { id: 5, name: "Charlie White", email: "charlie@example.com", role: "User", date: "2024-04-22", firType: "FIR" },
-  { id: 6, name: "David Black", email: "david@example.com", role: "Editor", date: "2024-05-05", firType: "Charge Sheet" },
-];
+const Chargesheetstatus = ({ apidata }) => {
+  console.log(apidata, 'FIR33333333333333333333333');
 
-const Chargesheetstatus = () => {
-  const [filters, setFilters] = useState({ id: "", name: "", email: "", role: "", date: "", firType: "" });
-  const [filteredData, setFilteredData] = useState(initialData);
+  const [filters, setFilters] = useState({ id: "", act: "", chargesheeted: "", total_registered: "", under_investigation: "", firType: "" });
+  const [filteredData, setFilteredData] = useState([]);
 
   const handleFilter = (event, key) => {
     const newFilters = { ...filters, [key]: event.target.value.toLowerCase() };
     setFilters(newFilters);
 
     setFilteredData(
-      initialData.filter((row) =>
+      filteredData.filter((row) =>
         Object.keys(newFilters).every((filterKey) =>
           row[filterKey].toString().toLowerCase().includes(newFilters[filterKey])
         )
@@ -28,30 +21,49 @@ const Chargesheetstatus = () => {
     );
   };
 
+  useEffect(() => {
+    if (apidata && typeof apidata === 'object') {
+      // Transform the backend data to match initialData structure
+      const transformedData = [{
+        id: apidata.id || "N/A",
+        act: apidata.act || "N/A",  // Assuming 'act' corresponds to 'name'
+        chargesheeted: apidata.chargesheeted || "N/A",  // Using 'file_path' as a placeholder for 'email'
+        total_registered: apidata.total_registered || "N/A",  // Using 'chargesheeted' as a placeholder for 'role'
+        under_investigation: apidata.under_investigation || "N/A",
+        firType: apidata.act ? "FIR" : "Charge Sheet"  // Adjust as needed
+      }];
+
+      // Set the transformed data
+      setFilteredData(transformedData);
+    }
+  }, [apidata]);
+
+  console.log(filteredData, 'filtered data');
+
   const columns = [
     {
       name: <span className="font-semibold text-[14px]">Act and Section</span>,
-      selector: (row) => row.id,
+      selector: (row) => row.act,
       sortable: true,
-      filterKey: "id",
+      filterKey: "act",
     },
     {
       name: <span className="font-semibold text-[14px]">Total Registered</span>,
-      selector: (row) => row.name,
+      selector: (row) => row.total_registered,
       sortable: true,
-      filterKey: "name",
+      filterKey: "total_registered",
     },
     {
       name: <span className="font-semibold text-[14px]">Chargesheeted</span>,
-      selector: (row) => row.email,
+      selector: (row) => row.chargesheeted,
       sortable: true,
-      filterKey: "email",
+      filterKey: "chargesheeted",
     },
     {
       name: <span className="font-semibold text-[14px]">Under Investigation</span>,
-      selector: (row) => row.email,
+      selector: (row) => row.under_investigation,
       sortable: true,
-      filterKey: "email",
+      filterKey: "under_investigation",
     },
   ];
 

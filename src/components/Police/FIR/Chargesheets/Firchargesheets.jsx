@@ -12,11 +12,18 @@ function Firchargesheets() {
     setActiveTab(tab);
   };
   const [trainingData,setTrainingData]=useState('')
+  const [trainingData2,setTrainingData2]=useState('')
 const getTrainingData = async()=>{
   try{
-    const response =await axiosInstance.get('/live_data?type=fir_2')
-    console.log(response.data,'FIR2 Data ----------')
-    setTrainingData(response.data.data_dict)
+    const [response1, response2] = await Promise.all([
+      axiosInstance.get('/live_data?type=fir_2'),
+      axiosInstance.get('/live_data?type=fir_3')
+    ]);
+  
+    console.log(response1.data,'FIR2 Data ----------')
+    console.log(response2.data,'FIR3 Data ----------')
+    setTrainingData(response1.data.data_dict)
+    setTrainingData2(response2.data.data_dict)
 
   }catch(error){
     console.log(error)
@@ -59,7 +66,7 @@ useEffect(() => {
           <div>
             <Chargesheet />
 
-            <Chargesheetstatus/>
+            <Chargesheetstatus apidata={trainingData2}/>
           </div>
         )}
       </div>
