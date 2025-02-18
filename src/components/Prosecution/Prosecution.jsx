@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Card, Button, Table, Pagination, Form } from "react-bootstrap";
+import ModalComponent from '../Police/ModalComponent'
 
 const data = [
   { role: "Assistant Public Prosecutor", posts: 491, date: "2025-02-01" },
@@ -12,6 +13,8 @@ const data = [
 const rowsPerPageOptions = [10, 20, 30, 50];
 
 const Prosecution = () => {
+  const [showModal, setShowModal] = useState(false);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -112,7 +115,8 @@ const Prosecution = () => {
             ))}
           </tbody>
         </Table>
-
+        <p onClick={() =>{console.log('set'); setShowModal(true)}}>open modal</p>
+    <ModalComponent open={showModal} onClose={() => setShowModal(false)} />
         {/* <div style={styles.pagination}>
           <Form.Select
             value={rowsPerPage}

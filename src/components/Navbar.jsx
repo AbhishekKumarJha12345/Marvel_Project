@@ -223,9 +223,9 @@ export default function Dashboard() {
           <div className="nav-divider"></div>
 
           {/* Admin Section */}
-          <li className="nav-link">
+          {/* <li className="nav-link">
             <FileText /> Admin
-          </li>
+          </li> */}
         </ul>
       </div>
 
