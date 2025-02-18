@@ -1,12 +1,14 @@
-import React from 'react';
+import {React,useState} from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-
+import ModalComponent from '../../ModalComponent';
 // Register the necessary chart components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const PoliceFirs = ({apidata}) => {
   // Data for the Pie Chart
+    const [showModal, setShowModal] = useState(false);
+  
   const data = {
     labels: [
       'FIRs Registered (BNS & IPC)',
@@ -31,7 +33,7 @@ const PoliceFirs = ({apidata}) => {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top',
+        position: 'bottom',
       },
       tooltip: {
         callbacks: {
@@ -52,12 +54,26 @@ const PoliceFirs = ({apidata}) => {
   };
 
   return (
-    <div className=" p-9 mx-auto rounded-lg w-[100%] h-[500px]">
-      <h1 className="text-4xl font-bold mb-8">FIRs New Criminal Laws</h1>
-      <div className="h-full">
-        <Pie data={data} options={options} />
-      </div>
+    <div className="bg-white p-6 mx-auto rounded-lg w-[60%] h-[600px]">
+  <div className="flex justify-between items-center mb-8">
+    <h1 className="text-4xl font-bold">FIRs New Criminal Laws</h1>
+    <button
+      className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+      style={{ backgroundColor: '#2d3748' }}
+      onClick={() => {
+        console.log("Open modal");
+        setShowModal(true);
+      }}
+    >
+      Add On
+    </button>
+  </div>
+  <div className="h-[500px] w-[500px]"> {/* Reduced height of chart */}
+    <Pie data={data} options={options} />
+  </div>
+  <ModalComponent open={showModal} type='fir_1'  onClose={() => setShowModal(false)} />
     </div>
+
   );
 };
 

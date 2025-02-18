@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import axiosInstance from '../../utils/axiosInstance';
-
+import ModalComponent from './ModalComponent';
 // Register required chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const PoliceOfficers = () => {
 
-
+  const [showModal, setShowModal] = useState(false);
   const [trainingData,setTrainingData]=useState('')
 const getTrainingData = async()=>{
   try{
@@ -53,7 +53,7 @@ useEffect(() => {
     maintainAspectRatio: false, // Ensures full width usage
     plugins: {
       legend: {
-        position: 'top',
+        position: 'bottom',
       },
       title: {
         display: true,
@@ -84,11 +84,27 @@ useEffect(() => {
 
   return (
     <div className="bg-white p-6 rounded-lg w-full h-[500px] text-center">
-      <h1 className="text-4xl font-bold mb-8">Police Officers</h1>
+     <div className="bg-white p-6 rounded-lg w-full h-[500px] text-center">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-4xl font-bold">Police Officers</h1>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+          style={{backgroundColor:'#2d3748'}}
+          onClick={() => {
+            console.log("Open modal");
+            setShowModal(true);
+          }}
+        >
+          Add On
+        </button>
+      </div>
       <div className="h-[400px] w-full">
         <Bar data={data} options={options} />
       </div>
     </div>
+    <ModalComponent open={showModal} type='police' onClose={() => setShowModal(false)} />
+  </div>
+
   );
 };
 
