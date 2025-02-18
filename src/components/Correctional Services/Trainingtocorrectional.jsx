@@ -25,7 +25,7 @@ const Training = () => {
   };
 
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto mt-6">
+    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto">
     <div className="bg-white p-4 rounded-xl shadow-md">
         <h1 className="text-2xl font-bold mb-6">Training to Correctional Services Personnel</h1>
         <div className="relative container mx-auto bg-gray-500" style={{ maxWidth: '1600px' }}>

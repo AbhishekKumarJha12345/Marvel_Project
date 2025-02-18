@@ -7,7 +7,7 @@ import VideoConferencingFacilities from './VideoConferencingFacilities'
 
 function Correctionaservicesgraphs() {
   return (
-    <div>
+    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <ComplianceSection />
         <ComplianceSection479 />
