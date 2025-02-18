@@ -1,5 +1,16 @@
 import React from "react";
-import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from "recharts";
 
 const firstData = [
   { name: "Director", value: 1 },
@@ -32,37 +43,73 @@ const Home = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Pie Chart */}
         <div className="bg-white p-4 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Prosecution Sanctioned Positions</h2>
-          <PieChart width={400} height={400}>
-            <Pie data={firstData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} fill="#8884d8" label>
-              {firstData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
+          <h2 className="text-xl font-semibold mb-4">
+            Prosecution Sanctioned Positions
+          </h2>
+
+          <div className="flex justify-center items-center w-full h-full">
+            <PieChart width={400} height={400}>
+              <Pie
+                data={firstData}
+                dataKey="value"
+                nameKey="name"
+                cx="50%" // Centers horizontally
+                cy="50%" // Centers vertically
+                outerRadius={100}
+                fill="#8884d8"
+                label
+              >
+                {firstData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </div>
         </div>
 
         {/* Donut Chart */}
         <div className="bg-white p-4 rounded-xl shadow-md">
           <h2 className="text-xl font-semibold mb-4">Login Data Statistics</h2>
-          <PieChart width={400} height={400}>
-            <Pie data={thirdData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={100} fill="#8884d8" label>
-              {thirdData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
+          <div className="flex justify-center items-center w-full h-full">
+            <PieChart width={400} height={400}>
+              <Pie
+                data={thirdData}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={100}
+                fill="#8884d8"
+                label
+              >
+                {thirdData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </div>
         </div>
       </div>
 
       {/* Bar Chart in a Separate Row */}
-      <div className="bg-white p-4 rounded-xl shadow-md mt-6">
-        <div style={{ width: "500px" }}>
-          <h2 className="text-xl font-semibold mb-4">Number of Prosecutors by Cadre</h2>
+      <div className="bg-white p-4 rounded-xl shadow-md mt-6 w-1/2">
+        <h2 className="text-xl font-semibold mb-4 text-left">
+          Number of Prosecutors by Cadre
+        </h2>
+
+        {/* Centering the Bar Chart */}
+        <div className="flex justify-center">
           <BarChart width={500} height={300} data={secondData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
@@ -78,4 +125,3 @@ const Home = () => {
 };
 
 export default Home;
-

@@ -2,6 +2,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-html, body, #root, *{
-    font-family:Work Sans !important;
+html,
+body,
+#root,
+* {
+  font-family: Work Sans !important;
+}
+/* Apply smooth scrolling to the entire page */
+html {
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: 6px !important;
+}
+::-webkit-scrollbar-track {
+  /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);*/
+  background-color: #fff;
+}
+.fade-bg {
+  background-color: #2d3748 !important;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #2d3748;
+  border-radius: 15px;
+  outline: 1px solid #2d3748;
+  height: 2px;
 }
