@@ -96,6 +96,7 @@ const [filters, setFilters] = useState({ role: "", posts: "", date: "" });
 
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto">
+      <h1 className="text-2xl font-bold mb-6">Features</h1>
       <div style={styles.cardContainer}>
         <Card style={styles.card}>
           <Card.Body>
