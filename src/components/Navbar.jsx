@@ -275,6 +275,7 @@ export default function Dashboard() {
 
       {activeServices === 'correctionalservices' && (
         <div className="content">
+          <h1 className="heading">Correctional Services</h1>
           <Correctionalservicetab />
         </div>
       )}
