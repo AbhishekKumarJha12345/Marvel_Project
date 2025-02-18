@@ -32,8 +32,8 @@ function Mainnavbar() {
   };
 
   return (
-    <div>
-    <nav className="px-2 py-3 flex items-center justify-between">
+    <div style={{backgroundColor:"#f4f4f4", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"}}>
+    <nav className="px-2 py-3 flex items-center justify-between" style={{marginBottom:"0.2rem", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"}}>
        <div className="flex items-center space-x-3">
         <img src={logo} alt="Logo" className='w-20' />
         <div className="text-2xl font-bold text-blue-600">ICJS</div>

@@ -33,16 +33,18 @@ const summonsData = [
   { month: 'Dec', deliveredElectronically: 100 },
 ];
 
-// Pie chart data for evaluating Digital Case Records
-const securityComplianceData = [
-  { name: 'Secure', value: 85 },
-  { name: 'Non-Secure', value: 15 },
+// Updated Pie chart data for compliance
+const complianceData = [
+  { name: 'Compliant', value: 85 },
+  { name: 'Non-Compliant', value: 15 },
 ];
 
-const accessibilityComplianceData = [
+const accessibilityData = [
   { name: 'Accessible', value: 80 },
   { name: 'Inaccessible', value: 20 },
 ];
+
+const COLORS = ['#0088FE', '#FF8042'];
 
 const CourtTab2 = () => {
   return (
@@ -80,29 +82,31 @@ const CourtTab2 = () => {
           </ResponsiveContainer>
         </div>
 
-        {/* Pie Chart for Data Security Compliance */}
+        {/* Updated Pie Chart for Compliance */}
         <div style={{ width: '45%', marginBottom: '30px' }}>
           <h3>Data Security Compliance</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
-              <Pie data={securityComplianceData} dataKey="value" nameKey="name" outerRadius={100} fill="#8884d8">
-                {
-                  securityComplianceData.map((entry, index) => <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#82ca9d' : '#FF6347'} />)
-                }
+              <Tooltip />
+              <Pie data={complianceData} dataKey="value" nameKey="name" outerRadius={100} fill="#8884d8" label>
+                {complianceData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
               </Pie>
             </PieChart>
           </ResponsiveContainer>
         </div>
 
-        {/* Pie Chart for Accessibility Compliance */}
+        {/* Updated Pie Chart for Accessibility */}
         <div style={{ width: '45%', marginBottom: '30px' }}>
           <h3>Accessibility Compliance</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
-              <Pie data={accessibilityComplianceData} dataKey="value" nameKey="name" outerRadius={100} fill="#8884d8">
-                {
-                  accessibilityComplianceData.map((entry, index) => <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#82ca9d' : '#FF6347'} />)
-                }
+              <Tooltip />
+              <Pie data={accessibilityData} dataKey="value" nameKey="name" outerRadius={100} fill="#82ca9d" label>
+                {accessibilityData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
               </Pie>
             </PieChart>
           </ResponsiveContainer>
