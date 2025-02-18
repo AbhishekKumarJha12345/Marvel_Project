@@ -31,9 +31,14 @@ function Forensicvisits() {
       {/* Tab Content */}
       <div className="mt-4">
         {activeTab === 'home' ? (
-          <div>
-            <PolicePunishment />
-          </div>
+         <div className="col-6">
+         <div className="card shadow-sm bg-white">
+           <div className="card-body">
+             <PolicePunishment />
+           </div>
+         </div>
+       </div>
+       
         ) : (
           <div className="flex space-x-4">  {/* flex container with space between items */}
     <div className="flex-1">

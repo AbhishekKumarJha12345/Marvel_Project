@@ -66,7 +66,7 @@ export default function Dashboard() {
   const handleTrainingClick = () => {
     resetContent();
     setActiveContent('training');
-  };git
+  };
 
   const handleCauroselClick = () => {
     resetContent();
@@ -170,9 +170,9 @@ export default function Dashboard() {
                     </button>
                   </div>
                 )}
-                <button className="dropdown-item" onClick={handleCauroselClick}>
+                {/* <button className="dropdown-item" onClick={handleCauroselClick}>
                   Awareness/Campaign
-                </button>
+                </button> */}
                 <button className="dropdown-item" onClick={handleForensicClick}>
                   Forensic Visits
                 </button>
@@ -232,10 +232,21 @@ export default function Dashboard() {
       {/* Conditionally render the content */}
       {activeContent === 'training' && (
         <div className="content">
-          <h1 className="heading">Police - Training</h1>
-          <PoliceOfficers />
-          <MasterTrainers />
+        <h1 className="heading">Police Training</h1>
+        <div className="row d-flex justify-content-between">
+          <div className="col-6">
+            <div className="police-container card shadow-sm">
+              <PoliceOfficers />
+            </div>
+          </div>
+          <div className="col-6">
+            <div className="MasterTrainers card shadow-sm">
+              <MasterTrainers />
+            </div>
+          </div>
         </div>
+      </div>
+      
       )}
 
       {activeContentawareness === 'awareness/campaign' && (
@@ -247,7 +258,7 @@ export default function Dashboard() {
 
       {activeContentforensic === 'forensic/visits' && (
         <div className="content">
-          <h1 className="heading">Forensic Visits</h1>
+          
           <Forensicvisits />
         </div>
       )}

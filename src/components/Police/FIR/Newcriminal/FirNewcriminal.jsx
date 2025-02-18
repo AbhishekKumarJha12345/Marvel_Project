@@ -31,9 +31,14 @@ function FirNewcriminal() {
       {/* Tab Content */}
       <div className="mt-4">
         {activeTab === 'home' ? (
-          <div>
-            <PoliceFirs />
-          </div>
+         <div class="col-6">
+         <div class="card shadow-sm bg-white">
+           <div class="card-body">
+             <PoliceFirs />
+           </div>
+         </div>
+       </div>
+       
         ) : (
           <div>
             <h2 className="text-2xl font-bold">New Criminals</h2>

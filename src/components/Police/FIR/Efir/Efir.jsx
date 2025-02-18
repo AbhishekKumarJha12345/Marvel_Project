@@ -18,20 +18,20 @@ function Efir() {
         >
           Home
         </button>
-        <button
-          onClick={() => handleTabChange('newCriminals')}
-          className={`py-2 px-4 text-lg font-medium ${activeTab === 'newCriminals' ? 'border-b-2 border-[#03045E] text-[#03045E]'  : 'text-gray-500 hover:text-blue-500'}`}
-        >
-           E FIR
-        </button>
+
       </div>
 
       {/* Tab Content */}
       <div className="mt-4">
         {activeTab === 'home' ? (
-          <div>
-           <Efirgraph />
-          </div>
+         <div className="col-6">
+         <div className="card shadow-sm bg-white">
+           <div className="card-body">
+             <Efirgraph />
+           </div>
+         </div>
+       </div>
+       
         ) : (
           <div>
             {/* <h2 className="text-2xl font-bold">E FIR</h2> */}

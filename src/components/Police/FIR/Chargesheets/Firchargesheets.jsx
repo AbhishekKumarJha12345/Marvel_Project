@@ -32,9 +32,14 @@ function Firchargesheets() {
       {/* Tab Content */}
       <div className="mt-4">
         {activeTab === 'home' ? (
-          <div>
-            <PoliceChargeSheet />
+          <div className="col-6">
+          <div className="card shadow-sm bg-white">
+            <div className="card-body">
+              <PoliceChargeSheet />
+            </div>
           </div>
+        </div>
+        
         ) : (
           <div>
             <Chargesheet />
