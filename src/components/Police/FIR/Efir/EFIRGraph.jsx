@@ -1,12 +1,14 @@
-import React from 'react';
+import {React,useState} from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-
+import ModalComponent from '../../ModalComponent';
 // Register required chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const EFIRsChart = () => {
   // Data for the bar graph
+        const [showModal, setShowModal] = useState(false);
+  
   const data = {
     labels: ['Total eFIRs Received', 'Total eFIRs Converted to Proper FIRs'], // Categories
     datasets: [
@@ -53,10 +55,25 @@ const EFIRsChart = () => {
 
   return (
     <div className="bg-white p-6 mx-auto rounded-lg w-[80%] h-[600px]"> {/* Increased width and height */}
-      <h1 className="text-4xl font-bold mb-8">eFIRs Overview</h1>
+    <div className="flex justify-between items-center mb-8">
+    <h1 className="text-4xl font-bold mb-8">eFIRs Overview</h1>
+      <button
+        className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+        style={{ backgroundColor: '#2d3748' }}
+        onClick={() => {
+          console.log("Open modal");
+          setShowModal(true);
+        }}
+      >
+        Add On
+      </button>
+    </div>
+
       <div className="h-[500px]"> {/* Increased height for the chart container */}
         <Bar data={data} options={options} />
       </div>
+    <ModalComponent open={showModal} type='fir_4' onClose={() => setShowModal(false)} />
+
     </div>
   );
 };

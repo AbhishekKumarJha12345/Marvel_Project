@@ -48,6 +48,10 @@ const ModalComponent = ({ open,type, onClose }) => {
     total_registered: "",
     chargesheeted: "",
     under_investigation: "",
+    // fir_4 fields
+    zero_fir : "",
+    regular_fir : "",
+    yet_to_be_registered_zero_fir : "",
   };
   
   const [formData, setFormData] = useState(initial);
@@ -100,7 +104,7 @@ const ModalComponent = ({ open,type, onClose }) => {
       formDataToSend.append("date", currentDate);
       if(type==='police') formDataToSend.append("type", selectedOption);
 
-      if(['fir_1','fir_2','fir_3'].includes(type)) {console.log('type',type); formDataToSend.append("type", type)}
+      if(['fir_1','fir_2','fir_3','fir_4'].includes(type)) {console.log('type',type); formDataToSend.append("type", type)}
     
       // Append files if any
       if (uploadedFiles.length > 0) {
@@ -415,6 +419,32 @@ const ModalComponent = ({ open,type, onClose }) => {
           />
         </Box>
       )}
+      {type === "fir_4" && (
+        <Box display="flex" flexDirection="column" gap={2} marginTop="10px">
+          <TextField
+            label="Zero FIR"
+            name="zero_fir"
+            value={formData.zero_fir}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Regular FIR"
+            name="regular_fir"
+            value={formData.regular_fir}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Yet to be Registered Zero FIR"
+            name="yet_to_be_registered_zero_fir"
+            value={formData.yet_to_be_registered_zero_fir}
+            onChange={handleChange}
+            fullWidth
+          />
+        </Box>
+      )}
+
 
       <>
   {/* File Upload Box */}
