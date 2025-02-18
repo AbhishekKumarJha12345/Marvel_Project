@@ -175,8 +175,8 @@ export default function Dashboard() {
 
       {/* Conditionally render the content */}
       {activeContent === "training" && (
-        <div className="grid grid-cols-12 gap-6 p-6">
-          <h1 className="col-span-12 text-center text-4xl font-bold mb-8">
+        <div className="grid grid-cols-12 p-6">
+          <h1 className="col-span-12 text-center text-4xl font-bold">
             Police - Training
           </h1>
           <div className="col-span-6">
@@ -188,8 +188,8 @@ export default function Dashboard() {
         </div>
       )}
       {activeContent === "awareness/campaign" && (
-        <div className="grid grid-cols-24 gap-5 p-4">
-          <h1 className="col-span-24 text-center text-4xl font-bold mb-8">
+        <div className="grid grid-cols-24 p-4">
+          <h1 className="col-span-24 text-center text-4xl font-bold">
             Awareness Campaigns
           </h1>
           <div className="col-span-24">
@@ -198,8 +198,8 @@ export default function Dashboard() {
         </div>
       )}
       {activeContent === "forensic/visits" && (
-        <div className="grid grid-cols-24 gap-5 p-4">
-          <h1 className="col-span-24 text-center text-4xl font-bold mb-8">
+        <div className="grid grid-cols-24 p-4">
+          <h1 className="col-span-24 text-center text-4xl font-bold">
             Forensic Visits
           </h1>
           <div className="col-span-24">
@@ -208,8 +208,8 @@ export default function Dashboard() {
         </div>
       )}
       {activeContent === "prosecution" && (
-        <div className="grid grid-cols-24 gap-5 p-4">
-          <h1 className="col-span-24 text-center text-4xl font-bold mb-8">
+        <div className="grid grid-cols-24 p-4">
+          <h1 className="col-span-24 text-center text-4xl font-bold">
             Prosecution
           </h1>
           <div className="col-span-24">
@@ -218,8 +218,8 @@ export default function Dashboard() {
         </div>
       )}
       {activeContent === "court" && (
-        <div className="grid grid-cols-24 gap-5 p-4">
-          <h1 className="col-span-24 text-center text-4xl font-bold mb-8">
+        <div className="grid grid-cols-24 p-4">
+          <h1 className="col-span-24 text-center text-4xl font-bold">
             Court
           </h1>
           <div className="col-span-24">
@@ -228,8 +228,8 @@ export default function Dashboard() {
         </div>
       )}
       {activeContent === "science" && (
-        <div className="grid grid-cols-24 gap-5 p-4">
-          <h1 className="col-span-24 text-center text-4xl font-bold mb-8">
+        <div className="grid grid-cols-24 p-4">
+          <h1 className="col-span-24 text-center text-4xl font-bold">
             Forensic Science Department
           </h1>
           <div className="col-span-24">
@@ -238,8 +238,8 @@ export default function Dashboard() {
         </div>
       )}
       {activeContent === "services" && (
-        <div className="grid grid-cols-24 gap-5 p-4">
-          <h1 className="col-span-24 text-center text-4xl font-bold mb-8">
+        <div className="grid grid-cols-24 p-4">
+          <h1 className="col-span-24 text-center text-4xl font-bold">
             Correctional Services
           </h1>
           <div className="col-span-24">
@@ -248,7 +248,7 @@ export default function Dashboard() {
         </div>
       )}
       {activeContent === "prosecution" && (
-        <div className="grid grid-cols-24 gap-5 p-4">
+        <div className="grid grid-cols-24 p-4">
           <>
             {/* <h1 className="col-span-24 text-center text-4xl font-bold mb-8">Prosecution Visits</h1> */}
             <div className="col-span-24">
@@ -258,7 +258,7 @@ export default function Dashboard() {
         </div>
       )}
       {activeContent === "correctionalservices" && (
-        <div className="grid grid-cols-24 gap-5 p-4">
+        <div className="grid grid-cols-24 p-4">
           {/* <h1 className="col-span-24 text-center text-4xl font-bold mb-8">Correctional Services</h1> */}
           <Correctionalservicetab />
         </div>

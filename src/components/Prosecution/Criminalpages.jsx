@@ -17,7 +17,7 @@ const CriminalPages = () => {
 
   return (
     <div>
-      <Navbar bg="primary" variant="light" expand="lg">
+      <Navbar variant="light" expand="lg">
         <Container>
           <Navbar.Brand href="#home">Criminal Management</Navbar.Brand>
         </Container>
