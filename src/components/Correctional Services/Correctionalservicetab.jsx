@@ -30,11 +30,10 @@ function Correctionalservicetab() {
       </div>
 
       {/* Tab Content */}
-      <div className="">
+      <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto mt-6">
         {activeTab === 'home' ? (
-          <div>
           <Correctionaservicesgraphs />
-          </div>
+        
         ) : (
           <div>
             <Trainingtocorrectional />

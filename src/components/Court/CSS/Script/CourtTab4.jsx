@@ -36,13 +36,13 @@ const COLORS = ['#8884d8', '#FF6347'];
 
 const CourtTab4 = () => {
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '40px', color: '#333' }}>Prosecution & Forensic Departments Dashboard</h1>
-      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto">
+      <h1 className="text-2xl font-bold mb-6">Prosecution & Forensic Departments Dashboard</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
         {/* Effectiveness of Data Sharing Mechanisms (Bar Chart) */}
-        <div style={{ width: '48%', marginBottom: '30px', backgroundColor: '#f7f7f7', borderRadius: '10px', padding: '20px' }}>
-          <h3>Effectiveness of Data-Sharing Mechanisms</h3>
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h3 className="text-xl font-semibold mb-4">Effectiveness of Data-Sharing Mechanisms</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={dataSharingEffectivenessData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -56,8 +56,8 @@ const CourtTab4 = () => {
         </div>
 
         {/* Percentage of Cases Using Forensic Data (Pie Chart) */}
-        <div style={{ width: '48%', marginBottom: '30px', backgroundColor: '#f7f7f7', borderRadius: '10px', padding: '20px' }}>
-          <h3>Percentage of Cases Using Forensic Data</h3>
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h3 className="text-xl font-semibold mb-4">Percentage of Cases Using Forensic Data</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -77,8 +77,8 @@ const CourtTab4 = () => {
         </div>
 
         {/* Response Time for Evidence Retrieval (Line Chart) */}
-        <div style={{ width: '48%', marginBottom: '30px', backgroundColor: '#f7f7f7', borderRadius: '10px', padding: '20px' }}>
-          <h3>Response Time for Evidence Retrieval</h3>
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h3 className="text-xl font-semibold mb-4">Response Time for Evidence Retrieval</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={responseTimeData}>
               <CartesianGrid strokeDasharray="3 3" />

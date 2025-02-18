@@ -72,8 +72,8 @@ const CorrectionalInstitutions = () => {
   };
 
   return (
-    <div className="bg-white p-6 mx-auto rounded-lg w-[60%] h-[500px]">
-      <h1 className="text-4xl font-bold mb-8">Correctional Institutions</h1>
+    <div className="bg-white p-4 rounded-xl shadow-md">
+      <h1 className="text-xl font-semibold mb-4">Correctional Institutions</h1>
       <div className="h-[250px]">
         <Bar data={data} options={options} />
       </div>

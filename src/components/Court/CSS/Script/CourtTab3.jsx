@@ -33,13 +33,13 @@ const COLORS = ['#8884d8', '#82ca9d', '#FFBB28', '#FF8042', '#FF6347'];
 
 const VideoConferencingDashboard = () => {
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '40px', color: '#333' }}>Video Conferencing Hearings & Case Disposal Rate Dashboard</h1>
-      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto">
+      <h1 className="text-2xl font-bold mb-6">Video Conferencing Hearings & Case Disposal Rate Dashboard</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
         {/* Case Disposal and Backlog Reduction Line Chart */}
-        <div style={{ width: '48%', marginBottom: '30px', backgroundColor: '#f7f7f7', borderRadius: '10px', padding: '20px' }}>
-          <h3>Case Disposal & Backlog Reduction</h3>
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h3 className="text-xl font-semibold mb-4">Case Disposal & Backlog Reduction</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={caseDisposalData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -54,8 +54,8 @@ const VideoConferencingDashboard = () => {
         </div>
 
         {/* Video Conferencing Impact Bar Chart */}
-        <div style={{ width: '48%', marginBottom: '30px', backgroundColor: '#f7f7f7', borderRadius: '10px', padding: '20px' }}>
-          <h3>Impact of Video Conferencing on Case Disposal</h3>
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h3 className="text-xl font-semibold mb-4">Impact of Video Conferencing on Case Disposal</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={caseDisposalData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -70,8 +70,8 @@ const VideoConferencingDashboard = () => {
         </div>
 
         {/* Infrastructure Readiness Pie Chart */}
-        <div style={{ width: '48%', marginBottom: '30px', backgroundColor: '#f7f7f7', borderRadius: '10px', padding: '20px' }}>
-          <h3>Infrastructure Readiness</h3>
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h3 className="text-xl font-semibold mb-4">Infrastructure Readiness</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie

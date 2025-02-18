@@ -36,13 +36,13 @@ const colorPalette = ['#82ca9d', '#FF6347', '#8884d8', '#66c2a5'];
 
 const CourtTab5 = () => {
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '40px', color: '#333' }}>NYAYSHRUTI Project Implementation Progress</h1>
-      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto">
+      <h1 className="text-2xl font-bold mb-6">NYAYSHRUTI Project Implementation Progress</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
         {/* Deployment Status and Impact on Judicial Processes (Stacked Bar Chart) */}
-        <div style={{ width: '48%', marginBottom: '30px', backgroundColor: '#f7f7f7', borderRadius: '10px', padding: '20px' }}>
-          <h3>Deployment Status & Impact on Judicial Processes</h3>
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h3 className="text-xl font-semibold mb-4">Deployment Status & Impact on Judicial Processes</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={deploymentStatusData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -56,8 +56,8 @@ const CourtTab5 = () => {
         </div>
 
         {/* Integration of Speech-to-Text & AI Transcription (Line Chart) */}
-        <div style={{ width: '48%', marginBottom: '30px', backgroundColor: '#f7f7f7', borderRadius: '10px', padding: '20px' }}>
-          <h3>Speech-to-Text & AI Transcription Integration</h3>
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h3 className="text-xl font-semibold mb-4">Speech-to-Text & AI Transcription Integration</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={speechToTextIntegrationData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -71,8 +71,8 @@ const CourtTab5 = () => {
         </div>
 
         {/* User Adoption & Feedback (Radar Chart) */}
-        <div style={{ width: '48%', marginBottom: '30px', backgroundColor: '#f7f7f7', borderRadius: '10px', padding: '20px' }}>
-          <h3>User Adoption & Feedback</h3>
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h3 className="text-xl font-semibold mb-4">User Adoption & Feedback</h3>
           <ResponsiveContainer width="100%" height={300}>
             <RadarChart outerRadius={90} width={500} height={300} data={userFeedbackData}>
               <PolarGrid />

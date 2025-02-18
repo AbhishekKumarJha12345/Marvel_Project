@@ -25,12 +25,12 @@ const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#A569BD"];
 
 const Home = () => {
   return (
-    <div style={{ padding: "20px", textAlign: "center" }}>
+    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto">
       {/* Pie and Donut Charts in One Row */}
-      <div style={{ display: "flex", justifyContent: "center", gap: "50px", marginBottom: "40px" }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Pie Chart */}
-        <div style={{ width: "400px" }}>
-          <h2>Prosecution Sanctioned Positions</h2>
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Prosecution Sanctioned Positions</h2>
           <PieChart width={400} height={400}>
             <Pie data={firstData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} fill="#8884d8" label>
               {firstData.map((entry, index) => (
@@ -43,8 +43,8 @@ const Home = () => {
         </div>
 
         {/* Donut Chart */}
-        <div style={{ width: "400px" }}>
-          <h2>Login Data Statistics</h2>
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Login Data Statistics</h2>
           <PieChart width={400} height={400}>
             <Pie data={thirdData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={100} fill="#8884d8" label>
               {thirdData.map((entry, index) => (
@@ -58,9 +58,9 @@ const Home = () => {
       </div>
 
       {/* Bar Chart in a Separate Row */}
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div className="bg-white p-4 rounded-xl shadow-md mt-6">
         <div style={{ width: "500px" }}>
-          <h2>Number of Prosecutors by Cadre</h2>
+          <h2 className="text-xl font-semibold mb-4">Number of Prosecutors by Cadre</h2>
           <BarChart width={500} height={300} data={secondData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
