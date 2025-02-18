@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 // Dummy data for the chart
-const tableData = [
+const forensicDevelopmentData = [
   { month: "Jul-24", cases1: 185232, exhibits1: 658694, cases2: 22211, exhibits2: 49066, cases3: 21122, exhibits3: 42617, cases4: 186321, exhibits4: 665205 },
   { month: "Aug-24", cases1: 186321, exhibits1: 665143, cases2: 19869, exhibits2: 43185, cases3: 22448, exhibits3: 45033, cases4: 183742, exhibits4: 663358 },
   { month: "Sep-24", cases1: 183742, exhibits1: 663302, cases2: 19241, exhibits2: 46706, cases3: 20942, exhibits3: 45116, cases4: 182041, exhibits4: 664908 },
@@ -23,7 +23,7 @@ export default function Tabledata() {
       <div className="bg-white p-4 rounded-xl shadow-md mt-6">
         <h2 className="text-xl font-semibold mb-4">Monthly Cases & Exhibits Overview</h2>
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={tableData}>
+          <BarChart data={forensicDevelopmentData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
             <YAxis />
