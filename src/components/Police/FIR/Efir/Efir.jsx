@@ -24,12 +24,14 @@ function Efir() {
       {/* Tab Content */}
       <div className="mt-4">
         {activeTab === 'home' ? (
+          <div className='row pb-6'>
          <div className="col-6">
          <div className="card shadow-sm bg-white">
            <div className="card-body">
              <Efirgraph />
            </div>
          </div>
+       </div>
        </div>
        
         ) : (

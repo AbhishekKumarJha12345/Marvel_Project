@@ -54,9 +54,9 @@ const PolicePunishment = () => {
   };
 
   return (
-    <div className="bg-white p-6 mx-auto rounded-lg w-[80%] h-[500px]"> {/* Increased width and height */}
-      <h1 className="text-4xl font-bold mb-8">Cases & Forensic Team Visits</h1>
-      <div className="h-[800px]"> {/* Increased height for the chart container */}
+    <div className="bg-white p-6 mx-auto rounded-lg w-[80%] h-[800px]"> {/* Increased width and height */}
+      <h1 className="text-xl font-bold mb-8">Cases & Forensic Team Visits</h1>
+      <div className="h-[300px]"> {/* Increased height for the chart container */}
         <Bar data={data} options={options} />
       </div>
     </div>

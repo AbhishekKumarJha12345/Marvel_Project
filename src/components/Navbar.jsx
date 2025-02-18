@@ -168,7 +168,7 @@ useEffect(() => {
       {/* Conditionally render the content */}
       {contentMap[activeSection?.section] || 
       <div style={{height:"74vh",marginTop:"3rem",display:"flex",flexDirection:"column",gap:"1rem",alignItems:"center"}}>
-        <h2 style={{fontSize:"29px",fontWeight:"500"}}>Integrated Criminal Justice System</h2>
+        <h2 style={{fontSize:"29px",fontWeight:"500"}}>ICJS-Interoperable Criminal Justice System</h2>
         <p style={{fontSize:"18px"}}>MAHARASHTRA RESEARCH & VIGILANCE MARVEL
         FOR ENHANCED LAW ENFORCEMENT LIMITED</p>
         <img src={logo} alt="Logo" style={{width:"40rem"}} />

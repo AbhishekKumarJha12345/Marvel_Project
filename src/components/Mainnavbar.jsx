@@ -36,7 +36,7 @@ function Mainnavbar() {
     <nav className="px-2 py-3 flex items-center justify-between" style={{marginBottom:"0.2rem", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"}}>
        <div className="flex items-center space-x-3">
         <img src={logo} alt="Logo" className='w-20' />
-        <div className="text-2xl font-bold text-blue-600">ICJS</div>
+        <div className="text-3xl font-bold " style={{color:"#2d3748"}}>ICJS</div>
           <div className="relative w-[400px] hidden md:block">
         <FaSearch className="absolute left-3 top-2.5 text-gray-400" size={20} />
         <input
@@ -114,7 +114,7 @@ function Mainnavbar() {
             className="flex items-center space-x-2 text-gray-700 hover:text-blue-500"
           >
             <FaUser size={22} />
-            <p>Hai, Alan</p>
+            <p>Admin</p>
             <FaChevronDown size={16} className="text-gray-400"/>
           </button>
           {isOpen.profile && (

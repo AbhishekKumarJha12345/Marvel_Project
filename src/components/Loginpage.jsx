@@ -45,7 +45,7 @@ function Login() {
             alt="Logo"
             style={{ width: '200px', height: 'auto', display: 'block', margin: '0 auto' }}
           />
-          <h2 className="text-3xl font-small text-center text-gray-600">Sign In</h2>
+          <h2 className="text-3xl font-bold text-center text-gray-600">Sign In</h2>
           <h6 className="text-sm text-center text-gray-400">Log in to your account to continue.</h6>
           <div className="space-y-4 pt-4">
             <div>
@@ -54,8 +54,8 @@ function Login() {
                 <FiUser className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
                 <input ref={usernameRef}
                   type="text"
-                  placeholder="e.g John_Doe"
-                  className="w-full px-10 py-2 text-gray-900 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
+                  placeholder="User Name"
+                  className="w-full px-10 py-2 text-gray-900 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#2d3748] placeholder-gray-500"
                 />
               </div>
             </div>
@@ -67,7 +67,7 @@ function Login() {
                 <input ref={passwordRef}
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
-                  className="w-full px-10 py-2 text-gray-900 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
+                  className="w-full px-10 py-2 text-gray-900 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#2d3748] placeholder-gray-500"
                 />
 
                 <span
@@ -81,7 +81,8 @@ function Login() {
             
             <div className="flex items-center justify-between">
               <button 
-                className="w-full px-4 py-2 font-bold text-white bg-blue-600 rounded-sm hover:bg-blue-700"
+                className="w-full px-4 py-2 font-bold text-white  rounded-sm "
+                style={{backgroundColor:"#2d3748"}}
                 onClick={handleLogin}  // Add onClick handler for login
               >
                 Log In
@@ -89,7 +90,8 @@ function Login() {
             </div>
           </div>
           <p className="text-sm text-center text-gray-600 pt-5 font-medium">
-            Not registered? <a href="#" className="text-blue-600 underline">Create an account</a>
+                
+                Not registered? <a href="#" className="font-bold underline" style={{color:"#2d3748"}} >Create an account</a>
           </p>
         </div>
       </div>

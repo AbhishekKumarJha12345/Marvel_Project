@@ -56,7 +56,7 @@ const PoliceFirs = ({apidata}) => {
   return (
     <div className="bg-white p-6 mx-auto rounded-lg w-[60%] h-[600px]">
   <div className="flex justify-between items-center mb-8">
-    <h1 className="text-4xl font-bold">FIRs New Criminal Laws</h1>
+    <h1 className="text-xl font-bold">FIRs New Criminal Laws</h1>
     <button
       className="bg-blue-500 text-white px-4 py-2 rounded-lg"
       style={{ backgroundColor: '#2d3748' }}
@@ -68,7 +68,7 @@ const PoliceFirs = ({apidata}) => {
       Add On
     </button>
   </div>
-  <div className="h-[500px] w-[500px]"> {/* Reduced height of chart */}
+  <div className="h-[400px] w-[500px]"> {/* Reduced height of chart */}
     <Pie data={data} options={options} />
   </div>
   <ModalComponent open={showModal} type='fir_1'  onClose={() => setShowModal(false)} />

@@ -22,7 +22,7 @@ const efficiencyData = [{ name: "Compliance", value: 92, fill: "#6a0dad" }];
 
 const ForensicStrengtheningInitiatives = () => {
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto">
+    <div className="rounded-lg w-full max-w-full h-auto">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
         <BarChartIcon size={28} className="text-blue-600" />
         Forensic Strengthening Initiatives

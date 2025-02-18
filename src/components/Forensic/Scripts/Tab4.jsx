@@ -37,7 +37,7 @@ const COLORS_RECRUIT = ["#8BC34A", "#CDDC39", "#FFEB3B", "#FFC107", "#FF9800", "
 
 export default function ForensicDashboard() {
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto">
+    <div className="rounded-lg w-full max-w-full h-auto">
       <h1 className="text-2xl font-bold mb-6">Forensic Development Dashboard</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

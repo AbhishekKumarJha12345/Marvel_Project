@@ -52,9 +52,9 @@ const EFIRsChart = () => {
   };
 
   return (
-    <div className="bg-white p-6 mx-auto rounded-lg w-[80%] h-[600px]"> {/* Increased width and height */}
-      <h1 className="text-4xl font-bold mb-8">eFIRs Overview</h1>
-      <div className="h-[500px]"> {/* Increased height for the chart container */}
+    <div className="p-6 rounded-lg w-[50%] flex flex-col"> {/* Increased width and height */}
+      <h1 className="text-xl font-bold mb-8">eFIRs Overview</h1>
+      <div className="h-[300px]"> {/* Increased height for the chart container */}
         <Bar data={data} options={options} />
       </div>
     </div>
