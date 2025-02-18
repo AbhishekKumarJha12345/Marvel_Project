@@ -23,7 +23,6 @@ function FirZero() {
       console.log(error);
     }
   };
-
   useEffect(() => {
     getTrainingData();
   }, []);
@@ -64,21 +63,33 @@ function FirZero() {
     <div>
       <div className="flex space-x-4 border-b border-gray-300">
         <button
-          onClick={() => handleTabChange('home')}
-          className={`py-2 px-4 text-lg font-medium ${activeTab === 'home' ? 'border-b-2 border-[#03045E] text-[#03045E]' : 'text-gray-500 hover:text-blue-500'}`}
+          onClick={() => handleTabChange("home")}
+          className={`py-2 px-4 text-lg font-medium ${
+            activeTab === "home"
+              ? "border-b-2 border-[#03045E] text-[#03045E]"
+              : "text-gray-500 hover:text-blue-500"
+          }`}
         >
           Home
         </button>
         <button
-          onClick={() => handleTabChange('newCriminals')}
-          className={`py-2 px-4 text-lg font-medium ${activeTab === 'newCriminals' ? 'border-b-2 border-[#03045E] text-[#03045E]' : 'text-gray-500 hover:text-blue-500'}`}
+          onClick={() => handleTabChange("newCriminals")}
+          className={`py-2 px-4 text-lg font-medium ${
+            activeTab === "newCriminals"
+              ? "border-b-2 border-[#03045E] text-[#03045E]"
+              : "text-gray-500 hover:text-blue-500"
+          }`}
         >
           Zero FIR
         </button>
 
         <button
-          onClick={() => handleTabChange('transferred/receivedzerofir')}
-          className={`py-2 px-4 text-lg font-medium ${activeTab === 'transferred/receivedzerofir' ? 'border-b-2 border-[#03045E] text-[#03045E]' : 'text-gray-500 hover:text-blue-500'}`}
+          onClick={() => handleTabChange("transferred/receivedzerofir")}
+          className={`py-2 px-4 text-lg font-medium ${
+            activeTab === "transferred/receivedzerofir"
+              ? "border-b-2 border-[#03045E] text-[#03045E]"
+              : "text-gray-500 hover:text-blue-500"
+          }`}
         >
           Transferred/Received Zero FIR
         </button>
@@ -102,7 +113,7 @@ function FirZero() {
             <ZeroFirinside />
           </div>
         )}
-        {activeTab === 'transferred/receivedzerofir' && (
+        {activeTab === "transferred/receivedzerofir" && (
           <div>
             <h2 className="text-2xl font-bold">Transferred/Received Zero FIR</h2>
             <Transferredtootherstates />

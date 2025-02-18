@@ -1,6 +1,13 @@
-import React from 'react'
+import React from "react";
 import { useState } from "react";
-import { FaBell, FaEnvelope, FaUser, FaChevronDown, FaSearch, FaGlobe } from "react-icons/fa";
+import {
+  FaBell,
+  FaEnvelope,
+  FaUser,
+  FaChevronDown,
+  FaSearch,
+  FaGlobe,
+} from "react-icons/fa";
 import { FaRegComment } from "react-icons/fa";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import logo from '../assets/logo.png'
@@ -91,8 +98,7 @@ function Mainnavbar() {
     {/* <Navbar/> */}
     <Navbar users={users} />
     </div>
-    
-  )
+  );
 }
 
-export default Mainnavbar
+export default Mainnavbar;

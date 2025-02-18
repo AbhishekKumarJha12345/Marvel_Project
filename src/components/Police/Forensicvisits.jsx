@@ -7,7 +7,7 @@ import axiosInstance from '../../utils/axiosInstance';
 
 
 function Forensicvisits() {
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState("home");
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -52,16 +52,24 @@ function Forensicvisits() {
     <div>
       <div className="flex space-x-4 border-b border-gray-300">
         <button
-          onClick={() => handleTabChange('home')}
-          className={`py-2 px-4 text-lg font-medium ${activeTab === 'home' ? 'border-b-2 border-[#03045E] text-[#03045E]' : 'text-gray-500 hover:text-blue-500'}`}
+          onClick={() => handleTabChange("home")}
+          className={`py-2 px-4 text-lg font-medium ${
+            activeTab === "home"
+              ? "border-b-2 border-[#03045E] text-[#03045E]"
+              : "text-gray-500 hover:text-blue-500"
+          }`}
         >
           Home
         </button>
         <button
-          onClick={() => handleTabChange('newCriminals')}
-          className={`py-2 px-4 text-lg font-medium ${activeTab === 'newCriminals' ? 'border-b-2 border-[#03045E] text-[#03045E]'  : 'text-gray-500 hover:text-blue-500'}`}
+          onClick={() => handleTabChange("newCriminals")}
+          className={`py-2 px-4 text-lg font-medium ${
+            activeTab === "newCriminals"
+              ? "border-b-2 border-[#03045E] text-[#03045E]"
+              : "text-gray-500 hover:text-blue-500"
+          }`}
         >
-          Forensic 
+          Forensic
         </button>
       </div>
 
@@ -92,7 +100,6 @@ function Forensicvisits() {
         <Policevisitsforensic />
     </div>
 </div>
-
         )}
       </div>
     </div>

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import axiosInstance from '../../utils/axiosInstance';
+import React, { useEffect, useState } from "react";
+import { Pie } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import axiosInstance from "../../utils/axiosInstance";
 
 // Register chart components
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -26,9 +26,9 @@ const MasterTrainers = () => {
   // Prepare data for the Pie Chart
   const data = {
     labels: [
-      'Training Workshops Conducted',
-      'Training through E-Academy Online',
-      'Master Trainers (Police Personnel)',
+      "Training Workshops Conducted",
+      "Training through E-Academy Online",
+      "Master Trainers (Police Personnel)",
     ],
     datasets: [
       {

@@ -92,6 +92,11 @@ const PoliceOfficers = () => {
       <div className="h-[400px] w-full">
         <Bar data={data} options={{ responsive: true, maintainAspectRatio: false }} />
       </div>
+      <ModalComponent
+        open={showModal}
+        type="police"
+        onClose={() => setShowModal(false)}
+      />
     </div>
   );
 };

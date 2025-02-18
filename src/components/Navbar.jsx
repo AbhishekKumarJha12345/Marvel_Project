@@ -15,7 +15,7 @@ import Efir from './Police/FIR/Efir/Efir';
 import FirNewcriminal from './Police/FIR/Newcriminal/FirNewcriminal';
 import FirZero from './Police/FIR/Zerofir/FirZero';
 import Correctionalservicetab from "./Correctional Services/Correctionalservicetab";
-import '../styles/Dashboard.scss';
+import "../styles/Dashboard.scss";
 import axiosInstance from "../utils/axiosInstance";
 import GavelIcon from '@mui/icons-material/Gavel';
 import BiotechIcon from '@mui/icons-material/Biotech';
