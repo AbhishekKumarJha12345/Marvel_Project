@@ -26,24 +26,36 @@ useEffect(() => {
   console.log(trainingData,'training props data------')
   // Data for the bar graph
   const data = {
-    labels: [trainingData?trainingData[0].rank :"", trainingData ?trainingData[1].rank:""], // Labels for the two roles
+    labels: [
+      trainingData && trainingData[0] && trainingData[0].rank ? trainingData[0].rank : "", 
+      trainingData && trainingData[1] && trainingData[1].rank ? trainingData[1].rank : ""
+    ],
+    
+    // labels: [trainingData?trainingData[0].rank :"", trainingData ?trainingData[1].rank:""], // Labels for the two roles
     datasets: [
       {
         label: 'Available Officers',
-        data: [trainingData?trainingData[0].available_officers:"",trainingData?trainingData[0].trained_officers:""], // Available Officers for AP and TS
-        backgroundColor: '#4CAF50', // Green color for Available Officers
-        borderColor: '#388E3C', // Darker green border
+        data: [
+          trainingData && trainingData[0] ? trainingData[0].available_officers || 0 : 0, 
+          trainingData && trainingData[0] ? trainingData[0].trained_officers || 0 : 0
+        ], 
+        backgroundColor: '#4CAF50', 
+        borderColor: '#388E3C',
         borderWidth: 1,
         barThickness: 20,
       },
       {
         label: 'Total Trained Officers',
-        data: [trainingData?trainingData[1].available_officers:"",trainingData?trainingData[1].trained_officers:""], // Total Trained Officers for AP and TS
-        backgroundColor: '#2196F3', // Blue color for Trained Officers
-        borderColor: '#1976D2', // Darker blue border
+        data: [
+          trainingData && trainingData[1] ? trainingData[1].available_officers || 0 : 0, 
+          trainingData && trainingData[1] ? trainingData[1].trained_officers || 0 : 0
+        ],
+        backgroundColor: '#2196F3', 
+        borderColor: '#1976D2',
         borderWidth: 1,
         barThickness: 20,
       },
+      
     ],
   };
 
