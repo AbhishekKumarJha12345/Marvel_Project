@@ -1,31 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Pie, Line } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement } from 'chart.js';
 import axiosInstance from '../../utils/axiosInstance';
 
 // Register the necessary chart components
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement);
 
 const MasterTrainers = () => {
+  const [trainingData, setTrainingData] = useState('');
 
-
-
-  const [trainingData,setTrainingData]=useState('')
-  const getTrainingData = async()=>{
-    try{
-      const response =await axiosInstance.get('/live_data')
-      console.log(response.data,'Trainig data response ----------')
-      setTrainingData(response.data.latest_workshop)
-  
-    }catch(error){
-      console.log(error)
+  const getTrainingData = async () => {
+    try {
+      const response = await axiosInstance.get('/live_data');
+      console.log(response.data, 'Training data response ----------');
+      setTrainingData(response.data.latest_workshop);
+    } catch (error) {
+      console.log(error);
     }
-  }
+  };
+
   useEffect(() => {
     getTrainingData();
   }, []);
+
   // Data for the Pie Chart
-  const data = {
+  const pieData = {
     labels: [
       'Training Workshops Conducted',
       'Training through E-Academy Online',
@@ -33,37 +32,38 @@ const MasterTrainers = () => {
     ],
     datasets: [
       {
-        data: [trainingData?trainingData.training_workshops:"", trainingData?trainingData.e_academy_online:"", trainingData?trainingData.master_trainers:""], // Corresponding values for each section
-        backgroundColor: ['#FF5733', '#33FF57', '#3357FF'], // Different colors for each section
-        borderColor: ['#FF5733', '#33FF57', '#3357FF'], // Border colors to match
+        data: [
+          trainingData ? trainingData.training_workshops || 0 : 0,
+          trainingData ? trainingData.e_academy_online || 0 : 0,
+          trainingData ? trainingData.master_trainers || 0 : 0,
+        ],
+        backgroundColor: ['#FF5733', '#33FF57', '#3357FF'],
+        borderColor: ['#FF5733', '#33FF57', '#3357FF'],
         borderWidth: 1,
       },
     ],
   };
 
-  // Options for the Pie chart
+  // Data for the Line Chart
+  const lineData = {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    datasets: [
+      {
+        label: 'Monthly Workshops',
+        data: trainingData ? trainingData.monthly_workshops || [] : [], // Assuming monthly_workshops is an array
+        fill: false,
+        backgroundColor: '#007BFF',
+        borderColor: '#007BFF',
+      },
+    ],
+  };
+
+  // Chart options
   const options = {
     responsive: true,
     plugins: {
       legend: {
         position: 'top',
-        labels: {
-          boxWidth: 20,
-        },
-      },
-      tooltip: {
-        displayColors: false,
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        titleAlign: 'center',
-        bodyAlign: 'center',
-        padding: 10,
-        callbacks: {
-          label: function (tooltipItem) {
-            const label = tooltipItem.label || '';
-            const value = tooltipItem.raw || 0;
-            return `${label}: ${value}`;
-          },
-        },
       },
     },
   };
@@ -72,8 +72,13 @@ const MasterTrainers = () => {
     <div className="bg-white p-6 rounded-lg w-full h-[500px] flex flex-col items-center">
       <h1 className="text-4xl font-bold mb-4">Master Trainers</h1>
       <div className="flex flex-col lg:flex-row w-full justify-center items-center">
-        <div className="w-full lg:w-2/3 h-[400px] p-3 d-flex justify-center items-center">
-          <Pie data={data} options={options} />
+        {/* Pie Chart */}
+        <div className="w-full lg:w-1/2 h-[400px] p-3 d-flex justify-center items-center">
+          <Pie data={pieData} options={options} />
+        </div>
+        {/* Line Chart */}
+        <div className="w-full lg:w-1/2 h-[400px] p-3 d-flex justify-center items-center">
+          <Line data={lineData} options={options} />
         </div>
       </div>
     </div>
