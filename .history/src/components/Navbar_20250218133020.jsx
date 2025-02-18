@@ -54,19 +54,15 @@ export default function Dashboard() {
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev);
   };
+
   const toggleSubMenu = (index) => {
-    if (activeSubMenu === index) {
-      setActiveSubMenu(null);
- // Close if the same submenu is clicked again
-    } else {
-      setActiveSubMenu(index); // Open new submenu and close others
-    }
+    setActiveSubMenu(index === activeSubMenu ? null : index);
   };
-  
+
   const handleTrainingClick = () => {
     resetContent();
     setActiveContent('training');
-  };git
+  };
 
   const handleCauroselClick = () => {
     resetContent();

@@ -56,8 +56,7 @@ export default function Dashboard() {
   };
   const toggleSubMenu = (index) => {
     if (activeSubMenu === index) {
-      setActiveSubMenu(null);
- // Close if the same submenu is clicked again
+      setActiveSubMenu(null); // Close if the same submenu is clicked again
     } else {
       setActiveSubMenu(index); // Open new submenu and close others
     }
@@ -66,7 +65,7 @@ export default function Dashboard() {
   const handleTrainingClick = () => {
     resetContent();
     setActiveContent('training');
-  };git
+  };
 
   const handleCauroselClick = () => {
     resetContent();

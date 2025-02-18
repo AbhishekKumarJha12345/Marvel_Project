@@ -66,7 +66,7 @@ export default function Dashboard() {
   const handleTrainingClick = () => {
     resetContent();
     setActiveContent('training');
-  };git
+  };
 
   const handleCauroselClick = () => {
     resetContent();

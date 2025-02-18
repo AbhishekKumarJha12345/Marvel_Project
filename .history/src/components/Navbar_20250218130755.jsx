@@ -15,7 +15,7 @@ import Efir from './Police/FIR/Efir/Efir';
 import FirNewcriminal from './Police/FIR/Newcriminal/FirNewcriminal';
 import FirZero from './Police/FIR/Zerofir/FirZero';
 import Correctionalservicetab from "./Correctional Services/Correctionalservicetab";
-import '../styles/Dashboard.scss'
+import "../style"
 export default function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -39,10 +39,7 @@ export default function Dashboard() {
     setActiveContentCourt(null);
     setActiveForensic(null);
     setActiveServices(null);
-    setIsOpen(false); // Close main dropdown
-    setActiveSubMenu(null); // Close subdropdown
   };
-  
 
   const dropdownRef = useRef(null);
 
@@ -54,19 +51,15 @@ export default function Dashboard() {
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev);
   };
+
   const toggleSubMenu = (index) => {
-    if (activeSubMenu === index) {
-      setActiveSubMenu(null);
- // Close if the same submenu is clicked again
-    } else {
-      setActiveSubMenu(index); // Open new submenu and close others
-    }
+    setActiveSubMenu(index === activeSubMenu ? null : index);
   };
-  
+
   const handleTrainingClick = () => {
     resetContent();
     setActiveContent('training');
-  };git
+  };
 
   const handleCauroselClick = () => {
     resetContent();
@@ -111,7 +104,7 @@ export default function Dashboard() {
       <div className="navbar">
         <ul className="nav-items">
           {/* Police Section */}
-          <div className="nav_main" ref={dropdownRef}>
+          <div className="relative" ref={dropdownRef}>
             <button
               className={`nav-link ${isOpen ? "active" : ""}`}
               onClick={toggleDropdown}
