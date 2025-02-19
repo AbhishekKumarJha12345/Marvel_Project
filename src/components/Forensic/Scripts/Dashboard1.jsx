@@ -1,14 +1,15 @@
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Tab2 from './Tab2';
 import Tab3 from './Tab3';
 import Tab4 from './Tab4';
 import Tab1 from './Tab1';
-import ForensicStrengtheningInitiatives from './ForensicStrengtheningInitiatives'
+import ForensicStrengtheningInitiatives from './ForensicStrengtheningInitiatives';
+import forensicPDF from '../../../assets/Forensic_Department_Analysis.pdf';
 
 const tabData = [
   { label: 'Forensic Lab Pendency Monitoring', component: <Tab1 /> },
@@ -47,13 +48,22 @@ export default function Dashboard1() {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (_, newValue) => {
-    console.log('new value',newValue)
+    console.log('new value', newValue);
     setValue(newValue);
   };
 
+  const handleDownload = () => {
+    const link = document.createElement('a');
+    link.href = forensicPDF;
+    link.download = 'Forensic_Department_Analysis.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
-    <Box sx={{ width: '100%', padding: '1rem',fontFamily:"Work Sans",backgroundColor:"#f4f4f4"}}>
-      <Box sx={{ borderBottom: 0, borderColor: '#dbdfed' }}>
+    <Box sx={{ width: '100%', padding: '1rem', fontFamily: 'Work Sans', backgroundColor: '#f4f4f4' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: 0, borderColor: '#dbdfed' }}>
         <Tabs
           value={value}
           onChange={handleChange}
@@ -80,7 +90,7 @@ export default function Dashboard1() {
               transform: 'translateY(50%)',
             },
             marginLeft: '-10px',
-            fontFamily:"Work Sans",
+            fontFamily: 'Work Sans',
           }}
           className="tab_names"
           aria-label="navigation tabs"
@@ -99,6 +109,9 @@ export default function Dashboard1() {
             />
           ))}
         </Tabs>
+        <Button variant="contained" color="primary" onClick={handleDownload}>
+          Export
+        </Button>
       </Box>
       {tabData.map((tab, index) => (
         <CustomTabPanel key={index} value={value} index={index}>
