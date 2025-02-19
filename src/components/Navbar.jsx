@@ -30,6 +30,7 @@ import { faL } from "@fortawesome/free-solid-svg-icons";
 import jsPDF from "jspdf";
 import pdflogo from "../assets/pdflogo.png";
 import background from "../assets/rbg3.jpg"; // Add your background image
+import html2canvas from "html2canvas";
 import {
   FormControl,
   Dialog,
@@ -47,6 +48,69 @@ import {
   IconButton,InputLabel,FormHelperText
 } from "@mui/material";
 import ReportGencomp from "./ReportGen/ReportGenComp";
+
+const exportDataDetails = [
+  {
+    name: "Police Department",
+    data: `
+Generated Summary:
+In the provided data, there are two sets of statistics related to court cases for the months September 2021 and February 2025. Here's a summary comparison between the two months:
+
+ Total Charge-Sheeted:  
+- Both months have a total of 7 charge-sheeted cases. However, it’s unclear whether these are the same or different cases.
+
+ Pending Cases:  
+- September 2021: 432 pending cases  
+- February 2025: 7 pending cases  
+-  Significant reduction in pending cases from 432 to 7.
+
+ Acquittals:  
+- September 2021: 44 acquitted cases  
+- February 2025: 7 acquitted cases  
+-  Decrease in acquittals over time.
+
+ Convictions:  
+- September 2021: 233 convicted cases  
+- February 2025: 7 convicted cases  
+-  Sharp drop in convictions.
+
+ Overall Summary:  
+There has been a major decrease in pending, acquitted, and convicted cases from September 2021 to February 2025.  
+However, more data would be needed to confirm if this trend is long-term or an anomaly.
+    `
+  },
+  {
+    name: "Forensic Department",
+    data: `
+Generated Summary:  
+ Analysis of Forensic Department Performance (July 2024 - January 2025)
+
+ Monthly Performance Trends:
+- Disposal Cases:  Highest in October 2024 (32,313),  Lowest in July 2024 (21,122).  
+- Pending Cases:  Peaked in August 2024 (186,321), declined to January 2025 (183,394).  
+- Received Cases:  Most in December 2024 (25,258),  Least in July 2024 (22,211).  
+- Disposal Exhibits:  Highest in October 2024 (59,104),  Lowest in July 2024 (42,617).  
+- Pending Exhibits:  Highest in August 2024 (6,65,143), decreased until January 2025 (6,74,863).  
+- Received Exhibits:  Most in December 2024 (53,470),  Least in July 2024 (49,066).  
+
+ Peak & Low Performance Months:
+-  Best Month (Highest Disposal Cases): October 2024  
+-  Worst Month (Highest Pending Cases & Exhibits): August 2024  
+-  Lowest Disposal Cases: July 2024  
+-  Lowest Pending Cases & Exhibits: January 2025  
+
+Overall Trends & Recommendations:
+- Pending cases increasing despite disposal improvements → Possible processing bottleneck.  
+- Stable efficiency until August 2024, then signs of decreasing efficiency.  
+- Suggested Improvements:
+  - Increase staffing
+  - Enhance processing efficiency
+  - Prioritize high-impact cases
+  - Reduce case-processing time
+    `
+  }
+];
+
 export default function Dashboard() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSubMenu, setActiveSubMenu] = useState(null);
@@ -105,8 +169,76 @@ useEffect(() => {
   // getTrainingData();
 }, []);
 
+
+const trainingRef = useRef(null); // Reference to PoliceTraining component
+
+const handleExportPoliceTraining = async () => {
+  const pdf = new jsPDF("p", "mm", "a4"); // Create A4 size PDF
+  const margin = 10;
+  let yPosition = 20; // Start position for text
+  
+  // Capture PoliceTraining as an image
+  if (trainingRef.current) {
+    const canvas = await html2canvas(trainingRef.current, { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+
+    const imgWidth = 180; // Fit image width into A4
+    const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
+
+    pdf.addImage(imgData, "PNG", margin, yPosition, imgWidth, imgHeight);
+    yPosition += imgHeight + 10; // Move below image
+  }
+
+  // Add a separator
+  pdf.setDrawColor(0);
+  pdf.line(10, yPosition, 200, yPosition);
+  yPosition += 10;
+
+  // Loop through exportDataDetails and add formatted text
+  exportDataDetails.forEach((item, index) => {
+    pdf.setFontSize(14);
+    pdf.setFont("helvetica", "bold");
+    pdf.text(item.name, margin, yPosition);
+    yPosition += 6;
+
+    pdf.setFontSize(11);
+    pdf.setFont("helvetica", "normal");
+
+    // Properly format long text for PDF
+    const textLines = pdf.splitTextToSize(item.data, 180);
+    
+    // Check if text fits on the page, if not add a new page
+    let linesPerPage = 50; // Approximate lines per page
+    let lineChunks = [];
+    
+    for (let i = 0; i < textLines.length; i += linesPerPage) {
+      lineChunks.push(textLines.slice(i, i + linesPerPage));
+    }
+    
+    lineChunks.forEach((chunk, chunkIndex) => {
+      if (yPosition > 270) {
+        pdf.addPage();
+        yPosition = 20;
+      }
+      pdf.text(chunk, margin, yPosition);
+      yPosition += chunk.length * 5 + 10; // Adjust spacing
+    });
+
+    // Add a separator for sections
+    if (index !== exportDataDetails.length - 1) {
+      pdf.line(10, yPosition, 200, yPosition);
+      yPosition += 10;
+    }
+  });
+
+  // Save the PDF
+  pdf.save("PoliceTraining_Report.pdf");
+};
+
+
+
   const contentMap = {
-    "training"              : <div className="content"><h1 className="heading">Police - Training</h1><PoliceTraining/></div>,
+    "training"              : <div className="content"><div className="ContentSpace"><h1 className="heading">Police - Training</h1><button className="ExportButton" onClick={handleExportPoliceTraining}>Export</button></div><PoliceTraining ref={trainingRef}/></div>,
     "awareness/campaign"    : <div className="content"><h1 className="heading">Awareness Campaigns</h1><Carousel /></div>,
     "forensic/visits"       : <div className="content"><h1 className="heading">Forensic Visits</h1><Forensicvisits /></div>,
     "court"                 : <div className="content"><h1 className="heading">Court Visits</h1><Dashboard2 /></div>,
