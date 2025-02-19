@@ -21,7 +21,7 @@ import GavelIcon from '@mui/icons-material/Gavel';
 import BiotechIcon from '@mui/icons-material/Biotech';
 import BalanceIcon from '@mui/icons-material/Balance';
 import FluorescentIcon from '@mui/icons-material/Fluorescent';
-import logo from '../assets/logo.png'
+import logo from '../assets/logo22.png'
 
 
 export default function Dashboard() {
@@ -168,10 +168,14 @@ useEffect(() => {
       {/* Conditionally render the content */}
       {contentMap[activeSection?.section] || 
       <div style={{height:"74vh",marginTop:"3rem",display:"flex",flexDirection:"column",gap:"1rem",alignItems:"center"}}>
-        <h2 style={{fontSize:"29px",fontWeight:"500"}}>Integrated Criminal Justice System</h2>
+        <h2 style={{fontSize:"29px",fontWeight:"500"}}>Interoperable Criminal Justice System</h2>
         <p style={{fontSize:"18px"}}>MAHARASHTRA RESEARCH & VIGILANCE MARVEL
         FOR ENHANCED LAW ENFORCEMENT LIMITED</p>
-        <img src={logo} alt="Logo" style={{width:"40rem"}} />
+        <img src={logo} alt="Logo"  style={{
+    width: "20rem", 
+    padding: "10px", 
+    borderRadius: "8px"
+  }}  />
 
       </div>
       }
