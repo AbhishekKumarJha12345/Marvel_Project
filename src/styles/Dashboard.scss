@@ -82,11 +82,24 @@
 
   .content {
     padding: 0rem 2rem;
+    .ContentSpace{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+    }
     .heading {
       text-align: left;
       font-size: 26px;
       font-weight: bold;
        
+    }
+    .ExportButton{
+      color: #65558F;
+      border: 2px solid #65558F;
+      padding: 5px 9px;
+      border-radius: 8px;
+
     }
   }
 }
