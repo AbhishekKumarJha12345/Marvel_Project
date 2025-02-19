@@ -71,7 +71,7 @@ export default function Tab2() {
 
   return (
     <div
-      className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto"
+      className="rounded-lg w-full max-w-full h-auto"
       style={{ fontFamily: "Work Sans", maxWidth: "90.7vw" }}
     >
       <h1 className="text-2xl font-bold mb-6">

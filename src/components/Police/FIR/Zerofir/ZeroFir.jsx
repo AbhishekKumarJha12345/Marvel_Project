@@ -31,9 +31,9 @@ const ZeroFIRStatus = () => {
   // Data for the Doughnut Chart
   const data = {
     labels: [
-      'Total Zero FIR Registered',
-      'Registered as Regular FIR',
-      'Yet to be Regularly Registered Zero FIR',
+      "Total Zero FIR Registered",
+      "Registered as Regular FIR",
+      "Yet to be Regularly Registered Zero FIR",
     ],
     datasets: [
       {
@@ -54,12 +54,12 @@ const ZeroFIRStatus = () => {
     responsive: true,
     plugins: {
       legend: {
-        position: 'bottom',
+        position: "bottom",
       },
       tooltip: {
         callbacks: {
           label: function (tooltipItem) {
-            const label = tooltipItem.label || '';
+            const label = tooltipItem.label || "";
             const value = tooltipItem.raw || 0;
             return `${label}: ${value.toLocaleString()}`; // Formatting numbers with commas
           },
@@ -69,12 +69,13 @@ const ZeroFIRStatus = () => {
   };
 
   return (
-    <div className="bg-white p-6 mx-auto rounded-lg w-[60%]">
+    <div className="bg-white  rounded-lg w-[100%]">
+      {/* Title and button section */}
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-bold">Zero FIR Status</h1>
+        <h1 className="text-xl font-bold text-left">Zero FIR Status</h1>
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-          style={{ backgroundColor: '#2d3748' }}
+          style={{ backgroundColor: "#2d3748" }}
           onClick={() => {
             console.log("Open modal");
             setShowModal(true);
@@ -83,12 +84,21 @@ const ZeroFIRStatus = () => {
           Add On
         </button>
       </div>
-      
-      <div className="h-[300px] w-[300px] mx-auto">
-        <Doughnut data={data} options={options} />
+
+      {/* Centered Graph */}
+      <div className="flex justify-center">
+        <div className=" rounded-lg w-[50%] flex flex-col items-center">
+          <div className="flex-grow w-[400px] h-[400px] flex justify-center items-center">
+            <Doughnut data={data} options={options} />
+          </div>
+        </div>
       </div>
-    
-      <ModalComponent open={showModal} type="fir_3" onClose={() => setShowModal(false)} />
+
+      <ModalComponent
+        open={showModal}
+        type="fir_3"
+        onClose={() => setShowModal(false)}
+      />
     </div>
   );
 };

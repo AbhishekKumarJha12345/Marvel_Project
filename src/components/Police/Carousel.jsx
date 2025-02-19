@@ -40,7 +40,7 @@ const Carousel = () => {
           key={index}
           className="carousel-item w-full flex-shrink-0"                    
           style={{
-            height: '80vh', 
+            height: '70vh', 
             backgroundImage: `url(${image})`,         
             backgroundSize: 'cover',
             backgroundPosition: 'center',

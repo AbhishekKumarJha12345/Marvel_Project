@@ -71,6 +71,8 @@ const MasterTrainers = () => {
     }
   };
 
+  
+
   useEffect(() => {
     getTrainingData();
   }, []);
@@ -78,9 +80,9 @@ const MasterTrainers = () => {
   // Data for the Pie Chart
   const pieData = {
     labels: [
-      'Training Workshops Conducted',
-      'Training through E-Academy Online',
-      'Master Trainers (Police Personnel)',
+      "Training Workshops Conducted",
+      "Training through E-Academy Online",
+      "Master Trainers (Police Personnel)",
     ],
     datasets: [
       {
@@ -96,7 +98,7 @@ const MasterTrainers = () => {
     ],
   };
 
-  // Chart options
+  // Options for the Pie chart
   const options = {
     responsive: true,
     plugins: {
@@ -104,11 +106,60 @@ const MasterTrainers = () => {
         position: 'top',
       },
     },
+  }
+// Function to send data to Flask and download the report
+const downloadReport = async () => {
+  if (!trainingData) {
+    alert("No data available for the report.");
+    return;
+  }
+
+  const requestData = {
+    chart_type: "pie",
+    data: {
+      labels: [
+        "Training Workshops Conducted",
+        "Training through E-Academy Online",
+        "Master Trainers (Police Personnel)",
+      ],
+      values: [
+        trainingData.training_workshops,
+        trainingData.e_academy_online,
+        trainingData.master_trainers,
+      ],
+      title: "Master Trainers Report",
+      colors: ["#FF5733", "#33FF57", "#3357FF"]
+    }
   };
 
+  try {
+    const response = await axiosInstance.post('/generate_report', requestData, {
+      responseType: 'blob',
+    });
+
+    // Create a URL for the PDF blob and trigger download
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'master_trainers_report.pdf');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (error) {
+    console.error("Error downloading report:", error);
+  }
+};
+
+
   return (
-    <div className="bg-white p-4 rounded-xl shadow-md">
-      <h1 className="text-xl font-semibold mb-4">Master Trainers</h1>
+    <div className="bg-white p-6 rounded-lg w-full h-[500px] flex flex-col ">
+      <div className="flex justify-between items-center mb-8">
+        
+      <h1 className="text-4xl font-bold mb-4">Master Trainers</h1>
+      <button className="bg-green-600 text-white px-4 py-2 rounded-lg" onClick={downloadReport}>
+          Download Report
+        </button>
+      </div>
       <div className="flex flex-col lg:flex-row w-full justify-center items-center">
         {/* Pie Chart */}
         <div className="w-full lg:w-1/2 h-[400px] p-3 d-flex justify-center items-center">
@@ -119,8 +170,10 @@ const MasterTrainers = () => {
           <Line data={lineChartData} options={options} />
         </div>
       </div>
+      
     </div>
   );
 };
 
 export default MasterTrainers;
+

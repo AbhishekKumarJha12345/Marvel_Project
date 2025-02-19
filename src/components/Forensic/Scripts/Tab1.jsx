@@ -9,7 +9,7 @@ export default function Tab1() {
   
 
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto">
+    <div className="rounded-lg w-full max-w-full h-auto">
 
 <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Forensic Development Dashboard</h1>

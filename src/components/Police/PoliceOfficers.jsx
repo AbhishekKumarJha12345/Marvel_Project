@@ -3,11 +3,11 @@ import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import axiosInstance from '../../utils/axiosInstance';
 import ModalComponent from './ModalComponent';
-// Register required chart components
+
+// Register chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const PoliceOfficers = () => {
-
   const [showModal, setShowModal] = useState(false);
   const [trainingData,setTrainingData]=useState('')
 const getTrainingData = async()=>{
@@ -93,12 +93,48 @@ useEffect(() => {
       },
     },
   };
+  // Function to download the PDF report
+  const downloadReport = async () => {
+    if (trainingData.length < 2) {
+      alert("Not enough data to generate a report.");
+      return;
+    }
+
+    const requestData = {
+      chart_type: "bar",
+      data: {
+        labels: [trainingData[0].rank, trainingData[1].rank],
+        values: [trainingData[0].available_officers, trainingData[1].trained_officers],
+        title: "Police Officers Training Report",
+        y_label: "Number of Officers",
+        colors: ["#4CAF50", "#2196F3"]
+      }
+    };
+
+    try {
+      const response = await axiosInstance.post('/generate_report', requestData, {
+        responseType: 'blob',
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'police_report.pdf');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error downloading report:", error);
+    }
+  };
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-md">
-     <div className="bg-white p-6 rounded-lg w-full h-[500px] text-center">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-xl font-semibold mb-4">Police Officers</h1>
+    <div className="bg-white p-6 rounded-lg w-full h-[500px] text-center">
+      <div className="flex justify-around items-center mb-8">
+        <h1 className="text-4xl font-bold">Police Officers</h1>
+        <button className="bg-green-600 text-white px-4 py-2 rounded-lg" onClick={downloadReport}>
+          Download Report
+        </button>
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded-lg"
           style={{backgroundColor:'#2d3748'}}
@@ -111,12 +147,14 @@ useEffect(() => {
         </button>
       </div>
       <div className="h-[400px] w-full">
-        <Bar data={data} options={options} />
+        <Bar data={data} options={{ responsive: true, maintainAspectRatio: false }} />
       </div>
+      <ModalComponent
+        open={showModal}
+        type="police"
+        onClose={() => setShowModal(false)}
+      />
     </div>
-    <ModalComponent open={showModal} type='police' onClose={() => setShowModal(false)} />
-  </div>
-
   );
 };
 

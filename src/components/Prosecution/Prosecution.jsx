@@ -95,18 +95,18 @@ const [filters, setFilters] = useState({ role: "", posts: "", date: "" });
   ];
 
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto">
+    <div className="rounded-lg w-full max-w-full h-auto">
       {/* <h1 className="text-2xl font-bold mb-6">Features</h1> */}
       <div style={styles.cardContainer}>
-        <Card style={styles.card}>
+        <Card style={styles.card} className="bg-white">
           <Card.Body>
-            <Card.Title className="text-xl font-semibold mb-4">Recent Appointment</Card.Title>
+            <Card.Title className=" text-xl font-semibold mb-4">Recent Appointment</Card.Title>
             <Card.Text style={styles.cardText}>
               491 New Assistant Public Prosecutors appointed.
             </Card.Text>
           </Card.Body>
         </Card>
-        <Card style={styles.card}>
+        <Card style={styles.card} className="bg-white">
           <Card.Body>
             <Card.Title className="text-xl font-semibold mb-4">Training Program</Card.Title>
             <Card.Text style={styles.cardText}>
@@ -114,7 +114,7 @@ const [filters, setFilters] = useState({ role: "", posts: "", date: "" });
             </Card.Text>
           </Card.Body>
         </Card>
-        <Card style={styles.card}>
+        <Card style={styles.card} className="bg-white">
           <Card.Body>
             <Card.Title className="text-xl font-semibold mb-4">Recruitment Proposal</Card.Title>
             <Card.Text style={styles.cardText}>
