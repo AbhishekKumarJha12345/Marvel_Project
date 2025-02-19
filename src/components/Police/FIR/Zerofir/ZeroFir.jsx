@@ -31,9 +31,9 @@ const ZeroFIRStatus = () => {
   // Data for the Doughnut Chart
   const data = {
     labels: [
-      'Total Zero FIR Registered',
-      'Registered as Regular FIR',
-      'Yet to be Regularly Registered Zero FIR',
+      "Total Zero FIR Registered",
+      "Registered as Regular FIR",
+      "Yet to be Regularly Registered Zero FIR",
     ],
     datasets: [
       {
@@ -54,12 +54,12 @@ const ZeroFIRStatus = () => {
     responsive: true,
     plugins: {
       legend: {
-        position: 'bottom',
+        position: "bottom",
       },
       tooltip: {
         callbacks: {
           label: function (tooltipItem) {
-            const label = tooltipItem.label || '';
+            const label = tooltipItem.label || "";
             const value = tooltipItem.raw || 0;
             return `${label}: ${value.toLocaleString()}`; // Formatting numbers with commas
           },

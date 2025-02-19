@@ -48,7 +48,7 @@ const COLORS = ['#0088FE', '#FF8042'];
 
 const CourtTab2 = () => {
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto">
+    <div className="rounded-lg w-full max-w-full h-auto">
       <h1 className="text-2xl font-bold mb-6">eSummons & Digital Case Records Dashboard</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 

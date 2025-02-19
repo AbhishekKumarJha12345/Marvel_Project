@@ -1,28 +1,43 @@
-import React from 'react';
-import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import React from "react";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
 // Register required chart components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const CorrectionalServices = () => {
   // Data for the bar graph (grouped by Available Strength and Personnel Trained)
   const data = {
-    labels: ['Class-1', 'Class-2', 'Class-3'], // Group labels
+    labels: ["Class-1", "Class-2", "Class-3"], // Group labels
     datasets: [
       {
-        label: 'Available Strength',
+        label: "Available Strength",
         data: [4232, 1500, 4147], // Data for Available Strength
-        backgroundColor: '#FF5733', // Orange for "Available Strength"
-        borderColor: '#D84315',
+        backgroundColor: "#FF5733", // Orange for "Available Strength"
+        borderColor: "#D84315",
         borderWidth: 1,
         barThickness: 50,
       },
       {
-        label: 'No. of Personnel Trained in New Laws',
+        label: "No. of Personnel Trained in New Laws",
         data: [3980, 1000, 3895], // Data for Trained Personnel
-        backgroundColor: '#2196F3', // Blue for "No. of Personnel Trained in New Laws"
-        borderColor: '#1976D2',
+        backgroundColor: "#2196F3", // Blue for "No. of Personnel Trained in New Laws"
+        borderColor: "#1976D2",
         borderWidth: 1,
         barThickness: 50,
       },
@@ -37,8 +52,8 @@ const CorrectionalServices = () => {
     responsive: true,
     plugins: {
       legend: {
-        display: true,  // Display legend at the top
-        position: 'top',
+        display: true, // Display legend at the top
+        position: "top",
       },
       title: {
         display: true,
@@ -68,11 +83,20 @@ const CorrectionalServices = () => {
   };
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-md">
-      <h1 className="text-xl font-semibold mb-4">Personnel Trained in New Laws
+    <div className="bg-white p-4 rounded-xl shadow-md w-[100%] h-[100%] mx-auto">
+      {/* Left-aligned heading */}
+      <h1 className="text-xl font-semibold mb-4 text-left">
+        Personnel Trained in New Laws
       </h1>
-      <div className="h-[250px]">
-        <Bar data={data} options={options} />
+
+      {/* Centering the Bar Chart */}
+      <div className="flex justify-center items-center">
+        <div className="w-[400px] h-[250px] flex justify-center items-center">
+          <Bar
+            data={data}
+            options={{ ...options, maintainAspectRatio: false }}
+          />
+        </div>
       </div>
     </div>
   );
