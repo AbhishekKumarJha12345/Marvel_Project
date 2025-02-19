@@ -396,7 +396,7 @@ doc.text("In summary, the data reveals that there is a general increase in the n
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
   
-    doc.text("Currectional Services:", 10, 90);
+    doc.text("Correctional Services :", 10, 90);
     doc.setFont("helvetica", "normal");
   
     doc.text("Over the provided period, the following trends have been observed regarding correctional institutions:", 10, 110, { maxWidth: 190 });
