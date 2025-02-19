@@ -52,7 +52,7 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 
 import Prosecution from "./Prosecution";
-
+import ProsecutionPDF from "../../assets/Prosecutor_Statistics.pdf"
 import Home from "./Home";
 import Carousel from "./Carousel";
 
