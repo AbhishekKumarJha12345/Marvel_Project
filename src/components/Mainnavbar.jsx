@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa";
 import { FaRegComment } from "react-icons/fa";
 import { IoIosNotificationsOutline } from "react-icons/io";
-import logo from '../assets/logo.png'
+import logo from '../assets/logo22.png'
 import Flag from 'react-world-flags';
 import Navbar from './Navbar'
 import { Routes, Route } from 'react-router-dom';
@@ -46,7 +46,7 @@ function Mainnavbar() {
     <div style={{backgroundColor:"#f4f4f4", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"}}>
     <nav className="px-2 py-3 flex items-center justify-between" style={{marginBottom:"0.2rem", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"}}>
        <div className="flex items-center space-x-3">
-        <img src={logo} alt="Logo" className='w-20' />
+        <img src={logo} alt="Logo" className='w-12' />
         <div className="text-3xl font-bold " style={{color:"#2d3748"}}>ICJS</div>
           <div className="relative w-[400px] hidden md:block">
         <FaSearch className="absolute left-3 top-2.5 text-gray-400" size={20} />

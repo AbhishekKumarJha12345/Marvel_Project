@@ -3,7 +3,7 @@ import { FiUser } from "react-icons/fi";
 import { CgLock } from "react-icons/cg";
 import { LuEye } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/logo.png";
+import logo from "../assets/logo22.png";
 import axiosInstance from "../utils/axiosInstance";
 
 function Login() {
