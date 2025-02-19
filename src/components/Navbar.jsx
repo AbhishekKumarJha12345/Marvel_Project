@@ -180,65 +180,66 @@ export default function Dashboard({ users }) {
     const pdf = new jsPDF("p", "mm", "a4"); // Create A4 size PDF
     const margin = 10;
     let yPosition = 20; // Start position for text
-
-    // Capture PoliceTraining as an image
+  
+    // 📌 Capture PoliceTraining component as an image
     if (trainingRef.current) {
       const canvas = await html2canvas(trainingRef.current, { scale: 2 });
       const imgData = canvas.toDataURL("image/png");
-
+  
       const imgWidth = 180; // Fit image width into A4
       const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
-
+  
       pdf.addImage(imgData, "PNG", margin, yPosition, imgWidth, imgHeight);
       yPosition += imgHeight + 10; // Move below image
     }
-
-    // Add a separator
+  
+    // 📌 Add a separator
     pdf.setDrawColor(0);
     pdf.line(10, yPosition, 200, yPosition);
     yPosition += 10;
-
-    // Loop through exporttrainingRefDetails and add formatted text
+  
+    // 📌 Loop through exporttrainingRefDetails and add formatted text
     exporttrainingRefDetails.forEach((item, index) => {
       pdf.setFontSize(14);
       pdf.setFont("helvetica", "bold");
+  
+      // 🟢 Check if title fits, else move to a new page
+      if (yPosition + 10 > 280) {
+        pdf.addPage();
+        yPosition = 20;
+      }
       pdf.text(item.name, margin, yPosition);
       yPosition += 6;
-
+  
       pdf.setFontSize(11);
       pdf.setFont("helvetica", "normal");
-
-      // Properly format long text for PDF
+  
+      // 📌 Properly format long text for PDF
       const textLines = pdf.splitTextToSize(item.data, 180);
-
-      // Check if text fits on the page, if not add a new page
-      let linesPerPage = 50; // Approximate lines per page
-      let lineChunks = [];
-
-      for (let i = 0; i < textLines.length; i += linesPerPage) {
-        lineChunks.push(textLines.slice(i, i + linesPerPage));
-      }
-
-      lineChunks.forEach((chunk, chunkIndex) => {
-        if (yPosition > 270) {
-          pdf.addPage();
-          yPosition = 20;
+      let pageHeight = 280; // Usable page height
+      let lineHeight = 6; // Space between lines
+  
+      textLines.forEach((line) => {
+        // 🟢 Check if line fits on the current page
+        if (yPosition + lineHeight > pageHeight) {
+          pdf.addPage(); // Add a new page
+          yPosition = 20; // Reset yPosition for new page
         }
-        pdf.text(chunk, margin, yPosition);
-        yPosition += chunk.length * 5 + 10; // Adjust spacing
+        pdf.text(line, margin, yPosition);
+        yPosition += lineHeight;
       });
-
-      // Add a separator for sections
+  
+      // 📌 Add separator for sections
       if (index !== exporttrainingRefDetails.length - 1) {
         pdf.line(10, yPosition, 200, yPosition);
         yPosition += 10;
       }
     });
-
-    // Save the PDF
+  
+    // 📌 Save the PDF
     pdf.save("PoliceTraining_Report.pdf");
   };
-
+  
  
 
   const contentMap = {
