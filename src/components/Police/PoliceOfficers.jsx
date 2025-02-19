@@ -95,10 +95,10 @@ useEffect(() => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg w-full h-[500px] text-center">
+    <div className="bg-white p-4 rounded-xl shadow-md">
      <div className="bg-white p-6 rounded-lg w-full h-[500px] text-center">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-bold">Police Officers</h1>
+        <h1 className="text-xl font-semibold mb-4">Police Officers</h1>
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded-lg"
           style={{backgroundColor:'#2d3748'}}

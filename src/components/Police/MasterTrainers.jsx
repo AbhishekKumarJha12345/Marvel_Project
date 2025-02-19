@@ -69,8 +69,8 @@ const MasterTrainers = () => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg w-full h-[500px] flex flex-col items-center">
-      <h1 className="text-4xl font-bold mb-4">Master Trainers</h1>
+    <div className="bg-white p-4 rounded-xl shadow-md">
+      <h1 className="text-xl font-semibold mb-4">Master Trainers</h1>
       <div className="flex flex-col lg:flex-row w-full justify-center items-center">
         <div className="w-full lg:w-2/3 h-[400px] p-3 d-flex justify-center items-center">
           <Pie data={data} options={options} />
