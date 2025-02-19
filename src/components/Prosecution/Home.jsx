@@ -120,7 +120,7 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
       value:
         Number(
           prosecutiondata?.logindatastatistics?.[0]
-            ?.assistant_public_prosecutorappointed
+            ?.assistant_public_prosecutor_appointed
         ) || 0,
     },
   ];
