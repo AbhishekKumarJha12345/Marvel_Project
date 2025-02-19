@@ -6,51 +6,62 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const CorrectionalServices = () => {
+  const chartColors = [
+    "#8884d8", // Muted Purple
+    "#82ca9d", // Soft Green
+    "#f2c57c", // Warm Sand
+    "#6a8caf", // Steel Blue
+    "#d4a5a5", // Soft Rose
+    "#a28bd3", // Lavender
+    "#ff9a76", // Muted Coral
+    "#74b49b", // Muted Teal
+    "#c08497", // Mauve
+    "#b0a8b9" // Dusty Lilac
+  ];
+
   // Data for the bar graph (grouped by Available Strength and Personnel Trained)
   const data = {
     labels: ['Class-1', 'Class-2', 'Class-3'], // Group labels
     datasets: [
       {
         label: 'Available Strength',
-        data: [4232, 1500, 4147], // Data for Available Strength
-        backgroundColor: '#FF5733', // Orange for "Available Strength"
-        borderColor: '#D84315',
+        data: [4232, 1500, 4147], 
+        backgroundColor: chartColors[0], // Muted Purple
         borderWidth: 1,
         barThickness: 50,
       },
       {
         label: 'No. of Personnel Trained in New Laws',
-        data: [3980, 1000, 3895], // Data for Trained Personnel
-        backgroundColor: '#2196F3', // Blue for "No. of Personnel Trained in New Laws"
-        borderColor: '#1976D2',
+        data: [3980, 1000, 3895], 
+        backgroundColor: chartColors[1], // Soft Green
         borderWidth: 1,
         barThickness: 50,
       },
-    ],
+    ]
   };
 
   // Static title for the chart
   const chartTitle = `Available Strength: 4,232, No. of Personnel Trained in New Laws: 3,980, Percentage: 94.05%`;
 
-  // Options to display the chart with custom tooltips and legend
+  // Options for the chart
   const options = {
     responsive: true,
+    maintainAspectRatio: false, // Allow flexible width
     plugins: {
       legend: {
-        display: true,  // Display legend at the top
-        position: 'top',
+        display: true,
+        position: 'right', // Move legend to the right
       },
       title: {
         display: true,
-        text: chartTitle, // Display the static title
+        text: chartTitle, // Display static title
       },
       tooltip: {
         callbacks: {
-          // Custom tooltip to display value
           label: function (tooltipItem) {
             const dataset = tooltipItem.dataset;
             const value = tooltipItem.raw;
-            return `${dataset.label}: ${value}`; // Return the individual value for the tooltip
+            return `${dataset.label}: ${value}`; // Return value for tooltip
           },
         },
       },
@@ -58,7 +69,7 @@ const CorrectionalServices = () => {
     scales: {
       x: {
         grid: {
-          offset: true, // Add offset to prevent overlapping
+          offset: true, // Prevent overlap
         },
       },
       y: {
@@ -68,10 +79,9 @@ const CorrectionalServices = () => {
   };
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-md">
-      <h1 className="text-xl font-semibold mb-4">Personnel Trained in New Laws
-      </h1>
-      <div className="h-[250px]">
+    <div className="bg-white p-4 rounded-xl shadow-md w-full">
+      <h1 className="text-xl font-semibold mb-4">Personnel Trained in New Laws</h1>
+      <div className="w-full h-[300px]"> {/* Full width, fixed height 300px */}
         <Bar data={data} options={options} />
       </div>
     </div>

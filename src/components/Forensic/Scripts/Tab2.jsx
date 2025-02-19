@@ -31,8 +31,19 @@ const dataExpansionDemand = [
   { region: "West", demand: 40 },
 ];
 
-const COLORS = [ "#FFBB28", "#FF8042", "#FF0000", "#00C49F"];
-
+// const chartColors = [ "#FFBB28", "#FF8042", "#FF0000", "#00C49F"];
+const chartColors = [
+  "#8884d8", // Muted Purple
+  "#82ca9d", // Soft Green
+  "#f2c57c", // Warm Sand
+  "#6a8caf", // Steel Blue
+  "#d4a5a5", // Soft Rose
+  "#a28bd3", // Lavender
+  "#ff9a76", // Muted Coral
+  "#74b49b", // Muted Teal
+  "#c08497", // Mauve
+  "#b0a8b9" // Dusty Lilac
+  ];
 export default function Tab2() {
   const [vanDeploymentData, setVanDeploymentData] = useState(null);
   const [pieChartData, setPieChartData] = useState([]);
@@ -107,7 +118,7 @@ export default function Tab2() {
                 {pieChartData && pieChartData.length>0 && pieChartData.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
+                    fill={chartColors[index % chartColors.length]}
                   />
                 ))}
               </Pie>

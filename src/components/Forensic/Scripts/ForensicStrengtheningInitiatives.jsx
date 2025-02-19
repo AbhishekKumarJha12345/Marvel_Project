@@ -1,24 +1,35 @@
 import React from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, RadialBarChart, RadialBar } from "recharts";
 import { UserPlus, ShieldCheck, TrendingUp, BarChart as BarChartIcon } from "lucide-react";
-
-// ✅ Dummy Data for Recruitment
+const chartColors = [
+  "#8884d8", // Muted Purple
+  "#82ca9d", // Soft Green
+  "#f2c57c", // Warm Sand
+  "#6a8caf", // Steel Blue
+  "#d4a5a5", // Soft Rose
+  "#a28bd3", // Lavender
+  "#ff9a76", // Muted Coral
+  "#74b49b", // Muted Teal
+  "#c08497", // Mauve
+  "#b0a8b9" // Dusty Lilac
+  ];
+// ✅ Updated Dummy Data for Recruitment
 const recruitmentData = [
-  { name: "Forensic Experts", value: 15, color: "#4CAF50" },
-  { name: "Analysts", value: 10, color: "#FF9800" },
-  { name: "Technicians", value: 8, color: "#03A9F4" },
+  { name: "Forensic Experts", value: 15, color: chartColors[0] }, // Muted Purple
+  { name: "Analysts", value: 10, color: chartColors[1] }, // Warm Sand
+  { name: "Technicians", value: 8, color: chartColors[2] }, // Steel Blue
 ];
 
-// ✅ Dummy Data for Cyber Forensic Advancements
+// ✅ Updated Dummy Data for Cyber Forensic Advancements
 const cyberForensicData = [
-  { name: "AI in Forensics", value: 85, color: "#4CAF50" },
-  { name: "Cloud Evidence Analysis", value: 75, color: "#FF9800" },
-  { name: "Blockchain Security", value: 65, color: "#03A9F4" },
-  { name: "Automation", value: 90, color: "#E91E63" },
+  { name: "AI in Forensics", value: 85, color: chartColors[3] }, // Soft Rose
+  { name: "Cloud Evidence Analysis", value: 75, color: chartColors[4] }, // Lavender
+  { name: "Blockchain Security", value: 65, color: chartColors[5] }, // Muted Coral
+  { name: "Automation", value: 90, color: chartColors[6] }, // Muted Teal
 ];
 
-// ✅ Dummy Data for Operational Efficiency (Gauge Chart)
-const efficiencyData = [{ name: "Compliance", value: 92, fill: "#6a0dad" }];
+// ✅ Updated Dummy Data for Operational Efficiency (Gauge Chart)
+const efficiencyData = [{ name: "Compliance", value: 92, fill: chartColors[7] }]; // Mauve
 
 const ForensicStrengtheningInitiatives = () => {
   return (

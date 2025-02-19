@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   LineChart, Line, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis
 } from 'recharts';
 
@@ -32,7 +32,18 @@ const userFeedbackData = [
 ];
 
 // Custom colors for visualization
-const colorPalette = ['#82ca9d', '#FF6347', '#8884d8', '#66c2a5'];
+const chartColors = [
+  "#8884d8", // Muted Purple
+  "#82ca9d", // Soft Green
+  "#f2c57c", // Warm Sand
+  "#6a8caf", // Steel Blue
+  "#d4a5a5", // Soft Rose
+  "#a28bd3", // Lavender
+  "#ff9a76", // Muted Coral
+  "#74b49b", // Muted Teal
+  "#c08497", // Mauve
+  "#b0a8b9"  // Dusty Lilac
+];
 
 const CourtTab5 = () => {
   return (
@@ -50,7 +61,7 @@ const CourtTab5 = () => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="progress" stackId="a" fill="#82ca9d" />
+              <Bar dataKey="progress" stackId="a" fill={chartColors[0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -65,7 +76,7 @@ const CourtTab5 = () => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="progress" stroke="#FF6347" />
+              <Line type="monotone" dataKey="progress" stroke={chartColors[1]} strokeWidth={2} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -78,8 +89,8 @@ const CourtTab5 = () => {
               <PolarGrid />
               <PolarAngleAxis dataKey="subject" />
               <PolarRadiusAxis />
-              <Radar name="Adoption Rate" dataKey="adoption" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-              <Radar name="Satisfaction Rate" dataKey="satisfaction" stroke="#66c2a5" fill="#66c2a5" fillOpacity={0.6} />
+              <Radar name="Adoption Rate" dataKey="adoption" stroke={chartColors[0]} fill={chartColors[0]} fillOpacity={0.6} />
+              <Radar name="Satisfaction Rate" dataKey="satisfaction" stroke={chartColors[1]} fill={chartColors[1]} fillOpacity={0.6} />
             </RadarChart>
           </ResponsiveContainer>
         </div>

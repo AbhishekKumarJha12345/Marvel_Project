@@ -29,8 +29,19 @@ const readinessData = [
 ];
 
 // Colors for Pie chart segments
-const COLORS = ['#8884d8', '#82ca9d', '#FFBB28', '#FF8042', '#FF6347'];
-
+// const COLORS = ['#8884d8', '#82ca9d', '#FFBB28', '#FF8042', '#FF6347'];
+const COLORS = [
+  "#8884d8", // Muted Purple
+  "#82ca9d", // Soft Green
+  "#f2c57c", // Warm Sand
+  "#6a8caf", // Steel Blue
+  "#d4a5a5", // Soft Rose
+  "#a28bd3", // Lavender
+  "#ff9a76", // Muted Coral
+  "#74b49b", // Muted Teal
+  "#c08497", // Mauve
+  "#b0a8b9" // Dusty Lilac
+];
 const VideoConferencingDashboard = () => {
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto">

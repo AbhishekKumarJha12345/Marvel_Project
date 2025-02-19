@@ -29,11 +29,22 @@ const dataRecruitment = [
   { category: "Contract Basis (Hired)", value: 336 },
   { category: "Contract Basis (In Progress)", value: 189 },
 ];
-
-const COLORS_MOUS = ["#4CAF50", "#FFC107", "#FF9800", "#F44336"];
-const COLORS_INFRA = ["#2196F3", "#3F51B5", "#673AB7"];
-const COLORS_RESOURCE = ["#009688", "#00BCD4", "#03A9F4"];
-const COLORS_RECRUIT = ["#8BC34A", "#CDDC39", "#FFEB3B", "#FFC107", "#FF9800", "#FF5722", "#795548"];
+const chartColors = [
+  "#8884d8", // Muted Purple
+  "#82ca9d", // Soft Green
+  "#f2c57c", // Warm Sand
+  "#6a8caf", // Steel Blue
+  "#d4a5a5", // Soft Rose
+  "#a28bd3", // Lavender
+  "#ff9a76", // Muted Coral
+  "#74b49b", // Muted Teal
+  "#c08497", // Mauve
+  "#b0a8b9" // Dusty Lilac
+  ];
+// const COLORS_MOUS = chartColors
+// const COLORS_INFRA = chartColors
+// const COLORS_RESOURCE = chartColors
+// const COLORS_RECRUIT = chartColors
 
 export default function ForensicDashboard() {
   return (
@@ -54,7 +65,7 @@ export default function ForensicDashboard() {
               <Legend />
               <Bar dataKey="count" fill="#8884d8" barSize={50} />
               {dataInfrastructure.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS_INFRA[index % COLORS_INFRA.length]} />
+                <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
               ))}
             </BarChart>
           </ResponsiveContainer>
@@ -104,7 +115,7 @@ export default function ForensicDashboard() {
                 label
               >
                 {dataMoUs.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS_MOUS[index % COLORS_MOUS.length]} />
+                  <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
                 ))}
               </Pie>
               <Tooltip />
