@@ -18,7 +18,7 @@ function Firchargesheets() {
     try {
       const [response1, response2] = await Promise.all([
         axiosInstance.get('/live_data?type=fir_2'),
-        axiosInstance.get('/live_data?type=fir_3'),
+        axiosInstance.get('/live_data?type=section'),
       ]);
 
       console.log(response1.data, 'FIR2 Data ----------');
@@ -119,7 +119,7 @@ function Firchargesheets() {
         {activeTab === 'home' ? (
           <div className="col-6">
           <div className="card shadow-sm bg-white">
-            <div className="card-body" style={{paddingBottom:"5rem",display:"flex",flexDirection:"column",gap:"1rem"}}>
+            <div className="card-body" style={{padding:"24px",display:"flex",flexDirection:"column",gap:"1rem"}}>
               {/* <PoliceChargeSheet apidata={trainingData}/> */}
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-semibold text-center flex-grow">
@@ -135,6 +135,12 @@ function Firchargesheets() {
                 >
                   Add On
                 </button>
+                 {/* Download Report Button */}
+      {/* <div className="mt-4"> */}
+        <button className="bg-green-600 text-white px-4 py-2 rounded-lg ml-4" onClick={downloadReport}>
+          Download Charge Sheet Report
+        </button>
+      {/* </div> */}
               </div>
               <CaseStatus />
               <br/>
@@ -153,12 +159,7 @@ function Firchargesheets() {
   <ModalComponent open={showModal} type='fir_2'  onClose={() => setShowModal(false)} />
 
 
-      {/* Download Report Button */}
-      <div className="mt-4">
-        <button className="bg-green-600 text-white px-4 py-2 rounded-lg" onClick={downloadReport}>
-          Download Charge Sheet Report
-        </button>
-      </div>
+     
     </div>
   );
 }
