@@ -1,58 +1,12 @@
-// import React, { useState } from "react";
-// import { Navbar, Container, Tab, Tabs } from "react-bootstrap";
-// // import Prosecution from "./criminal/Prosecution";
-// import Prosecution from "./Prosecution";
-
-// import Home from "./Home";
-// import Carousel from "./Carousel";
-
-// import 'bootstrap/dist/css/bootstrap.min.css';
-// // import './App.css'; // Import custom CSS for additional styling
-
-// const CriminalPages = () => {
-//   const [key, setKey] = useState("home");
-
-//   return (
-//     <div>
-//       {/* <Navbar variant="light" expand="lg" style={{background:"#f0f0f0"}}>
-//         <Container>
-//           <Navbar.Brand href="#home">Criminal Management</Navbar.Brand>
-//         </Container>
-//       </Navbar> */}
-
-//       <Container className="mt-4">
-//         <Tabs
-//           id="controlled-tab-example"
-//           activeKey={key}
-//           onSelect={(k) => setKey(k)}
-//           className="mb-3"
-//           fill
-//         >
-//           <Tab eventKey="home" title="Home">
-//             <Home />
-//           </Tab>
-//           <Tab eventKey="prosecution" title="Prosecution">
-//             <Prosecution />
-//           </Tab>
-//           <Tab eventKey="carousal" title="Carousal">
-//             <Carousel />
-//           </Tab>
-//         </Tabs>
-//       </Container>
-//     </div>
-//   );
-// };
-
-// export default CriminalPages;
-
 import React from "react";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 
 import Prosecution from "./Prosecution";
-import ProsecutionPDF from "../../assets/Prosecutor_Statistics.pdf"
+import ProsecutionPDF from "../../assets/Summary_Report_Final.pdf";
 import Home from "./Home";
 import Carousel from "./Carousel";
 
@@ -92,8 +46,16 @@ export default function CriminalPages() {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (_, newValue) => {
-    console.log("new value", newValue);
     setValue(newValue);
+  };
+
+  const handleDownload = () => {
+    const link = document.createElement("a");
+    link.href = ProsecutionPDF;
+    link.download = "Prosecutor_Statistics.pdf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -106,7 +68,15 @@ export default function CriminalPages() {
         marginTop: "0",
       }}
     >
-      <Box sx={{ borderBottom: 0, borderColor: "#dbdfed" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          borderBottom: 0,
+          borderColor: "#dbdfed",
+        }}
+      >
         <Tabs
           value={value}
           onChange={handleChange}
@@ -152,7 +122,30 @@ export default function CriminalPages() {
             />
           ))}
         </Tabs>
+
+        {/* Show Export Button only in Home Tab */}
+        {value === 0 && (
+          <Button
+            variant="contained"
+            onClick={handleDownload}
+            sx={{
+              backgroundColor: "transparent",
+              color: "#65558F",
+              border: "2px solid #65558F",
+              padding: "5px 9px",
+              borderRadius: "8px",
+              "&:hover": {
+                backgroundColor: "#65558F",
+                color: "white",
+              },
+            }}
+          >
+            Export
+          </Button>
+        )}
+
       </Box>
+
       {tabData.map((tab, index) => (
         <CustomTabPanel key={index} value={value} index={index}>
           {tab.component}
