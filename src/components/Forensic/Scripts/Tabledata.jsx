@@ -49,7 +49,7 @@ export default function Tabledata() {
 
   return (
     <div className="mt-6">
-      <h1 className="text-2xl font-bold mb-6">Forensic Development Dashboard</h1>
+      {/* <h1 className="text-2xl font-bold mb-6">Forensic Development Dashboard</h1> */}
 
       {/* Bar Chart for Monthly Cases & Exhibits Overview */}
       <div className="bg-white p-4 rounded-xl shadow-md mt-6">

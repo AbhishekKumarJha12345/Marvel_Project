@@ -83,7 +83,32 @@ In conclusion, over the eight-month period, there has been a decrease in the num
       `
     }
   ];
-
+  const highlightAdjectives = (text, pdf, x, y) => {
+    const words = text.split(" ");
+    let currentX = x;
+    let currentY = y;
+    pdf.setFontSize(11);
+  
+    words.forEach((word) => {
+      const isAdjective = /\b(amazing|significant|highest|lowest|sharp|major|stable|best|worst|efficient|new|strong|weak|increasing|decreasing|increase|decrease|critical|improved|rapid|slow|better|worse|important|remarkable)\b/i.test(word);
+  
+      if (isAdjective) {
+        pdf.setFont("helvetica", "bold"); // Highlight adjective in bold
+      } else {
+        pdf.setFont("helvetica", "normal");
+      }
+  
+      if (currentX + pdf.getTextWidth(word) > 180) {
+        currentX = x;
+        currentY += 6; // Move to new line if needed
+      }
+  
+      pdf.text(word, currentX, currentY);
+      currentX += pdf.getTextWidth(word) + 3; // Move forward
+    });
+  
+    return currentY + 6; // Return new Y position
+  };
 const handleExportPoliceTraining = async () => {
   const pdf = new jsPDF("p", "mm", "a4"); // Create A4 size PDF
   const margin = 10;
@@ -107,41 +132,44 @@ const handleExportPoliceTraining = async () => {
   yPosition += 10;
 
   // Loop through exportDataDetails and add formatted text
+ 
+  
   exportDataDetails.forEach((item, index) => {
     pdf.setFontSize(14);
     pdf.setFont("helvetica", "bold");
     pdf.text(item.name, margin, yPosition);
     yPosition += 6;
-
+  
     pdf.setFontSize(11);
     pdf.setFont("helvetica", "normal");
-
-    // Properly format long text for PDF
+  
     const textLines = pdf.splitTextToSize(item.data, 180);
-    
-    // Check if text fits on the page, if not add a new page
-    let linesPerPage = 50; // Approximate lines per page
+    let linesPerPage = 50;
     let lineChunks = [];
-    
+  
     for (let i = 0; i < textLines.length; i += linesPerPage) {
       lineChunks.push(textLines.slice(i, i + linesPerPage));
     }
-    
+  
     lineChunks.forEach((chunk, chunkIndex) => {
       if (yPosition > 270) {
         pdf.addPage();
         yPosition = 20;
       }
-      pdf.text(chunk, margin, yPosition);
-      yPosition += chunk.length * 5 + 10; // Adjust spacing
+  
+      chunk.forEach((line) => {
+        yPosition = highlightAdjectives(line, pdf, margin, yPosition);
+      });
+  
+      yPosition += 10;
     });
-
-    // Add a separator for sections
+  
     if (index !== exportDataDetails.length - 1) {
       pdf.line(10, yPosition, 200, yPosition);
       yPosition += 10;
     }
   });
+  
 
   // Save the PDF
   pdf.save("Forensic_Department_Analysis.pdf");
