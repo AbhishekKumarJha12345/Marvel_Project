@@ -3,17 +3,17 @@ import { BiCube } from "react-icons/bi";
 import { AiTwotoneThunderbolt } from "react-icons/ai";
 import { TbTable } from "react-icons/tb";
 import { Home, FileText } from "lucide-react";
-import MasterTrainers from './Police/MasterTrainers';
-import Dashboard1 from './Forensic/Scripts/Dashboard1';
-import CriminalPages from './Prosecution/Criminalpages';
-import PoliceOfficers from './Police/PoliceOfficers';
-import Carousel from './Police/Carousel';
-import Forensicvisits from './Police/Forensicvisits';
-import Dashboard2 from './Court/CSS/Script/Dashboard2'
-import Firchargesheets from './Police/FIR/Chargesheets/Firchargesheets';
-import Efir from './Police/FIR/Efir/Efir';
-import FirNewcriminal from './Police/FIR/Newcriminal/FirNewcriminal';
-import FirZero from './Police/FIR/Zerofir/FirZero';
+import MasterTrainers from "./Police/MasterTrainers";
+import Dashboard1 from "./Forensic/Scripts/Dashboard1";
+import CriminalPages from "./Prosecution/Criminalpages";
+import PoliceOfficers from "./Police/PoliceOfficers";
+import Carousel from "./Police/Carousel";
+import Forensicvisits from "./Police/Forensicvisits";
+import Dashboard2 from "./Court/CSS/Script/Dashboard2";
+import Firchargesheets from "./Police/FIR/Chargesheets/Firchargesheets";
+import Efir from "./Police/FIR/Efir/Efir";
+import FirNewcriminal from "./Police/FIR/Newcriminal/FirNewcriminal";
+import FirZero from "./Police/FIR/Zerofir/FirZero";
 import Correctionalservicetab from "./Correctional Services/Correctionalservicetab";
 import "../styles/Dashboard.scss";
 import axiosInstance from "../utils/axiosInstance";
@@ -46,9 +46,12 @@ import {
   MenuItem,
   Box,
   Typography,
-  IconButton,InputLabel,FormHelperText
+  IconButton,
+  InputLabel,
+  FormHelperText,
 } from "@mui/material";
-import ReportGencomp from "./ReportGen/ReportGenComp";import training from '../assets/police/training.svg'
+import ReportGencomp from "./ReportGen/ReportGenComp";
+import training from '../assets/police/training.svg'
 import forensicvisit from '../assets/police/forinsic_visit.svg'
 import fir from '../assets/police/fir.svg'
 import awareness from '../assets/police/awareness.svg'
@@ -56,7 +59,7 @@ import PoliceTraining from "./Police/PoliceTraining";
 
 
 
-const exportDataDetails = [
+const exporttrainingRefDetails = [
   {
     name: "Police Department",
     data: `
@@ -84,7 +87,7 @@ In the provided data, there are two sets of statistics related to court cases fo
  Overall Summary:  
 There has been a major decrease in pending, acquitted, and convicted cases from September 2021 to February 2025.  
 However, more data would be needed to confirm if this trend is long-term or an anomaly.
-    `
+    `,
   },
   {
     name: "Forensic Department",
@@ -114,12 +117,11 @@ Overall Trends & Recommendations:
   - Enhance processing efficiency
   - Prioritize high-impact cases
   - Reduce case-processing time
-    `
-  }
+    `,
+  },
 ];
 
 export default function Dashboard({ users }) {
-
   const [isOpen, setIsOpen] = useState(false);
   const [activeSubMenu, setActiveSubMenu] = useState(null);
   const [activeSection, setActiveSection] = useState(null); // Unified state for all sections
@@ -162,88 +164,87 @@ export default function Dashboard({ users }) {
     };
   }, []);
 
-  const [trainingData, setTrainingData] = useState('')
+  const [trainingData, setTrainingData] = useState("");
   const getTrainingData = async () => {
     try {
-      const response = await axiosInstance.get('/live_data')
-      console.log(response.data, 'Trainig data response ----------')
-      setTrainingData(response.data)
-
+      const response = await axiosInstance.get("/live_data");
+      console.log(response.data, "Trainig data response ----------");
+      setTrainingData(response.data);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
   useEffect(() => {
     // getTrainingData();
   }, []);
 
+  const trainingRef = useRef(null); // Reference to PoliceTraining component
 
-const trainingRef = useRef(null); // Reference to PoliceTraining component
-
-const handleExportPoliceTraining = async () => {
-  const pdf = new jsPDF("p", "mm", "a4"); // Create A4 size PDF
-  const margin = 10;
-  let yPosition = 20; // Start position for text
+  const handleExportPoliceTraining = async () => {
+    const pdf = new jsPDF("p", "mm", "a4"); // Create A4 size PDF
+    const margin = 10;
+    let yPosition = 20; // Start position for text
   
-  // Capture PoliceTraining as an image
-  if (trainingRef.current) {
-    const canvas = await html2canvas(trainingRef.current, { scale: 2 });
-    const imgData = canvas.toDataURL("image/png");
-
-    const imgWidth = 180; // Fit image width into A4
-    const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
-
-    pdf.addImage(imgData, "PNG", margin, yPosition, imgWidth, imgHeight);
-    yPosition += imgHeight + 10; // Move below image
-  }
-
-  // Add a separator
-  pdf.setDrawColor(0);
-  pdf.line(10, yPosition, 200, yPosition);
-  yPosition += 10;
-
-  // Loop through exportDataDetails and add formatted text
-  exportDataDetails.forEach((item, index) => {
-    pdf.setFontSize(14);
-    pdf.setFont("helvetica", "bold");
-    pdf.text(item.name, margin, yPosition);
-    yPosition += 6;
-
-    pdf.setFontSize(11);
-    pdf.setFont("helvetica", "normal");
-
-    // Properly format long text for PDF
-    const textLines = pdf.splitTextToSize(item.data, 180);
-    
-    // Check if text fits on the page, if not add a new page
-    let linesPerPage = 50; // Approximate lines per page
-    let lineChunks = [];
-    
-    for (let i = 0; i < textLines.length; i += linesPerPage) {
-      lineChunks.push(textLines.slice(i, i + linesPerPage));
+    // 📌 Capture PoliceTraining component as an image
+    if (trainingRef.current) {
+      const canvas = await html2canvas(trainingRef.current, { scale: 2 });
+      const imgData = canvas.toDataURL("image/png");
+  
+      const imgWidth = 180; // Fit image width into A4
+      const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
+  
+      pdf.addImage(imgData, "PNG", margin, yPosition, imgWidth, imgHeight);
+      yPosition += imgHeight + 10; // Move below image
     }
-    
-    lineChunks.forEach((chunk, chunkIndex) => {
-      if (yPosition > 270) {
+  
+    // 📌 Add a separator
+    pdf.setDrawColor(0);
+    pdf.line(10, yPosition, 200, yPosition);
+    yPosition += 10;
+  
+    // 📌 Loop through exporttrainingRefDetails and add formatted text
+    exporttrainingRefDetails.forEach((item, index) => {
+      pdf.setFontSize(14);
+      pdf.setFont("helvetica", "bold");
+  
+      // 🟢 Check if title fits, else move to a new page
+      if (yPosition + 10 > 280) {
         pdf.addPage();
         yPosition = 20;
       }
-      pdf.text(chunk, margin, yPosition);
-      yPosition += chunk.length * 5 + 10; // Adjust spacing
+      pdf.text(item.name, margin, yPosition);
+      yPosition += 6;
+  
+      pdf.setFontSize(11);
+      pdf.setFont("helvetica", "normal");
+  
+      // 📌 Properly format long text for PDF
+      const textLines = pdf.splitTextToSize(item.data, 180);
+      let pageHeight = 280; // Usable page height
+      let lineHeight = 6; // Space between lines
+  
+      textLines.forEach((line) => {
+        // 🟢 Check if line fits on the current page
+        if (yPosition + lineHeight > pageHeight) {
+          pdf.addPage(); // Add a new page
+          yPosition = 20; // Reset yPosition for new page
+        }
+        pdf.text(line, margin, yPosition);
+        yPosition += lineHeight;
+      });
+  
+      // 📌 Add separator for sections
+      if (index !== exporttrainingRefDetails.length - 1) {
+        pdf.line(10, yPosition, 200, yPosition);
+        yPosition += 10;
+      }
     });
-
-    // Add a separator for sections
-    if (index !== exportDataDetails.length - 1) {
-      pdf.line(10, yPosition, 200, yPosition);
-      yPosition += 10;
-    }
-  });
-
-  // Save the PDF
-  pdf.save("PoliceTraining_Report.pdf");
-};
-
-
+  
+    // 📌 Save the PDF
+    pdf.save("PoliceTraining_Report.pdf");
+  };
+  
+ 
 
   const contentMap = {
     "training"              : <div className="content"><div className="ContentSpace"><h1 className="heading">Police - Training</h1><button className="ExportButton" onClick={handleExportPoliceTraining}>Export</button></div><PoliceTraining ref={trainingRef}/></div>,
@@ -259,12 +260,10 @@ const handleExportPoliceTraining = async () => {
     "efir"                  : <div className="content"><Efir /></div>,
     "admin": <div className="content"><Adminviewe /> </div>,
   };
-const [openmodal,setOpenmodal]=useState(false)
-  const openreportmodal =()=>{
-    setOpenmodal(true)
-
-  }
-
+  const [openmodal, setOpenmodal] = useState(false);
+  const openreportmodal = () => {
+    setOpenmodal(true);
+  };
 
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -528,142 +527,254 @@ doc.text("In summary, the data reveals that there is a general increase in the n
 
             users === "chief secretary" ? (
               <div className="nav_main" ref={dropdownRef}>
-                <button className={`nav-link ${isOpen ? "active" : ""}`} onClick={toggleDropdown}>
+                <button
+                  className={`nav-link ${isOpen ? "active" : ""}`}
+                  onClick={toggleDropdown}
+                >
                   <BiCube size={25} /> Police
                 </button>
 
                 {isOpen && (
                   <div className="dropdown">
-                    <button className="dropdown-item" onClick={() => handleSectionClick("training")}>
+                    <button
+                      className="dropdown-item"
+                      onClick={() => handleSectionClick("training")}
+                    >
                       Training
                     </button>
-                    <button className="dropdown-item" onClick={() => toggleSubMenu(1)}>FIR's</button>
+                    <button
+                      className="dropdown-item"
+                      onClick={() => toggleSubMenu(1)}
+                    >
+                      FIR's
+                    </button>
 
                     {activeSubMenu === 1 && (
                       <div className="sub-dropdown">
-                        <button className="sub-dropdown-item" onClick={() => handleSectionClick("newcriminal")}>
+                        <button
+                          className="sub-dropdown-item"
+                          onClick={() => handleSectionClick("newcriminal")}
+                        >
                           A New Criminal Law
                         </button>
-                        <button className="sub-dropdown-item" onClick={() => handleSectionClick("chargesheet")}>
+                        <button
+                          className="sub-dropdown-item"
+                          onClick={() => handleSectionClick("chargesheet")}
+                        >
                           Charge Sheet
                         </button>
-                        <button className="sub-dropdown-item" onClick={() => handleSectionClick("zerofir")}>
+                        <button
+                          className="sub-dropdown-item"
+                          onClick={() => handleSectionClick("zerofir")}
+                        >
                           Zero FIR
                         </button>
-                        <button className="sub-dropdown-item" onClick={() => handleSectionClick("efir")}>
+                        <button
+                          className="sub-dropdown-item"
+                          onClick={() => handleSectionClick("efir")}
+                        >
                           E FIR
                         </button>
                       </div>
                     )}
-                    <button className="dropdown-item" onClick={() => handleSectionClick("awareness/campaign")}>
+                    <button
+                      className="dropdown-item"
+                      onClick={() => handleSectionClick("awareness/campaign")}
+                    >
                       Awareness/Campaign
                     </button>
-                    <button className="dropdown-item" onClick={() => handleSectionClick("forensic/visits")}>
+                    <button
+                      className="dropdown-item"
+                      onClick={() => handleSectionClick("forensic/visits")}
+                    >
                       Forensic Visits
                     </button>
                   </div>
                 )}
               </div>
-            )
-              :
-              (
+            ) : (
+              <div className="nav_main" style={{ display: "flex" }}>
+                <button
+                  className={`nav-link ${
+                    activeSection?.section === "training" ? "active" : ""
+                  }`}
+                  onClick={() => handleSectionClick("training")}
+                >
+                  <img
+                    src={training}
+                    alt="Training Icon"
+                    className="nav-icon"
+                  />{" "}
+                  Training
+                </button>
+                <div className="nav-divider"></div>
+                <button
+                  className={`nav-link ${
+                    ["newcriminal", "chargesheet", "zerofir", "efir"].includes(
+                      activeSection?.section
+                    )
+                      ? "active"
+                      : ""
+                  }`}
+                  onClick={() => toggleSubMenu(1)}
+                >
+                  {" "}
+                  <img
+                    src={fir}
+                    alt="Training Icon"
+                    className="nav-icon"
+                  />{" "}
+                  FIR's ▾{" "}
+                </button>
+                <div className="nav-divider"></div>
 
-                <div className="nav_main" style={{ display: "flex" }}>
-                  <button className={`nav-link ${activeSection?.section === 'training' ? 'active' : ''}`} onClick={() => handleSectionClick("training")}><img src={training} alt="Training Icon" className="nav-icon" /> Training</button>
-                  <div className="nav-divider"></div>
-                  <button className={`nav-link ${['newcriminal', 'chargesheet', 'zerofir', 'efir'].includes(activeSection?.section) ? 'active' : ''}`} onClick={() => toggleSubMenu(1)}> <img src={fir} alt="Training Icon" className="nav-icon" /> FIR's ▾ </button>
-                  <div className="nav-divider"></div>
-
-                  {activeSubMenu === 1 && (
-                    <div className="dropdown" style={{ top: "140px", left: "7rem" }}>
-
-                      <div className="sub-dropdown">
-                        <button className="sub-dropdown-item" onClick={() => handleSectionClick("newcriminal")}>
-                          A New Criminal Law
-                        </button>
-                        <button className="sub-dropdown-item" onClick={() => handleSectionClick("chargesheet")}>
-                          Charge Sheet
-                        </button>
-                        <button className="sub-dropdown-item" onClick={() => handleSectionClick("zerofir")}>
-                          Zero FIR
-                        </button>
-                        <button className="sub-dropdown-item" onClick={() => handleSectionClick("efir")}>
-                          E FIR
-                        </button>
-                      </div>
+                {activeSubMenu === 1 && (
+                  <div
+                    className="dropdown"
+                    style={{ top: "140px", left: "7rem" }}
+                  >
+                    <div className="sub-dropdown">
+                      <button
+                        className="sub-dropdown-item"
+                        onClick={() => handleSectionClick("newcriminal")}
+                      >
+                        A New Criminal Law
+                      </button>
+                      <button
+                        className="sub-dropdown-item"
+                        onClick={() => handleSectionClick("chargesheet")}
+                      >
+                        Charge Sheet
+                      </button>
+                      <button
+                        className="sub-dropdown-item"
+                        onClick={() => handleSectionClick("zerofir")}
+                      >
+                        Zero FIR
+                      </button>
+                      <button
+                        className="sub-dropdown-item"
+                        onClick={() => handleSectionClick("efir")}
+                      >
+                        E FIR
+                      </button>
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  <button className={`nav-link ${activeSection?.section === 'awareness/campaign' ? 'active' : ''}`} onClick={() => handleSectionClick("awareness/campaign")}>
-                    <img src={awareness} alt="Training Icon" className="nav-icon" />
-                    Awareness/Campaign
-                  </button>
+                <button
+                  className={`nav-link ${
+                    activeSection?.section === "awareness/campaign"
+                      ? "active"
+                      : ""
+                  }`}
+                  onClick={() => handleSectionClick("awareness/campaign")}
+                >
+                  <img
+                    src={awareness}
+                    alt="Training Icon"
+                    className="nav-icon"
+                  />
+                  Awareness/Campaign
+                </button>
 
-                  <div className="nav-divider"></div>
+                <div className="nav-divider"></div>
 
+                <button
+                  className={`nav-link ${
+                    activeSection?.section === "forensic/visits" ? "active" : ""
+                  }`}
+                  onClick={() => handleSectionClick("forensic/visits")}
+                >
+                  <img
+                    src={forensicvisit}
+                    alt="Training Icon"
+                    className="nav-icon"
+                  />{" "}
+                  Forensic Visits
+                </button>
+              </div>
+            ))}
 
-                  <button className={`nav-link ${activeSection?.section === 'forensic/visits' ? 'active' : ''}`} onClick={() => handleSectionClick("forensic/visits")}><img src={forensicvisit} alt="Training Icon" className="nav-icon" />  Forensic Visits</button>
-                </div>
+          {users === "chief secretary" ? (
+            <div className="nav-divider"></div>
+          ) : null}
 
-
-              )
-
-          )}
-
-          {users === 'chief secretary' ? <div className="nav-divider"></div> : null}
-
-
-          {(users === 'chief secretary' || users === 'prosecution') && (
-            <li className={`nav-link ${activeSection?.section === 'prosecution' ? 'active' : ''}`} onClick={() => handleSectionClick('prosecution')}>
+          {(users === "chief secretary" || users === "prosecution") && (
+            <li
+              className={`nav-link ${
+                activeSection?.section === "prosecution" ? "active" : ""
+              }`}
+              onClick={() => handleSectionClick("prosecution")}
+            >
               {/* <Home /> Prosecution */}
               <GavelIcon /> Prosecution
             </li>
           )}
 
-          {users === 'chief secretary' ? <div className="nav-divider"></div> : null}
+          {users === "chief secretary" ? (
+            <div className="nav-divider"></div>
+          ) : null}
 
-
-          {(users === 'chief secretary' || users === 'court') && (
-            <li className={`nav-link ${activeSection?.section === 'court' ? 'active' : ''}`} onClick={() => handleSectionClick('court')}>
+          {(users === "chief secretary" || users === "court") && (
+            <li
+              className={`nav-link ${
+                activeSection?.section === "court" ? "active" : ""
+              }`}
+              onClick={() => handleSectionClick("court")}
+            >
               {/* <TbTable size={25} /> Court */}
               <BalanceIcon size={25} /> Court
             </li>
           )}
 
-          {users === 'chief secretary' ? <div className="nav-divider"></div> : null}
+          {users === "chief secretary" ? (
+            <div className="nav-divider"></div>
+          ) : null}
 
-
-          {(users === 'chief secretary' || users === 'correctionalservices') && (
-            <li className={`nav-link ${activeSection?.section === 'correctionalservices' ? 'active' : ''}`} onClick={() => handleSectionClick('correctionalservices')}>
+          {(users === "chief secretary" ||
+            users === "correctionalservices") && (
+            <li
+              className={`nav-link ${
+                activeSection?.section === "correctionalservices"
+                  ? "active"
+                  : ""
+              }`}
+              onClick={() => handleSectionClick("correctionalservices")}
+            >
               {/* <AiTwotoneThunderbolt /> Correctional Services */}
               <FluorescentIcon /> Correctional Services
             </li>
           )}
 
+          {users === "chief secretary" ? (
+            <div className="nav-divider"></div>
+          ) : null}
 
-          {users === 'chief secretary' ? <div className="nav-divider"></div> : null}
-
-
-          {(users === 'chief secretary' || users === 'forensic') && (
-              <>
-                {/* Forensic Science Section */}
-                <li 
-                  className={`nav-link ${activeSection?.section === 'science' ? 'active' : ''}`} 
-                  onClick={() => handleSectionClick('science')}
-                >
-                  <BiotechIcon size={25} /> Forensic Science Department
-                </li>
-                <li 
-                  className={`nav-link ${activeSection?.section === 'report' ? 'active' : ''}`} 
-                  onClick={() => {handleSectionClick('report');
-                    generatePDF()}}
-                >
-                  <PictureAsPdfIcon size={25} /> Generate Report
-                </li>
-              </>
-            )}
-
-
+          {(users === "chief secretary" || users === "forensic") && (
+            <>
+              {/* Forensic Science Section */}
+              <li
+                className={`nav-link ${
+                  activeSection?.section === "science" ? "active" : ""
+                }`}
+                onClick={() => handleSectionClick("science")}
+              >
+                <BiotechIcon size={25} /> Forensic Science Department
+              </li>
+              <li
+                className={`nav-link ${
+                  activeSection?.section === "report" ? "active" : ""
+                }`}
+                onClick={() => {
+                  handleSectionClick("report");
+                  generatePDF();
+                }}
+              >
+                <PictureAsPdfIcon size={25} /> Generate Report
+              </li>
+            </>
+          )}
         </ul>
       </div>
 
@@ -685,11 +796,7 @@ doc.text("In summary, the data reveals that there is a general increase in the n
                   : contentMap["correctionalservices"])
       }
 
-      {
-        openmodal && 
-        <ReportGencomp />
-      }
-
+      {openmodal && <ReportGencomp />}
     </div>
   );
 }
