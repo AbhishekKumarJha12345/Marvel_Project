@@ -265,85 +265,149 @@ const [openmodal,setOpenmodal]=useState(false)
 
   const generatePDF = () => {
     const doc = new jsPDF();
-
+  
     // Add background image
     const bgImg = new Image();
     bgImg.src = background;
-    doc.addImage(bgImg, "PNG", 0, 0, 210, 297); // A4 size background
-
+    doc.addImage(bgImg, "PNG", 0, 0, 210, 297);
+  
     // Title
     doc.setFontSize(18);
-    doc.setTextColor(255, 255, 255); // White color
+    doc.setTextColor(255, 255, 255);
     doc.text("Interoperable Criminal Justice System Report", 40, 10);
-
+  
     // Add logo
     const img = new Image();
     img.src = pdflogo;
     doc.addImage(img, "PNG", 80, 16, 45, 30);
-
+  
     // Summary Section
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
-
+  
     doc.text("Police Department:", 10, 90);
     doc.setFont("helvetica", "normal");
-
     doc.text("In the provided data, there are two sets of statistics related to court cases for the months September 2021 and February 2025:", 10, 110, { maxWidth: 190 });
     doc.text("- Total charge-sheeted: Both months have a total of 7 charges sheeted, but it's not clear if this is the same set of cases or different ones.", 10, 130, { maxWidth: 190 });
     doc.text("- Pending Cases: In September 2021, there were 432 pending cases, while in February 2025, there were 7 pending cases.", 10, 150, { maxWidth: 190 });
     doc.text("- Acquittals: In September 2021, there were 44 acquitted cases, while in February 2025, there were 7 acquitted cases.", 10, 170, { maxWidth: 190 });
     doc.text("- Convictions: In September 2021, there were 233 convicted cases, while in February 2025, there were only 7 convicted cases.", 10, 190, { maxWidth: 190 });
     doc.text("- In summary, it appears that there has been a significant reduction in the number of pending, acquitted, and convicted cases from September 2021 to February 2025.", 10, 210, { maxWidth: 190 });
-
+  
     // Footer - Page number
     doc.setFontSize(10);
-    doc.setTextColor(255, 255, 255); // White color
+    doc.setTextColor(255, 255, 255);
     doc.text(`Page 1`, 180, 290);
-
+  
     // Add new page
     doc.addPage();
-    doc.addImage(bgImg, "PNG", 0, 0, 210, 297); // A4 size background
-
+    doc.addImage(bgImg, "PNG", 0, 0, 210, 297);
+  
     doc.setFontSize(18);
-    doc.setTextColor(255, 255, 255); // White color
+    doc.setTextColor(255, 255, 255);
     doc.text("Interoperable Criminal Justice System Report", 40, 10);
-
-    const img2 = new Image();
-    img2.src = pdflogo;
-    doc.addImage(img2, "PNG", 80, 16, 45, 30);
-
+  
+    doc.addImage(img, "PNG", 80, 16, 45, 30);
+  
     // Forensic Department Performance
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
-
+  
     doc.text("Forensic Department:", 10, 90);
     doc.setFont("helvetica", "normal");
-
+  
     doc.text("Analysis of Forensic Department Performance from July 2024 to January 2025 Over the six months analyzed, the forensic department exhibited some notable trends in case and exhibit disposal, intake, and pending status.", 10, 110, { maxWidth: 190 });
     doc.text("- Disposal cases: Highest in October 2024 (32,313), lowest in July 2024 (21,122).", 10, 130, { maxWidth: 190 });
     doc.text("- Pending cases: Peaked in August 2024 (186,321), steadily decreased to January 2025 (183,394).", 10, 150, { maxWidth: 190 });
-    doc.text("- Received cases: Highest intake in December 2024 (25,258), lowest in July 2024 (22,211).", 10, 160, { maxWidth: 190 });
-    doc.text("- Disposal exhibits: Highest in October 2024 (59,104), lowest in July 2024 (42,617).", 10, 170, { maxWidth: 190 });
-    doc.text("- Pending exhibits: Peaked in August 2024 (6,65,143), declined to January 2025 (6,74,863).", 10, 180, { maxWidth: 190 });
-    doc.text("- Received exhibits: Highest in December 2024 (53,470), lowest in July 2024 (49,066).", 10, 190, { maxWidth: 190 });
-    doc.text("- Overall Trends: Increasing pending cases despite fluctuations suggests a processing bottleneck.", 10, 200, { maxWidth: 190 });
-    doc.text("  Consider increasing staffing levels, streamlining procedures, and prioritizing high-impact cases.", 10, 210, { maxWidth: 190 });
-
+  
     // Footer - Page number
-
     doc.setFontSize(10);
-    doc.setTextColor(255, 255, 255); // White color
+    doc.setTextColor(255, 255, 255);
+    doc.text(`Page 2`, 180, 290);
+  
+    // Add third page
+//     doc.addPage();
+//     doc.addImage(bgImg, "PNG", 0, 0, 210, 297);
+  
+//     doc.setFontSize(18);
+//     doc.setTextColor(255, 255, 255);
+//     doc.text("Interoperable Criminal Justice System Report", 40, 10);
+  
+//     doc.addImage(img, "PNG", 80, 16, 45, 30);
+  
+//     // Public Prosecutor Trends
+//     doc.setFont("helvetica", "bold");
+//     doc.setFontSize(12);
+//     doc.setTextColor(0, 0, 0);
+  
+//     doc.text("Prosecution", 10, 90);
+//     doc.setFont("helvetica", "normal");
+  
+//     doc.text("In the given dataset from January 2024 to October 2024, I have analyzed and summarized the monthly trends of public prosecutors categorized as Deputy Director, Assistant Director Public Prosecutor, Additional Public Prosecutor, Assistant Public Prosecutors, ADPP Prosecutors, Additional Public Prosecutors, and Assistant Public Prosecutors.", 10, 10, { maxWidth: 190 });
+
+// doc.text("Overall, it is observed that the number of public prosecutors in each category fluctuates across different months, with a slight increase in the number of prosecutors towards the end of the year (October 2024).", 10, 40, { maxWidth: 190 });
+
+// doc.text("Here are some key insights based on the data:", 10, 60, { maxWidth: 190 });
+
+// doc.text("- Deputy Director: The number of deputy directors remains relatively stable from January to October 2024, with only slight fluctuations. In July, there is a notable decrease in the number of deputy directors compared to the previous months.", 10, 70, { maxWidth: 190 });
+
+// doc.text("- Assistant Director Public Prosecutor: There's a gradual increase in the number of Assistant Directors from January to October, with a significant rise observed in September and October.", 10, 100, { maxWidth: 190 });
+
+// doc.text("- Additional Public Prosecutor: The number of Additional Public Prosecutors follows a similar trend as the Assistant Director Public Prosecutor, with a slight decrease in February and March followed by an increase from April to October.", 10, 130, { maxWidth: 190 });
+
+// doc.text("- Assistant Public Prosecutors: There is a steady increase in the number of assistant public prosecutors across all months, except for a small drop in January compared to December 2023.", 10, 160, { maxWidth: 190 });
+
+// doc.text("- ADPP Prosecutors: The number of ADPP Prosecutors exhibits a fluctuating trend throughout the year, with an increase observed from June to October.", 10, 190, { maxWidth: 190 });
+
+// doc.text("- Additional Public Prosecutors: A consistent upward trend can be observed for this category, starting from January and reaching a peak in October 2024.", 10, 220, { maxWidth: 190 });
+
+// doc.text("- Assistant Public Prosecutors: The number of assistant public prosecutors displays an increasing trend from January to October, with some minor fluctuations along the way.", 10, 250, { maxWidth: 190 });
+
+// doc.text("In summary, the data reveals that there is a general increase in the number of public prosecutors over the period analyzed, with certain categories showing more significant rises than others. Additionally, the data suggests a possible reallocation or promotion of resources within the prosecutor ranks during specific months (July for Deputy Director and September/October for Assistant Directors, Additional Public Prosecutors, and ADPP Prosecutors). Further investigation would be needed to confirm these trends and their potential implications.", 10, 280, { maxWidth: 190 });
+
+// doc.text("Heading 4: Overall Summary", 10, 320);
+
+// doc.text("- The data reveals a general increase in the number of public prosecutors over the period analyzed, with some categories showing significant rises.", 10, 340, { maxWidth: 190 });
+
+// doc.text("- Trends suggest reallocation or promotion of resources within the prosecutor ranks.", 10, 360, { maxWidth: 190 });
+
+
+
+//     // Add new page
+//     doc.addPage();
+//     doc.addImage(bgImg, "PNG", 0, 0, 210, 297);
+  
+//     doc.setFontSize(18);
+//     doc.setTextColor(255, 255, 255);
+//     doc.text("Interoperable Criminal Justice System Report", 40, 10);
+  
+//     doc.addImage(img, "PNG", 80, 16, 45, 30);
+  
+//     // Forensic Department Performance
+//     doc.setFont("helvetica", "bold");
+//     doc.setFontSize(12);
+//     doc.setTextColor(0, 0, 0);
+  
+//     doc.text("Currectional Services:", 10, 90);
+//     doc.setFont("helvetica", "normal");
+  
+//     doc.text("Analysis of Forensic Department Performance from July 2024 to January 2025 Over the six months analyzed, the forensic department exhibited some notable trends in case and exhibit disposal, intake, and pending status.", 10, 110, { maxWidth: 190 });
+//     doc.text("- Disposal cases: Highest in October 2024 (32,313), lowest in July 2024 (21,122).", 10, 130, { maxWidth: 190 });
+//     doc.text("- Pending cases: Peaked in August 2024 (186,321), steadily decreased to January 2025 (183,394).", 10, 150, { maxWidth: 190 });
+  
+    // Footer - Page number
+    doc.setFontSize(10);
+    doc.setTextColor(255, 255, 255);
     doc.text("Generated on: " + new Date().toLocaleString(), 10, 290);
 
-    doc.setFontSize(10);
-    doc.setTextColor(255, 255, 255); // White color
-    doc.text(`Page 2`, 180, 290);
-
+    // doc.text(`Page 4`, 180, 290);
+  
     // Save PDF
     doc.save("Overall_Report.pdf");
-};
+  };
+  
 
 
 
