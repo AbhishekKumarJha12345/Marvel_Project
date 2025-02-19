@@ -2,6 +2,7 @@ import {React,useState} from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import ModalComponent from '../../ModalComponent';
+import FirBarGraph from './FirBarGraph';
 // Register the necessary chart components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -54,7 +55,7 @@ const PoliceFirs = ({apidata}) => {
   };
 
   return (
-    <div className="bg-white p-6 mx-auto rounded-lg w-[60%] h-[600px]">
+    <div className="bg-white p-6 mx-auto rounded-lg w-[100%] h-[600px]">
   <div className="flex justify-between items-center mb-8">
     <h1 className="text-4xl font-bold">FIRs New Criminal Laws</h1>
     <button
@@ -68,8 +69,10 @@ const PoliceFirs = ({apidata}) => {
       Add On
     </button>
   </div>
-  <div className="h-[500px] w-[500px]"> {/* Reduced height of chart */}
+  <div style={{height:"50vh",width:"100%",display:"flex"}}> {/* Reduced height of chart */}
     <Pie data={data} options={options} />
+  <FirBarGraph />
+
   </div>
   <ModalComponent open={showModal} type='fir_1'  onClose={() => setShowModal(false)} />
     </div>

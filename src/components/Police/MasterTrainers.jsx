@@ -8,12 +8,64 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointE
 
 const MasterTrainers = () => {
   const [trainingData, setTrainingData] = useState('');
+  const [lineChartData, setLineChartData] = useState({ labels: [], datasets: [] });
 
   const getTrainingData = async () => {
     try {
-      const response = await axiosInstance.get('/live_data');
-      console.log(response.data, 'Training data response ----------');
-      setTrainingData(response.data.latest_workshop);
+      const [response1, response2] = await Promise.all([
+        axiosInstance.get('/live_data'),
+        axiosInstance.get('/live_data?type=line')
+      ]);
+
+      console.log(response1.data, 'FIR2 Data ----------');
+      console.log(response2.data, 'Line Data ----------');
+
+      setTrainingData(response1.data.latest_workshop);
+
+      // Transform the line chart data
+      const transformedData = {
+        dates: [],
+        psi_sp_dcp_trained: [],
+        pc_asi_trained: []
+      };
+
+      response2.data.data_dict.forEach(entry => {
+        const date = new Date(entry.date).toLocaleDateString('en-GB', {
+          day: '2-digit', month: 'short', year: 'numeric'
+        });
+
+        if (!transformedData.dates.includes(date)) {
+          transformedData.dates.push(date);
+        }
+
+        if (entry.latest_training_psi_sp_dcp) {
+          transformedData.psi_sp_dcp_trained.push(parseInt(entry.latest_training_psi_sp_dcp.trained_officers));
+        }
+
+        if (entry.latest_training_pc_asi) {
+          transformedData.pc_asi_trained.push(parseInt(entry.latest_training_pc_asi.trained_officers));
+        }
+      });
+
+      setLineChartData({
+        labels: transformedData.dates,
+        datasets: [
+          {
+            label: 'PSI/SP/DCP Trained Officers',
+            data: transformedData.psi_sp_dcp_trained,
+            fill: false,
+            backgroundColor: '#007BFF',
+            borderColor: '#007BFF',
+          },
+          {
+            label: 'PC/ASI Trained Officers',
+            data: transformedData.pc_asi_trained,
+            fill: false,
+            backgroundColor: '#FF5733',
+            borderColor: '#FF5733',
+          }
+        ]
+      });
     } catch (error) {
       console.log(error);
     }
@@ -44,20 +96,6 @@ const MasterTrainers = () => {
     ],
   };
 
-  // Data for the Line Chart
-  const lineData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    datasets: [
-      {
-        label: 'Monthly Workshops',
-        data: trainingData ? trainingData.monthly_workshops || [] : [], // Assuming monthly_workshops is an array
-        fill: false,
-        backgroundColor: '#007BFF',
-        borderColor: '#007BFF',
-      },
-    ],
-  };
-
   // Chart options
   const options = {
     responsive: true,
@@ -78,7 +116,7 @@ const MasterTrainers = () => {
         </div>
         {/* Line Chart */}
         <div className="w-full lg:w-1/2 h-[400px] p-3 d-flex justify-center items-center">
-          <Line data={lineData} options={options} />
+          <Line data={lineChartData} options={options} />
         </div>
       </div>
     </div>

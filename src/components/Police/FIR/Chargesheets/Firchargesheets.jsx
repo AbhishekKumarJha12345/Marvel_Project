@@ -3,6 +3,8 @@ import PoliceChargeSheet from './PoliceChargeSheet'
 import Chargesheet from './Firstchargesheet';
 import Chargesheetstatus from './Chargesheetstatus'
 import axiosInstance from '../../../../utils/axiosInstance';
+import CaseStatus from './CaseStatus';
+import ChargeSheetGraph2 from './ChargeSheetGraph2';
 
 
 function Firchargesheets() {
@@ -56,8 +58,12 @@ useEffect(() => {
         {activeTab === 'home' ? (
           <div className="col-6">
           <div className="card shadow-sm bg-white">
-            <div className="card-body" style={{paddingBottom:"5rem"}}>
-              <PoliceChargeSheet apidata={trainingData}/>
+            <div className="card-body" style={{paddingBottom:"5rem",display:"flex",flexDirection:"column",gap:"1rem"}}>
+              {/* <PoliceChargeSheet apidata={trainingData}/> */}
+              <CaseStatus />
+              <br/>
+              <hr/>
+              <ChargeSheetGraph2 />
             </div>
           </div>
         </div>

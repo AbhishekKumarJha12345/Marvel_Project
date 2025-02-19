@@ -5,6 +5,7 @@ import ZeroFirinside from './ZeroFIRinNcl';
 import Receivedfromotherstates from './ReceivedfromOtherstates'
 import Transferredtootherstates from './Transferedotherstates'
 import axiosInstance from '../../../../utils/axiosInstance';
+import ZeroFir2 from './Zerofir2';
 
 function FirZero() {
   const [activeTab, setActiveTab] = useState('home');
@@ -54,9 +55,10 @@ function FirZero() {
       {/* Tab Content */}
       <div className="mt-4">
         {activeTab === 'home' && <div className="col-6">
-  <div className="card shadow-sm bg-white">
-    <div className="card-body">
-      <ZeroFir />
+  <div className="card shadow-sm bg-white" style={{height:"70vh"}}>
+    <div className="card-body" >
+      {/* <ZeroFir /> */}
+      <ZeroFir2 />
     </div>
   </div>
 </div>
