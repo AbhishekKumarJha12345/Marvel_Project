@@ -22,6 +22,18 @@ const caseStatusData = [
   { name: 'Pending', value: 500 },
   { name: 'Disposed', value: 9500 }
 ];
+const chartColors = [
+  "#8884d8", // Muted Purple
+  "#82ca9d", // Soft Green
+  "#f2c57c", // Warm Sand
+  "#6a8caf", // Steel Blue
+  "#d4a5a5", // Soft Rose
+  "#a28bd3", // Lavender
+  "#ff9a76", // Muted Coral
+  "#74b49b", // Muted Teal
+  "#c08497", // Mauve
+  "#b0a8b9" // Dusty Lilac
+];
 
 const CourtTab1 = () => {
   return (
@@ -54,9 +66,9 @@ const CourtTab1 = () => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="total" stroke="#8884d8" activeDot={{ r: 8 }} />
-              <Line type="monotone" dataKey="pending" stroke="#82ca9d" />
-              <Line type="monotone" dataKey="disposed" stroke="#FF6347" />
+              <Line type="monotone" dataKey="total" stroke={chartColors[0]} activeDot={{ r: 8 }} />
+              <Line type="monotone" dataKey="pending" stroke={chartColors[1]} />
+              <Line type="monotone" dataKey="disposed" stroke={chartColors[2]} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -70,7 +82,7 @@ const CourtTab1 = () => {
               <XAxis dataKey="month" />
               <YAxis />
               <Tooltip />
-              <Area type="monotone" dataKey="avgResolutionTime" fill="#8884d8" stroke="#8884d8" />
+              <Area type="monotone" dataKey="avgResolutionTime" fill={chartColors[0]} stroke="#8884d8" />
             </AreaChart>
           </ResponsiveContainer>
         </div>

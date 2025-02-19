@@ -51,6 +51,12 @@ const ModalComponent = ({ open,type, onClose }) => {
     zero_fir : "",
     regular_fir : "",
     yet_to_be_registered_zero_fir : "",
+    //fir_5 fields
+    city :"",
+    state :"",
+    ps_name:"",
+    date_of_data :"",
+    type_of_data :"",
     //van fields
     vanId :"", 
     city :"",
@@ -133,7 +139,7 @@ const ModalComponent = ({ open,type, onClose }) => {
       let url='/add_forms'
       if(type==='police') formDataToSend.append("type", selectedOption);
 
-      if(['fir_1','fir_2','fir_3','fir_4'].includes(type)) {console.log('type',type); formDataToSend.append("type", type)}
+      if(['fir_1','fir_2','fir_3','fir_4','fir_5'].includes(type)) {console.log('type',type); formDataToSend.append("type", type)}
       if(type==='forensic'){
         formDataToSend.append("type", selectedOption);
         url='/forensic_form'
@@ -649,6 +655,48 @@ const ModalComponent = ({ open,type, onClose }) => {
           />
         </Box>
       )}
+     {type === "fir_5" && (
+      <Box display="flex" flexDirection="column" gap={2} marginTop="10px">
+        <TextField
+          label="City"
+          name="city"
+          value={formData.city}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          label="State"
+          name="state"
+          value={formData.state}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          label="Police Station Name"
+          name="ps_name"
+          value={formData.ps_name}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          label="Date of Data"
+          name="date_of_data"
+          type="date"
+          value={formData.date_of_data}
+          onChange={handleChange}
+          fullWidth
+          InputLabelProps={{ shrink: true }} // Ensures label stays when date is selected
+        />
+        <TextField
+          label="Type of Data"
+          name="type_of_data"
+          value={formData.type_of_data}
+          onChange={handleChange}
+          fullWidth
+        />
+      </Box>
+      )}
+
 
 
       <>

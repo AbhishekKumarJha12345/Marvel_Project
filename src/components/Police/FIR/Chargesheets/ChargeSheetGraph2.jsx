@@ -4,7 +4,18 @@ import axiosInstance from "../../../../utils/axiosInstance"; // Make sure this p
 
 const ChargeSheetGraph2 = () => {
   const [data, setData] = useState([]);
-
+  const chartColors = [
+    "#8884d8", // Muted Purple
+    "#82ca9d", // Soft Green
+    "#f2c57c", // Warm Sand
+    "#6a8caf", // Steel Blue
+    "#d4a5a5", // Soft Rose
+    "#a28bd3", // Lavender
+    "#ff9a76", // Muted Coral
+    "#74b49b", // Muted Teal
+    "#c08497", // Mauve
+    "#b0a8b9" // Dusty Lilac
+  ];
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -42,9 +53,9 @@ const ChargeSheetGraph2 = () => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="total_registered" fill="#8884d8" name="Total Registered" />
-          <Bar dataKey="chargesheeted" fill="#82ca9d" name="Chargesheeted" />
-          <Bar dataKey="under_investigation" fill="#ff7300" name="Under Investigation" />
+          <Bar dataKey="total_registered" fill={chartColors[0]} name="Total Registered" />
+          <Bar dataKey="chargesheeted" fill={chartColors[1]} name="Chargesheeted" />
+          <Bar dataKey="under_investigation" fill={chartColors[2]} name="Under Investigation" />
         </BarChart>
       </ResponsiveContainer>
     </div>

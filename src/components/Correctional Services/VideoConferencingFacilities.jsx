@@ -7,6 +7,19 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const VideoConferencingFacilities = () => {
   // Data for the Pie Chart
+  const chartColors = [
+    "#8884d8", // Muted Purple
+    "#82ca9d", // Soft Green
+    "#f2c57c", // Warm Sand
+    "#6a8caf", // Steel Blue
+    "#d4a5a5", // Soft Rose
+    "#a28bd3", // Lavender
+    "#ff9a76", // Muted Coral
+    "#74b49b", // Muted Teal
+    "#c08497", // Mauve
+    "#b0a8b9" // Dusty Lilac
+  ];
+
   const data = {
     labels: [
       "No. of Correctional Institutions",
@@ -17,8 +30,8 @@ const VideoConferencingFacilities = () => {
     datasets: [
       {
         data: [60, 2200, 437, 281], // Updated values
-        backgroundColor: ["#FF5733", "#33FF57", "#3357FF", "#FFD700"], // Different colors for each section
-        borderColor: ["#FF5733", "#33FF57", "#3357FF", "#FFD700"], // Border colors to match
+        backgroundColor: chartColors, // Different colors for each section
+        borderColor: chartColors, // Border colors to match
         borderWidth: 1,
       },
     ],
@@ -27,9 +40,10 @@ const VideoConferencingFacilities = () => {
   // Options for the Pie chart
   const options = {
     responsive: true,
+    maintainAspectRatio: false, // Allow full width resizing
     plugins: {
       legend: {
-        position: "top",
+        position: 'right',
       },
       tooltip: {
         callbacks: {
@@ -44,28 +58,10 @@ const VideoConferencingFacilities = () => {
   };
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-md w-[100%] h-[100%] mx-auto">
-      {/* Header Section with Left-Aligned Text and Right-Aligned Button */}
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-semibold text-left">
-          Video Conferencing Facilities
-        </h1>
-        <button
-          className="text-white px-4 py-2 rounded-lg"
-          style={{ backgroundColor: "rgb(45, 55, 72)" }}
-        >
-          Add On
-        </button>
-      </div>
-
-      {/* Centering the Pie Chart */}
-      <div className="flex justify-center items-center">
-        <div className="w-[400px] h-[350px] flex justify-center items-center">
-          <Pie
-            data={data}
-            options={{ ...options, maintainAspectRatio: false }}
-          />
-        </div>
+    <div className="bg-white p-4 rounded-xl shadow-md w-full">
+      <h1 className="text-xl font-semibold mb-4">Video Conferencing Facilities</h1>
+      <div className="w-full h-[300px]"> 
+        <Pie data={data} options={options} />
       </div>
     </div>
   );

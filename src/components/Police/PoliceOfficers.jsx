@@ -6,7 +6,18 @@ import ModalComponent from './ModalComponent';
 
 // Register chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-
+const chartColors = [
+  "#8884d8", // Muted Purple
+  "#82ca9d", // Soft Green
+  "#f2c57c", // Warm Sand
+  "#6a8caf", // Steel Blue
+  "#d4a5a5", // Soft Rose
+  "#a28bd3", // Lavender
+  "#ff9a76", // Muted Coral
+  "#74b49b", // Muted Teal
+  "#c08497", // Mauve
+  "#b0a8b9"  // Dusty Lilac
+];
 const PoliceOfficers = () => {
   const [showModal, setShowModal] = useState(false);
   const [trainingData,setTrainingData]=useState('')
@@ -39,8 +50,8 @@ useEffect(() => {
           trainingData && trainingData[0] ? trainingData[0].available_officers || 0 : 0, 
           trainingData && trainingData[0] ? trainingData[0].trained_officers || 0 : 0
         ], 
-        backgroundColor: '#4CAF50', 
-        borderColor: '#388E3C',
+        backgroundColor: chartColors[0], 
+        borderColor: chartColors[0],
         borderWidth: 1,
         barThickness: 20,
       },
@@ -50,8 +61,8 @@ useEffect(() => {
           trainingData && trainingData[1] ? trainingData[1].available_officers || 0 : 0, 
           trainingData && trainingData[1] ? trainingData[1].trained_officers || 0 : 0
         ],
-        backgroundColor: '#2196F3', 
-        borderColor: '#1976D2',
+        backgroundColor: chartColors[1], 
+        borderColor: chartColors[1],
         borderWidth: 1,
         barThickness: 20,
       },

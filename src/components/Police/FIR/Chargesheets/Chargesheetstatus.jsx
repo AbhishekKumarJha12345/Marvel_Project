@@ -8,35 +8,66 @@ const Chargesheetstatus = ({ apidata }) => {
   const [filters, setFilters] = useState({ id: "", act: "", chargesheeted: "", total_registered: "", under_investigation: "", firType: "" });
   const [filteredData, setFilteredData] = useState([]);
 
-  const handleFilter = (event, key) => {
-    const newFilters = { ...filters, [key]: event.target.value.toLowerCase() };
-    setFilters(newFilters);
+  // const handleFilter = (event, key) => {
+  //   const newFilters = { ...filters, [key]: event.target.value.toLowerCase() };
+  //   setFilters(newFilters);
 
-    setFilteredData(
-      filteredData.filter((row) =>
-        Object.keys(newFilters).every((filterKey) =>
-          row[filterKey].toString().toLowerCase().includes(newFilters[filterKey])
-        )
+  //   setFilteredData(
+  //     filteredData.filter((row) =>
+  //       Object.keys(newFilters).every((filterKey) =>
+  //         row[filterKey].toString().toLowerCase().includes(newFilters[filterKey])
+  //       )
+  //     )
+  //   );
+  // };
+  const handleFilter = (event, key) => {
+    const value = event.target.value.toLowerCase();
+    const newFilters = { ...filters, [key]: value };
+    setFilters(newFilters);
+  
+    // If all filters are empty, reset to original data
+    const isEmpty = Object.values(newFilters).every((val) => val === "");
+    if (isEmpty) {
+      setFilteredData(apidata.map((item) => ({
+        id: item.id || "N/A",
+        act: item.act || "N/A",  
+        chargesheeted: item.chargesheeted || "N/A",  
+        total_registered: item.total_registered || "N/A",  
+        under_investigation: item.under_investigation || "N/A",
+        firType: item.act ? "FIR" : "Charge Sheet"
+      })));
+      return;
+    }
+  
+    // Filter from original apidata
+    const filtered = apidata.filter((row) =>
+      Object.keys(newFilters).every((filterKey) =>
+        newFilters[filterKey]
+          ? row[filterKey]?.toString().toLowerCase().includes(newFilters[filterKey])
+          : true
       )
     );
+  
+    setFilteredData(filtered);
   };
-
+  
   useEffect(() => {
-    if (apidata && typeof apidata === 'object') {
-      // Transform the backend data to match initialData structure
-      const transformedData = [{
-        id: apidata.id || "N/A",
-        act: apidata.act || "N/A",  // Assuming 'act' corresponds to 'name'
-        chargesheeted: apidata.chargesheeted || "N/A",  // Using 'file_path' as a placeholder for 'email'
-        total_registered: apidata.total_registered || "N/A",  // Using 'chargesheeted' as a placeholder for 'role'
-        under_investigation: apidata.under_investigation || "N/A",
-        firType: apidata.act ? "FIR" : "Charge Sheet"  // Adjust as needed
-      }];
-
+    if (Array.isArray(apidata)) {
+      // Transform each item in apidata array
+      const transformedData = apidata.map((item) => ({
+        id: item.id || "N/A",
+        act: item.act || "N/A",  
+        chargesheeted: item.chargesheeted || "N/A",  
+        total_registered: item.total_registered || "N/A",  
+        under_investigation: item.under_investigation || "N/A",
+        firType: item.act ? "FIR" : "Charge Sheet"  // Adjust as needed
+      }));
+  
       // Set the transformed data
       setFilteredData(transformedData);
     }
   }, [apidata]);
+  
 
   console.log(filteredData, 'filtered data');
 

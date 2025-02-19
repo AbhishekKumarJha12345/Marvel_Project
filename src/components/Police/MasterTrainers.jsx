@@ -3,6 +3,19 @@ import { Pie, Line } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement } from 'chart.js';
 import axiosInstance from '../../utils/axiosInstance';
 
+const chartColors = [
+  "#8884d8", // Muted Purple
+  "#82ca9d", // Soft Green
+  "#f2c57c", // Warm Sand
+  "#6a8caf", // Steel Blue
+  "#d4a5a5", // Soft Rose
+  "#a28bd3", // Lavender
+  "#ff9a76", // Muted Coral
+  "#74b49b", // Muted Teal
+  "#c08497", // Mauve
+  "#b0a8b9"  // Dusty Lilac
+];
+
 // Register the necessary chart components
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement);
 
@@ -29,7 +42,7 @@ const MasterTrainers = () => {
         pc_asi_trained: []
       };
 
-      response2.data.data_dict.forEach(entry => {
+      response2.data.forEach(entry => {
         const date = new Date(entry.date).toLocaleDateString('en-GB', {
           day: '2-digit', month: 'short', year: 'numeric'
         });
@@ -54,15 +67,15 @@ const MasterTrainers = () => {
             label: 'PSI/SP/DCP Trained Officers',
             data: transformedData.psi_sp_dcp_trained,
             fill: false,
-            backgroundColor: '#007BFF',
-            borderColor: '#007BFF',
+            backgroundColor: chartColors[0],
+            borderColor: chartColors[0],
           },
           {
             label: 'PC/ASI Trained Officers',
             data: transformedData.pc_asi_trained,
             fill: false,
-            backgroundColor: '#FF5733',
-            borderColor: '#FF5733',
+            backgroundColor: chartColors[1],
+            borderColor: chartColors[1],
           }
         ]
       });
@@ -91,8 +104,8 @@ const MasterTrainers = () => {
           trainingData ? trainingData.e_academy_online || 0 : 0,
           trainingData ? trainingData.master_trainers || 0 : 0,
         ],
-        backgroundColor: ['#FF5733', '#33FF57', '#3357FF'],
-        borderColor: ['#FF5733', '#33FF57', '#3357FF'],
+        backgroundColor: [chartColors[2], chartColors[3], chartColors[4]],
+        borderColor: [chartColors[2], chartColors[3], chartColors[4]],
         borderWidth: 1,
       },
     ],
@@ -173,6 +186,9 @@ const downloadReport = async () => {
       
     </div>
   );
+  
+  
+  // );
 };
 
 export default MasterTrainers;

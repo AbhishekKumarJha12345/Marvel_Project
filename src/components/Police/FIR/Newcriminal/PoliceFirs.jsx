@@ -5,8 +5,19 @@ import ModalComponent from '../../ModalComponent';
 import FirBarGraph from './FirBarGraph';
 // Register the necessary chart components
 ChartJS.register(ArcElement, Tooltip, Legend);
-
-const PoliceFirs = ({ apidata }) => {
+const chartColors = [
+  "#8884d8", // Muted Purple
+  "#82ca9d", // Soft Green
+  "#f2c57c", // Warm Sand
+  "#6a8caf", // Steel Blue
+  "#d4a5a5", // Soft Rose
+  "#a28bd3", // Lavender
+  "#ff9a76", // Muted Coral
+  "#74b49b", // Muted Teal
+  "#c08497", // Mauve
+  "#b0a8b9" // Dusty Lilac
+];
+const PoliceFirs = ({apidata}) => {
   // Data for the Pie Chart
   const [showModal, setShowModal] = useState(false);
 
@@ -21,34 +32,9 @@ const PoliceFirs = ({ apidata }) => {
     ],
     datasets: [
       {
-        data: [
-          apidata ? apidata.total_no_fir_registered_under_bns_ipc : "",
-          apidata ? apidata.no_of_fir_registered_under_bns : "",
-          apidata ? apidata.percentage_of_fir_under_bns_against_total_firs : "",
-          apidata ? apidata.no_of_chargesheets_filed_under_bns : "",
-          apidata
-            ? apidata.no_of_chargesheets_not_filed_within_the_stipulated_time
-            : "",
-          apidata
-            ? apidata.percentage_of_chargesheets_filed_on_the_basis_of_firs_under_bns
-            : "",
-        ], // Corresponding values for each section
-        backgroundColor: [
-          "#FF5733",
-          "#33FF57",
-          "#3357FF",
-          "#FF8C00",
-          "#DAF7A6",
-          "#900C3F",
-        ], // Different colors for each section
-        borderColor: [
-          "#FF5733",
-          "#33FF57",
-          "#3357FF",
-          "#FF8C00",
-          "#DAF7A6",
-          "#900C3F",
-        ], // Border colors to match
+        data: [apidata ?apidata.total_no_fir_registered_under_bns_ipc:"", apidata ?apidata.no_of_fir_registered_under_bns:"", apidata ?apidata.percentage_of_fir_under_bns_against_total_firs:"", apidata ?apidata.no_of_chargesheets_filed_under_bns:"", apidata ?apidata.no_of_chargesheets_not_filed_within_the_stipulated_time:"", apidata ?apidata.percentage_of_chargesheets_filed_on_the_basis_of_firs_under_bns:""], // Corresponding values for each section
+        backgroundColor: chartColors, // Different colors for each section
+        borderColor: chartColors, // Border colors to match
         borderWidth: 1,
       },
     ],
@@ -81,24 +67,35 @@ const PoliceFirs = ({ apidata }) => {
 
   return (
     <div className="bg-white p-6 mx-auto rounded-lg w-[100%] h-[600px]">
-  <div className="flex justify-between items-center mb-8">
-    <h1 className="text-4xl font-bold">FIRs New Criminal Laws</h1>
-    <button
-      className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-      style={{ backgroundColor: '#2d3748' }}
-      onClick={() => {
-        console.log("Open modal");
-        setShowModal(true);
-      }}
-    >
-      Add On
-    </button>
-  </div>
-  <div style={{height:"50vh",width:"100%",display:"flex"}}> {/* Reduced height of chart */}
+  <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-semibold text-center flex-grow">
+        FIRs New Criminal Laws
+        </h2>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+          style={{ backgroundColor: '#2d3748' }}
+          onClick={() => {
+            console.log("Open modal");
+            setShowModal(true);
+          }}
+        >
+          Add On
+        </button>
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "20px" }}>
+  {/* First Chart (Pie Chart) */}
+  <div style={{ flex: "1 1 45%", maxWidth: "100%", height: "400px", display: "flex", justifyContent: "center" }}>
     <Pie data={data} options={options} />
-  <FirBarGraph />
-
   </div>
+
+  {/* Second Chart (FirBarGraph) */}
+  <div style={{ flex: "1 1 45%", maxWidth: "100%", height: "30vh", display: "flex", justifyContent: "center" }}>
+    <FirBarGraph />
+  </div>
+</div>
+
+
+
   <ModalComponent open={showModal} type='fir_1'  onClose={() => setShowModal(false)} />
     </div>
   );

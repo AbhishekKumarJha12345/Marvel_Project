@@ -21,53 +21,62 @@ ChartJS.register(
 );
 
 const ComplianceSection479 = () => {
+  const chartColors = [
+    "#8884d8", // Muted Purple
+    "#82ca9d", // Soft Green
+    "#f2c57c", // Warm Sand
+    "#6a8caf", // Steel Blue
+    "#d4a5a5", // Soft Rose
+    "#a28bd3", // Lavender
+    "#ff9a76", // Muted Coral
+    "#74b49b", // Muted Teal
+    "#c08497", // Mauve
+    "#b0a8b9" // Dusty Lilac
+  ];
+
   // Data for the bar graph (grouped by First Time UTPs and Other UTPs)
   const data = {
-    labels: ["First Time UTPs", "Other UTPs"], // Group labels for First Time UTPs and Other UTPs
+    labels: ['First Time UTPs', 'Other UTPs'], // Group labels
     datasets: [
       {
-        label: "No. of UTPs who have served 1/3rd of the maximum sentence",
-        data: [45, 9], // Data for UTPs who served 1/3rd of the maximum sentence
-        backgroundColor: "#FF5733", // Orange for "First Time UTPs"
-        borderColor: "#D84315",
+        label: 'No. of UTPs who have served 1/3rd of the maximum sentence',
+        data: [45, 9],
+        backgroundColor: chartColors[0], // Muted Purple
         borderWidth: 1,
         barThickness: 50,
       },
       {
-        label:
-          "No. of applications preferred in the Court by Jail Superintendent",
-        data: [45, 9], // Data for applications preferred in the Court by Jail Superintendent
-        backgroundColor: "#2196F3", // Blue for "Applications Preferred"
-        borderColor: "#1976D2",
+        label: 'No. of applications preferred in the Court by Jail Superintendent',
+        data: [45, 9],
+        backgroundColor: chartColors[1], // Soft Green
         borderWidth: 1,
         barThickness: 50,
       },
       {
-        label: "No. of UTPs released on bond",
-        data: [27, 5], // Data for UTPs released on bond
-        backgroundColor: "#FFEB3B", // Yellow for "UTPs released on bond"
-        borderColor: "#FBC02D",
+        label: 'No. of UTPs released on bond',
+        data: [27, 5],
+        backgroundColor: chartColors[2], // Warm Sand
         borderWidth: 1,
         barThickness: 50,
       },
     ],
   };
 
-  // Options to display the chart with custom tooltips and legend
+  // Chart options
   const options = {
     responsive: true,
+    maintainAspectRatio: false, // Allow full-width resizing
     plugins: {
       legend: {
-        display: true, // Display legend at the top
-        position: "top",
+        display: true, 
+        position: 'right',
       },
       tooltip: {
         callbacks: {
-          // Custom tooltip to display value
           label: function (tooltipItem) {
             const dataset = tooltipItem.dataset;
             const value = tooltipItem.raw;
-            return `${dataset.label}: ${value}`; // Return the individual value for the tooltip
+            return `${dataset.label}: ${value}`;
           },
         },
       },
@@ -75,7 +84,7 @@ const ComplianceSection479 = () => {
     scales: {
       x: {
         grid: {
-          offset: true, // Add offset to prevent overlapping
+          offset: true,
         },
       },
       y: {
@@ -85,20 +94,10 @@ const ComplianceSection479 = () => {
   };
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-md w-[100%] h-[100%] mx-auto">
-      {/* Left-aligned heading */}
-      <h1 className="text-xl font-semibold mb-4 text-left">
-        Compliance of Section 479 of BNSS
-      </h1>
-
-      {/* Centering the Bar Chart and removing extra space */}
-      <div className="flex justify-center">
-        <div className="w-[400px] h-[250px]">
-          <Bar
-            data={data}
-            options={{ ...options, maintainAspectRatio: false }}
-          />
-        </div>
+    <div className="bg-white p-4 rounded-xl shadow-md w-full">
+      <h1 className="text-xl font-semibold mb-4">Compliance of Section 479 of BNSS</h1>
+      <div className="w-full h-[300px]"> {/* Full width, fixed height 300px */}
+        <Bar data={data} options={options} />
       </div>
     </div>
   );

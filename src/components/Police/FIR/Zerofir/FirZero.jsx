@@ -6,10 +6,12 @@ import Receivedfromotherstates from './ReceivedfromOtherstates';
 import Transferredtootherstates from './Transferedotherstates';
 import axiosInstance from '../../../../utils/axiosInstance';
 import ZeroFir2 from './Zerofir2';
-
+import ModalComponent from '../../ModalComponent';
 function FirZero() {
   const [activeTab, setActiveTab] = useState('home');
   const [trainingData, setTrainingData] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -102,6 +104,21 @@ function FirZero() {
   <div className="card shadow-sm bg-white" style={{height:"70vh"}}>
     <div className="card-body" >
       {/* <ZeroFir /> */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-semibold text-center flex-grow">
+        Zero FIR
+        </h2>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+          style={{ backgroundColor: '#2d3748' }}
+          onClick={() => {
+            console.log("Open modal");
+            setShowModal(true);
+          }}
+        >
+          Add On
+        </button>
+      </div>
       <ZeroFir2 />
     </div>
   </div>
@@ -117,7 +134,7 @@ function FirZero() {
         {activeTab === "transferred/receivedzerofir" && (
           <div>
             <h2 className="text-2xl font-bold">Transferred/Received Zero FIR</h2>
-            <Transferredtootherstates />
+           <Transferredtootherstates/>
             <Receivedfromotherstates />
           </div>
         )}
@@ -132,6 +149,8 @@ function FirZero() {
           Download Report
         </button>
       </div>
+  <ModalComponent open={showModal} type='fir_3'  onClose={() => setShowModal(false)} />
+
     </div>
   );
 }
