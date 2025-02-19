@@ -23,6 +23,10 @@ import BalanceIcon from '@mui/icons-material/Balance';
 import FluorescentIcon from '@mui/icons-material/Fluorescent';
 import logo from '../assets/logo22.png'
 
+
+import Adminviewe from '../../src/components/Admin/Adminviewe'
+import Adminregister from '../../src/components/Admin/Admincontroll'
+
 import training from '../assets/police/training.svg'
 import forensicvisit from '../assets/police/forinsic_visit.svg'
 import fir from '../assets/police/fir.svg'
@@ -90,23 +94,34 @@ export default function Dashboard({ users }) {
   }, []);
 
   const contentMap = {
-    "training"              : <div className="content"><h1 className="heading">Police - Training</h1><PoliceTraining/></div>,
-    "awareness/campaign"    : <div className="content"><h1 className="heading">Awareness Campaigns</h1><Carousel /></div>,
-    "forensic/visits"       : <div className="content"><h1 className="heading">Forensic Visits</h1><Forensicvisits /></div>,
-    "court"                 : <div className="content"><h1 className="heading">Court Visits</h1><Dashboard2 /></div>,
-    "science"               : <div className="content"><h1 className="heading">Forensic Science Department</h1><Dashboard1 /></div>,
-    "prosecution"           : <div className="content"><h1 className="heading">Prosecution Visits</h1><CriminalPages /></div>,
-    "correctionalservices"  : <div className="content"><h1 className="heading">Correctional services</h1><Correctionalservicetab /></div>,
-    "newcriminal"           : <div className="content"><FirNewcriminal /></div>,
-    "chargesheet"           : <div className="content"><Firchargesheets  /></div>,
-    "zerofir"               : <div className="content"><FirZero /></div>,
-    "efir"                  : <div className="content"><Efir /></div>,
+    "training": <div className="content"><h1 className="heading">Police - Training</h1><PoliceTraining /></div>,
+    "awareness/campaign": <div className="content"><h1 className="heading">Awareness Campaigns</h1><Carousel /></div>,
+    "forensic/visits": <div className="content"><h1 className="heading">Forensic Visits</h1><Forensicvisits /></div>,
+    "court": <div className="content"><h1 className="heading">Court Visits</h1><Dashboard2 /></div>,
+    "science": <div className="content"><h1 className="heading">Forensic Science Department</h1><Dashboard1 /></div>,
+    "prosecution": <div className="content"><h1 className="heading">Prosecution Visits</h1><CriminalPages /></div>,
+    "correctionalservices": <div className="content"><h1 className="heading">Correctional services</h1><Correctionalservicetab /></div>,
+    "newcriminal": <div className="content"><FirNewcriminal /></div>,
+    "chargesheet": <div className="content"><Firchargesheets /></div>,
+    "zerofir": <div className="content"><FirZero /></div>,
+    "efir": <div className="content"><Efir /></div>,
+    "admin": <div className="content"><Adminviewe /> </div>,
   };
 
   return (
     <div className="dashboard">
       <div className="navbar">
         <ul className="nav-items">
+
+          {users === 'admin' && (
+
+            <li className={`nav-link active`} onClick={() => handleSectionClick('admin')}>
+              <GavelIcon /> Dashboard
+            </li>
+
+          )
+
+          }
 
 
           {(users === 'chief secretary' || users === 'police') && (
@@ -256,6 +271,7 @@ export default function Dashboard({ users }) {
             : users === "court" ? contentMap["court"]
               : users === "forensic" ? contentMap["science"]
                 : users === "prosecution" ? contentMap["prosecution"]
+                : users === "admin" ? contentMap["admin"]
                   : contentMap["correctionalservices"])
       }
     </div>
