@@ -289,6 +289,7 @@ export default function Dashboard({ users }) {
     doc.setTextColor(0, 0, 0);
   
     doc.text("Police Department:", 10, 90);
+    doc.line(10, 91, 48, 91);
     doc.setFont("helvetica", "normal");
     doc.text("In the provided data, there are two sets of statistics related to court cases for the months September 2021 and February 2025:", 10, 110, { maxWidth: 190 });
     doc.text("- Total charge-sheeted: Both months have a total of 7 charges sheeted, but it's not clear if this is the same set of cases or different ones.", 10, 130, { maxWidth: 190 });
@@ -318,6 +319,8 @@ export default function Dashboard({ users }) {
     doc.setTextColor(0, 0, 0);
   
     doc.text("Forensic Department:", 10, 90);
+    doc.line(10, 91, 53, 91);
+
     doc.setFont("helvetica", "normal");
   
     doc.text("Analysis of Forensic Department Performance from July 2024 to January 2025 Over the six months analyzed, the forensic department exhibited some notable trends in case and exhibit disposal, intake, and pending status.", 10, 110, { maxWidth: 190 });
@@ -344,7 +347,10 @@ export default function Dashboard({ users }) {
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
   
-    doc.text("Prosecution", 10, 80);
+    doc.text("Prosecution :", 10, 80);
+    doc.line(10, 81, 35, 81);
+    // 10, 82, 25, 82
+
     doc.setFont("helvetica", "normal");
   
     doc.text("In the given dataset from January 2024 to October 2024, I have analyzed and summarized the monthly trends of public prosecutors categorized as Deputy Director, Assistant Director Public Prosecutor, Additional Public Prosecutor, Assistant Public Prosecutors, ADPP Prosecutors, Additional Public Prosecutors, and Assistant Public Prosecutors.", 10, 90, { maxWidth: 190 });
@@ -396,6 +402,8 @@ doc.text("In summary, the data reveals that there is a general increase in the n
     doc.setTextColor(0, 0, 0);
   
     doc.text("Correctional Services :", 10, 90);
+    doc.line(10, 91, 55, 91);
+
     doc.setFont("helvetica", "normal");
   
     doc.text("Over the provided period, the following trends have been observed regarding correctional institutions:", 10, 110, { maxWidth: 190 });
@@ -451,6 +459,8 @@ doc.text("In summary, the data reveals that there is a general increase in the n
     doc.setTextColor(0, 0, 0);
   
     doc.text("Court :", 10, 80);
+    doc.line(10, 82, 23, 82);
+
     doc.setFont("helvetica", "normal");
 
     doc.text("2024 witnessed significant advancements and improvements in the legal system, as evidenced by the analysis of key metrics such as eSummons deliveries electronically, total cases, case resolution times, backlog reduction, and adoption rate.",10,90,{maxWidth:"190"})
