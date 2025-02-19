@@ -22,9 +22,10 @@ import BiotechIcon from '@mui/icons-material/Biotech';
 import BalanceIcon from '@mui/icons-material/Balance';
 import FluorescentIcon from '@mui/icons-material/Fluorescent';
 import logo from '../assets/logo22.png'
-import TrainingDataGraph from "./Police/TrainingDataGraph";
-import TrainingDataGraph2 from "./Police/TrainingDataGraph2";
-import PoliceTraining from "./Police/PoliceTraining";
+
+
+import Adminviewe from '../../src/components/Admin/Adminviewe'
+import Adminregister from '../../src/components/Admin/Admincontroll'
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { faL } from "@fortawesome/free-solid-svg-icons";
 import jsPDF from "jspdf";
@@ -51,6 +52,7 @@ import ReportGencomp from "./ReportGen/ReportGenComp";import training from '../a
 import forensicvisit from '../assets/police/forinsic_visit.svg'
 import fir from '../assets/police/fir.svg'
 import awareness from '../assets/police/awareness.svg'
+import PoliceTraining from "./Police/PoliceTraining";
 
 
 
@@ -255,6 +257,7 @@ const handleExportPoliceTraining = async () => {
     "chargesheet"           : <div className="content"><Firchargesheets  /></div>,
     "zerofir"               : <div className="content"><FirZero /></div>,
     "efir"                  : <div className="content"><Efir /></div>,
+    "admin": <div className="content"><Adminviewe /> </div>,
   };
 const [openmodal,setOpenmodal]=useState(false)
   const openreportmodal =()=>{
@@ -509,6 +512,16 @@ doc.text("In summary, the data reveals that there is a general increase in the n
       <div className="navbar">
         <ul className="nav-items">
 
+          {users === 'admin' && (
+
+            <li className={`nav-link active`} onClick={() => handleSectionClick('admin')}>
+              <GavelIcon /> Dashboard
+            </li>
+
+          )
+
+          }
+
 
           {(users === 'chief secretary' || users === 'police') && (
 
@@ -668,6 +681,7 @@ doc.text("In summary, the data reveals that there is a general increase in the n
             : users === "court" ? contentMap["court"]
               : users === "forensic" ? contentMap["science"]
                 : users === "prosecution" ? contentMap["prosecution"]
+                : users === "admin" ? contentMap["admin"]
                   : contentMap["correctionalservices"])
       }
 

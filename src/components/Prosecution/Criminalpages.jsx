@@ -1,51 +1,4 @@
-// import React, { useState } from "react";
-// import { Navbar, Container, Tab, Tabs } from "react-bootstrap";
-// // import Prosecution from "./criminal/Prosecution";
-// import Prosecution from "./Prosecution";
-
-// import Home from "./Home";
-// import Carousel from "./Carousel";
-
-// import 'bootstrap/dist/css/bootstrap.min.css';
-// // import './App.css'; // Import custom CSS for additional styling
-
-// const CriminalPages = () => {
-//   const [key, setKey] = useState("home");
-
-//   return (
-//     <div>
-//       {/* <Navbar variant="light" expand="lg" style={{background:"#f0f0f0"}}>
-//         <Container>
-//           <Navbar.Brand href="#home">Criminal Management</Navbar.Brand>
-//         </Container>
-//       </Navbar> */}
-
-//       <Container className="mt-4">
-//         <Tabs
-//           id="controlled-tab-example"
-//           activeKey={key}
-//           onSelect={(k) => setKey(k)}
-//           className="mb-3"
-//           fill
-//         >
-//           <Tab eventKey="home" title="Home">
-//             <Home />
-//           </Tab>
-//           <Tab eventKey="prosecution" title="Prosecution">
-//             <Prosecution />
-//           </Tab>
-//           <Tab eventKey="carousal" title="Carousal">
-//             <Carousel />
-//           </Tab>
-//         </Tabs>
-//       </Container>
-//     </div>
-//   );
-// };
-
-// export default CriminalPages;
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -56,11 +9,7 @@ import ProsecutionPDF from "../../assets/Prosecutor_Statistics.pdf"
 import Home from "./Home";
 import Carousel from "./Carousel";
 
-const tabData = [
-  { label: "Home", component: <Home /> },
-  { label: "Prosecution", component: <Prosecution /> },
-  { label: "Glimpses of Training Session", component: <Carousel /> },
-];
+import axiosInstance from "../../utils/axiosInstance";
 
 function CustomTabPanel({ children, value, index }) {
   return (
@@ -90,6 +39,53 @@ function a11yProps(index) {
 
 export default function CriminalPages() {
   const [value, setValue] = React.useState(0);
+  const [key, setKey] = useState("home");
+  const [prosecutiondata, setData] = useState(null);
+
+  const token =
+    localStorage.getItem("token") || import.meta.env.VITE_REACT_APP_TOKEN;
+
+  const fetchData = async () => {
+    console.log("Fetching prosecution data...");
+
+    try {
+      // const response = await fetch(
+      //   "http://localhost:5555/api/fetchprosecutiondata",
+      //   {
+      //     method: "GET",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //   }
+      // );
+
+      const response = await axiosInstance.get("/fetchprosecutiondata");
+
+      console.log("Received data:", response.data.prosecutiondata);
+      setData(response.data.prosecutiondata);
+    } catch (error) {
+      console.error("Error:", error);
+      console.log(
+        "An error occurred while fetching the data. Please try again."
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const tabData = [
+    {
+      label: "Home",
+      component: (
+        <Home prosecutiondata={prosecutiondata} fetchData={fetchData} />
+      ),
+    },
+    { label: "Prosecution", component: <Prosecution /> },
+    { label: "Glimpses of Training Session", component: <Carousel /> },
+  ];
 
   const handleChange = (_, newValue) => {
     console.log("new value", newValue);
