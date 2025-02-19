@@ -60,7 +60,7 @@ const ModalComponent = ({ open,type, onClose }) => {
     //van fields
     vanId :"", 
     city :"",
-    date :"",
+    // date :"",
     count :"",
     status :"",
     //for_dev fields

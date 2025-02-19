@@ -169,9 +169,9 @@ const downloadReport = async () => {
       <div className="flex justify-between items-center mb-8">
         
       <h1 className="text-4xl font-bold mb-4">Master Trainers</h1>
-      <button className="bg-green-600 text-white px-4 py-2 rounded-lg" onClick={downloadReport}>
+      {/* <button className="bg-green-600 text-white px-4 py-2 rounded-lg" onClick={downloadReport}>
           Download Report
-        </button>
+        </button> */}
       </div>
       <div className="flex flex-col lg:flex-row w-full justify-center items-center">
         {/* Pie Chart */}
@@ -179,9 +179,9 @@ const downloadReport = async () => {
           <Pie data={pieData} options={options} />
         </div>
         {/* Line Chart */}
-        <div className="w-full lg:w-1/2 h-[400px] p-3 d-flex justify-center items-center">
+        {/* <div className="w-full lg:w-1/2 h-[400px] p-3 d-flex justify-center items-center">
           <Line data={lineChartData} options={options} />
-        </div>
+        </div> */}
       </div>
       
     </div>

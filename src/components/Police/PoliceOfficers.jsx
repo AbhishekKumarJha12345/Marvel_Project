@@ -143,9 +143,9 @@ useEffect(() => {
     <div className="bg-white p-6 rounded-lg w-full h-[500px] text-center">
       <div className="flex justify-around items-center mb-8">
         <h1 className="text-4xl font-bold">Police Officers</h1>
-        <button className="bg-green-600 text-white px-4 py-2 rounded-lg" onClick={downloadReport}>
+        {/* <button className="bg-green-600 text-white px-4 py-2 rounded-lg" onClick={downloadReport}>
           Download Report
-        </button>
+        </button> */}
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded-lg"
           style={{backgroundColor:'#2d3748'}}
