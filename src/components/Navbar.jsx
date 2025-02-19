@@ -328,75 +328,165 @@ const [openmodal,setOpenmodal]=useState(false)
     doc.text(`Page 2`, 180, 290);
   
     // Add third page
-//     doc.addPage();
-//     doc.addImage(bgImg, "PNG", 0, 0, 210, 297);
+    doc.addPage();
+    doc.addImage(bgImg, "PNG", 0, 0, 210, 297);
   
-//     doc.setFontSize(18);
-//     doc.setTextColor(255, 255, 255);
-//     doc.text("Interoperable Criminal Justice System Report", 40, 10);
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Interoperable Criminal Justice System Report", 40, 10);
   
-//     doc.addImage(img, "PNG", 80, 16, 45, 30);
+    doc.addImage(img, "PNG", 80, 16, 45, 30);
   
-//     // Public Prosecutor Trends
-//     doc.setFont("helvetica", "bold");
-//     doc.setFontSize(12);
-//     doc.setTextColor(0, 0, 0);
+    // Public Prosecutor Trends
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
   
-//     doc.text("Prosecution", 10, 90);
-//     doc.setFont("helvetica", "normal");
+    doc.text("Prosecution", 10, 80);
+    doc.setFont("helvetica", "normal");
   
-//     doc.text("In the given dataset from January 2024 to October 2024, I have analyzed and summarized the monthly trends of public prosecutors categorized as Deputy Director, Assistant Director Public Prosecutor, Additional Public Prosecutor, Assistant Public Prosecutors, ADPP Prosecutors, Additional Public Prosecutors, and Assistant Public Prosecutors.", 10, 10, { maxWidth: 190 });
+    doc.text("In the given dataset from January 2024 to October 2024, I have analyzed and summarized the monthly trends of public prosecutors categorized as Deputy Director, Assistant Director Public Prosecutor, Additional Public Prosecutor, Assistant Public Prosecutors, ADPP Prosecutors, Additional Public Prosecutors, and Assistant Public Prosecutors.", 10, 90, { maxWidth: 190 });
 
-// doc.text("Overall, it is observed that the number of public prosecutors in each category fluctuates across different months, with a slight increase in the number of prosecutors towards the end of the year (October 2024).", 10, 40, { maxWidth: 190 });
+doc.text("Overall, it is observed that the number of public prosecutors in each category fluctuates across different months, with a slight increase in the number of prosecutors towards the end of the year (October 2024).", 10, 110, { maxWidth: 190 });
 
-// doc.text("Here are some key insights based on the data:", 10, 60, { maxWidth: 190 });
+doc.text("Here are some key insights based on the data:", 10, 130, { maxWidth: 190 });
 
-// doc.text("- Deputy Director: The number of deputy directors remains relatively stable from January to October 2024, with only slight fluctuations. In July, there is a notable decrease in the number of deputy directors compared to the previous months.", 10, 70, { maxWidth: 190 });
+doc.text("- Deputy Director: The number of deputy directors remains relatively stable from January to October 2024, with only slight fluctuations. In July, there is a notable decrease in the number of deputy directors compared to the previous months.", 10, 140, { maxWidth: 190 });
 
-// doc.text("- Assistant Director Public Prosecutor: There's a gradual increase in the number of Assistant Directors from January to October, with a significant rise observed in September and October.", 10, 100, { maxWidth: 190 });
+doc.text("- Assistant Director Public Prosecutor: There's a gradual increase in the number of Assistant Directors from January to October, with a significant rise observed in September and October.", 10, 160, { maxWidth: 190 });
 
-// doc.text("- Additional Public Prosecutor: The number of Additional Public Prosecutors follows a similar trend as the Assistant Director Public Prosecutor, with a slight decrease in February and March followed by an increase from April to October.", 10, 130, { maxWidth: 190 });
+doc.text("- Additional Public Prosecutor: The number of Additional Public Prosecutors follows a similar trend as the Assistant Director Public Prosecutor, with a slight decrease in February and March followed by an increase from April to October.", 10, 170, { maxWidth: 190 });
 
-// doc.text("- Assistant Public Prosecutors: There is a steady increase in the number of assistant public prosecutors across all months, except for a small drop in January compared to December 2023.", 10, 160, { maxWidth: 190 });
+doc.text("- Assistant Public Prosecutors: There is a steady increase in the number of assistant public prosecutors across all months, except for a small drop in January compared to December 2023.", 10, 190, { maxWidth: 190 });
 
-// doc.text("- ADPP Prosecutors: The number of ADPP Prosecutors exhibits a fluctuating trend throughout the year, with an increase observed from June to October.", 10, 190, { maxWidth: 190 });
+doc.text("- ADPP Prosecutors: The number of ADPP Prosecutors exhibits a fluctuating trend throughout the year, with an increase observed from June to October.", 10, 200, { maxWidth: 190 });
 
-// doc.text("- Additional Public Prosecutors: A consistent upward trend can be observed for this category, starting from January and reaching a peak in October 2024.", 10, 220, { maxWidth: 190 });
+doc.text("- Additional Public Prosecutors: A consistent upward trend can be observed for this category, starting from January and reaching a peak in October 2024.", 10, 210, { maxWidth: 190 });
 
-// doc.text("- Assistant Public Prosecutors: The number of assistant public prosecutors displays an increasing trend from January to October, with some minor fluctuations along the way.", 10, 250, { maxWidth: 190 });
+doc.text("- Assistant Public Prosecutors: The number of assistant public prosecutors displays an increasing trend from January to October, with some minor fluctuations along the way.", 10, 220, { maxWidth: 190 });
 
-// doc.text("In summary, the data reveals that there is a general increase in the number of public prosecutors over the period analyzed, with certain categories showing more significant rises than others. Additionally, the data suggests a possible reallocation or promotion of resources within the prosecutor ranks during specific months (July for Deputy Director and September/October for Assistant Directors, Additional Public Prosecutors, and ADPP Prosecutors). Further investigation would be needed to confirm these trends and their potential implications.", 10, 280, { maxWidth: 190 });
+doc.text("In summary, the data reveals that there is a general increase in the number of public prosecutors over the period analyzed, with certain categories showing more significant rises than others. Additionally, the data suggests a possible reallocation or promotion of resources within the prosecutor ranks during specific months (July for Deputy Director and September/October for Assistant Directors, Additional Public Prosecutors, and ADPP Prosecutors). Further investigation would be needed to confirm these trends and their potential implications.", 10, 230, { maxWidth: 190 });
 
-// doc.text("Heading 4: Overall Summary", 10, 320);
+// doc.text("Heading 4: Overall Summary", 10, 230);
 
 // doc.text("- The data reveals a general increase in the number of public prosecutors over the period analyzed, with some categories showing significant rises.", 10, 340, { maxWidth: 190 });
 
 // doc.text("- Trends suggest reallocation or promotion of resources within the prosecutor ranks.", 10, 360, { maxWidth: 190 });
 
-
+ // Footer - Page number
+ doc.setFontSize(10);
+ doc.setTextColor(255, 255, 255);
+ doc.text(`Page 3`, 180, 290);
 
 //     // Add new page
-//     doc.addPage();
-//     doc.addImage(bgImg, "PNG", 0, 0, 210, 297);
+    doc.addPage();
+    doc.addImage(bgImg, "PNG", 0, 0, 210, 297);
   
-//     doc.setFontSize(18);
-//     doc.setTextColor(255, 255, 255);
-//     doc.text("Interoperable Criminal Justice System Report", 40, 10);
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Interoperable Criminal Justice System Report", 40, 10);
   
-//     doc.addImage(img, "PNG", 80, 16, 45, 30);
+    doc.addImage(img, "PNG", 80, 16, 45, 30);
   
-//     // Forensic Department Performance
-//     doc.setFont("helvetica", "bold");
-//     doc.setFontSize(12);
-//     doc.setTextColor(0, 0, 0);
+    // Forensic Department Performance
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
   
-//     doc.text("Currectional Services:", 10, 90);
-//     doc.setFont("helvetica", "normal");
+    doc.text("Currectional Services:", 10, 90);
+    doc.setFont("helvetica", "normal");
   
-//     doc.text("Analysis of Forensic Department Performance from July 2024 to January 2025 Over the six months analyzed, the forensic department exhibited some notable trends in case and exhibit disposal, intake, and pending status.", 10, 110, { maxWidth: 190 });
-//     doc.text("- Disposal cases: Highest in October 2024 (32,313), lowest in July 2024 (21,122).", 10, 130, { maxWidth: 190 });
-//     doc.text("- Pending cases: Peaked in August 2024 (186,321), steadily decreased to January 2025 (183,394).", 10, 150, { maxWidth: 190 });
+    doc.text("Over the provided period, the following trends have been observed regarding correctional institutions:", 10, 110, { maxWidth: 190 });
+    doc.text("- Number of Correctional Institutions: The count has remained relatively stable over time, with minor fluctuations suggesting no significant increase or decrease in the number of facilities.", 10, 130, { maxWidth: 190 });
+    doc.text("- Inmate Population: There appears to be a gradual rise in the total inmate population, indicating a growing correctional system demand. However, it's essential to consider other factors that could influence this trend, such as crime rates and sentencing policies.", 10, 150, { maxWidth: 190 });
+    doc.text("Admissions: Similar to the inmate population, admissions have also shown an upward trend. This increase might be attributed to the rise in the crime rate or changes in criminal justice policies.",10,170,{maxWidth:190});
+    doc.text("Percentage of Inmates Served by Different Sentence Durations: Approximately 33% (one-third) of the inmates serve sentences lasting less than a year, while around 67% serve longer durations. This suggests that a majority of individuals are incarcerated for more extended periods, which could indicate a focus on rehabilitation or longer sentencing policies.",10,190,{maxWidth:"190"})
+    doc.text("Application and Bond Counts: The data does not provide daily application and bond counts, but there appears to be an increase in the total number of applications and bonds processed over time. This trend may reflect growing public interest in correctional facilities or changes in legal procedures.",10,210,{maxWidth:"190"})
+    doc.text("Significant Changes or Trends:",10,230,{maxWidth:"190"})
+    doc.text("The gradual increase in the inmate population, admissions, and application/bond counts could suggest a growing need for correctional services or changes in criminal justice policies.",10,250,{maxWidth:"190"})
+    
+     // Footer - Page number
+     doc.setFontSize(10);
+     doc.setTextColor(255, 255, 255);
+     doc.text(`Page 4`, 180, 290);
+    
+    doc.addPage();
+    doc.addImage(bgImg, "PNG", 0, 0, 210, 297);
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Interoperable Criminal Justice System Report", 40, 10);
   
+    doc.addImage(img, "PNG", 80, 16, 45, 30);
+
+
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(0,0,0);
+
+    doc.text("The steady number of correctional institutions may indicate that existing facilities are adapting to accommodate the increasing demand or new correctional facilities are being constructed.",10,90,{maxWidth:"190"})
+    doc.text("Insights into the Relationships:",10,110,{maxWidth:"190"})
+    doc.text("A positive correlation is observed between the number of admissions and the inmate population, indicating an association between the two variables. This could suggest that as more individuals enter the system, the total inmate population grows.",10,130,{maxWidth:"190"})
+    doc.text("There seems to be a weak relationship between the number of correctional institutions, the inmate population, and application/bond counts. This may imply that changes in these factors do not significantly impact each other, or there are other underlying factors influencing these trends.",10,150,{maxWidth:"190"})
+    doc.text("In conclusion, the provided data shows an increase in admissions, inmate population, applications, and bonds over time. The stable number of correctional institutions suggests that existing facilities are adapting to accommodate this growth. Further research could explore potential causes for these trends and analyze the impact on public safety and justice system efficiency.",10,170,{maxWidth:"190"})
+    doc.text("",10,260,{maxWidth:"190"})
+
+    // Footer - Page number
+    doc.setFontSize(10);
+    doc.setTextColor(255, 255, 255);
+    doc.text(`Page 5`, 180, 290);
+
+    doc.addPage();
+    doc.addImage(bgImg, "PNG", 0, 0, 210, 297);
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Interoperable Criminal Justice System Report", 40, 10);
+  
+    doc.addImage(img, "PNG", 80, 16, 45, 30);
+  
+    // Forensic Department Performance
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+  
+    doc.text("Court :", 10, 80);
+    doc.setFont("helvetica", "normal");
+
+    doc.text("2024 witnessed significant advancements and improvements in the legal system, as evidenced by the analysis of key metrics such as eSummons deliveries electronically, total cases, case resolution times, backlog reduction, and adoption rate.",10,90,{maxWidth:"190"})
+    doc.text("eSummons Delivered Electronically: There was a notable monthly increase in eSummons deliveries throughout 2024, indicating an increasing trend toward digitalization and modernization within the legal system. This shift not only streamlined the summons delivery process but also reduced paper usage and associated costs.",10,110,{maxWidth:"190"})
+    doc.text("Total Cases: The total number of cases saw fluctuations throughout the year, with a slight increase in the early months due to increased public awareness and accessibility to the system. However, by mid-year, the number of new cases began to decrease, suggesting that public education and preventive measures were effective in addressing some underlying issues causing these cases.",10,140,{maxWidth:"190"})
+    doc.text("Pending Cases and Disposed Cases: The number of pending cases remained relatively stable throughout 2024; this is likely due to the system's increased efficiency in processing cases more quickly, as evidenced by a decrease in the average resolution time. Meanwhile, the number of disposed cases increased steadily, reflecting the legal system's growing ability to address and resolve cases effectively.",10,160,{maxWidth:"190"})
+    doc.text("Average Resolution Time: The average resolution time for cases showed a consistent downward trend throughout 2024. This improvement can be attributed to factors such as the streamlined workflow enabled by eSummons delivery, increased judicial efficiency, and a more proactive approach to case management.",10,190,{maxWidth:"190"})
+    doc.text("Backlog Reduction: As more cases were disposed of each month, the system saw significant backlog reduction throughout 2024. The corresponding backlog reduction percentage consistently rose, demonstrating the legal system's success in addressing and resolving outstanding cases efficiently.",10,210,{maxWidth:"190"})
+    doc.text("Adoption Rate: The adoption rate of the legal system continued to grow steadily during 2024, reflecting users' increasing confidence in the system's effectiveness and efficiency. This growth in adoption was a key factor in the overall improvement of the legal system, as it allowed for more cases to be processed quickly and efficiently.",10,230,{maxWidth:"190"})
+    
+    
+    // Footer - Page number
+    doc.setFontSize(10);
+    doc.setTextColor(255, 255, 255);
+    doc.text(`Page 6`, 180, 290);
+
+
+    doc.addPage();
+    doc.addImage(bgImg, "PNG", 0, 0, 210, 297);
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Interoperable Criminal Justice System Report", 40, 10);
+  
+    doc.addImage(img, "PNG", 80, 16, 45, 30);
+
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(0,0,0);
+
+    doc.text("In summary, the legal system showed significant improvements across key metrics in 2024, particularly in backlog reduction and the adoption of eSummons delivery. The steady increase in eSummons deliveries electronically, combined with a decrease in average resolution time and a consistent downward trend in total cases and backlog, indicate that the legal system is becoming more efficient and effective at addressing and resolving cases. Furthermore, the growing adoption rate suggests that the improvements made within the system are being recognized and embraced by its users. Overall, these trends demonstrate the legal system's ongoing efforts to modernize, streamline processes, and improve accessibility for all parties involved.",10,90,{maxWidth:"190"})
+
+
+     // Footer - Page number
+     doc.setFontSize(10);
+     doc.setTextColor(255, 255, 255);
+     doc.text(`Page 7`, 180, 290);
+
+
     // Footer - Page number
     doc.setFontSize(10);
     doc.setTextColor(255, 255, 255);
