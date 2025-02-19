@@ -29,6 +29,7 @@ function Login() {
         "court",
         "correctionalservices",
         "forensic",
+        "admin"
       ];
 
       console.log("Response received:", response.data);

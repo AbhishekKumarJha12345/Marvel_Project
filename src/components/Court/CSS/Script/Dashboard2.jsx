@@ -10,14 +10,7 @@ import CourtTab3 from './CourtTab3';
 import CourtTab4 from './CourtTab4';
 import CourtTab5 from './CourtTab5';
 
-// const tabData = [
-//   { label: 'Number of Cases Processed through ICJS', component: <CourtTab1 /> },
-//   { label: 'Use of eSummons & Digital Case Records', component: <CourtTab2 /> },
-//   { label: 'Video Conferencing Hearings & Case Disposal Rate', component: <CourtTab3 /> },
-//   { label: 'Integration with Prosecution & Forensic Departments', component: <CourtTab4 /> },
-//   { label: 'NYAYSHRUTI Project Implementation Progress', component: <CourtTab5 /> },
 
-// ];
 
 const tabData = [
   { label: 'ICJS Case Processing', component: <CourtTab1 /> },
