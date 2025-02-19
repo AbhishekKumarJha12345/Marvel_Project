@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import ZeroFir from './ZeroFir';
-import Zerofiroutside from './ZeroFIRoutside';
-import ZeroFirinside from './ZeroFIRinNcl';
-import Receivedfromotherstates from './ReceivedfromOtherstates';
-import Transferredtootherstates from './Transferedotherstates';
-import axiosInstance from '../../../../utils/axiosInstance';
-import ZeroFir2 from './Zerofir2';
-import ModalComponent from '../../ModalComponent';
+import React, { useEffect, useState } from "react";
+import ZeroFir from "./ZeroFir";
+import Zerofiroutside from "./ZeroFIRoutside";
+import ZeroFirinside from "./ZeroFIRinNcl";
+import Receivedfromotherstates from "./ReceivedfromOtherstates";
+import Transferredtootherstates from "./Transferedotherstates";
+import axiosInstance from "../../../../utils/axiosInstance";
+import ZeroFir2 from "./Zerofir2";
+import ModalComponent from "../../ModalComponent";
+
 function FirZero() {
-  const [activeTab, setActiveTab] = useState('home');
-  const [trainingData, setTrainingData] = useState('');
+  const [activeTab, setActiveTab] = useState("home");
+  const [trainingData, setTrainingData] = useState("");
   const [showModal, setShowModal] = useState(false);
-  
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -19,51 +19,52 @@ function FirZero() {
 
   const getTrainingData = async () => {
     try {
-      const response = await axiosInstance.get('/live_data?type=fir_3');
-      console.log(response.data, 'FIR3 Data ----------');
+      const response = await axiosInstance.get("/live_data?type=fir_3");
+      console.log(response.data, "FIR3 Data ----------");
       setTrainingData(response.data.data_dict);
     } catch (error) {
       console.log(error);
     }
   };
+
   useEffect(() => {
     getTrainingData();
   }, []);
 
-  // Function to handle report download
   const handleDownloadReport = async () => {
     try {
       const response = await axiosInstance.post(
-        '/generate_report',
+        "/generate_report",
         {
-          chart_type: 'donut',
+          chart_type: "donut",
           data: {
-            labels: ['Total Registered', 'Charge-sheeted', 'Under Investigation'],
+            labels: ["Total Registered", "Charge-sheeted", "Under Investigation"],
             values: [
               parseInt(trainingData.total_registered, 10),
               parseInt(trainingData.chargesheeted, 10),
               parseInt(trainingData.under_investigation, 10),
             ],
-            title: 'FIR3 Report - Donut Chart',
+            title: "FIR3 Report - Donut Chart",
           },
         },
-        { responseType: 'blob' }
+        { responseType: "blob" }
       );
 
-      const blob = new Blob([response.data], { type: 'application/pdf' });
-      const link = document.createElement('a');
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const link = document.createElement("a");
       link.href = window.URL.createObjectURL(blob);
-      link.download = 'FIR3_Report.pdf';
+      link.download = "FIR3_Report.pdf";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     } catch (error) {
-      console.error('Error downloading report:', error);
+      console.error("Error downloading report:", error);
     }
   };
 
   return (
     <div>
+      {/* Tabs */}
       <div className="flex space-x-4 border-b border-gray-300">
         <button
           onClick={() => handleTabChange("home")}
@@ -85,7 +86,6 @@ function FirZero() {
         >
           Zero FIR
         </button>
-
         <button
           onClick={() => handleTabChange("transferred/receivedzerofir")}
           className={`py-2 px-4 text-lg font-medium ${
@@ -100,57 +100,55 @@ function FirZero() {
 
       {/* Tab Content */}
       <div className="mt-4">
-        {activeTab === 'home' && <div className="col-6">
-  <div className="card shadow-sm bg-white" style={{height:"70vh"}}>
-    <div className="card-body" >
-      {/* <ZeroFir /> */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold text-center flex-grow">
-        Zero FIR
-        </h2>
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-          style={{ backgroundColor: '#2d3748' }}
-          onClick={() => {
-            console.log("Open modal");
-            setShowModal(true);
-          }}
-        >
-          Add On
-        </button>
-      </div>
-      <ZeroFir2 />
-    </div>
-  </div>
-</div>
-}
-        {activeTab === 'newCriminals' && (
+        {activeTab === "home" && (
+          <div className="col-6">
+            <div className="card shadow-sm bg-white" style={{ padding:"24px",height: "70vh" }}>
+              <div className="card-body">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-2xl font-semibold text-center flex-grow">Zero FIR</h2>
+
+                  {/* Add On Button */}
+                  <button
+                    className="px-4 py-2 bg-[#03045E] text-white rounded-lg shadow-md hover:bg-[#023e8a] transition-all"
+                    onClick={() => setShowModal(true)}
+                  >
+                    Add On
+                  </button>
+
+                  {/* Download Report Button */}
+                  <button
+                    onClick={handleDownloadReport}
+                    className="px-4 py-2 ml-4 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition-all"
+                  >
+                    Download Report
+                  </button>
+                </div>
+
+                <ZeroFir2 />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "newCriminals" && (
           <div>
             <h2 className="text-2xl font-bold">Zero FIR</h2>
             <Zerofiroutside />
             <ZeroFirinside />
           </div>
         )}
+
         {activeTab === "transferred/receivedzerofir" && (
           <div>
             <h2 className="text-2xl font-bold">Transferred/Received Zero FIR</h2>
-           <Transferredtootherstates/>
+            <Transferredtootherstates />
             <Receivedfromotherstates />
           </div>
         )}
       </div>
 
-      {/* Download Report Button */}
-      <div className="mt-6">
-        <button
-          onClick={handleDownloadReport}
-          className="px-4 py-2 bg-[#03045E] text-white rounded-lg shadow-md hover:bg-[#023e8a]"
-        >
-          Download Report
-        </button>
-      </div>
-  <ModalComponent open={showModal} type='fir_3'  onClose={() => setShowModal(false)} />
-
+      {/* Modal Component */}
+      <ModalComponent open={showModal} type="fir_3" onClose={() => setShowModal(false)} />
     </div>
   );
 }

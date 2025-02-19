@@ -57,13 +57,13 @@ function Efir() {
             <div className="col-6">
               <div className="card shadow-sm bg-white">
                 <div className="card-body">
-                  <Efirgraph />
-                  <button
+                  <Efirgraph generateReport={generateReport} />
+                  {/* <button
                     onClick={generateReport}
                     className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
                   >
                     Download Report
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>

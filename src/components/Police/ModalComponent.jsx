@@ -52,7 +52,7 @@ const ModalComponent = ({ open,type, onClose }) => {
     regular_fir : "",
     yet_to_be_registered_zero_fir : "",
     //fir_5 fields
-    city :"",
+    // city :"",
     state :"",
     ps_name:"",
     date_of_data :"",
