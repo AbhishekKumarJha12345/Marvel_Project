@@ -1,14 +1,33 @@
-import {React,useState} from 'react';
-
+import { React, useState, useEffect } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import ModalComponent from '../../ModalComponent';
+import axiosInstance from '../../../../utils/axiosInstance';
+
 // Register the necessary chart components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ZeroFIRStatus = () => {
-   const [showModal, setShowModal] = useState(false);
-  
+  const [showModal, setShowModal] = useState(false);
+  const [zeroFirData, setZeroFirDAta] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axiosInstance.get("/live_data", {
+          params: { type: "fir_4" },
+        });
+
+        setZeroFirDAta(response.data.data_dict);
+        console.log("Van deployment Data is:", response.data);
+      } catch (error) {
+        console.log("Error occurred:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   // Data for the Doughnut Chart
   const data = {
     labels: [
@@ -18,9 +37,13 @@ const ZeroFIRStatus = () => {
     ],
     datasets: [
       {
-        data: [5120, 3790, 543], // Corresponding values for each section
-        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'], // Different colors for each section
-        borderColor: ['#FF6384', '#36A2EB', '#FFCE56'], // Border colors to match
+        data: zeroFirData ? [
+          parseInt(zeroFirData.zero_fir), 
+          parseInt(zeroFirData.regular_fir), 
+          parseInt(zeroFirData.yet_to_be_registered_zero_fir)
+        ] : [0, 0, 0], // Default values if data is not available
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+        borderColor: ['#FF6384', '#36A2EB', '#FFCE56'],
         borderWidth: 1,
       },
     ],
@@ -47,27 +70,26 @@ const ZeroFIRStatus = () => {
 
   return (
     <div className="bg-white p-6 mx-auto rounded-lg w-[60%]">
-    <div className="flex justify-between items-center mb-8">
-      <h1 className="text-4xl font-bold">Zero FIR Status</h1>
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-        style={{ backgroundColor: '#2d3748' }}
-        onClick={() => {
-          console.log("Open modal");
-          setShowModal(true);
-        }}
-      >
-        Add On
-      </button>
-    </div>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-4xl font-bold">Zero FIR Status</h1>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+          style={{ backgroundColor: '#2d3748' }}
+          onClick={() => {
+            console.log("Open modal");
+            setShowModal(true);
+          }}
+        >
+          Add On
+        </button>
+      </div>
+      
+      <div className="h-[300px] w-[300px] mx-auto">
+        <Doughnut data={data} options={options} />
+      </div>
     
-    <div className="h-[300px] w-[300px] mx-auto">
-      <Doughnut data={data} options={options} />
+      <ModalComponent open={showModal} type="fir_3" onClose={() => setShowModal(false)} />
     </div>
-  
-    <ModalComponent open={showModal} type='fir_3' onClose={() => setShowModal(false)} />
-  </div>
-  
   );
 };
 

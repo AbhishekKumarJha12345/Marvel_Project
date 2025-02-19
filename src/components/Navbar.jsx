@@ -22,6 +22,9 @@ import BiotechIcon from '@mui/icons-material/Biotech';
 import BalanceIcon from '@mui/icons-material/Balance';
 import FluorescentIcon from '@mui/icons-material/Fluorescent';
 import logo from '../assets/logo22.png'
+import TrainingDataGraph from "./Police/TrainingDataGraph";
+import TrainingDataGraph2 from "./Police/TrainingDataGraph2";
+import PoliceTraining from "./Police/PoliceTraining";
 
 
 export default function Dashboard() {
@@ -83,7 +86,7 @@ useEffect(() => {
 }, []);
 
   const contentMap = {
-    "training"              : <div className="content"><h1 className="heading">Police - Training</h1><PoliceOfficers /><MasterTrainers /></div>,
+    "training"              : <div className="content"><h1 className="heading">Police - Training</h1><PoliceTraining/></div>,
     "awareness/campaign"    : <div className="content"><h1 className="heading">Awareness Campaigns</h1><Carousel /></div>,
     "forensic/visits"       : <div className="content"><h1 className="heading">Forensic Visits</h1><Forensicvisits /></div>,
     "court"                 : <div className="content"><h1 className="heading">Court Visits</h1><Dashboard2 /></div>,
