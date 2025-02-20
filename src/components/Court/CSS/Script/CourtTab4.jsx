@@ -271,6 +271,7 @@ const CourtTab4 = () => {
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Tooltip />
+                <Legend/>
                 <Pie
                   data={forensicDataUsageData}
                   dataKey="value"
