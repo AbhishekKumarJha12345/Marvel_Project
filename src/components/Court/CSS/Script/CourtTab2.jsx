@@ -166,13 +166,12 @@ const CourtTab2 = () => {
     };
   });
 
-  const adoptionData = summonsDigitalData?.map((item) => ({
-    month: new Date(item.month).toLocaleString("en-US", {
-      month: "short",
-      year: "numeric",
-    }),
-    adoptionRate: item.adoption_rate,
-  }));
+  const adoptionData = Array.isArray(summonsDigitalData) 
+  ? summonsDigitalData.map(item => ({
+      month: new Date(item?.month || "").toLocaleString('en-US', { month: 'short', year: 'numeric' }),
+      adoptionRate: parseInt(item?.adoption_rate) || 0 // Handle null/undefined values safely
+    })) 
+  : [];
 
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
@@ -229,7 +228,7 @@ const CourtTab2 = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis 
-      domain={[0, Math.max(...adoptionData.map(item => item.adoptionRate)) + 50]} // Auto-scale with padding
+      domain={[0, Math.max(...adoptionData?.map(item => item.adoptionRate)) + 50]} // Auto-scale with padding
       tickCount={6} // Adjust tick intervals
     />
                   <Tooltip />
