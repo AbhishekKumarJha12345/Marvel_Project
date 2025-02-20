@@ -136,9 +136,9 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
         <div className="mb-4">
           <input
             type="text"
-            id={entry.name}
-            name={entry.name}
-            placeholder={entry.name}
+            id={`${entry.name}_prosecutors`}
+            name={`${entry.name}_prosecutors`}
+            placeholder={`${entry.name}_prosecutors`}
             className="mt-1 p-3 border border-gray-300 rounded w-full"
           />
         </div>
