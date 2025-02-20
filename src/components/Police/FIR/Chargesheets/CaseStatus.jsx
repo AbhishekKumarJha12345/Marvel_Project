@@ -16,6 +16,12 @@ const CaseStatus = () => {
     "#c08497", // Mauve
     "#b0a8b9" // Dusty Lilac
   ];
+  function convertMonthFormat(yyyy_mm) {
+    if (!yyyy_mm || !yyyy_mm.includes("-")) return yyyy_mm; // Handle invalid input
+
+    const [year, month] = yyyy_mm.split("-"); // Split by "-"
+    return month+'-' + year; // Rearrange to MMYYYY format
+}
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -26,7 +32,7 @@ const CaseStatus = () => {
           // Process and filter data
           const formattedData = response.data.data_dict
             .map(item => ({
-              month: item.month,
+              month: convertMonthFormat(item.month),
               acquitted: parseFloat(item.acquitted) || 0,
               convicted: parseFloat(item.convicted) || 0,
               pending: parseFloat(item.pending) || 0,

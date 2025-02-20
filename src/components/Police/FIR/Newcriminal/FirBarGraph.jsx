@@ -15,7 +15,12 @@ const chartColors = [
 ];
 const FirBarGraph = () => {
   const [data, setData] = useState([]);
+  function convertMonthFormat(yyyy_mm) {
+    if (!yyyy_mm || !yyyy_mm.includes("-")) return yyyy_mm; // Handle invalid input
 
+    const [year, month] = yyyy_mm.split("-"); // Split by "-"
+    return month+'-' + year; // Rearrange to MMYYYY format
+}
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -23,11 +28,12 @@ const FirBarGraph = () => {
   
         if (response.status === 200) {
           if (response.data.data_dict) {
+            console.log('fir data',response.data.data_dict)
             // Process and filter data
             const formattedData = response.data.data_dict
               .filter(item => item.total_no_fir_registered_under_bns_ipc !== null) // Remove null values
               .map(item => ({
-                month: item.month,
+                month: convertMonthFormat(item.month),
                 total_firs: parseFloat(item.total_no_fir_registered_under_bns_ipc) || 0,
                 fir_under_bns: parseFloat(item.no_of_fir_registered_under_bns) || 0,
                 chargesheets_filed: parseFloat(item.no_of_chargesheets_filed_under_bns) || 0,

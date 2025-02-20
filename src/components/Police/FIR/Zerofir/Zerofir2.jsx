@@ -16,6 +16,12 @@ const ZeroFir2 = () => {
     "#c08497", // Mauve
     "#b0a8b9" // Dusty Lilac
   ];
+  function convertMonthFormat(yyyy_mm) {
+    if (!yyyy_mm || !yyyy_mm.includes("-")) return yyyy_mm; // Handle invalid input
+
+    const [year, month] = yyyy_mm.split("-"); // Split by "-"
+    return month+'-' + year; // Rearrange to MMYYYY format
+}
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -26,7 +32,7 @@ const ZeroFir2 = () => {
           // Parse and sort data by month
           const sortedData = response.data.data_dict
             .map(item => ({
-              month: item.month,
+              month: convertMonthFormat(item.month),
               regular_fir: parseInt(item.regular_fir, 10) || 0,
               yet_to_be_registered_zero_fir: parseInt(item.yet_to_be_registered_zero_fir, 10) || 0,
               zero_fir: parseInt(item.zero_fir, 10) || 0,
