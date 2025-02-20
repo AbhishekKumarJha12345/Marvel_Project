@@ -122,7 +122,7 @@ const VideoConferencingDashboard = () => {
   };
 
   const caseDisposalData = confrenceDisposalData?.map((item) => ({
-    month: item.month,
+    month: new Date(item.month).toLocaleString('en-US', { month: 'short', year: 'numeric' }),
     disposedCases: item.disposed_cases,
     backlogReduction: item.backlog_reduction,
   }));

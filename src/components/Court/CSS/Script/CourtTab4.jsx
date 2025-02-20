@@ -169,12 +169,12 @@ const CourtTab4 = () => {
   ];
 
   const responseTimeData = forensicData?.map((item) => ({
-    month: item.month,
+    month: new Date(item.month).toLocaleString('en-US', { month: 'short', year: 'numeric' }),
     responseTime: item.response_time_for_evidence_retrieval,
   }));
 
   const dataSharingEffectiveData = forensicData?.map((item) => ({
-    month: item.month,
+    month: new Date(item.month).toLocaleString('en-US', { month: 'short', year: 'numeric' }),
     Judicial: item.judicial_effectiveness,
     Prosecution: item.prosecution_effectiveness,
     Forensic: item.forensic_effectiveness,

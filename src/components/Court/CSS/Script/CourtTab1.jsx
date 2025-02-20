@@ -3,6 +3,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import axiosInstance from "../../../../utils/axiosInstance";
 import {
+  BarChart,
   LineChart,
   Line,
   XAxis,
@@ -16,6 +17,7 @@ import {
   PieChart,
   Pie,
   Cell,
+  Bar,
 } from "recharts";
 
 const CourtRefDetails = `Generated Summary:
@@ -47,7 +49,7 @@ const chartColors = [
   "#c08497", // Mauve
   "#b0a8b9", // Dusty Lilac
 ];
-import Courtform from './Courtform.jsx'
+import Courtform from "./Courtform.jsx";
 const CourtTab1 = () => {
   const exportRef = useRef(null);
   const [icjsData, setIcjsData] = useState(null);
@@ -69,7 +71,7 @@ const CourtTab1 = () => {
     ICJSCaseData();
   }, []);
   const [showModal, setShowModal] = useState(false);
-  
+
   const handleExport = async () => {
     const pdf = new jsPDF("p", "mm", "a4");
     const margin = 10;
@@ -131,7 +133,10 @@ const CourtTab1 = () => {
       ];
 
   const caseData = icjsData?.map((item) => ({
-    month: item.month,
+    month: new Date(item.month).toLocaleString("en-US", {
+      month: "short",
+      year: "numeric",
+    }),
     total: parseInt(item.pending) + parseInt(item.completed),
     pending: parseInt(item.pending),
     completed: parseInt(item.completed),
@@ -146,14 +151,18 @@ const CourtTab1 = () => {
           <button className="ExportButton" onClick={handleExport}>
             Export
           </button>
-          {localStorage.getItem('role') !=='chief secretary' &&  <button 
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-          style={{backgroundColor:'#2d3748'}} onClick={() => {
-            console.log("Open modal");
-            setShowModal(true);
-          }}>
-            Add on
-          </button>}
+          {localStorage.getItem("role") !== "chief secretary" && (
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+              style={{ backgroundColor: "#2d3748" }}
+              onClick={() => {
+                console.log("Open modal");
+                setShowModal(true);
+              }}
+            >
+              Add on
+            </button>
+          )}
         </div>
       </div>
       <div ref={exportRef}>
@@ -197,19 +206,34 @@ const CourtTab1 = () => {
               <h3 className="text-xl font-semibold mb-4">
                 Average Resolution Time Over Time
               </h3>
-              <ResponsiveContainer width="100%" height={300}>
+              {/* <ResponsiveContainer width="100%" height={300}>
                 <AreaChart data={caseData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
+                  <XAxis dataKey="month" angle={-45} textAnchor="end" />
+                  <YAxis domain={[0, "auto"]} />
                   <Tooltip />
                   <Area
                     type="monotone"
                     dataKey="avgResolutionTime"
                     fill={chartColors[0]}
                     stroke="#8884d8"
+                    fillOpacity={0.5} // Ensure proper transparency
                   />
                 </AreaChart>
+              </ResponsiveContainer> */}
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={caseData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar
+                    dataKey="avgResolutionTime"
+                    fill={chartColors[0]}
+                    name="Avg Resolution Time"
+                  />
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
@@ -218,31 +242,30 @@ const CourtTab1 = () => {
         {/* Pie Chart */}
         <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">Live</h1>
-            <div className="bg-white p-4 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold mb-4">
-                Case Status Distribution
-              </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={caseStatusData}
-                    dataKey="value"
-                    nameKey="name"
-                    outerRadius={100}
-                    fill="#8884d8"
-                  >
-                    {caseStatusData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={index % 2 === 0 ? "#82ca9d" : "#8884d8"}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-        
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <h3 className="text-xl font-semibold mb-4">
+              Case Status Distribution
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={caseStatusData}
+                  dataKey="value"
+                  nameKey="name"
+                  outerRadius={100}
+                  fill="#8884d8"
+                >
+                  {caseStatusData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={index % 2 === 0 ? "#82ca9d" : "#8884d8"}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
       <Courtform

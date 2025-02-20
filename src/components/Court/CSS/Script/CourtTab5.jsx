@@ -145,19 +145,19 @@ const [showModal, setShowModal] = useState(false);
   ];
 
   const speechToTextIntegrationData = implementationData?.map((item) => ({
-    month: item.month,
+    month: new Date(item.month).toLocaleString('en-US', { month: 'short', year: 'numeric' }),
     progress: parseInt(item.ai_transcription_integration || 0),
   }));
 
   const userFeedbackDatas = implementationData?.map((item) => ({
-    month: item.month,
+    month: new Date(item.month).toLocaleString('en-US', { month: 'short', year: 'numeric' }),
     Judges: item.judges_feedback,
     "Legal Professionals": item.legal_professionals_feedback,
     "Administrative Staff": item.administrative_staff_feedback,
   }));
 
   const monthlyProgressData = implementationData?.map((item) => ({
-    month: item.month,
+    month: new Date(item.month).toLocaleString('en-US', { month: 'short', year: 'numeric' }),
     Planning: parseInt(item.planning || 0),
     Development: parseInt(item.development || 0),
     Testing: parseInt(item.testing || 0),
