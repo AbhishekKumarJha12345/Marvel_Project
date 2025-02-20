@@ -140,9 +140,9 @@ function Firchargesheets() {
                 </button>}
                  {/* Download Report Button */}
       {/* <div className="mt-4"> */}
-        <button className="bg-green-600 text-white px-4 py-2 rounded-lg ml-4" onClick={downloadReport}>
+        {/* <button className="bg-green-600 text-white px-4 py-2 rounded-lg ml-4" onClick={downloadReport}>
           Download Charge Sheet Report
-        </button>
+        </button> */}
       {/* </div> */}
               </div>
               <CaseStatus />

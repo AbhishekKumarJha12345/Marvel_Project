@@ -78,12 +78,12 @@ function Forensicvisits() {
         {activeTab === 'home' ? (
          <div className="col-6">
          <div className="card shadow-sm bg-white text-right p-2">
-         <button
+         {/* <button
                   onClick={generateReport}
                   className="mt-4 px-4 py-2 bg-[#2d3748] text-white rounded"
                 >
                   Download Report
-                </button>
+                </button> */}
            <div className="card-body">
              <PolicePunishment />
            </div>

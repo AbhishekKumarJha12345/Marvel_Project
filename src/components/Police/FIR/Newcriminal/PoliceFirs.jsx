@@ -71,12 +71,12 @@ const PoliceFirs = ({ apidata, downloadReport }) => {
           >
             Add On
           </button>}
-          <button
+          {/* <button
             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all"
             onClick={downloadReport}
           >
             Download FIR Report
-          </button>
+          </button> */}
         </div>
       </div>
 
