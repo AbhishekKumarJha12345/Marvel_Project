@@ -141,15 +141,15 @@ const CourtTab4 = () => {
   const dataSharingEffectivenessData = [
     {
       department: "Judicial",
-      effectiveness: parseInt(forensicData?.[0].judicial_effectiveness || 0),
+      effectiveness: parseInt(forensicData?.[0]?.judicial_effectiveness || 0),
     },
     {
       department: "Prosecution",
-      effectiveness: parseInt(forensicData?.[0].prosecution_effectiveness || 0),
+      effectiveness: parseInt(forensicData?.[0]?.prosecution_effectiveness || 0),
     },
     {
       department: "Forensic",
-      effectiveness: parseInt(forensicData?.[0].forensic_effectiveness || 0),
+      effectiveness: parseInt(forensicData?.[0]?.forensic_effectiveness || 0),
     },
   ];
 
@@ -157,27 +157,27 @@ const CourtTab4 = () => {
     {
       name: "Used Forensic Data",
       value: parseInt(
-        forensicData?.[0].percentage_of_cases_using_forensic_data || 0
+        forensicData?.[0]?.percentage_of_cases_using_forensic_data || 0
       ),
     },
     {
       name: "Did Not Use Forensic Data",
       value: parseInt(
-        100 - forensicData?.[0].percentage_of_cases_using_forensic_data || 0
+        100 - forensicData?.[0]?.percentage_of_cases_using_forensic_data || 0
       ),
     },
   ];
 
   const responseTimeData = forensicData?.map((item) => ({
     month: new Date(item.month).toLocaleString('en-US', { month: 'short', year: 'numeric' }),
-    responseTime: item.response_time_for_evidence_retrieval,
+    responseTime: item?.response_time_for_evidence_retrieval,
   }));
 
   const dataSharingEffectiveData = forensicData?.map((item) => ({
     month: new Date(item.month).toLocaleString('en-US', { month: 'short', year: 'numeric' }),
-    Judicial: item.judicial_effectiveness,
-    Prosecution: item.prosecution_effectiveness,
-    Forensic: item.forensic_effectiveness,
+    Judicial: item?.judicial_effectiveness,
+    Prosecution: item?.prosecution_effectiveness,
+    Forensic: item?.forensic_effectiveness,
   }));
 
   return (
