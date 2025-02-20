@@ -21,11 +21,21 @@ const chartColors = [
 const  PoliceOfficers = ({getDate}) => {
   const [showModal, setShowModal] = useState(false);
   const [trainingData,setTrainingData]=useState('')
+  const formatRank = (rank) => {
+    return rank.replace(/\b[a-z]/g, (char) => char.toUpperCase()) // Capitalize first letter outside parentheses
+               .replace(/\((.*?)\)/g, (match, p1) => `(${p1.toUpperCase()})`); // Convert text inside parentheses to uppercase
+  };
+  
 const getTrainingData = async()=>{
   try{
     const response =await axiosInstance.get('/live_data')
     console.log(response.data,'Trainig data response ----------')
-    setTrainingData(response.data.latest_trainings)
+    const formattedData = response.data.latest_trainings.map((item) => ({
+      ...item,
+      rank: formatRank(item.rank), // Format rank before updating state
+    }));
+    setTrainingData(formattedData);
+    // setTrainingData(response.data.latest_trainings)
     getDate(response.data.latest_trainings &&response.data.latest_trainings[0] &&response.data.latest_trainings[0].uploaded_date)
 
   }catch(error){
@@ -85,26 +95,52 @@ useEffect(() => {
       },
       tooltip: {
         callbacks: {
-          // Custom tooltip label (percentage for each group)
           label: function (tooltipItem) {
             const label = tooltipItem.dataset.label || '';
             const dataIndex = tooltipItem.dataIndex;
             let percentage = '';
-
-            // Predefined percentages for the whole groups
-            if (dataIndex === 0) { // Police Officers(PSI to SP/DCP) group
-              percentage = '92.35%'; // Percentage for Police Officers group
-            } else if (dataIndex === 1) { // Police Personnel(PC to ASI) group
-              percentage = '90.50%'; // Percentage for Police Personnel group
+  
+            if (dataIndex === 0) {
+              percentage = '92.35%'; 
+            } else if (dataIndex === 1) {
+              percentage = '90.50%';
             }
-
-            // Return custom label with percentage for the group
+  
             return `${label}: ${percentage}`;
           },
         },
       },
     },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Rank',  // X-axis label
+          font: { size: 14 },
+          padding: { top: 10 },
+        },
+        ticks: {
+          font: { size: 12 },
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Number of Officers',  // Y-axis label
+          font: { size: 14 },
+          padding: { bottom: 10 }, // Prevents cutting off
+        },
+        ticks: {
+          font: { size: 12 },
+        },
+      },
+    },
   };
+  
+  // Apply `options` properly inside the `Bar` component
+  // <Bar data={data} options={options} />
+  
+  
   // Function to download the PDF report
   const downloadReport = async () => {
     if (trainingData.length < 2) {
@@ -141,11 +177,9 @@ useEffect(() => {
   };
 
   return (
-    <>
-   
-    <div className="bg-white p-6 rounded-lg w-full h-[500px] text-center  rounded-xl shadow-md" style={{width:"48%"}}>
-      <div className="flex justify-around items-center mb-8 ">
-        <h1 className="">Police Officers</h1>
+    <div className="bg-white p-6 rounded-lg w-[50%] h-[500px] text-center  rounded-xl shadow-md">
+      <div className="flex items-left mb-8">
+        <h1 className="text-xl" style={{fontWeight:"600"}}>Police Officers</h1>
         {/* <button className="bg-green-600 text-white px-4 py-2 rounded-lg" onClick={downloadReport}>
           Download Report
         </button> */}
@@ -160,8 +194,8 @@ useEffect(() => {
           Add On
         </button> */}
       </div>
-      <div className="h-[400px] w-full ">
-        <Bar data={data} options={{ responsive: true, maintainAspectRatio: false }} />
+      <div className="h-[400px] w-[full]">
+        <Bar data={data} options={{options}} />
       </div>
       <ModalComponent
         open={showModal}
@@ -169,7 +203,7 @@ useEffect(() => {
         onClose={() => setShowModal(false)}
       />
     </div>
-    </>
+    
 
   );
 };

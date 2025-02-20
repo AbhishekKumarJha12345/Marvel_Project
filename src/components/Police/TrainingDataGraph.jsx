@@ -84,11 +84,28 @@ const TrainingDataGraph = () => {
       </div>
 
       {/* Line Chart */}
-      <div className="w-full h-auto min-h-[300px]">
-        <ResponsiveContainer width="100%" height={400}>
+      <div className="w-full h-auto min-h-[300px] ">
+        <ResponsiveContainer width="100%" height={400} padding={1}>
           <LineChart data={processedData}>
-            <XAxis dataKey="date" stroke="#6b7280" tick={{ fontSize: 14 }} />
-            <YAxis stroke="#6b7280" tick={{ fontSize: 14 }} />
+          <XAxis 
+          dataKey="date" 
+          stroke="#6b7280" 
+          tick={{ fontSize: 14 }} 
+          label={{ value: "Date of Training", position: "insideBottom", offset: -5 }} 
+        />
+        <YAxis 
+          stroke="#6b7280" 
+          tick={{ fontSize: 14 }} 
+          // label={{ value: "No of Officer Trained", angle: -90, position: "center", offset: -5 }} 
+          label={{
+            value: "No of Officers Trained",
+            angle: -90,
+            position: "insideLeft",
+            offset: -0, // Moves label further left to prevent overlap
+            style: { textAnchor: "middle" }, 
+          }}
+        />
+
             <Tooltip
               contentStyle={{
                 backgroundColor: "#f9fafb",
@@ -96,7 +113,7 @@ const TrainingDataGraph = () => {
                 border: "1px solid #e5e7eb",
               }}
             />
-            <Legend iconType="circle" wrapperStyle={{ paddingBottom: 10 }} />
+            <Legend iconType="circle" wrapperStyle={{ paddingBottom: 10,paddingTop: 10 }} />
             <Line
               type="monotone"
               dataKey="psi_sp_dcp"

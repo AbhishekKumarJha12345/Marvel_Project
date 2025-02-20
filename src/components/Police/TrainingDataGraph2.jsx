@@ -59,8 +59,29 @@ const TrainingDataGraph2 = () => {
       <ResponsiveContainer width="100%" height="92%">
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
-          <YAxis />
+          <XAxis 
+  dataKey="month" 
+  label={{ 
+    //value: "Workshop Month", 
+    value: "Date of workshop", 
+    position: "insideBottom", 
+
+    offset: -3
+  }} 
+/>
+<YAxis
+  tick={{ fontSize: 14, dx: -5 }} // Moves Y-axis values slightly left
+  label={{
+    value: "No. of Workshops Conducted",
+    angle: -90,
+    position: "insideLeft",
+    offset: -0, // Moves label further left to prevent overlap
+    style: { textAnchor: "middle" }, 
+  }} 
+/>
+
+
+
           <Tooltip />
           <Line
             type="monotone"
