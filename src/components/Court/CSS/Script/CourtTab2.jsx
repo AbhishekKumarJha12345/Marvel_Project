@@ -172,6 +172,10 @@ const CourtTab2 = () => {
       adoptionRate: parseInt(item?.adoption_rate) || 0 // Handle null/undefined values safely
     })) 
   : [];
+  const recentEntryDate = new Date(summonsDigitalData?.[0]?.month).toLocaleString("en-US", {
+    month: "short",
+    year: "numeric",
+  })
 
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
@@ -246,7 +250,7 @@ const CourtTab2 = () => {
           </div>
         </div>
         <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
-          <h1 className="text-2xl font-bold">Live</h1>
+          <h1 className="text-2xl font-bold">Recent Entry : {recentEntryDate}</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Updated Pie Chart for Compliance */}
             <div className="bg-white p-4 rounded-xl shadow-md">
