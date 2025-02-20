@@ -12,7 +12,12 @@ import axiosInstance from "../../utils/axiosInstance";
 
 const TrainingDataGraph2 = () => {
   const [data, setData] = useState([]);
+  function convertMonthFormat(yyyy_mm) {
+    if (!yyyy_mm || !yyyy_mm.includes("-")) return yyyy_mm; // Handle invalid input
 
+    const [year, month] = yyyy_mm.split("-"); // Split by "-"
+    return month+'-' + year; // Rearrange to MMYYYY format
+}
   const fetchData = async () => {
     try {
       const response = await axiosInstance.get("/live_data", {
@@ -25,10 +30,10 @@ const TrainingDataGraph2 = () => {
         const sortedData = result?.data_dict
           .map((item) => {
             // Convert the date to dd/mm/yyyy format
-            const date = new Date(item.month);
-            const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`;
+            const date = convertMonthFormat(item.month);
+            // const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`;
             return {
-              month: formattedDate,
+              month: date,
               count: parseInt(item.count, 10),
             };
           })
@@ -70,12 +75,12 @@ const TrainingDataGraph2 = () => {
   }} 
 />
 <YAxis
-  tick={{ fontSize: 14, dx: -5 }} // Moves Y-axis values slightly left
+  tick={{ fontSize: 12  , dx: -5 }} // Moves Y-axis values slightly left
   label={{
     value: "No. of Workshops Conducted",
     angle: -90,
     position: "insideLeft",
-    offset: -0, // Moves label further left to prevent overlap
+    offset: -1, // Moves label further left to prevent overlap
     style: { textAnchor: "middle" }, 
   }} 
 />

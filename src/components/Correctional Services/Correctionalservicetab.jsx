@@ -103,22 +103,43 @@ In conclusion, the provided data shows an increase in admissions, inmate populat
   
     return currentY + 6; // Return new Y position
   };
+  const [rloading,setRloading]=useState(false)
   const handleExportPoliceTraining = async () => {
+    setRloading(true)
     const pdf = new jsPDF("p", "mm", "a4"); // Create A4 size PDF
     const margin = 10;
     let yPosition = 20; // Start position for text
     
     // Capture PoliceTraining as an image
+    // if (trainingRef.current) {
+    //   const canvas = await html2canvas(trainingRef.current, { scale: 2 });
+    //   const imgData = canvas.toDataURL("image/png");
+  
+    //   const imgWidth = 180; // Fit image width into A4
+    //   const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
+  
+    //   pdf.addImage(imgData, "PNG", margin, yPosition, imgWidth, imgHeight);
+    //   yPosition += imgHeight + 10; // Move below image
+    // }
     if (trainingRef.current) {
       const canvas = await html2canvas(trainingRef.current, { scale: 2 });
       const imgData = canvas.toDataURL("image/png");
-  
-      const imgWidth = 180; // Fit image width into A4
+    
+      const pageWidth = pdf.internal.pageSize.getWidth() - 2 * margin; // Get available width
+      const pageHeight = pdf.internal.pageSize.getHeight() - 2 * margin; // Get available height
+      const imgWidth = Math.min(pageWidth, canvas.width);
       const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
-  
-      pdf.addImage(imgData, "PNG", margin, yPosition, imgWidth, imgHeight);
-      yPosition += imgHeight + 10; // Move below image
+    
+      if (imgHeight > pageHeight) {
+        pdf.addImage(imgData, "PNG", margin, margin, pageWidth, pageHeight); // Stretch to fit
+        pdf.addPage();
+        yPosition = 20; // Reset yPosition for text
+      } else {
+        pdf.addImage(imgData, "PNG", margin, yPosition, imgWidth, imgHeight);
+        yPosition += imgHeight + 10; // Move below image
+      }
     }
+    
   
     // Add a separator
     pdf.setDrawColor(0);
@@ -164,6 +185,7 @@ In conclusion, the provided data shows an increase in admissions, inmate populat
   
     // Save the PDF
     pdf.save("Correctional_Services_Report.pdf");
+    setRloading(false)
   };
 
   return (
@@ -222,13 +244,14 @@ In conclusion, the provided data shows an increase in admissions, inmate populat
           border: "2px solid #65558F",
           padding: "5px 9px",
           borderRadius: "8px",
+          minWidth:'80px',
           "&:hover": {
           backgroundColor: "#65558F",
           color: "white",
           },
           }}
           onClick={handleExportPoliceTraining}>
-          Export
+          {!rloading ? 'Export' : <><span className="spinner-border spinner-border-sm me-2"></span></>}
         </Button>}
       </Box>
       {tabData.map((tab, index) => (
