@@ -1,201 +1,83 @@
 import React, { useEffect, useState } from 'react';
-import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-import axiosInstance from '../../utils/axiosInstance';
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import axiosInstance from '../../utils/axiosInstance'; 
 import ModalComponent from './ModalComponent';
 
 // Register chart components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-const chartColors = [
-  "#8884d8", // Muted Purple
-  "#82ca9d", // Soft Green
-  "#f2c57c", // Warm Sand
-  "#6a8caf", // Steel Blue
-  "#d4a5a5", // Soft Rose
-  "#a28bd3", // Lavender
-  "#ff9a76", // Muted Coral
-  "#74b49b", // Muted Teal
-  "#c08497", // Mauve
-  "#b0a8b9"  // Dusty Lilac
-];
-const  PoliceOfficers = ({getDate}) => {
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+const PoliceOfficers = ({ getDate }) => {
   const [showModal, setShowModal] = useState(false);
-  const [trainingData,setTrainingData]=useState('')
+  const [trainingData, setTrainingData] = useState([]);
+
   const formatRank = (rank) => {
     return rank.replace(/\b[a-z]/g, (char) => char.toUpperCase()) // Capitalize first letter outside parentheses
                .replace(/\((.*?)\)/g, (match, p1) => `(${p1.toUpperCase()})`); // Convert text inside parentheses to uppercase
   };
-  
-const getTrainingData = async()=>{
-  try{
-    const response =await axiosInstance.get('/live_data')
-    console.log(response.data,'Trainig data response ----------')
-    const formattedData = response.data.latest_trainings.map((item) => ({
-      ...item,
-      rank: formatRank(item.rank), // Format rank before updating state
-    }));
-    setTrainingData(formattedData);
-    // setTrainingData(response.data.latest_trainings)
-    getDate(response.data.latest_trainings &&response.data.latest_trainings[0] &&response.data.latest_trainings[0].uploaded_date)
 
-  }catch(error){
-    console.log(error)
-  }
-}
-useEffect(() => {
-  getTrainingData();
-}, []);
-  console.log(trainingData,'training props data------')
-  // Data for the bar graph
+  const getTrainingData = async () => {
+    try {
+      const response = await axiosInstance.get('/live_data');
+      console.log(response.data, 'Training data response ----------');
+      const formattedData = response.data.latest_trainings.map((item) => ({
+        ...item,
+        rank: formatRank(item.rank),
+        available_officers: parseInt(item.available_officers, 10),
+        trained_officers: parseInt(item.trained_officers, 10),
+      }));
+      setTrainingData(formattedData);
+
+      if (formattedData.length > 0) {
+        getDate(formattedData[0].uploaded_date);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getTrainingData();
+  }, []);
+
+  console.log(trainingData, 'training props data------');
+
+  const totalOfficers = trainingData.reduce((acc, item) => acc + item.trained_officers, 0);
+  const availableOfficers = trainingData.reduce((acc, item) => acc + item.available_officers, 0);
+
   const data = {
-    labels: [
-      trainingData && trainingData[0] && trainingData[0].rank ? trainingData[0].rank : "", 
-      trainingData && trainingData[1] && trainingData[1].rank ? trainingData[1].rank : ""
-    ],
-    
-    // labels: [trainingData?trainingData[0].rank :"", trainingData ?trainingData[1].rank:""], // Labels for the two roles
+    labels: ['Total Trained Officers', 'Available Officers'],
     datasets: [
       {
-        label: 'Available Officers',
-        data: [
-          trainingData && trainingData[0] ? trainingData[0].available_officers || 0 : 0, 
-          trainingData && trainingData[0] ? trainingData[0].trained_officers || 0 : 0
-        ], 
-        backgroundColor: chartColors[0], 
-        borderColor: chartColors[0],
-        borderWidth: 1,
-        barThickness: 20,
+        label: 'Officers Data',
+        data: [totalOfficers, availableOfficers],
+        backgroundColor: ['#82ca9d', '#8884d8'],
+        hoverBackgroundColor: ['#4CAF50', '#2196F3'],
       },
-      {
-        label: 'Total Trained Officers',
-        data: [
-          trainingData && trainingData[1] ? trainingData[1].available_officers || 0 : 0, 
-          trainingData && trainingData[1] ? trainingData[1].trained_officers || 0 : 0
-        ],
-        backgroundColor: chartColors[1], 
-        borderColor: chartColors[1],
-        borderWidth: 1,
-        barThickness: 20,
-      },
-      
     ],
   };
 
-  // Custom tooltip content (percentage display for each group)
   const options = {
     responsive: true,
-    maintainAspectRatio: false, // Ensures full width usage
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'bottom',
       },
       title: {
         display: true,
-        text: 'Officers Data Comparison',
-      },
-      tooltip: {
-        callbacks: {
-          label: function (tooltipItem) {
-            const label = tooltipItem.dataset.label || '';
-            const dataIndex = tooltipItem.dataIndex;
-            let percentage = '';
-  
-            if (dataIndex === 0) {
-              percentage = '92.35%'; 
-            } else if (dataIndex === 1) {
-              percentage = '90.50%';
-            }
-  
-            return `${label}: ${percentage}`;
-          },
-        },
+        // text: 'Officers Data Comparison',
       },
     },
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: 'Rank',  // X-axis label
-          font: { size: 14 },
-          padding: { top: 10 },
-        },
-        ticks: {
-          font: { size: 12 },
-        },
-      },
-      y: {
-        title: {
-          display: true,
-          text: 'Number of Officers',  // Y-axis label
-          font: { size: 14 },
-          padding: { bottom: 10 }, // Prevents cutting off
-        },
-        ticks: {
-          font: { size: 12 },
-        },
-      },
-    },
-  };
-  
-  // Apply `options` properly inside the `Bar` component
-  // <Bar data={data} options={options} />
-  
-  
-  // Function to download the PDF report
-  const downloadReport = async () => {
-    if (trainingData.length < 2) {
-      alert("Not enough data to generate a report.");
-      return;
-    }
-
-    const requestData = {
-      chart_type: "bar",
-      data: {
-        labels: [trainingData[0].rank, trainingData[1].rank],
-        values: [trainingData[0].available_officers, trainingData[1].trained_officers],
-        title: "Police Officers Training Report",
-        y_label: "Number of Officers",
-        colors: ["#4CAF50", "#2196F3"]
-      }
-    };
-
-    try {
-      const response = await axiosInstance.post('/generate_report', requestData, {
-        responseType: 'blob',
-      });
-
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'police_report.pdf');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error("Error downloading report:", error);
-    }
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg w-[50%] h-[500px] text-center  rounded-xl shadow-md">
+    <div className="bg-white p-6 rounded-lg w-[50%] h-[500px] text-center rounded-xl shadow-md">
       <div className="flex items-left mb-8">
-        <h1 className="text-xl" style={{fontWeight:"600"}}>Police Officers</h1>
-        {/* <button className="bg-green-600 text-white px-4 py-2 rounded-lg" onClick={downloadReport}>
-          Download Report
-        </button> */}
-        {/* <button
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-          style={{backgroundColor:'#2d3748'}}
-          onClick={() => {
-            console.log("Open modal");
-            setShowModal(true);
-          }}
-        >
-          Add On
-        </button> */}
+        <h1 className="text-xl" style={{ fontWeight: '600' }}>Police Officers</h1>
       </div>
-      <div className="h-[400px] w-[full]">
-        <Bar data={data} options={{options}} />
+      <div className="h-[400px] w-full">
+        <Pie data={data} options={options} />
       </div>
       <ModalComponent
         open={showModal}
@@ -203,8 +85,6 @@ useEffect(() => {
         onClose={() => setShowModal(false)}
       />
     </div>
-    
-
   );
 };
 

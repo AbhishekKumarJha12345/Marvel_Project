@@ -1,37 +1,27 @@
 import { React, useState } from 'react';
-import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import ModalComponent from '../../ModalComponent';
 
 // Register required chart components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const EFIRsChart = ({ generateReport }) => {
   const [showModal, setShowModal] = useState(false);
 
   const chartColors = [
-    "#8884d8", "#82ca9d", "#f2c57c", "#6a8caf", "#d4a5a5",
-    "#a28bd3", "#ff9a76", "#74b49b", "#c08497", "#b0a8b9"
+    "#8884d8", "#82ca9d"
   ];
 
   const data = {
     labels: ['Total eFIRs Received', 'Total eFIRs Converted to Proper FIRs'],
     datasets: [
       {
-        label: 'Total eFIRs Received',
-        data: [365, 0],
-        backgroundColor: chartColors[0],
-        borderColor: chartColors[0],
+        label: 'eFIRs Data',
+        data: [365, 87],
+        backgroundColor: chartColors,
+        borderColor: chartColors,
         borderWidth: 1,
-        barThickness: 50,
-      },
-      {
-        label: 'Total eFIRs Converted',
-        data: [0, 87],
-        backgroundColor: chartColors[1],
-        borderColor: chartColors[1],
-        borderWidth: 1,
-        barThickness: 50,
       },
     ],
   };
@@ -44,7 +34,7 @@ const EFIRsChart = ({ generateReport }) => {
       tooltip: {
         callbacks: {
           label: function (tooltipItem) {
-            return `${tooltipItem.dataset.label}: ${tooltipItem.raw.toLocaleString()}`;
+            return `${tooltipItem.label}: ${tooltipItem.raw.toLocaleString()}`;
           },
         },
       },
@@ -57,23 +47,19 @@ const EFIRsChart = ({ generateReport }) => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-3xl font-semibold text-center flex-grow">eFIRs Overview</h2>
         <div className="flex space-x-4">
-          {localStorage.getItem('role') !=='chief secretary' && <button
-            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-all"
-            onClick={() => setShowModal(true)}
-          >
-            Add On
-          </button>}
-          {/* <button
-            onClick={generateReport}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-blue-700 transition-all"
-          >
-            Download Report
-          </button> */}
+          {localStorage.getItem('role') !== 'chief secretary' && (
+            <button
+              className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-all"
+              onClick={() => setShowModal(true)}
+            >
+              Add On
+            </button>
+          )}
         </div>
       </div>
 
-      <div className="h-[500px]">
-        <Bar data={data} options={options} />
+      <div className="h-[350px]">
+        <Pie data={data} options={options} />
       </div>
 
       <ModalComponent open={showModal} type="fir_4" onClose={() => setShowModal(false)} />

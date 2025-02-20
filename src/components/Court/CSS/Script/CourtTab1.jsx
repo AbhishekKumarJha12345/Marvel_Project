@@ -253,26 +253,30 @@ const CourtTab1 = () => {
               Case Status Distribution
             </h3>
             <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-              <Legend />
+  <PieChart>
+    <Legend 
+      layout="horizontal" 
+      align="center" 
+      verticalAlign="bottom" 
+    />
+    <Pie
+      data={caseStatusData}
+      dataKey="value"
+      nameKey="name"
+      outerRadius={100}
+      fill="#8884d8"
+    >
+      {caseStatusData.map((entry, index) => (
+        <Cell
+          key={`cell-${index}`}
+          fill={index % 2 === 0 ? "#82ca9d" : "#8884d8"}
+        />
+      ))}
+    </Pie>
+    <Tooltip />
+  </PieChart>
+</ResponsiveContainer>
 
-                <Pie
-                  data={caseStatusData}
-                  dataKey="value"
-                  nameKey="name"
-                  outerRadius={100}
-                  fill="#8884d8"
-                >
-                  {caseStatusData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={index % 2 === 0 ? "#82ca9d" : "#8884d8"}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
           </div>
         </div>
       </div>

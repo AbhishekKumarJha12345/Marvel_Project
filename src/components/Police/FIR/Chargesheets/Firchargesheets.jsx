@@ -120,7 +120,7 @@ function Firchargesheets() {
       <div className="mt-4">
       
         {activeTab === 'home' ? (
-          <div className="col-6">
+          <div className="col-6" style={{width:"100%"}}>
           <div className="card shadow-sm bg-white">
             <div className="card-body" style={{padding:"24px",display:"flex",flexDirection:"column",gap:"1rem"}}>
               {/* <PoliceChargeSheet apidata={trainingData}/> */}
@@ -145,10 +145,12 @@ function Firchargesheets() {
         </button> */}
       {/* </div> */}
               </div>
+              <div style={{display:"flex",width:"100%",height:"60vh",marginBottom:"2rem"}}>
               <CaseStatus />
               <br/>
               <hr/>
               <ChargeSheetGraph2 />
+            </div>
             </div>
           </div>
           </div>

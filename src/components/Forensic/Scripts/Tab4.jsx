@@ -57,70 +57,82 @@ export default function ForensicDashboard() {
         <div className="bg-white p-4 rounded-xl shadow-md">
           <h2 className="text-xl font-semibold mb-4">Infrastructure Development Projects</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={dataInfrastructure}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="project" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="count" fill="#8884d8" barSize={50} />
-              {dataInfrastructure.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
+  <PieChart>
+    <Pie 
+      data={dataInfrastructure} 
+      dataKey="count" 
+      nameKey="project" 
+      cx="50%" 
+      cy="50%" 
+      outerRadius={100} 
+      fill="#8884d8" 
+      label
+    >
+      {dataInfrastructure.map((entry, index) => (
+        <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
+      ))}
+    </Pie>
+    <Tooltip />
+    <Legend />
+  </PieChart>
+</ResponsiveContainer>
+
         </div>
 
         {/* Resource Allocation Line Chart */}
         <div className="bg-white p-4 rounded-xl shadow-md">
           <h2 className="text-xl font-semibold mb-4">Resource Allocation & Facility Expansion</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={dataResourceAllocation}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="category" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="value" stroke="#82ca9d" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
+  <BarChart data={dataResourceAllocation}>
+    <CartesianGrid strokeDasharray="3 3" />
+    <XAxis dataKey="category" />
+    <YAxis />
+    <Tooltip />
+    <Legend />
+    <Bar dataKey="value" fill="#82ca9d" />
+  </BarChart>
+</ResponsiveContainer>
+
         </div>
 
         {/* Recruitment Line Chart */}
         <div className="bg-white p-4 rounded-xl shadow-md">
           <h2 className="text-xl font-semibold mb-4">Recruitment & Hiring of Forensic Experts</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={dataRecruitment}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="category" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="value" stroke="#FF8042" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
+  <BarChart data={dataRecruitment}>
+    <CartesianGrid strokeDasharray="3 3" />
+    <XAxis dataKey="category" />
+    <YAxis />
+    <Tooltip />
+    <Legend />
+    <Bar dataKey="value" fill="#FF8042" barSize={30} />
+  </BarChart>
+</ResponsiveContainer>
+
         </div>
          {/* MoUs Pie Chart */}
          <div className="bg-white p-4 rounded-xl shadow-md">
           <h2 className="text-xl font-semibold mb-4">MoUs with NFSU</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={dataMoUs}
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-                label
-              >
-                {dataMoUs.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+  <PieChart>
+    <Pie
+      data={dataMoUs}
+      cx="50%"
+      cy="50%"
+      outerRadius={80}
+      fill="#8884d8"
+      dataKey="value"
+      label
+    >
+      {dataMoUs.map((entry, index) => (
+        <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
+      ))}
+    </Pie>
+    <Tooltip />
+    <Legend layout="vertical" align="right" verticalAlign="middle" />
+  </PieChart>
+</ResponsiveContainer>
+
         </div>
       </div>
     </div>
