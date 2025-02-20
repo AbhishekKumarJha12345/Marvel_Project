@@ -70,6 +70,7 @@ const AdminRegister = ({ onRegister, onClose }) => {
               className="w-full p-2 border rounded-md bg-white"
             >
               <option value="">Select Role</option>
+              <option value="chief secretary">Chief Secretary</option>
               <option value="police">Police</option>
               <option value="Prosecutor">Prosecutor</option>
               <option value="Correction">Correction Services</option>
