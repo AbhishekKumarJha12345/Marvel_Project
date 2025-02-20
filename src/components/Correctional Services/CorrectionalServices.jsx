@@ -17,7 +17,7 @@ const CorrectionalServices = () => {
     class3_trained: '',
   });
   useEffect(() => {
-    fetch('http://localhost:5555/api/get_personnel_trained')
+    fetch('https://sjci.marvel.pinacalabs.com/api/get_personnel_trained')
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -99,7 +99,7 @@ const CorrectionalServices = () => {
     e.preventDefault();
   
     // Send form data to the backend and update the data in the `personnel_trained` table
-    fetch('http://localhost:5555/api/add_personnel_trained', {
+    fetch('https://sjci.marvel.pinacalabs.com/api/add_personnel_trained', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -142,7 +142,7 @@ const CorrectionalServices = () => {
       // Log FormData to ensure it's populated correctly
       console.log("FormData being sent:", formData);
       
-      fetch('http://localhost:5555/api/upload_personnel_data', {
+      fetch('https://sjci.marvel.pinacalabs.com/api/upload_personnel_data', {
         method: 'POST',
         body: formData,
       })
@@ -171,7 +171,7 @@ const CorrectionalServices = () => {
   };
   
   const fetchPersonnelData = () => {
-    fetch('http://localhost:5555/api/get_personnel_trained')
+    fetch('https://sjci.marvel.pinacalabs.com/api/get_personnel_trained')
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {

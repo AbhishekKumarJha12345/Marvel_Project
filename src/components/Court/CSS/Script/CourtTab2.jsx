@@ -162,7 +162,7 @@ const CourtTab2 = () => {
         month: "short",
         year: "numeric",
       }),
-      deliveredElectronically: item.electronic_court_summons,
+      deliveredElectronically: parseInt(item.electronic_court_summons),
     };
   });
 
