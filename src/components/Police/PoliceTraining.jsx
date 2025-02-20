@@ -6,7 +6,7 @@ import TrainingDataGraph2 from "./TrainingDataGraph2";
 
 const PoliceTraining = forwardRef((props, ref) => {
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto" ref={ref}>
+    <div className="p-6 rounded-lg w-full max-w-full h-auto" ref={ref}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <TrainingDataGraph />
         <TrainingDataGraph2 />

@@ -9,7 +9,7 @@ const AdminRegister = ({ onRegister, onClose }) => {
     user_name: "",
     password: "",
     role: "",
-    rank: "",
+    // rank: "",
     station: "",
     created_on: new Date().toISOString().split("T")[0],
     created_by: "admin",
@@ -77,7 +77,7 @@ const AdminRegister = ({ onRegister, onClose }) => {
               <option value="Forensic">Forensic</option>
             </select>
           </div>
-          <div>
+          {/* <div>
             <Label htmlFor="rank">Rank</Label>
             <input
               type="text"
@@ -88,7 +88,7 @@ const AdminRegister = ({ onRegister, onClose }) => {
               required
               className="w-full p-2 border rounded-md"
             />
-          </div>
+          </div> */}
           <div>
             <Label htmlFor="station">Station</Label>
             <input
@@ -102,11 +102,23 @@ const AdminRegister = ({ onRegister, onClose }) => {
             />
           </div>
           <div className="flex justify-between gap-4">
-            <Button type="submit" className="w-full">Register</Button>
+            <button type="submit" className="w-full" style={{
+                  backgroundColor: "#2d3748",
+                  color: "white",
+                  padding: "8px 16px",
+                  borderRadius: "6px",
+                  border: "none",
+                  }}>Register</button>
             {onClose && (
-              <Button type="button" variant="outline" onClick={onClose} className="w-full">
+              <button type="button" variant="outline" onClick={onClose} className="w-full" style={{
+          backgroundColor: "#dc3545",
+          color: "white",
+          padding: "8px 16px",
+          borderRadius: "6px",
+          border: "none",
+          }}>
                 Cancel
-              </Button>
+              </button>
             )}
           </div>
         </form>

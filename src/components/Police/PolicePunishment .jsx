@@ -73,11 +73,11 @@ const PolicePunishment = () => {
   };
 
   return (
-    <div className="p-6 rounded-lg w-[50%] h-[400px] flex flex-col">
+    <div className="p-6 rounded-lg  flex flex-col">
       <div className="flex-grow">
         {" "}
-        {/* Increased height for the chart container */}
-        <Bar data={data} options={options} height={450} />
+        {/* Increased height for the chart container w-[50%]*/}
+        <Bar data={data} options={options} />
       </div>
     </div>
   );
