@@ -91,14 +91,18 @@ export default function CriminalPages() {
   const handleChange = (_, newValue) => {
     setValue(newValue);
   };
+  const [rloading,setRloading]=useState(false)
 
   const handleDownload = () => {
+    setRloading(true)
     const link = document.createElement("a");
     link.href = ProsecutionPDF;
     link.download = "Prosecutor_Statistics.pdf";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    setRloading(false)
+
   };
 
   return (
@@ -174,6 +178,7 @@ export default function CriminalPages() {
             sx={{
               backgroundColor: "transparent",
               color: "#65558F",
+              minWidth:'80px',
               border: "2px solid #65558F",
               padding: "5px 9px",
               borderRadius: "8px",
@@ -183,7 +188,7 @@ export default function CriminalPages() {
               },
             }}
           >
-            Export
+          {!rloading ? 'Export' : <><span className="spinner-border spinner-border-sm me-2"></span></>}
           </Button>
         )}
 

@@ -116,12 +116,12 @@ function FirZero() {
                   </button>}
 
                   {/* Download Report Button */}
-                  <button
+                  {/* <button
                     onClick={handleDownloadReport}
                     className="px-4 py-2 ml-4 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition-all"
                   >
                     Download Report
-                  </button>
+                  </button> */}
                 </div>
 
                 <ZeroFir2 />

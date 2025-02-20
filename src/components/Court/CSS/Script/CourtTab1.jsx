@@ -71,8 +71,11 @@ const CourtTab1 = () => {
     ICJSCaseData();
   }, []);
   const [showModal, setShowModal] = useState(false);
-
+  const [rloading,setRloading]=useState(false)
+  
   const handleExport = async () => {
+  setRloading(true)
+
     const pdf = new jsPDF("p", "mm", "a4");
     const margin = 10;
     let yPosition = 20;
@@ -119,6 +122,7 @@ const CourtTab1 = () => {
 
     //  Save the PDF
     pdf.save("Court System.pdf");
+    setRloading(false)
   };
 
   // Dynamic pie chart data
@@ -151,8 +155,8 @@ const CourtTab1 = () => {
         <h1 className="text-2xl font-bold">Court System Dashboard</h1>
 
         <div className="flex space-x-2">
-          <button className="ExportButton" onClick={handleExport}>
-            Export
+          <button className="ExportButton" style={{minWidth:'80px'}} onClick={handleExport}>
+          {!rloading ? 'Export' : <><span className="spinner-border spinner-border-sm me-2"></span></>}
           </button>
           {localStorage.getItem("role") !== "chief secretary" && (
             <button
