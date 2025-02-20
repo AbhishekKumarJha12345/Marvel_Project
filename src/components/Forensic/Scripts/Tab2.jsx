@@ -90,9 +90,9 @@ export default function Tab2() {
       </h1>
 
       {/* Image Carousel Over Van Availability */}
-      <div className="relative mb-6">
+      {/* <div className="relative mb-6">
         <ImageCarousel />
-      </div>
+      </div> */}
 
       {/* Van Availability Table */}
 
