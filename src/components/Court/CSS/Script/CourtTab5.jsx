@@ -254,18 +254,18 @@ const [showModal, setShowModal] = useState(false);
                 Processes
               </h3>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={monthlyProgressData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="Planning" fill={chartColors[0]} />
-                  <Bar dataKey="Development" fill={chartColors[1]} />
-                  <Bar dataKey="Testing" fill={chartColors[2]} />
-                  <Bar dataKey="Implementation" fill={chartColors[3]} />
-                </BarChart>
-              </ResponsiveContainer>
+  <LineChart data={monthlyProgressData}>
+    <CartesianGrid strokeDasharray="3 3" />
+    <XAxis dataKey="month" />
+    <YAxis />
+    <Tooltip />
+    <Legend />
+    <Line type="monotone" dataKey="Planning" stroke={chartColors[0]} />
+    <Line type="monotone" dataKey="Development" stroke={chartColors[1]} />
+    <Line type="monotone" dataKey="Testing" stroke={chartColors[2]} />
+    <Line type="monotone" dataKey="Implementation" stroke={chartColors[3]} />
+  </LineChart>
+</ResponsiveContainer>
             </div>
         </div>
         <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">

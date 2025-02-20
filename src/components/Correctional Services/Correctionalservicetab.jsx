@@ -42,7 +42,7 @@ export default function Correctionalservicetab() {
   const trainingRef = useRef(null); // Reference to PoliceTraining component
   const tabData = [
     { label: 'Home', component: <Correctionaservicesgraphs ref={trainingRef}/> },
-    { label: 'Services', component: <Trainingtocorrectional /> },
+    // { label: 'Services', component: null },
   ];
   const handleChange = (_, newValue) => {
     console.log('new value',newValue)

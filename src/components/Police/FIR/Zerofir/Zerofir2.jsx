@@ -50,7 +50,7 @@ const ZeroFir2 = () => {
   }, []);
 
   return (
-    <div style={{ width: "80%", height: 400, margin: "auto" }}>
+    <div style={{ width: "80%", height: 350, margin: "auto" }}>
       <h2 style={{ textAlign: "center" }}>FIR Trends Over Time</h2>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>

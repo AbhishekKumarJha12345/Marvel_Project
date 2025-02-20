@@ -102,7 +102,7 @@ function FirZero() {
       <div className="mt-4">
         {activeTab === "home" && (
           <div className="col-6">
-            <div className="card shadow-sm bg-white" style={{ padding:"24px",height: "70vh" }}>
+            <div className="card shadow-sm bg-white" style={{ padding:"24px",height: "70vh",marginBottom:"1rem" }}>
               <div className="card-body">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-2xl font-semibold text-center flex-grow">Zero FIR</h2>

@@ -27,38 +27,35 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
       name: "Director",
       value:
         Number(
-          prosecutiondata?.prosecutionsanctionedpositions?.[0]?.director
+          prosecutiondata?.prosecutionsanctionedpositions?.director
         ) || 0,
     },
     {
       name: "Deputy Director",
       value:
         Number(
-          prosecutiondata?.prosecutionsanctionedpositions?.[0]?.deputy_director
+          prosecutiondata?.prosecutionsanctionedpositions?.deputy_director
         ) || 0,
     },
     {
       name: "Assistant Director Public Prosecutor",
       value:
         Number(
-          prosecutiondata?.prosecutionsanctionedpositions?.[0]
-            ?.assistant_director_public_prosecutor
+          prosecutiondata?.prosecutionsanctionedpositions?.assistant_director_public_prosecutor
         ) || 0,
     },
     {
       name: "Additional Public Prosecutor",
       value:
         Number(
-          prosecutiondata?.prosecutionsanctionedpositions?.[0]
-            ?.additional_public_prosecutor
+          prosecutiondata?.prosecutionsanctionedpositions?.additional_public_prosecutor
         ) || 0,
     },
     {
       name: "Assistant Public Prosecutors",
       value:
         Number(
-          prosecutiondata?.prosecutionsanctionedpositions?.[0]
-            ?.assistant_public_prosecutors
+          prosecutiondata?.prosecutionsanctionedpositions?.assistant_public_prosecutors
         ) || 0,
     },
   ];
@@ -67,34 +64,30 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
     {
       name: "ADPP",
       prosecutors:
-        Number(prosecutiondata?.prosecutorsbycadre?.[0]?.adpp_prosecutors) || 0,
+        Number(prosecutiondata?.prosecutorsbycadre?.adpp_prosecutors) || 0,
       percentage:
-        Number(prosecutiondata?.prosecutorsbycadre?.[0]?.adpp_percentage) || 0,
+        Number(prosecutiondata?.prosecutorsbycadre?.adpp_percentage) || 0,
     },
     {
       name: "Additional Public Prosecutors",
       prosecutors:
         Number(
-          prosecutiondata?.prosecutorsbycadre?.[0]
-            ?.additional_public_prosecutors_prosecutors
+          prosecutiondata?.prosecutorsbycadre?.additional_public_prosecutors_prosecutors
         ) || 0,
       percentage:
         Number(
-          prosecutiondata?.prosecutorsbycadre?.[0]
-            ?.additional_public_prosecutors_percentage
+          prosecutiondata?.prosecutorsbycadre?.additional_public_prosecutors_percentage
         ) || 0,
     },
     {
       name: "Assistant Public Prosecutors",
       prosecutors:
         Number(
-          prosecutiondata?.prosecutorsbycadre?.[0]
-            ?.assistant_public_prosecutors_prosecutors
+          prosecutiondata?.prosecutorsbycadre?.assistant_public_prosecutors_prosecutors
         ) || 0,
       percentage:
         Number(
-          prosecutiondata?.prosecutorsbycadre?.[0]
-            ?.assistant_public_prosecutors_percentage
+          prosecutiondata?.prosecutorsbycadre?.assistant_public_prosecutors_percentage
         ) || 0,
     },
   ];
@@ -104,23 +97,21 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
       name: "Additional Public Prosecutor",
       value:
         Number(
-          prosecutiondata?.logindatastatistics?.[0]
-            ?.additional_public_prosecutor
+          prosecutiondata?.logindatastatistics?.additional_public_prosecutor
         ) || 0,
     },
     {
       name: "Assistant Public Prosecutor",
       value:
         Number(
-          prosecutiondata?.logindatastatistics?.[0]?.assistant_public_prosecutor
+          prosecutiondata?.logindatastatistics?.assistant_public_prosecutor
         ) || 0,
     },
     {
       name: "Assistant Public Prosecutor Appointed",
       value:
         Number(
-          prosecutiondata?.logindatastatistics?.[0]
-            ?.assistant_public_prosecutor_appointed
+          prosecutiondata?.logindatastatistics?.assistant_public_prosecutor_appointed
         ) || 0,
     },
   ];
@@ -131,31 +122,57 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
   };
 
   const getInputFields = (data) => {
-    return data.map((entry, index) => (
-      <div key={index}>
-        <div className="mb-4">
-          <input
-            type="text"
-            id={`${entry.name}_prosecutors`}
-            name={`${entry.name}_prosecutors`}
-            placeholder={`${entry.name}_prosecutors`}
-            className="mt-1 p-3 border border-gray-300 rounded w-full"
-          />
-        </div>
-        {entry.prosecutors !== undefined && (
-          <div className="mb-4">
-            <input
-              type="text"
-              id={`${entry.name}_percentage`}
-              name={`${entry.name}_percentage`}
-              placeholder={`${entry.name}_percentage`}
-              className="mt-1 p-3 border border-gray-300 rounded w-full"
-            />
+    return data.map((entry, index) => {
+      if (
+        data === ProsecutorsbyCadre &&
+        (entry.name === "ADPP" || 
+        entry.name === "Additional Public Prosecutors" || 
+        entry.name === "Assistant Public Prosecutors")
+      ) {
+        return (
+          <div key={index}>
+            <div className="mb-4">
+              {/* <label htmlFor={`${entry.name}_prosecutors`} className="block text-left">{`${entry.name}_prosecutors`}</label> */}
+              <input
+                type="text"
+                id={`${entry.name}_prosecutors`}
+                name={`${entry.name}_prosecutors`}
+                placeholder={`${entry.name}_prosecutors`}
+                className="mt-1 p-3 border border-gray-300 rounded w-full"
+              />
+            </div>
+            {/* Percentage Input Field */}
+            <div className="mb-4">
+              {/* <label htmlFor={`${entry.name}_percentage`} className="block text-left">{`${entry.name}_percentage`}</label> */}
+              <input
+                type="text"
+                id={`${entry.name}_percentage`}
+                name={`${entry.name}_percentage`}
+                placeholder={`${entry.name}_percentage`}
+                className="mt-1 p-3 border border-gray-300 rounded w-full"
+              />
+            </div>
           </div>
-        )}
-      </div>
-    ));
-  };
+        );
+      } else {
+        return (
+          <div key={index}>
+            {/* Name Input Field */}
+            <div className="mb-4">
+              {/* <label htmlFor={entry.name} className="block text-left">{entry.name}</label> */}
+              <input
+                type="text"
+                id={entry.name}
+                name={entry.name}
+                placeholder={`${entry.name}`}
+                className="mt-1 p-3 border border-gray-300 rounded w-full"
+              />
+            </div>
+          </div>
+        );
+      }
+    });
+  };  
 
   const handleSubmit = async () => {
     const fields = [];

@@ -211,15 +211,28 @@ const CourtTab2 = () => {
               <h3 className="text-xl font-semibold mb-4">
                 Percentage of Court Summons Delivered Electronically
               </h3>
+              
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={summonsData}>
+                <LineChart data={summonsData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
+                  {/* <YAxis 
+                    domain={[
+                      0, 
+                      Math.max(0, ...(summonsData?.map(item => item.deliveredElectronically) || [0])) + 50
+                    ]}
+                    tickCount={6}
+                  /> */}
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="deliveredElectronically" fill="#82ca9d" />
-                </BarChart>
+                  <Line
+                    type="monotone"
+                    dataKey="deliveredElectronically"
+                    stroke={COLORS[0]}
+                    activeDot={{ r: 8 }}
+                  />
+                </LineChart>
               </ResponsiveContainer>
             </div>
             {/* Adoption Rate Line Chart */}
@@ -227,25 +240,29 @@ const CourtTab2 = () => {
               <h3 className="text-xl font-semibold mb-4">
                 Adoption Rate of eSummons & Digital Case Records
               </h3>
+              
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={adoptionData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis 
-      domain={[0, Math.max(...adoptionData?.map(item => item.adoptionRate)) + 50]} // Auto-scale with padding
-      tickCount={6} // Adjust tick intervals
-    />
+                    domain={[
+                      0, 
+                      Math.max(0, ...(adoptionData?.map(item => item.adoptionRate) || [0])) + 50
+                    ]}
+                    tickCount={6}
+                  />
                   <Tooltip />
                   <Legend />
                   <Line
                     type="monotone"
                     dataKey="adoptionRate"
-                    stroke="#8884d8"
-                    strokeWidth={2}
-                    dot={{ r: 4 }}
+                    stroke={COLORS[1]}  // Updated to use COLORS[0] from the second chart
+                    activeDot={{ r: 8 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
+
             </div>
           </div>
         </div>
@@ -257,9 +274,11 @@ const CourtTab2 = () => {
               <h3 className="text-xl font-semibold mb-4">
                 Data Security Compliance
               </h3>
+              
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Tooltip />
+                  <Legend />
                   <Pie
                     data={complianceData}
                     dataKey="value"
@@ -269,14 +288,12 @@ const CourtTab2 = () => {
                     label
                   >
                     {complianceData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
                 </PieChart>
               </ResponsiveContainer>
+
             </div>
 
             {/* Updated Pie Chart for Accessibility */}
@@ -287,6 +304,8 @@ const CourtTab2 = () => {
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Tooltip />
+    <Legend />
+
                   <Pie
                     data={accessibilityData}
                     dataKey="value"

@@ -105,26 +105,28 @@ export default function Tab2() {
         <div className="bg-white p-4 rounded-xl shadow-md">
           <h2 className="text-xl font-semibold mb-4">Van Availability</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={pieChartData}
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-                label
-              >
-                {pieChartData && pieChartData.length>0 && pieChartData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={chartColors[index % chartColors.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+  <PieChart>
+    <Pie
+      data={pieChartData}
+      cx="50%"
+      cy="50%"
+      outerRadius={80}
+      fill="#8884d8"
+      dataKey="value"
+      label
+    >
+      {pieChartData && pieChartData.length > 0 && pieChartData.map((entry, index) => (
+        <Cell
+          key={`cell-${index}`}
+          fill={chartColors[index % chartColors.length]}
+        />
+      ))}
+    </Pie>
+    <Tooltip />
+    <Legend verticalAlign="middle" align="right" layout="vertical" />
+  </PieChart>
+</ResponsiveContainer>
+
         </div>
 
         {/* Response Times Bar Chart */}
