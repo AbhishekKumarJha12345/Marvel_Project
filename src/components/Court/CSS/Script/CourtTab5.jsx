@@ -169,6 +169,7 @@ const [showModal, setShowModal] = useState(false);
         <h1 className="text-2xl font-bold mb-6">
           NYAYSHRUTI Project Implementation Progress
         </h1>
+        <div className="flex space-x-2">
         <button className="ExportButton" onClick={handleExport}>
           Export
         </button>
@@ -180,6 +181,7 @@ const [showModal, setShowModal] = useState(false);
           }}>
             Add on
           </button>}
+          </div>
       </div>
       <div ref={exportRef}>
         <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">

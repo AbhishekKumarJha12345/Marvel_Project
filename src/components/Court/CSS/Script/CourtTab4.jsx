@@ -186,6 +186,7 @@ const CourtTab4 = () => {
         <h1 className="text-2xl font-bold mb-6">
           Prosecution & Forensic Departments Dashboard
         </h1>
+        <div className="flex space-x-2">
         <button className="ExportButton" onClick={handleExport}>
           Export
         </button>
@@ -197,6 +198,7 @@ const CourtTab4 = () => {
           }}>
             Add on
           </button>}
+          </div>
       </div>
       <div ref={exportRef}>
       <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
