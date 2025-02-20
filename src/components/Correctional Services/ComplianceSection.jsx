@@ -7,6 +7,12 @@ import { RxCross1 } from "react-icons/rx";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ComplianceSection = () => {
+  const [selectedFile, setSelectedFile] = useState(null);
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
+  
+  
   const [chartData, setChartData] = useState({
     labels: [
       'Correctional Institutions',
@@ -124,35 +130,38 @@ const ComplianceSection = () => {
     setIsModalOpen(false); // Close modal after submitting
   };
   
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      fetch('http://localhost:5555/api/upload', {
-        method: 'POST',
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            console.log('File uploaded and data updated successfully');
-            alert('File uploaded and data updated successfully');
-            setIsModalOpen(false); // Close the modal after successful upload
-            fetchComplianceData(); // Refetch compliance data after upload
-          } else {
-            console.error('Error:', data.error);
-            alert(`Error: ${data.error}`);
-          }
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-          alert('File upload failed');
-        });
+  const handleFileUpload = (file) => {
+    if (!file) {
+      alert('Please select a file before uploading');
+      return;
     }
+  
+    const formData = new FormData();
+    formData.append('file', file);
+  
+    fetch('http://localhost:5555/api/upload', {
+      method: 'POST',
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          console.log('File uploaded and data updated successfully');
+          alert('File uploaded and data updated successfully');
+          setIsModalOpen(false); // Close modal after upload
+          fetchComplianceData(); // Refresh chart data
+          setSelectedFile(null); // Reset file state after upload
+        } else {
+          console.error('Error:', data.error);
+          alert(`Error: ${data.error}`);
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('File upload failed');
+      });
   };
-
+  
   return (
     <div>
       {/* Add Button */}
@@ -262,7 +271,7 @@ Submit                  </button>
                 <input
                   type="file"
                   accept=".csv, .xlsx, .xls"
-                  onChange={handleFileUpload}
+                  onChange={handleFileChange} 
 
                   
                   className="mb-4 border border-gray-300 p-3 rounded w-full"
@@ -270,8 +279,8 @@ Submit                  </button>
                 <button
                   type="button"
                   className="bg-gray-700 text-white py-2 px-4 rounded mt-3"
-                  onClick={() => console.log('File upload initiated')}
-                >
+                  onClick={() => handleFileUpload(selectedFile)} 
+                  >
                   Upload File
                 </button>
                

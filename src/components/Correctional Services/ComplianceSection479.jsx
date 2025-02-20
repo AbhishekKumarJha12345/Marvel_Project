@@ -6,6 +6,8 @@ import { RxCross1 } from "react-icons/rx";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const ComplianceSection479 = () => {
+  const [selectedFile, setSelectedFile] = useState(null);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('fillForm');
   const [formData, setFormData] = useState({
@@ -84,31 +86,36 @@ const ComplianceSection479 = () => {
       alert('An error occurred while uploading the data.');
     }
   };
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append('file', file);
+  const handleFileUpload = async () => {
+    if (!selectedFile) {
+      alert("Please select a file before uploading.");
+      return;
+    }
 
-      try {
-        const response = await fetch('http://localhost:5555/api/upload_479', {
-          method: 'POST',
-          body: formData,
-        });
+    const formData = new FormData();
+    formData.append("file", selectedFile);
 
-        const data = await response.json();
-        if (data.success) {
-          alert('File uploaded successfully!');
-          fetchPersonnelData(); // Fetch updated data instead of refreshing
-          setIsModalOpen(false);
-        } else {
-          alert(`Error: ${data.error}`);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('File upload failed');
+    try {
+      const response = await fetch("http://localhost:5555/api/upload_479", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        alert("File uploaded successfully!");
+        fetchPersonnelData();
+        setIsModalOpen(false);
+      } else {
+        alert(`Error: ${data.error}`);
       }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("File upload failed");
     }
   };
 
@@ -182,9 +189,10 @@ const ComplianceSection479 = () => {
 
   {/* File upload section */}
   {selectedOption === 'upload' && (
-<input type="file" accept=".csv, .xlsx, .xls" onChange={handleFileUpload} className="mb-4 border border-gray-300 p-2 rounded w-full" />
-)}
-
+    <div className='flex flex-col items-end mb-4 mt-4'>
+                  <input type="file" accept=".csv, .xlsx, .xls" onChange={handleFileChange} className="mb-4 border border-gray-300 p-2 rounded w-full" />
+                  <button onClick={handleFileUpload} className="bg-gray-700 text-white py-2 px-4 rounded">Upload File</button>
+                </div>)}
           </div>
         </div>
         </div>
