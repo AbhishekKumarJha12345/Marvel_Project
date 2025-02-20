@@ -88,7 +88,7 @@ function Mainnavbar() {
           <div className="text-4xl font-bold mr-5" style={{ color: "#2d3748" }}>
             ICJS
           </div>
-          <div className="relative w-[400px] hidden md:block">
+          {/* <div className="relative w-[400px] hidden md:block">
             <FaSearch
               className="absolute left-3 top-2.5 text-gray-400"
               size={20}
@@ -98,7 +98,7 @@ function Mainnavbar() {
               placeholder="Search..."
               className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full"
             />
-          </div>
+          </div> */}
         </div>
 
         <div className="flex items-center space-x-6 ">
