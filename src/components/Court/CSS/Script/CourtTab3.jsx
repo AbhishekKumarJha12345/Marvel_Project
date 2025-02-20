@@ -178,7 +178,7 @@ const VideoConferencingDashboard = () => {
             <h3 className="text-xl font-semibold mb-4">
               Case Disposal & Backlog Reduction
             </h3>
-            <ResponsiveContainer width="100%" height={300}>
+            {/* <ResponsiveContainer width="100%" height={300}>
               <BarChart data={caseDisposalData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
@@ -196,7 +196,30 @@ const VideoConferencingDashboard = () => {
                   name="Backlog Reduction"
                 />
               </BarChart>
-            </ResponsiveContainer>
+            </ResponsiveContainer> */}
+            <ResponsiveContainer width="100%" height={300}>
+  <LineChart data={caseDisposalData}>
+    <CartesianGrid strokeDasharray="3 3" />
+    <XAxis dataKey="month" />
+    <YAxis />
+    <Tooltip />
+    <Legend />
+    <Line
+      type="monotone"
+      dataKey="disposedCases"
+      stroke="#8884d8"
+      name="Disposed Cases"
+      activeDot={{ r: 8 }}
+    />
+    <Line
+      type="monotone"
+      dataKey="backlogReduction"
+      stroke="#82ca9d"
+      name="Backlog Reduction"
+    />
+  </LineChart>
+</ResponsiveContainer>
+
           </div>
         </div>
         <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
@@ -209,6 +232,7 @@ const VideoConferencingDashboard = () => {
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Tooltip />
+                <Legend/>
                 <Pie
                   data={readinessData}
                   dataKey="value"
