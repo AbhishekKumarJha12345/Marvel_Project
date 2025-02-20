@@ -165,10 +165,10 @@ const downloadReport = async () => {
 
 
   return (
-    <div className="bg-white p-6 rounded-lg w-full h-[500px] flex flex-col ">
-      <div className="flex justify-between items-center mb-8">
+    <div className="bg-white p-6 rounded-lg w-full h-[500px] flex flex-col rounded-xl shadow-md" style={{width:"48%"}}>
+      <div  className="flex justify-around items-center mb-8">
         
-      <h1 className="text-4xl font-bold mb-4">Master Trainers</h1>
+      <h1 className="" style={{textAlign:"center"}}>Mode of Training</h1>
       {/* <button className="bg-green-600 text-white px-4 py-2 rounded-lg" onClick={downloadReport}>
           Download Report
         </button> */}

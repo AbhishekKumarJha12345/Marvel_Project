@@ -108,12 +108,12 @@ function FirZero() {
                   <h2 className="text-2xl font-semibold text-center flex-grow">Zero FIR</h2>
 
                   {/* Add On Button */}
-                  <button
+                  { localStorage.getItem('role') !=='chief secretary' && <button
                     className="px-4 py-2 bg-[#03045E] text-white rounded-lg shadow-md hover:bg-[#023e8a] transition-all"
                     onClick={() => setShowModal(true)}
                   >
                     Add On
-                  </button>
+                  </button>}
 
                   {/* Download Report Button */}
                   <button

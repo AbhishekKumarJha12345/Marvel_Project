@@ -73,7 +73,7 @@ const ZeroFIRStatus = () => {
       {/* Title and button section */}
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-xl font-bold text-left">Zero FIR Status</h1>
-        <button
+        {localStorage.getItem('role') !=='chief secretary' && <button
           className="bg-blue-500 text-white px-4 py-2 rounded-lg"
           style={{ backgroundColor: "#2d3748" }}
           onClick={() => {
@@ -82,7 +82,7 @@ const ZeroFIRStatus = () => {
           }}
         >
           Add On
-        </button>
+        </button>}
       </div>
 
       {/* Centered Graph */}

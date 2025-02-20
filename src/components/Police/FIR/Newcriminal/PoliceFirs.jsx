@@ -65,12 +65,12 @@ const PoliceFirs = ({ apidata, downloadReport }) => {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold text-center flex-grow">FIRs New Criminal Laws</h2>
         <div className="flex space-x-4">
-          <button
+         { localStorage.getItem('role') !=='chief secretary' && <button
             className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-all"
             onClick={() => setShowModal(true)}
           >
             Add On
-          </button>
+          </button>}
           <button
             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all"
             onClick={downloadReport}

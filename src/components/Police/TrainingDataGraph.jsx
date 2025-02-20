@@ -69,9 +69,9 @@ const TrainingDataGraph = () => {
   );
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-md">
+    <div className="bg-white p-4 rounded-xl shadow-md" style={{width:"48%"}}>
       <div className="flex justify-between mb-4">
-        <h2 className="text-xl font-semibold mb-4">Training Data Graph</h2>
+        <h2 className="">Training Data Graph</h2>
         {/* Dropdown for selecting metric */}
         <select
           onChange={(e) => setSelectedMetric(e.target.value)}

@@ -265,12 +265,12 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
             <h2 className="text-xl font-semibold">
               Prosecution Sanctioned Positions
             </h2>
-            <button
+            {localStorage.getItem('role') !=='chief secretary' && <button
               onClick={() => handleOpenModal("first")}
               className="bg-gray-700 text-white px-4 py-2 rounded"
             >
               Add Data
-            </button>
+            </button>}
           </div>
 
           <div className="flex justify-center items-center w-full h-full">
@@ -300,12 +300,12 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
         <div className="bg-white p-4 rounded-xl shadow-md">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">Login Data Statistics</h2>
-            <button
+            {localStorage.getItem('role') !=='chief secretary' && <button
               onClick={() => handleOpenModal("third")}
               className="bg-gray-700 text-white px-4 py-2 rounded"
             >
               Add Data
-            </button>
+            </button>}
           </div>
           <div className="flex justify-center items-center w-full h-full">
             <PieChart width={400} height={400}>
@@ -338,12 +338,12 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
           <h2 className="text-xl font-semibold mb-4 text-left">
             Number of Prosecutors by Cadre
           </h2>
-          <button
+         {localStorage.getItem('role') !=='chief secretary' && <button
             onClick={() => handleOpenModal("second")}
             className="bg-gray-700 text-white px-4 py-2 rounded"
           >
             Add Data
-          </button>
+          </button>}
         </div>
 
         <div className="flex justify-center">

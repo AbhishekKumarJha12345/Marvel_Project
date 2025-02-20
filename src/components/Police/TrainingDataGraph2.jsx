@@ -23,22 +23,27 @@ const TrainingDataGraph2 = () => {
       const result = response.data;
       if (result?.data_dict) {
         const sortedData = result?.data_dict
-          .map((item) => ({
-            month: item.month,
-            count: parseInt(item.count, 10),
-          }))
-          .sort((a, b) => new Date(a.month) - new Date(b.month));
-
+          .map((item) => {
+            // Convert the date to dd/mm/yyyy format
+            const date = new Date(item.month);
+            const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`;
+            return {
+              month: formattedDate,
+              count: parseInt(item.count, 10),
+            };
+          })
+          .sort((a, b) => new Date(a.month.split('/').reverse().join('-')) - new Date(b.month.split('/').reverse().join('-')));
+  
         setData(sortedData);
       }
-
-      // setData(sortedData);
+  
       setLoading(false);
     } catch (error) {
       setError(error.message);
       setLoading(false);
     }
   };
+  
   useEffect(() => {
     fetchData();
   }, []);
@@ -46,9 +51,9 @@ const TrainingDataGraph2 = () => {
   return (
     <div
       className="bg-white p-4 rounded-xl shadow-md"
-      style={{ width: "100%", height: 500 }}
+      style={{ width: "48%", height: 500 }}
     >
-      <h2 className="text-xl font-semibold mb-4">
+      <h2 className="" style={{marginBottom:"1rem"}}>
         Monthly Workshops Conducted
       </h2>
       <ResponsiveContainer width="100%" height="92%">

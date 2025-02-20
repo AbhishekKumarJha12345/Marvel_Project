@@ -10,12 +10,13 @@ const Tab1 = forwardRef((props, ref) => {
     <div className="rounded-lg w-full max-w-full h-auto" ref={ref}>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Forensic Development Dashboard</h1>
-        <button
+        
+        {/* <button
           className="bg-[#2d3748] text-white px-4 py-2 rounded-lg"
           onClick={() => setShowModal(true)}
         >
           Add On
-        </button>
+        </button> */}
       </div>
      
       <Tab1_1 />

@@ -1,9 +1,22 @@
-import React, {useRef} from 'react';
+import React, { useRef, useState, useEffect } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import axiosInstance from "../../../../utils/axiosInstance";
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell
-} from 'recharts';
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 
 const CourtRefDetails = `Generated Summary:
 2024 witnessed significant advancements and improvements in the legal system, as evidenced by the analysis of key metrics such as eSummons deliveries electronically, total cases, case resolution times, backlog reduction, and adoption rate.
@@ -22,31 +35,6 @@ const CourtRefDetails = `Generated Summary:
 
 🔹 In summary, the legal system in 2024 became more efficient with the adoption of digital tools and backlog reduction. The ongoing improvements indicate a commitment to modernization, streamlined case management, and accessibility enhancements.`;
 
-// Dummy Data for Video Conferencing Hearings & Case Disposal Rate
-const caseDisposalData = [
-  { month: 'Jan', disposedCases: 30, backlogReduction: 5 },
-  { month: 'Feb', disposedCases: 40, backlogReduction: 10 },
-  { month: 'Mar', disposedCases: 50, backlogReduction: 15 },
-  { month: 'Apr', disposedCases: 60, backlogReduction: 20 },
-  { month: 'May', disposedCases: 70, backlogReduction: 25 },
-  { month: 'Jun', disposedCases: 85, backlogReduction: 35 },
-  { month: 'Jul', disposedCases: 95, backlogReduction: 45 },
-  { month: 'Aug', disposedCases: 100, backlogReduction: 50 },
-  { month: 'Sep', disposedCases: 110, backlogReduction: 60 },
-  { month: 'Oct', disposedCases: 120, backlogReduction: 70 },
-  { month: 'Nov', disposedCases: 130, backlogReduction: 80 },
-  { month: 'Dec', disposedCases: 140, backlogReduction: 90 },
-];
-
-// Pie chart data for infrastructure readiness
-const readinessData = [
-  { subject: 'Video Call', value: 80 },
-  { subject: 'Audio Call', value: 85 },
-  { subject: 'Case Filing', value: 75 },
-  { subject: 'Judiciary Systems', value: 90 },
-  { subject: 'Legal Professionals', value: 70 },
-];
-
 // Colors for Pie chart segments
 // const COLORS = ['#8884d8', '#82ca9d', '#FFBB28', '#FF8042', '#FF6347'];
 const COLORS = [
@@ -59,11 +47,31 @@ const COLORS = [
   "#ff9a76", // Muted Coral
   "#74b49b", // Muted Teal
   "#c08497", // Mauve
-  "#b0a8b9" // Dusty Lilac
+  "#b0a8b9", // Dusty Lilac
 ];
+import Courtform from './Courtform.jsx'
+
 const VideoConferencingDashboard = () => {
   const exportRef = useRef(null); // Reference to content to be exported
+  const [confrenceDisposalData, setConfrenceDisposalData] = useState(null);
 
+  const fetchConfrenceDisposalData = async () => {
+    try {
+      const response = await axiosInstance.get("/live_data", {
+        params: {
+          type: "court_3",
+        },
+      });
+      const responseData = response.data;
+      setConfrenceDisposalData(responseData.data_dict);
+    } catch (error) {
+      console.error("Some error occured", error);
+    }
+  };
+  useEffect(() => {
+    fetchConfrenceDisposalData();
+  }, []);  
+  const [showModal, setShowModal] = useState(false);
   const handleExport = async () => {
     const pdf = new jsPDF("p", "mm", "a4");
     const margin = 10;
@@ -112,70 +120,114 @@ const VideoConferencingDashboard = () => {
     //  Save the PDF
     pdf.save("Video Conferencing Hearings.pdf");
   };
+
+  const caseDisposalData = confrenceDisposalData?.map((item) => ({
+    month: item.month,
+    disposedCases: item.disposed_cases,
+    backlogReduction: item.backlog_reduction,
+  }));
+
+  const readinessData = [
+    {
+      subject: "Backlog Reduction",
+      value: parseInt(confrenceDisposalData?.[0].backlog_reduction || 0),
+    },
+    {
+      subject: "Disposed Cases",
+      value: parseInt(confrenceDisposalData?.[0].disposed_cases || 0),
+    },
+  ];
+
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
-      <div className="ContentSpace">
+      {/* <div className="ContentSpace">
       <h1 className="text-2xl font-bold mb-6">Video Conferencing Hearings & Case Disposal Rate Dashboard</h1>
         <button className="ExportButton" onClick={handleExport}>
           Export
         </button>
+      </div> */}
+      <div className="ContentSpace flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Video Conferencing Hearings & Case Disposal Rate Dashboard</h1>
+
+        <div className="flex space-x-2">
+          <button className="ExportButton" onClick={handleExport}>
+            Export
+          </button>
+         { localStorage.getItem('role') !=='chief secretary' &&  <button 
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+          style={{backgroundColor:'#2d3748'}} onClick={() => {
+            console.log("Open modal");
+            setShowModal(true);
+          }}>
+            Add on
+          </button>}
+        </div>
       </div>
-      <div ref={exportRef} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div ref={exportRef}>
+        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+          <h1 className="text-2xl font-bold">Deviation</h1>
 
-        {/* Case Disposal and Backlog Reduction Line Chart */}
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <h3 className="text-xl font-semibold mb-4">Case Disposal & Backlog Reduction</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={caseDisposalData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="disposedCases" stroke="#8884d8" name="Disposed Cases" />
-              <Line type="monotone" dataKey="backlogReduction" stroke="#82ca9d" name="Backlog Reduction" />
-            </LineChart>
-          </ResponsiveContainer>
+          {/* Video Conferencing Impact Bar Chart */}
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <h3 className="text-xl font-semibold mb-4">
+              Case Disposal & Backlog Reduction
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={caseDisposalData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar
+                  dataKey="disposedCases"
+                  fill="#8884d8"
+                  name="Disposed Cases"
+                />
+                <Bar
+                  dataKey="backlogReduction"
+                  fill="#82ca9d"
+                  name="Backlog Reduction"
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-
-        {/* Video Conferencing Impact Bar Chart */}
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <h3 className="text-xl font-semibold mb-4">Impact of Video Conferencing on Case Disposal</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={caseDisposalData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="disposedCases" fill="#8884d8" name="Disposed Cases" />
-              <Bar dataKey="backlogReduction" fill="#82ca9d" name="Backlog Reduction" />
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+          <h1 className="text-2xl font-bold">Live</h1>
+          {/* Infrastructure Readiness Pie Chart */}
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <h3 className="text-xl font-semibold mb-4">
+              Infrastructure Readiness
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Tooltip />
+                <Pie
+                  data={readinessData}
+                  dataKey="value"
+                  nameKey="subject"
+                  outerRadius={100}
+                  fill="#8884d8"
+                  label
+                >
+                  {readinessData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-
-        {/* Infrastructure Readiness Pie Chart */}
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <h3 className="text-xl font-semibold mb-4">Infrastructure Readiness</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={readinessData}
-                dataKey="value"
-                nameKey="subject"
-                outerRadius={100}
-                fill="#8884d8"
-                label
-              >
-                {readinessData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-
       </div>
+      <Courtform
+        open={showModal}
+        type="court_3"
+        onClose={() => setShowModal(false)}
+      />
     </div>
   );
 };

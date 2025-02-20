@@ -128,7 +128,7 @@ function Firchargesheets() {
                 <h2 className="text-2xl font-semibold text-center flex-grow">
                 FIR Charge Sheets
                 </h2>
-                <button
+               { localStorage.getItem('role') !=='chief secretary' &&  <button
                   className="bg-blue-500 text-white px-4 py-2 rounded-lg"
                   style={{ backgroundColor: '#2d3748' }}
                   onClick={() => {
@@ -137,7 +137,7 @@ function Firchargesheets() {
                   }}
                 >
                   Add On
-                </button>
+                </button>}
                  {/* Download Report Button */}
       {/* <div className="mt-4"> */}
         <button className="bg-green-600 text-white px-4 py-2 rounded-lg ml-4" onClick={downloadReport}>

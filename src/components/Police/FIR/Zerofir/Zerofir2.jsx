@@ -53,7 +53,7 @@ const ZeroFir2 = () => {
           <YAxis />
           <Tooltip />
           <Line type="monotone" dataKey="regular_fir" stroke={chartColors[0]} strokeWidth={2} name="Regular FIR"/>
-          <Line type="monotone" dataKey="yet_to_be_registered_zero_fir" stroke={chartColors[1]} strokeWidth={2} name="Yet to be Registered Zero FIR"/>
+          <Line type="monotone" dataKey="yet_to_be_registered_zero_fir" stroke={chartColors[1]} strokeWidth={2} name="Yet to Regularly Zero FIR"/>
           <Line type="monotone" dataKey="zero_fir" stroke={chartColors[2]} strokeWidth={2} name="Zero FIR" />
         </LineChart>
       </ResponsiveContainer>
