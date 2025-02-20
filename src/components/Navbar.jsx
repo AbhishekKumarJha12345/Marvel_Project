@@ -291,7 +291,7 @@ export default function Dashboard({ users }) {
     doc.text("Police Department:", 10, 90);
     doc.line(10, 91, 48, 91);
     doc.setFont("helvetica", "normal");
-    doc.text("In the provided data, there are two sets of statistics related to court cases for the months September 2021 and February 2025:", 10, 110, { maxWidth: 190 });
+    doc.text(`In the provided data, there are two sets of statistics related to court cases for the months September 2021 and February 2025:`, 10, 110, { maxWidth: 190 });
     doc.text("- Total charge-sheeted: Both months have a total of 7 charges sheeted, but it's not clear if this is the same set of cases or different ones.", 10, 130, { maxWidth: 190 });
     doc.text("- Pending Cases: In September 2021, there were 432 pending cases, while in February 2025, there were 7 pending cases.", 10, 150, { maxWidth: 190 });
     doc.text("- Acquittals: In September 2021, there were 44 acquitted cases, while in February 2025, there were 7 acquitted cases.", 10, 170, { maxWidth: 190 });
@@ -565,7 +565,7 @@ doc.text("In summary, the data reveals that there is a general increase in the n
                           className="sub-dropdown-item"
                           onClick={() => handleSectionClick("newcriminal")}
                         >
-                          A New Criminal Law
+                          New Criminal Stats
                         </button>
                         <button
                           className="sub-dropdown-item"
@@ -648,7 +648,7 @@ doc.text("In summary, the data reveals that there is a general increase in the n
                         className="sub-dropdown-item"
                         onClick={() => handleSectionClick("newcriminal")}
                       >
-                        A New Criminal Law
+                        New Criminal Stats
                       </button>
                       <button
                         className="sub-dropdown-item"
@@ -794,8 +794,7 @@ doc.text("In summary, the data reveals that there is a general increase in the n
 
           <div style={{ height: "74vh", marginTop: "3rem", display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center" }}>
             <h2 style={{ fontSize: "29px", fontWeight: "500" }}>ICJS-Interoperable Criminal Justice System</h2>
-            <p style={{ fontSize: "18px" }}>MAHARASHTRA RESEARCH & VIGILANCE MARVEL
-              FOR ENHANCED LAW ENFORCEMENT LIMITED</p>
+            {/* <p style={{ fontSize: "18px" }}>MAHARASHTRA RESEARCH & VIGILANCE MARVEL FOR ENHANCED LAW ENFORCEMENT LIMITED</p> */}
             <img src={logo} alt="Logo" style={{ width: "20rem" }} />
 
           </div>) : contentMap[activeSection?.section] || (users === "police" ? contentMap["training"]

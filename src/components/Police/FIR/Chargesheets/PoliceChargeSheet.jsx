@@ -50,7 +50,7 @@ const PoliceChargeSheet = ({ apidata }) => {
       {/* Use col-6 to take up 50% width in the grid system */}
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-xl font-bold">Charge Sheet Status</h1>
-        <button
+        { localStorage.getItem('role') !=='chief secretary' && <button
           className="bg-blue-500 text-white px-4 py-2 rounded-lg"
           style={{ backgroundColor: "#2d3748" }}
           onClick={() => {
@@ -59,7 +59,7 @@ const PoliceChargeSheet = ({ apidata }) => {
           }}
         >
           Add On
-        </button>
+        </button>}
       </div>
       {/* Center the chart */}
       <div className="flex justify-center items-center h-[350px]">

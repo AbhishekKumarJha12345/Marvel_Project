@@ -77,13 +77,13 @@ const Chargesheet = () => {
         <h2 className="text-2xl font-semibold text-center flex-grow">
           First Charge Sheet Data Criminal Laws
         </h2>
-        <button
+        {localStorage.getItem('role') !=='chief secretary' && <button
           className="bg-blue-500 text-white px-4 py-2 rounded-lg"
           style={{ backgroundColor: "#2d3748" }}
           onClick={() => setShowModal(true)}
         >
           Add On
-        </button>
+        </button>}
       </div>
 
       <div className="p-6 w-[98%] mx-auto bg-white shadow-lg rounded-lg">

@@ -48,7 +48,7 @@ const ReportGencomp = () => {
 
   return (
     <div style={{ textAlign: "center", marginTop: "20px" }}>
-      <h1>Court Cases Summary</h1>
+      <h1>Sample Summary</h1>
       <button 
         onClick={generatePDF} 
         style={{ 

@@ -39,6 +39,7 @@ function Login() {
         allowedRoles.includes(response.data.role?.toLowerCase())
       ) {
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("role", response.data.role);
         navigate("/mainnavbar", { state: { users: response.data.role } });
       } else {
         setError("User doesn't have access to log in.");
@@ -58,7 +59,7 @@ function Login() {
   }, [error]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen" style={{backgroundColor:"#f4f4f4"}}>
       {error && (
         <div
           className="fixed top-5 right-5 p-1 z-50 bg-red-500 text-white rounded-lg shadow-lg transition-opacity duration-500"
@@ -93,7 +94,7 @@ function Login() {
             <label className="block text-gray-700">Username</label>
             <div className="relative">
               <FiUser className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
-              <input
+              <input autoFocus
                 ref={usernameRef}
                 type="text"
                 placeholder="User Name"

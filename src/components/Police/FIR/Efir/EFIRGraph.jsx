@@ -57,12 +57,12 @@ const EFIRsChart = ({ generateReport }) => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-3xl font-semibold text-center flex-grow">eFIRs Overview</h2>
         <div className="flex space-x-4">
-          <button
+          {localStorage.getItem('role') !=='chief secretary' && <button
             className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-all"
             onClick={() => setShowModal(true)}
           >
             Add On
-          </button>
+          </button>}
           <button
             onClick={generateReport}
             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-blue-700 transition-all"
