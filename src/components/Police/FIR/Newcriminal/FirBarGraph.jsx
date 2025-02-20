@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import axiosInstance from "../../../../utils/axiosInstance";
-
+const chartColors = [
+  "#8884d8", // Muted Purple
+  "#82ca9d", // Soft Green
+  "#f2c57c", // Warm Sand
+  "#6a8caf", // Steel Blue
+  "#d4a5a5", // Soft Rose
+  "#a28bd3", // Lavender
+  "#ff9a76", // Muted Coral
+  "#74b49b", // Muted Teal
+  "#c08497", // Mauve
+  "#b0a8b9" // Dusty Lilac
+];
 const FirBarGraph = () => {
   const [data, setData] = useState([]);
 
@@ -46,10 +57,10 @@ const FirBarGraph = () => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="total_firs" fill="#8884d8" name="Total FIRs" />
-          <Bar dataKey="fir_under_bns" fill="#82ca9d" name="FIRs under BNS" />
-          <Bar dataKey="chargesheets_filed" fill="#ff7300" name="Chargesheets Filed" />
-          <Bar dataKey="chargesheets_not_filed" fill="#d9534f" name="Chargesheets Not Filed on Time" />
+          <Bar dataKey="total_firs" fill={chartColors[0]} name="Total FIRs" />
+          <Bar dataKey="fir_under_bns" fill={chartColors[1]} name="FIRs under BNS" />
+          <Bar dataKey="chargesheets_filed" fill={chartColors[2]} name="Chargesheets Filed" />
+          <Bar dataKey="chargesheets_not_filed" fill={chartColors[3]} name="Chargesheets Not Filed on Time" />
         </BarChart>
       </ResponsiveContainer>
     </div>

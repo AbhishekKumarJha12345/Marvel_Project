@@ -4,7 +4,18 @@ import axiosInstance from "../../../../utils/axiosInstance";
 
 const CaseStatus = () => {
   const [data, setData] = useState([]);
-
+  const chartColors = [
+    "#8884d8", // Muted Purple
+    "#82ca9d", // Soft Green
+    "#f2c57c", // Warm Sand
+    "#6a8caf", // Steel Blue
+    "#d4a5a5", // Soft Rose
+    "#a28bd3", // Lavender
+    "#ff9a76", // Muted Coral
+    "#74b49b", // Muted Teal
+    "#c08497", // Mauve
+    "#b0a8b9" // Dusty Lilac
+  ];
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -43,10 +54,10 @@ const CaseStatus = () => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="acquitted" fill="#8884d8" name="Acquitted" />
-          <Bar dataKey="convicted" fill="#82ca9d" name="Convicted" />
-          <Bar dataKey="pending" fill="#ff7300" name="Pending" />
-          <Bar dataKey="total_charge_sheeted" fill="#d9534f" name="Total Charge Sheeted" />
+          <Bar dataKey="acquitted" fill={chartColors[0]} name="Acquitted" />
+          <Bar dataKey="convicted" fill={chartColors[1]} name="Convicted" />
+          <Bar dataKey="pending" fill={chartColors[2]} name="Pending" />
+          <Bar dataKey="total_charge_sheeted" fill={chartColors[3]} name="Total Charge Sheeted" />
         </BarChart>
       </ResponsiveContainer>
     </div>

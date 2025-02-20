@@ -103,12 +103,12 @@ function FirNewcriminal() {
               
               <div className="card-body" style={{ paddingBottom: "5rem" }}>
                 {/* Download Report Button */}
-      <div className="mt-4">
+      {/* <div className="mt-4">
         <button className="bg-green-600 text-white px-4 py-2 rounded-lg" onClick={downloadReport}>
           Download FIR Report
         </button>
-      </div>
-                <PoliceFirs apidata={trainingData} />
+      </div> */}
+                <PoliceFirs apidata={trainingData} downloadReport={downloadReport} />
               </div>
             </div>
           </div>

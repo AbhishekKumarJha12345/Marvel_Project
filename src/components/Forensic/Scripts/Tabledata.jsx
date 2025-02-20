@@ -34,11 +34,22 @@ export default function Tabledata() {
   
     fetchData();
   }, []);
-  
+  const chartColors = [
+    "#8884d8", // Muted Purple
+    "#82ca9d", // Soft Green
+    "#f2c57c", // Warm Sand
+    "#6a8caf", // Steel Blue
+    "#d4a5a5", // Soft Rose
+    "#a28bd3", // Lavender
+    "#ff9a76", // Muted Coral
+    "#74b49b", // Muted Teal
+    "#c08497", // Mauve
+    "#b0a8b9" // Dusty Lilac
+  ];
 
   return (
     <div className="mt-6">
-      <h1 className="text-2xl font-bold mb-6">Forensic Development Dashboard</h1>
+      {/* <h1 className="text-2xl font-bold mb-6">Forensic Development Dashboard</h1> */}
 
       {/* Bar Chart for Monthly Cases & Exhibits Overview */}
       <div className="bg-white p-4 rounded-xl shadow-md mt-6">
@@ -51,21 +62,22 @@ export default function Tabledata() {
             <Tooltip />
             <Legend />
             {/* Bar for Cases 1 */}
-            <Bar dataKey="disposal_cases" fill="#8884d8" name="Disposal Cases" />
+            <Bar dataKey="disposal_cases" fill={chartColors[0]} name="Disposal Cases" />
             {/* Bar for Exhibits 1 */}
-            <Bar dataKey="disposal_exhibits" fill="#82ca9d" name="Disposal Exhibits" />
+            <Bar dataKey="disposal_exhibits" fill={chartColors[1]} name="Disposal Exhibits" />
             {/* Bar for Cases 2 */}
-            <Bar dataKey="earlier_pending" fill="#ffc658" name="Eearlier Pending Cases" />
+            <Bar dataKey="earlier_pending" fill={chartColors[2]} name="Earlier Pending Cases" />
             {/* Bar for Exhibits 2 */}
-            <Bar dataKey="earlier_pending_exhibits" fill="#ff7300" name="Eralier Pending Exhibits" />
+            <Bar dataKey="earlier_pending_exhibits" fill={chartColors[3]} name="Earlier Pending Exhibits" />
             {/* Bar for Cases 3 */}
-            <Bar dataKey="pending_cases" fill="#d85e00" name="Pending Cases" />
+            <Bar dataKey="pending_cases" fill={chartColors[4]} name="Pending Cases" />
             {/* Bar for Exhibits 3 */}
-            <Bar dataKey="pending_exhibits" fill="#0066ff" name="Pending Exhibits" />
+            <Bar dataKey="pending_exhibits" fill={chartColors[5]} name="Pending Exhibits" />
             {/* Bar for Cases 4 */}
-            <Bar dataKey="received_cases" fill="#66cc00" name="Received Cases" />
+            <Bar dataKey="received_cases" fill={chartColors[6]} name="Received Cases" />
             {/* Bar for Exhibits 4 */}
-            <Bar dataKey="received_exhibits" fill="#ff33cc" name="Received Exhibits" />
+            <Bar dataKey="received_exhibits" fill={chartColors[7]} name="Received Exhibits" />
+
           </BarChart>
         </ResponsiveContainer>
       </div>

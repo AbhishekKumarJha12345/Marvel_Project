@@ -3,9 +3,10 @@ import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 
 import Prosecution from "./Prosecution";
-
+import ProsecutionPDF from "../../assets/Summary_Report_Final.pdf";
 import Home from "./Home";
 import Carousel from "./Carousel";
 
@@ -88,8 +89,16 @@ export default function CriminalPages() {
   ];
 
   const handleChange = (_, newValue) => {
-    console.log("new value", newValue);
     setValue(newValue);
+  };
+
+  const handleDownload = () => {
+    const link = document.createElement("a");
+    link.href = ProsecutionPDF;
+    link.download = "Prosecutor_Statistics.pdf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -102,7 +111,15 @@ export default function CriminalPages() {
         marginTop: "0",
       }}
     >
-      <Box sx={{ borderBottom: 0, borderColor: "#dbdfed" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          borderBottom: 0,
+          borderColor: "#dbdfed",
+        }}
+      >
         <Tabs
           value={value}
           onChange={handleChange}
@@ -148,7 +165,30 @@ export default function CriminalPages() {
             />
           ))}
         </Tabs>
+
+        {/* Show Export Button only in Home Tab */}
+        {value === 0 && (
+          <Button
+            variant="contained"
+            onClick={handleDownload}
+            sx={{
+              backgroundColor: "transparent",
+              color: "#65558F",
+              border: "2px solid #65558F",
+              padding: "5px 9px",
+              borderRadius: "8px",
+              "&:hover": {
+                backgroundColor: "#65558F",
+                color: "white",
+              },
+            }}
+          >
+            Export
+          </Button>
+        )}
+
       </Box>
+
       {tabData.map((tab, index) => (
         <CustomTabPanel key={index} value={value} index={index}>
           {tab.component}

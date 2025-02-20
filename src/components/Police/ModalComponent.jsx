@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FormControl,
   Dialog,
@@ -14,12 +14,11 @@ import {
   Box,
   Typography,
   IconButton,InputLabel,FormHelperText
-  
 } from "@mui/material";
 import { CloudUpload, Close } from "@mui/icons-material";
 import axiosInstance from "../../utils/axiosInstance";
 const ModalComponent = ({ open,type, onClose }) => {
-  const [selectedOption, setSelectedOption] = useState("training");
+  const [selectedOption, setSelectedOption] = useState("");
   const [selectedFileType, setSelectedFileType] = useState(""); // Police or Workshop
   const initial = {
     // type:selectedOption,
@@ -52,6 +51,29 @@ const ModalComponent = ({ open,type, onClose }) => {
     zero_fir : "",
     regular_fir : "",
     yet_to_be_registered_zero_fir : "",
+    //fir_5 fields
+    // city :"",
+    state :"",
+    ps_name:"",
+    date_of_data :"",
+    type_of_data :"",
+    //van fields
+    vanId :"", 
+    city :"",
+    // date :"",
+    count :"",
+    status :"",
+    //for_dev fields
+    month :"",
+    earlier_pending :"",
+    earlier_pending_exhibits :"",
+    received_cases :"",
+    received_exhibits :"",
+    disposal_cases :"",
+    disposal_exhibits :"",
+    pending_cases :"",
+    pending_exhibits :"",
+
   };
   
   const [formData, setFormData] = useState(initial);
@@ -75,15 +97,27 @@ const ModalComponent = ({ open,type, onClose }) => {
   // Handle File Upload
   const handleFileUpload = (event) => {
     const files = Array.from(event.target.files);
-    setUploadedFiles([...uploadedFiles, ...files]);
+    const allowedTypes = ["application/zip", "application/x-zip-compressed", "text/csv"];
+  
+    const validFiles = files.filter(file => allowedTypes.includes(file.type));
+  
+    if (validFiles.length !== files.length) {
+      alert("Only CSV or ZIP files are allowed.");
+    }
+  
+    setUploadedFiles([...uploadedFiles, ...validFiles]);
   };
+  
 
   // Remove File
   const removeFile = (index) => {
     const updatedFiles = uploadedFiles.filter((_, i) => i !== index);
     setUploadedFiles(updatedFiles);
   };
-
+  useEffect(() => {
+    if (type === "police") setSelectedOption("training");
+    if (type === "forensic") setSelectedOption("van");
+  }, [type]);
  
 
 
@@ -102,10 +136,14 @@ const ModalComponent = ({ open,type, onClose }) => {
       // Append current date
       const currentDate = new Date().toISOString().split("T")[0];
       formDataToSend.append("date", currentDate);
+      let url='/add_forms'
       if(type==='police') formDataToSend.append("type", selectedOption);
 
-      if(['fir_1','fir_2','fir_3','fir_4'].includes(type)) {console.log('type',type); formDataToSend.append("type", type)}
-    
+      if(['fir_1','fir_2','fir_3','fir_4','fir_5'].includes(type)) {console.log('type',type); formDataToSend.append("type", type)}
+      if(type==='forensic'){
+        formDataToSend.append("type", selectedOption);
+        url='/forensic_form'
+      }
       // Append files if any
       if (uploadedFiles.length > 0) {
         // formDataToSend.append('type',selectedFileType)
@@ -123,7 +161,7 @@ const ModalComponent = ({ open,type, onClose }) => {
 
 
       // Send all data in one request
-      const response = await axiosInstance.post("/add_forms", formDataToSend, {
+      const response = await axiosInstance.post(url, formDataToSend, {
         headers: {
           "Content-Type": "multipart/form-data", // Important to specify this
         },
@@ -139,8 +177,8 @@ const ModalComponent = ({ open,type, onClose }) => {
       setFormData(initial);
       setUploadedFiles([]);
       setSelectedFileType("");
-      setSelectedOption("training");
-    
+      if (type === "police") setSelectedOption("training");
+      if (type === "forensic") setSelectedOption("van");
     } catch (error) {
       console.error("Error submitting form:", error);
       alert("An error occurred while submitting the form.");
@@ -154,7 +192,34 @@ const ModalComponent = ({ open,type, onClose }) => {
   return (
     <>
 
-  <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" borderRadius='30px'>
+<Dialog
+  open={open}
+  onClose={onClose}
+  fullWidth
+  maxWidth="sm"
+  sx={{
+    "& .MuiPaper-root": { borderRadius: "30px" }, // Rounded corners
+    "& .MuiDialogContent-root": { 
+      maxHeight: "600px",  // Set a max height to enable scrolling
+      overflowY: "auto",   // Enable vertical scrolling
+      scrollbarWidth: "thin", // Firefox scrollbar
+      scrollbarColor: "#2d3748 #f0f0f0", // Track and thumb color for Firefox
+      "&::-webkit-scrollbar": {
+        width: "6px", // Slimmer scrollbar width
+      },
+      "&::-webkit-scrollbar-thumb": {
+        backgroundColor: "#2d3748", // Thumb color
+        borderRadius: "4px",
+      },
+      "&::-webkit-scrollbar-track": {
+        backgroundColor: "#f0f0f0", // Track color
+        marginBlock: "4px", // Removes scrollbar arrows
+      },
+    },
+  }}
+  
+>
+
     <DialogTitle backgroundColor='#2d3748' color='white' marginBottom='30px'>
       <Box display="flex" justifyContent="space-between" alignItems="center" >
         <Typography variant="h6"><strong>Form Details</strong></Typography>
@@ -166,39 +231,76 @@ const ModalComponent = ({ open,type, onClose }) => {
 
     <DialogContent marginTop='10px'>
       {/* Button Group */}
-      {type === "police"&&<Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-      <Button
-  variant={selectedOption === "training" ? "contained" : "outlined"}
-  color="primary"
-  onClick={() => handleOptionChange({ target: { value: "training" } })}
-  sx={{
-    marginRight: 2,
-    backgroundColor: selectedOption === "training" ? "#2d3748" : "transparent", // Background color
-    color: selectedOption === "training" ? "white" : "inherit", // Text color
-    "&:hover": {
-      backgroundColor: selectedOption === "training" ? "#2d3748" : "transparent", // Keep background color on hover if selected
-    },
-  }}
->
-  Training Form
-</Button>
+      {type === "police"&&
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+          <Button
+              variant={selectedOption === "training" ? "contained" : "outlined"}
+              color="primary"
+              onClick={() => handleOptionChange({ target: { value: "training" } })}
+              sx={{
+                marginRight: 2,
+                backgroundColor: selectedOption === "training" ? "#2d3748" : "transparent", // Background color
+                color: selectedOption === "training" ? "white" : "inherit", // Text color
+                "&:hover": {
+                  backgroundColor: selectedOption === "training" ? "#2d3748" : "transparent", // Keep background color on hover if selected
+                },
+              }}
+            >
+              Training Form
+          </Button>
 
-<Button
-  variant={selectedOption === "workshop" ? "contained" : "outlined"}
-  color="primary"
-  onClick={() => handleOptionChange({ target: { value: "workshop" } })}
-  sx={{
-    backgroundColor: selectedOption === "workshop" ? "#2d3748" : "transparent", // Background color
-    color: selectedOption === "workshop" ? "white" : "inherit", // Text color
-    "&:hover": {
-      backgroundColor: selectedOption === "workshop" ? "#2d3748" : "transparent", // Keep background color on hover if selected
-    },
-  }}
->
-  Workshop Form
-</Button>
+          <Button
+            variant={selectedOption === "workshop" ? "contained" : "outlined"}
+            color="primary"
+            onClick={() => handleOptionChange({ target: { value: "workshop" } })}
+            sx={{
+              backgroundColor: selectedOption === "workshop" ? "#2d3748" : "transparent", // Background color
+              color: selectedOption === "workshop" ? "white" : "inherit", // Text color
+              "&:hover": {
+                backgroundColor: selectedOption === "workshop" ? "#2d3748" : "transparent", // Keep background color on hover if selected
+              },
+            }}
+          >
+            Workshop Form
+          </Button>
 
-      </Box>}
+        </Box>
+      }
+      {type === "forensic"&&
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+          <Button
+              variant={selectedOption === "van" ? "contained" : "outlined"}
+              color="primary"
+              onClick={() => handleOptionChange({ target: { value: "van" } })}
+              sx={{
+                marginRight: 2,
+                backgroundColor: selectedOption === "van" ? "#2d3748" : "transparent", // Background color
+                color: selectedOption === "van" ? "white" : "inherit", // Text color
+                "&:hover": {
+                  backgroundColor: selectedOption === "van" ? "#2d3748" : "transparent", // Keep background color on hover if selected
+                },
+              }}
+            >
+              VAN Form
+          </Button>
+
+          <Button
+            variant={selectedOption === "for_dev" ? "contained" : "outlined"}
+            color="primary"
+            onClick={() => handleOptionChange({ target: { value: "for_dev" } })}
+            sx={{
+              backgroundColor: selectedOption === "for_dev" ? "#2d3748" : "transparent", // Background color
+              color: selectedOption === "for_dev" ? "white" : "inherit", // Text color
+              "&:hover": {
+                backgroundColor: selectedOption === "for_dev" ? "#2d3748" : "transparent", // Keep background color on hover if selected
+              },
+            }}
+          >
+            DEV Form
+          </Button>
+
+        </Box>
+      }
 
       {/* Conditionally render fields based on selected option */}
       {type === "police"&&selectedOption === "training" && (
@@ -268,7 +370,7 @@ const ModalComponent = ({ open,type, onClose }) => {
     </Select>
     <FormHelperText>Select Department</FormHelperText>
   </FormControl> */}
-</Box>
+        </Box>
 
       )}
 
@@ -297,6 +399,115 @@ const ModalComponent = ({ open,type, onClose }) => {
           />
         </Box>
       )}
+      {type === "forensic" && selectedOption === "van" && (
+        <Box display="flex" flexDirection="column" gap={2}>
+          <TextField
+            label="Van ID"
+            name="vanId"
+            value={formData.vanId}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="City"
+            name="city"
+            value={formData.city}
+            onChange={handleChange}
+            fullWidth
+          />
+          {/* <TextField
+            label="Date"
+            name="date"
+            type="date"
+            value={formData.date}
+            onChange={handleChange}
+            fullWidth
+          /> */}
+          <TextField
+            label="Count"
+            name="count"
+            value={formData.count}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Status"
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+            fullWidth
+          />
+        </Box>
+      )}
+
+      {type === "forensic" && selectedOption === "for_dev" && (
+        <Box display="flex" flexDirection="column" gap={2}>
+          <TextField
+            label="Month"
+            name="month"
+            value={formData.month}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Earlier Pending Cases"
+            name="earlier_pending"
+            value={formData.earlier_pending}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Earlier Pending Exhibits"
+            name="earlier_pending_exhibits"
+            value={formData.earlier_pending_exhibits}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Received Cases"
+            name="received_cases"
+            value={formData.received_cases}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Received Exhibits"
+            name="received_exhibits"
+            value={formData.received_exhibits}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Disposal Cases"
+            name="disposal_cases"
+            value={formData.disposal_cases}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Disposal Exhibits"
+            name="disposal_exhibits"
+            value={formData.disposal_exhibits}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Pending Cases"
+            name="pending_cases"
+            value={formData.pending_cases}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            label="Pending Exhibits"
+            name="pending_exhibits"
+            value={formData.pending_exhibits}
+            onChange={handleChange}
+            fullWidth
+          />
+        </Box>
+      )}
+
 
       {/* Fields for fir_1 */}
       {type === "fir_1" && (
@@ -444,6 +655,48 @@ const ModalComponent = ({ open,type, onClose }) => {
           />
         </Box>
       )}
+     {type === "fir_5" && (
+      <Box display="flex" flexDirection="column" gap={2} marginTop="10px">
+        <TextField
+          label="City"
+          name="city"
+          value={formData.city}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          label="State"
+          name="state"
+          value={formData.state}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          label="Police Station Name"
+          name="ps_name"
+          value={formData.ps_name}
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          label="Date of Data"
+          name="date_of_data"
+          type="date"
+          value={formData.date_of_data}
+          onChange={handleChange}
+          fullWidth
+          InputLabelProps={{ shrink: true }} // Ensures label stays when date is selected
+        />
+        <TextField
+          label="Type of Data"
+          name="type_of_data"
+          value={formData.type_of_data}
+          onChange={handleChange}
+          fullWidth
+        />
+      </Box>
+      )}
+
 
 
       <>

@@ -50,12 +50,13 @@ const CorrectionalServices = () => {
         borderWidth: 1,
         barThickness: 50,
       },
-    ],
+    ]
   };
 
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false, // Allow flexible width
     plugins: {
       legend: {
         display: true, // Display legend at the top
@@ -70,7 +71,7 @@ const CorrectionalServices = () => {
           label: function (tooltipItem) {
             const dataset = tooltipItem.dataset;
             const value = tooltipItem.raw;
-            return `${dataset.label}: ${value}`; // Return the individual value for the tooltip
+            return `${dataset.label}: ${value}`; // Return value for tooltip
           },
         },
       },
@@ -78,7 +79,7 @@ const CorrectionalServices = () => {
     scales: {
       x: {
         grid: {
-          offset: true, // Add offset to prevent overlapping
+          offset: true, // Prevent overlap
         },
       },
       y: {

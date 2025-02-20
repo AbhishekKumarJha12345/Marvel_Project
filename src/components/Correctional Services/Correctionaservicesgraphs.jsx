@@ -5,7 +5,7 @@ import CorrectionalInstitutions from './CorrectionalInstitutions';
 import CorrectionalServices from './CorrectionalServices';
 import VideoConferencingFacilities from './VideoConferencingFacilities';
 
-function Correctionaservicesgraphs() {
+const Correctionaservicesgraphs = forwardRef((props, ref) => {
   return (
     <div className="grid grid-cols-2 gap-4 p-4">
       {[ComplianceSection, ComplianceSection479, CorrectionalInstitutions, CorrectionalServices, VideoConferencingFacilities].map((Component, index) => (
@@ -16,5 +16,6 @@ function Correctionaservicesgraphs() {
     </div>
   );
 }
+)
 
 export default Correctionaservicesgraphs;

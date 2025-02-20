@@ -1,74 +1,91 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import "tailwindcss/tailwind.css";
-
-const initialData = [
-  { id: 1, name: "John Doe", email: "john@example.com", role: "Admin", date: "2024-01-01", firType: "FIR" },
-  { id: 2, name: "Jane Smith", email: "jane@example.com", role: "User", date: "2024-01-02", firType: "Charge Sheet" },
-  { id: 3, name: "Alice Johnson", email: "alice@example.com", role: "Editor", date: "2024-02-15", firType: "FIR" },
-  { id: 4, name: "Bob Brown", email: "bob@example.com", role: "Viewer", date: "2024-03-10", firType: "Charge Sheet" },
-  { id: 5, name: "Charlie White", email: "charlie@example.com", role: "User", date: "2024-04-22", firType: "FIR" },
-  { id: 6, name: "David Black", email: "david@example.com", role: "Editor", date: "2024-05-05", firType: "Charge Sheet" },
-];
+import ModalComponent from "../../ModalComponent"; 
+import axiosInstance from "../../../../utils/axiosInstance";
 
 const Chargesheet = () => {
-  const [filters, setFilters] = useState({ id: "", name: "", email: "", role: "", date: "", firType: "" });
-  const [filteredData, setFilteredData] = useState(initialData);
+  const [filters, setFilters] = useState({ 
+    id: "", 
+    state: "", 
+    city: "", 
+    ps_name: "", 
+    date_of_data: "", 
+    type_of_data: "" 
+  });
 
+  const [data, setData] = useState([]); // Ensure initial state is an array
+  const [filteredData, setFilteredData] = useState([]); // To store filtered results
+
+  const [showModal, setShowModal] = useState(false);
+  
   const handleFilter = (event, key) => {
-    const newFilters = { ...filters, [key]: event.target.value.toLowerCase() };
+    const value = event.target.value.toLowerCase();
+  
+    // Update the filters state
+    const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
-
-    setFilteredData(
-      initialData.filter((row) =>
-        Object.keys(newFilters).every((filterKey) =>
-          row[filterKey].toString().toLowerCase().includes(newFilters[filterKey])
-        )
+  
+    // Filter the data based on all filters
+    const filtered = data.filter((row) =>
+      Object.keys(newFilters).every((filterKey) =>
+        newFilters[filterKey]
+          ? row[filterKey]?.toString().toLowerCase().includes(newFilters[filterKey])
+          : true
       )
     );
+  
+    setFilteredData(filtered);
   };
+  
+
   const columns = [
-    {
-      name:  <span className="font-semibold text-[14px]">Charge Sheet No</span>,
-      selector: (row) => row.id,
-      sortable: true,
-      filterKey: "id",
-    },
-    {
-      name:  <span className="font-semibold text-[14px]">State</span>,
-      selector: (row) => row.name,
-      sortable: true,
-      filterKey: "name",
-    },
-    {
-      name: <span className="font-semibold text-[14px]">City</span>,
-      selector: (row) => row.email,
-      sortable: true,
-      filterKey: "email",
-    },
-    {
-      name: <span className="font-semibold text-[14px]">Ps Name</span>,
-      selector: (row) => row.role,
-      sortable: true,
-      filterKey: "role",
-    },
-    {
-      name:  <span className="font-semibold text-[14px]">Date</span>,
-      selector: (row) => row.date,
-      sortable: true,
-      filterKey: "date",
-    },
-    {
-      name: <span className="font-semibold text-[14px]">Charge Sheet</span>,
-      selector: (row) => row.firType,
-      sortable: true,
-      filterKey: "firType",
-    },
+    { name: <span className="font-semibold text-[14px]">Charge Sheet No</span>, selector: (row) => row.id, sortable: true, filterKey: "id" },
+    { name: <span className="font-semibold text-[14px]">State</span>, selector: (row) => row.state, sortable: true, filterKey: "state" },
+    { name: <span className="font-semibold text-[14px]">City</span>, selector: (row) => row.city, sortable: true, filterKey: "city" },
+    { name: <span className="font-semibold text-[14px]">PS Name</span>, selector: (row) => row.ps_name, sortable: true, filterKey: "ps_name" },
+    { name: <span className="font-semibold text-[14px]">Date of Data</span>, selector: (row) => row.date_of_data, sortable: true, filterKey: "date_of_data" },
+    { name: <span className="font-semibold text-[14px]">Charge Sheet Type</span>, selector: (row) => row.type_of_data, sortable: true, filterKey: "type_of_data" },
   ];
+  
+  const fetchFir5Data = async () => {
+    try {
+      const response = await axiosInstance.get("/live_data", { params: { type: "fir_5" } });
+      if (Array.isArray(response.data.data_dict)) {
+        setData(response.data.data_dict);
+        setFilteredData(response.data.data_dict); 
+      } else {
+        console.error("Expected an array but got:", typeof response.data.data_dict);
+        setData([]);
+        setFilteredData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching FIR_5 data:", error);
+      setData([]);
+      setFilteredData([]); // Prevent undefined issues
+    }
+  };
+  
+
+  useEffect(() => {
+    fetchFir5Data();
+  }, []);
 
   return (
     <div className="mt-5">
-      <h2 className="text-center text-2xl font-semibold mb-4">First Charge sheet Data Criminal Laws</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-semibold text-center flex-grow">
+          First Charge Sheet Data Criminal Laws
+        </h2>
+        {localStorage.getItem('role') !=='chief secretary' && <button
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+          style={{ backgroundColor: "#2d3748" }}
+          onClick={() => setShowModal(true)}
+        >
+          Add On
+        </button>}
+      </div>
+
       <div className="p-6 w-[98%] mx-auto bg-white shadow-lg rounded-lg">
         <div className="grid grid-cols-6 gap-2 mb-4">
           {columns.map((col, index) => (
@@ -85,12 +102,14 @@ const Chargesheet = () => {
 
         <DataTable
           columns={columns}
-          data={filteredData}
+          data={filteredData||[] }
           pagination
           highlightOnHover
           striped
           responsive
         />
+
+        <ModalComponent open={showModal} type="fir_5" onClose={() => setShowModal(false)} />
       </div>
     </div>
   );

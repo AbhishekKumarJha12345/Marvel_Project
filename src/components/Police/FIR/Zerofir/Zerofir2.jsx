@@ -4,7 +4,18 @@ import axiosInstance from "../../../../utils/axiosInstance";
 
 const ZeroFir2 = () => {
   const [data, setData] = useState([]);
-
+  const chartColors = [
+    "#8884d8", // Muted Purple
+    "#82ca9d", // Soft Green
+    "#f2c57c", // Warm Sand
+    "#6a8caf", // Steel Blue
+    "#d4a5a5", // Soft Rose
+    "#a28bd3", // Lavender
+    "#ff9a76", // Muted Coral
+    "#74b49b", // Muted Teal
+    "#c08497", // Mauve
+    "#b0a8b9" // Dusty Lilac
+  ];
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -41,9 +52,9 @@ const ZeroFir2 = () => {
           <XAxis dataKey="month" />
           <YAxis />
           <Tooltip />
-          <Line type="monotone" dataKey="regular_fir" stroke="#8774d8" strokeWidth={2} name="Regular FIR"/>
-          <Line type="monotone" dataKey="yet_to_be_registered_zero_fir" stroke="#4984d8" strokeWidth={2} name="Yet to be Registered Zero FIR"/>
-          <Line type="monotone" dataKey="zero_fir" stroke="#F884d8" strokeWidth={2} name="Zero FIR" />
+          <Line type="monotone" dataKey="regular_fir" stroke={chartColors[0]} strokeWidth={2} name="Regular FIR"/>
+          <Line type="monotone" dataKey="yet_to_be_registered_zero_fir" stroke={chartColors[1]} strokeWidth={2} name="Yet to Regularly Zero FIR"/>
+          <Line type="monotone" dataKey="zero_fir" stroke={chartColors[2]} strokeWidth={2} name="Zero FIR" />
         </LineChart>
       </ResponsiveContainer>
     </div>

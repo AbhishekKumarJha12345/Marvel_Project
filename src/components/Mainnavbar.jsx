@@ -49,7 +49,15 @@ function Mainnavbar() {
     localStorage.clear();
     navigate("/");
   };
-
+  const toCamelCase = (str) => {
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+  
+  
   return (
     <div
       style={{
@@ -116,7 +124,8 @@ function Mainnavbar() {
               className="flex items-center space-x-2 text-gray-700 hover:[#2d3748]"
             >
               <FaUser size={22} />
-              <p>{users}</p>
+              <p>{toCamelCase(users)}</p>
+
               <FaChevronDown size={16} className="text-gray-400" />
             </button>
             {isOpen.profile && (

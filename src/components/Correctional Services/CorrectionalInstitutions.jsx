@@ -55,6 +55,7 @@ const CorrectionalInstitutions = () => {
   };
   const options = {
     responsive: true,
+    maintainAspectRatio: false, // Allow full-width resizing
     plugins: {
       legend: {
         display: true,

@@ -11,15 +11,19 @@ import {
 } from "chart.js";
 
 // Register required chart components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+const chartColors = [
+  "#8884d8", // Muted Purple
+  "#82ca9d", // Soft Green
+  "#f2c57c", // Warm Sand
+  "#6a8caf", // Steel Blue
+  "#d4a5a5", // Soft Rose
+  "#a28bd3", // Lavender
+  "#ff9a76", // Muted Coral
+  "#74b49b", // Muted Teal
+  "#c08497", // Mauve
+  "#b0a8b9"  // Dusty Lilac
+];
 const PolicePunishment = () => {
   // Data for the bar graph
   const data = {
@@ -28,16 +32,16 @@ const PolicePunishment = () => {
       {
         label: "No. of Cases Registered", // Label for the first dataset
         data: [13939, 0], // Only data for "No. of Cases Registered"
-        backgroundColor: "#FF5733", // Orange for "No. of Cases Registered"
-        borderColor: "#D84315", // Darker border shade
+        backgroundColor: chartColors[0], // Orange for "No. of Cases Registered"
+        borderColor: chartColors[0], // Darker border shade
         borderWidth: 1,
         barThickness: 50,
       },
       {
         label: "Cases in which Forensic Team Visited", // Label for the second dataset
         data: [0, 2587], // Only data for "Cases in which Forensic Team Visited"
-        backgroundColor: "#2196F3", // Blue for "Cases in which Forensic Team Visited"
-        borderColor: "#1976D2", // Darker border shade
+        backgroundColor: chartColors[1], // Blue for "Cases in which Forensic Team Visited"
+        borderColor: chartColors[1], // Darker border shade
         borderWidth: 1,
         barThickness: 50,
       },
