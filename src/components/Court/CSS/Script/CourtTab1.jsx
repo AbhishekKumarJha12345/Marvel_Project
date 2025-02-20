@@ -1,6 +1,7 @@
-import React, {useRef} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import axiosInstance from "../../../../utils/axiosInstance";
 import {
   LineChart,
   Line,
@@ -34,99 +35,6 @@ const CourtRefDetails = `Generated Summary:
 
 🔹 In summary, the legal system in 2024 became more efficient with the adoption of digital tools and backlog reduction. The ongoing improvements indicate a commitment to modernization, streamlined case management, and accessibility enhancements.`;
 
-// Dummy Data for Charts
-const caseData = [
-  {
-    month: "Jan",
-    total: 1200,
-    pending: 400,
-    disposed: 800,
-    avgResolutionTime: 30,
-  },
-  {
-    month: "Feb",
-    total: 1300,
-    pending: 500,
-    disposed: 800,
-    avgResolutionTime: 28,
-  },
-  {
-    month: "Mar",
-    total: 1400,
-    pending: 300,
-    disposed: 1100,
-    avgResolutionTime: 35,
-  },
-  {
-    month: "Apr",
-    total: 1250,
-    pending: 350,
-    disposed: 900,
-    avgResolutionTime: 32,
-  },
-  {
-    month: "May",
-    total: 1500,
-    pending: 200,
-    disposed: 1300,
-    avgResolutionTime: 25,
-  },
-  {
-    month: "Jun",
-    total: 1100,
-    pending: 450,
-    disposed: 650,
-    avgResolutionTime: 28,
-  },
-  {
-    month: "Jul",
-    total: 1400,
-    pending: 300,
-    disposed: 1100,
-    avgResolutionTime: 33,
-  },
-  {
-    month: "Aug",
-    total: 1350,
-    pending: 400,
-    disposed: 950,
-    avgResolutionTime: 29,
-  },
-  {
-    month: "Sep",
-    total: 1450,
-    pending: 500,
-    disposed: 950,
-    avgResolutionTime: 27,
-  },
-  {
-    month: "Oct",
-    total: 1300,
-    pending: 450,
-    disposed: 850,
-    avgResolutionTime: 31,
-  },
-  {
-    month: "Nov",
-    total: 1200,
-    pending: 400,
-    disposed: 800,
-    avgResolutionTime: 30,
-  },
-  {
-    month: "Dec",
-    total: 1500,
-    pending: 200,
-    disposed: 1300,
-    avgResolutionTime: 25,
-  },
-];
-
-// Pie chart data
-const caseStatusData = [
-  { name: "Pending", value: 500 },
-  { name: "Disposed", value: 9500 },
-];
 const chartColors = [
   "#8884d8", // Muted Purple
   "#82ca9d", // Soft Green
@@ -141,7 +49,25 @@ const chartColors = [
 ];
 
 const CourtTab1 = () => {
-  const exportRef = useRef(null)
+  const exportRef = useRef(null);
+  const [icjsData, setIcjsData] = useState(null);
+
+  const ICJSCaseData = async () => {
+    try {
+      const response = await axiosInstance.get("/live_data", {
+        params: {
+          type: "court_1",
+        },
+      });
+      const responseData = response.data;
+      setIcjsData(responseData.data_dict);
+    } catch (error) {
+      console.error("Some error occured", error);
+    }
+  };
+  useEffect(() => {
+    ICJSCaseData();
+  }, []);
   const handleExport = async () => {
     const pdf = new jsPDF("p", "mm", "a4");
     const margin = 10;
@@ -190,6 +116,27 @@ const CourtTab1 = () => {
     //  Save the PDF
     pdf.save("Court System.pdf");
   };
+
+
+
+  // Dynamic pie chart data
+  const caseStatusData = icjsData
+    ? [
+        { name: "Pending", value: parseInt(icjsData[0]?.pending || 0) },
+        { name: "Completed", value: parseInt(icjsData[0]?.completed || 0) },
+      ]
+    : [
+        { name: "Pending", value: 0 },
+        { name: "Completed", value: 0 },
+      ];
+
+  const caseData = icjsData?.map((item) => ({
+    month: item.month,
+    total: parseInt(item.pending) + parseInt(item.completed),
+    pending: parseInt(item.pending),
+    completed: parseInt(item.completed),
+    avgResolutionTime: item.average_resolution_time,
+  }));
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
       <div className="ContentSpace">
@@ -247,7 +194,7 @@ const CourtTab1 = () => {
               <Line type="monotone" dataKey="pending" stroke={chartColors[1]} />
               <Line
                 type="monotone"
-                dataKey="disposed"
+                dataKey="completed"
                 stroke={chartColors[2]}
               />
             </LineChart>

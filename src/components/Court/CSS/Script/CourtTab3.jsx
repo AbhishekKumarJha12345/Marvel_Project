@@ -1,6 +1,7 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import axiosInstance from '../../../../utils/axiosInstance';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell
 } from 'recharts';
@@ -22,30 +23,7 @@ const CourtRefDetails = `Generated Summary:
 
 🔹 In summary, the legal system in 2024 became more efficient with the adoption of digital tools and backlog reduction. The ongoing improvements indicate a commitment to modernization, streamlined case management, and accessibility enhancements.`;
 
-// Dummy Data for Video Conferencing Hearings & Case Disposal Rate
-const caseDisposalData = [
-  { month: 'Jan', disposedCases: 30, backlogReduction: 5 },
-  { month: 'Feb', disposedCases: 40, backlogReduction: 10 },
-  { month: 'Mar', disposedCases: 50, backlogReduction: 15 },
-  { month: 'Apr', disposedCases: 60, backlogReduction: 20 },
-  { month: 'May', disposedCases: 70, backlogReduction: 25 },
-  { month: 'Jun', disposedCases: 85, backlogReduction: 35 },
-  { month: 'Jul', disposedCases: 95, backlogReduction: 45 },
-  { month: 'Aug', disposedCases: 100, backlogReduction: 50 },
-  { month: 'Sep', disposedCases: 110, backlogReduction: 60 },
-  { month: 'Oct', disposedCases: 120, backlogReduction: 70 },
-  { month: 'Nov', disposedCases: 130, backlogReduction: 80 },
-  { month: 'Dec', disposedCases: 140, backlogReduction: 90 },
-];
 
-// Pie chart data for infrastructure readiness
-const readinessData = [
-  { subject: 'Video Call', value: 80 },
-  { subject: 'Audio Call', value: 85 },
-  { subject: 'Case Filing', value: 75 },
-  { subject: 'Judiciary Systems', value: 90 },
-  { subject: 'Legal Professionals', value: 70 },
-];
 
 // Colors for Pie chart segments
 // const COLORS = ['#8884d8', '#82ca9d', '#FFBB28', '#FF8042', '#FF6347'];
@@ -63,7 +41,24 @@ const COLORS = [
 ];
 const VideoConferencingDashboard = () => {
   const exportRef = useRef(null); // Reference to content to be exported
+  const [confrenceDisposalData, setConfrenceDisposalData] = useState(null);
 
+  const fetchConfrenceDisposalData = async () => {
+    try {
+      const response = await axiosInstance.get("/live_data", {
+        params: {
+          type: "court_3",
+        },
+      });
+      const responseData = response.data;
+      setConfrenceDisposalData(responseData.data_dict);
+    } catch (error) {
+      console.error("Some error occured", error);
+    }
+  };
+  useEffect(() => {
+    fetchConfrenceDisposalData();
+  }, []);
   const handleExport = async () => {
     const pdf = new jsPDF("p", "mm", "a4");
     const margin = 10;
@@ -112,6 +107,16 @@ const VideoConferencingDashboard = () => {
     //  Save the PDF
     pdf.save("Video Conferencing Hearings.pdf");
   };
+
+  const caseDisposalData = confrenceDisposalData?.map((item) => (
+    { month: item.month, disposedCases: item.disposed_cases, backlogReduction: item.backlog_reduction }
+  ))
+
+  const readinessData = [
+    { subject: 'Backlog Reduction', value: parseInt(confrenceDisposalData?.[0].backlog_reduction || 0) },
+    { subject: 'Disposed Cases', value: parseInt(confrenceDisposalData?.[0].disposed_cases || 0) },
+  ];
+
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
       <div className="ContentSpace">
@@ -123,7 +128,7 @@ const VideoConferencingDashboard = () => {
       <div ref={exportRef} className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
         {/* Case Disposal and Backlog Reduction Line Chart */}
-        <div className="bg-white p-4 rounded-xl shadow-md">
+        {/* <div className="bg-white p-4 rounded-xl shadow-md">
           <h3 className="text-xl font-semibold mb-4">Case Disposal & Backlog Reduction</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={caseDisposalData}>
@@ -136,11 +141,11 @@ const VideoConferencingDashboard = () => {
               <Line type="monotone" dataKey="backlogReduction" stroke="#82ca9d" name="Backlog Reduction" />
             </LineChart>
           </ResponsiveContainer>
-        </div>
+        </div> */}
 
         {/* Video Conferencing Impact Bar Chart */}
         <div className="bg-white p-4 rounded-xl shadow-md">
-          <h3 className="text-xl font-semibold mb-4">Impact of Video Conferencing on Case Disposal</h3>
+          <h3 className="text-xl font-semibold mb-4">Case Disposal & Backlog Reduction</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={caseDisposalData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -159,6 +164,7 @@ const VideoConferencingDashboard = () => {
           <h3 className="text-xl font-semibold mb-4">Infrastructure Readiness</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
+              <Tooltip />
               <Pie
                 data={readinessData}
                 dataKey="value"

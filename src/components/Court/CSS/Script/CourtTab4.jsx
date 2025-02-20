@@ -1,6 +1,7 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import axiosInstance from '../../../../utils/axiosInstance';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line, AreaChart, Area
@@ -23,17 +24,7 @@ const CourtRefDetails = `Generated Summary:
 
 🔹 In summary, the legal system in 2024 became more efficient with the adoption of digital tools and backlog reduction. The ongoing improvements indicate a commitment to modernization, streamlined case management, and accessibility enhancements.`;
 
-// Dummy Data for Prosecution & Forensic Departments
-const dataSharingEffectivenessData = [
-  { department: 'Judicial', effectiveness: 75 },
-  { department: 'Prosecution', effectiveness: 85 },
-  { department: 'Forensic', effectiveness: 80 },
-];
 
-const forensicDataUsageData = [
-  { name: 'Used Forensic Data', value: 70 },
-  { name: 'Did Not Use Forensic Data', value: 30 },
-];
 
 const responseTimeData = [
   { month: 'Jan', responseTime: 5 },
@@ -51,7 +42,6 @@ const responseTimeData = [
 ];
 
 // Colors for Pie chart segments
-// const COLORS = ['#8884d8', '#FF6347'];
 const COLORS = [
   "#8884d8", // Muted Purple
   "#82ca9d", // Soft Green
@@ -67,7 +57,24 @@ const COLORS = [
 
 const CourtTab4 = () => {
   const exportRef = useRef(null); // Reference to content to be exported
+  const [forensicData, setForensicData] = useState(null);
 
+  const fetchForensicData = async () => {
+    try {
+      const response = await axiosInstance.get("/live_data", {
+        params: {
+          type: "court_4",
+        },
+      });
+      const responseData = response.data;
+      setForensicData(responseData.data_dict);
+    } catch (error) {
+      console.error("Some error occured", error);
+    }
+  };
+  useEffect(() => {
+    fetchForensicData();
+  }, []);
   const handleExport = async () => {
     const pdf = new jsPDF("p", "mm", "a4");
     const margin = 10;
@@ -116,6 +123,27 @@ const CourtTab4 = () => {
     //  Save the PDF
     pdf.save("Prosecution & Forensic Departments Dashboard.pdf");
   };
+
+  const dataSharingEffectivenessData = [
+    { department: 'Judicial', effectiveness: parseInt(forensicData?.[0].judicial_effectiveness || 0) },
+    { department: 'Prosecution', effectiveness: parseInt(forensicData?.[0].prosecution_effectiveness || 0)  },
+    { department: 'Forensic', effectiveness: parseInt(forensicData?.[0].forensic_effectiveness || 0)  },
+  ];
+  
+  const forensicDataUsageData = [
+    { name: 'Used Forensic Data', value: parseInt(forensicData?.[0].percentage_of_cases_using_forensic_data || 0)  },
+    { name: 'Did Not Use Forensic Data', value: parseInt(100 - forensicData?.[0].percentage_of_cases_using_forensic_data || 0) },
+  ];
+
+  const responseTimeData = forensicData?.map((item)=> (
+    { month: item.month, responseTime: item.response_time_for_evidence_retrieval }
+
+  ))
+
+  const dataSharingEffectiveData = forensicData?.map((item) => (
+    { month: item.month, Judicial: item.judicial_effectiveness, Prosecution: item.prosecution_effectiveness, Forensic:item.forensic_effectiveness }
+  ))
+
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
       <div className="ContentSpace">
@@ -126,26 +154,12 @@ const CourtTab4 = () => {
       </div>
       <div ref={exportRef} className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-        {/* Effectiveness of Data Sharing Mechanisms (Bar Chart) */}
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <h3 className="text-xl font-semibold mb-4">Effectiveness of Data-Sharing Mechanisms</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={dataSharingEffectivenessData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="department" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="effectiveness" fill="#82ca9d" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Percentage of Cases Using Forensic Data (Pie Chart) */}
+                {/* Percentage of Cases Using Forensic Data (Pie Chart) */}
         <div className="bg-white p-4 rounded-xl shadow-md">
           <h3 className="text-xl font-semibold mb-4">Percentage of Cases Using Forensic Data</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
+              <Tooltip />
               <Pie
                 data={forensicDataUsageData}
                 dataKey="value"
@@ -161,6 +175,39 @@ const CourtTab4 = () => {
             </PieChart>
           </ResponsiveContainer>
         </div>
+        
+        {/* Effectiveness of Data Sharing Mechanisms (Bar Chart) */}
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h3 className="text-xl font-semibold mb-4">Effectiveness of Data-Sharing Mechanisms</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={dataSharingEffectivenessData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="department" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="effectiveness" fill="#82ca9d" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h3 className="text-xl font-semibold mb-4">Data-Sharing Effectivness</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={dataSharingEffectiveData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="Judicial" stroke="#8884d8" name="Disposed Cases" />
+              <Line type="monotone" dataKey="Prosecution" stroke="#82ca9d" name="Backlog Reduction" />
+              <Line type="monotone" dataKey="Forensic" stroke="#6a8caf" name="Backlog Reduction" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+
 
         {/* Response Time for Evidence Retrieval (Line Chart) */}
         <div className="bg-white p-4 rounded-xl shadow-md">
@@ -176,7 +223,6 @@ const CourtTab4 = () => {
             </LineChart>
           </ResponsiveContainer>
         </div>
-
       </div>
     </div>
   );

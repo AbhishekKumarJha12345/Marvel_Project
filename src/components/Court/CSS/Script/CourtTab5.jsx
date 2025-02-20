@@ -1,6 +1,7 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import axiosInstance from '../../../../utils/axiosInstance';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   LineChart, Line, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis
@@ -23,33 +24,6 @@ const CourtRefDetails = `Generated Summary:
 
 🔹 In summary, the legal system in 2024 became more efficient with the adoption of digital tools and backlog reduction. The ongoing improvements indicate a commitment to modernization, streamlined case management, and accessibility enhancements.`;
 
-// Dummy Data for NYAYSHRUTI Project Implementation
-const deploymentStatusData = [
-  { stage: 'Planning', progress: 100 },
-  { stage: 'Development', progress: 75 },
-  { stage: 'Testing', progress: 50 },
-  { stage: 'Implementation', progress: 20 },
-];
-
-const speechToTextIntegrationData = [
-  { month: 'Jan', progress: 10 },
-  { month: 'Feb', progress: 20 },
-  { month: 'Mar', progress: 35 },
-  { month: 'Apr', progress: 45 },
-  { month: 'May', progress: 60 },
-  { month: 'Jun', progress: 75 },
-  { month: 'Jul', progress: 80 },
-  { month: 'Aug', progress: 90 },
-  { month: 'Sep', progress: 95 },
-  { month: 'Oct', progress: 100 },
-];
-
-const userFeedbackData = [
-  { subject: 'Judges', adoption: 85, satisfaction: 90 },
-  { subject: 'Legal Professionals', adoption: 75, satisfaction: 85 },
-  { subject: 'Administrative Staff', adoption: 80, satisfaction: 80 },
-];
-
 // Custom colors for visualization
 const chartColors = [
   "#8884d8", // Muted Purple
@@ -68,6 +42,24 @@ const chartColors = [
 
 const CourtTab5 = () => {
   const exportRef = useRef(null); // Reference to content to be exported
+  const [implementationData, setImplementationData] = useState(null);
+
+  const fetchImplementationData = async () => {
+    try {
+      const response = await axiosInstance.get("/live_data", {
+        params: {
+          type: "court_5",
+        },
+      });
+      const responseData = response.data;
+      setImplementationData(responseData.data_dict);
+    } catch (error) {
+      console.error("Some error occured", error);
+    }
+  };
+  useEffect(() => {
+    fetchImplementationData();
+  }, []);
 
   const handleExport = async () => {
     const pdf = new jsPDF("p", "mm", "a4");
@@ -117,6 +109,29 @@ const CourtTab5 = () => {
     //  Save the PDF
     pdf.save("NYAYSHRUTI Project Implementation Progress.pdf");
   };
+
+  const deploymentStatusData = [
+    { stage: 'Planning', progress: parseInt(implementationData?.[0]?.planning ||0) },
+    { stage: 'Development', progress: parseInt(implementationData?.[0]?.development ||0) },
+    { stage: 'Testing', progress: parseInt(implementationData?.[0]?.testing ||0) },
+    { stage: 'Implementation', progress: parseInt(implementationData?.[0]?.implementation ||0) },
+  ];
+
+  const speechToTextIntegrationData = implementationData?.map((item) => (
+    { month: item.month, progress: parseInt(item.ai_transcription_integration ||0) }
+  ))
+
+  const userFeedbackDatas = implementationData?.map((item) => (
+    { month: item.month, "Judges": item.judges_feedback, "Legal Professionals": item.legal_professionals_feedback, "Administrative Staff":item.administrative_staff_feedback }
+  ))
+
+  const monthlyProgressData = implementationData?.map((item) => ({
+    month: item.month,
+    Planning: parseInt(item.planning || 0),
+    Development: parseInt(item.development || 0),
+    Testing: parseInt(item.testing || 0),
+    Implementation: parseInt(item.implementation || 0),
+  }));
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
       <div className="ContentSpace">
@@ -157,17 +172,38 @@ const CourtTab5 = () => {
           </ResponsiveContainer>
         </div>
 
-        {/* User Adoption & Feedback (Radar Chart) */}
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <h3 className="text-xl font-semibold mb-4">User Adoption & Feedback</h3>
+         <div className="bg-white p-4 rounded-xl shadow-md">
+            <h3 className="text-xl font-semibold mb-4">User Adoption & Feedback</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={userFeedbackDatas}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="Judges" stroke="#8884d8" name="Disposed Cases" />
+                <Line type="monotone" dataKey="Legal Professionals" stroke="#82ca9d" name="Backlog Reduction" />
+                <Line type="monotone" dataKey="Administrative Staff" stroke="#6a8caf" name="Backlog Reduction" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="bg-white p-4 rounded-xl shadow-md">
+          <h3 className="text-xl font-semibold mb-4">
+            Monthly Progress of Deployment Status & Impact on Judicial Processes
+          </h3>
           <ResponsiveContainer width="100%" height={300}>
-            <RadarChart outerRadius={90} width={500} height={300} data={userFeedbackData}>
-              <PolarGrid />
-              <PolarAngleAxis dataKey="subject" />
-              <PolarRadiusAxis />
-              <Radar name="Adoption Rate" dataKey="adoption" stroke={chartColors[0]} fill={chartColors[0]} fillOpacity={0.6} />
-              <Radar name="Satisfaction Rate" dataKey="satisfaction" stroke={chartColors[1]} fill={chartColors[1]} fillOpacity={0.6} />
-            </RadarChart>
+            <BarChart data={monthlyProgressData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="Planning" fill={chartColors[0]} />
+              <Bar dataKey="Development" fill={chartColors[1]} />
+              <Bar dataKey="Testing" fill={chartColors[2]} />
+              <Bar dataKey="Implementation" fill={chartColors[3]} />
+            </BarChart>
           </ResponsiveContainer>
         </div>
 
