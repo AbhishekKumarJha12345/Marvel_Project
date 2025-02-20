@@ -157,9 +157,9 @@ const ComplianceSection = () => {
     <div>
       {/* Add Button */}
       <div className="w-full flex justify-end">
-        <button onClick={() => setIsModalOpen(true)} className="bg-gray-700 text-white py-2 px-4 rounded">
+        {localStorage.getItem('role') !== 'chief secretary' && <button onClick={() => setIsModalOpen(true)} className="bg-gray-700 text-white py-2 px-4 rounded">
           Add
-        </button>
+        </button>}
       </div>
 
       {/* Pie Chart Section */}

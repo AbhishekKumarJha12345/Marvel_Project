@@ -189,12 +189,12 @@ const CorrectionalServices = () => {
     <div className="bg-white mx-auto rounded-lg w-[90%] h-[500px]">
       {/* Button to open the modal */}
       <div className="w-full flex justify-end mb-4">
-        <button
+        {localStorage.getItem('role') !== 'chief secretary' && <button
           onClick={() => setIsModalOpen(true)}
           className="bg-gray-700 text-white py-2 px-4 rounded"
         >
           Add
-        </button>
+        </button>}
       </div>
 
       <h1 className="text-4xl font-bold text-center">Personnel Trained in New Laws</h1>

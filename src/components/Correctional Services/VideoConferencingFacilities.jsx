@@ -149,9 +149,9 @@ const VideoConferencingFacilities = () => {
     <div>
       {/* Add Button */}
       <div className="w-full flex justify-end">   
-      <button onClick={() => setIsModalOpen(true)} className="bg-gray-700 text-white py-2 px-4 rounded">
+      {localStorage.getItem('role') !== 'chief secretary' && <button onClick={() => setIsModalOpen(true)} className="bg-gray-700 text-white py-2 px-4 rounded">
   Add
-</button>
+</button>}
       </div>
     <div className="bg-white p-6 mx-auto rounded-lg w-[100%] h-[500px]">
       <h1 className="text-4xl font-bold mb-8 text-center">Video Conferencing Facilities</h1>
