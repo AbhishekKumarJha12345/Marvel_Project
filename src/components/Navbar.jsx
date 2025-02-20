@@ -250,7 +250,7 @@ export default function Dashboard({ users }) {
     "training"              : 
     <div className="content">
       <div className="ContentSpace">
-        <h1 className="heading">Police - Training</h1>
+        <h1 className="heading" style={{marginLeft:"40rem"}}>Police - Training</h1>
         <div className="button-container flex space-x-2">
           <button className="ExportButton" onClick={handleExportPoliceTraining}>Export</button>
           {localStorage.getItem('role') !=='chief secretary' &&  <button 

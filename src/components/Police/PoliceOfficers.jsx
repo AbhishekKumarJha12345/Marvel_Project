@@ -18,7 +18,7 @@ const chartColors = [
   "#c08497", // Mauve
   "#b0a8b9"  // Dusty Lilac
 ];
-const PoliceOfficers = () => {
+const  PoliceOfficers = ({getDate}) => {
   const [showModal, setShowModal] = useState(false);
   const [trainingData,setTrainingData]=useState('')
 const getTrainingData = async()=>{
@@ -26,6 +26,7 @@ const getTrainingData = async()=>{
     const response =await axiosInstance.get('/live_data')
     console.log(response.data,'Trainig data response ----------')
     setTrainingData(response.data.latest_trainings)
+    getDate(response.data.latest_trainings &&response.data.latest_trainings[0] &&response.data.latest_trainings[0].uploaded_date)
 
   }catch(error){
     console.log(error)
@@ -140,9 +141,11 @@ useEffect(() => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg w-full h-[500px] text-center  rounded-xl shadow-md">
-      <div className="flex justify-around items-center mb-8">
-        <h1 className="text-xl" style={{fontWeight:"600"}}>Police Officers</h1>
+    <>
+   
+    <div className="bg-white p-6 rounded-lg w-full h-[500px] text-center  rounded-xl shadow-md" style={{width:"48%"}}>
+      <div className="flex justify-around items-center mb-8 ">
+        <h1 className="">Police Officers</h1>
         {/* <button className="bg-green-600 text-white px-4 py-2 rounded-lg" onClick={downloadReport}>
           Download Report
         </button> */}
@@ -157,7 +160,7 @@ useEffect(() => {
           Add On
         </button> */}
       </div>
-      <div className="h-[400px] w-full">
+      <div className="h-[400px] w-full ">
         <Bar data={data} options={{ responsive: true, maintainAspectRatio: false }} />
       </div>
       <ModalComponent
@@ -166,6 +169,8 @@ useEffect(() => {
         onClose={() => setShowModal(false)}
       />
     </div>
+    </>
+
   );
 };
 
