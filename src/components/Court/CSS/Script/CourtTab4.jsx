@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef,useState} from 'react';
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import {
@@ -64,9 +64,11 @@ const COLORS = [
   "#c08497", // Mauve
   "#b0a8b9" // Dusty Lilac
 ];
+import Courtform from './Courtform.jsx'
 
 const CourtTab4 = () => {
   const exportRef = useRef(null); // Reference to content to be exported
+const [showModal, setShowModal] = useState(false);
 
   const handleExport = async () => {
     const pdf = new jsPDF("p", "mm", "a4");
@@ -118,11 +120,23 @@ const CourtTab4 = () => {
   };
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
-      <div className="ContentSpace">
-      <h1 className="text-2xl font-bold mb-6">Prosecution & Forensic Departments Dashboard</h1>
-        <button className="ExportButton" onClick={handleExport}>
-          Export
-        </button>
+      
+      <div className="ContentSpace flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Prosecution & Forensic Departments Dashboard</h1>
+
+        <div className="flex space-x-2">
+          <button className="ExportButton" onClick={handleExport}>
+            Export
+          </button>
+          {localStorage.getItem('role') !=='chief secretary' && <button 
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+          style={{backgroundColor:'#2d3748'}} onClick={() => {
+            console.log("Open modal");
+            setShowModal(true);
+          }}>
+            Add on
+          </button>}
+        </div>
       </div>
       <div ref={exportRef} className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -178,6 +192,11 @@ const CourtTab4 = () => {
         </div>
 
       </div>
+      <Courtform
+        open={showModal}
+        type="court_4"
+        onClose={() => setShowModal(false)}
+      />
     </div>
   );
 };

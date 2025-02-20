@@ -12,7 +12,7 @@ import ForensicStrengtheningInitiatives from './ForensicStrengtheningInitiatives
 import forensicPDF from '../../../assets/Forensic_Department_Analysis.pdf';
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas"; // ✅ Add this at the top
-
+import ModalComponent from '../../Police/ModalComponent';
 
 
 
@@ -44,6 +44,8 @@ function a11yProps(index) {
 
 export default function Dashboard1() {
   const [value, setValue] = useState(0);
+    const [showModal, setShowModal] = useState(false);
+  
   const trainingRef = useRef(null); // Reference to PoliceTraining component
 
   const handleChange = (_, newValue) => {
@@ -176,6 +178,7 @@ const handleExportPoliceTraining = async () => {
 };
 
   return (
+    <>
     <Box sx={{ width: '100%', padding: '1rem', fontFamily: 'Work Sans', backgroundColor: '#f4f4f4' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: 0, borderColor: '#dbdfed' }}>
         <Tabs
@@ -222,22 +225,38 @@ const handleExportPoliceTraining = async () => {
               }}
             />
           ))}
+
         </Tabs>
-        {value===0&&<Button
-        sx={{
-          backgroundColor: "transparent",
-          color: "#65558F",
-          border: "2px solid #65558F",
-          padding: "5px 9px",
-          borderRadius: "8px",
-          "&:hover": {
-          backgroundColor: "#65558F",
-          color: "white",
-          },
-          }}
-          onClick={handleExportPoliceTraining}>
-          Export
-        </Button>}
+        <div style={{ display: "flex", gap: "8px" }}>
+          {value === 0 && (
+            <>
+            <Button
+              sx={{
+                backgroundColor: "transparent",
+                color: "#65558F",
+                border: "2px solid #65558F",
+                padding: "5px 9px",
+                borderRadius: "8px",
+                "&:hover": {
+                  backgroundColor: "#65558F",
+                  color: "white",
+                },
+              }}
+              onClick={handleExportPoliceTraining}
+            >
+              Export
+            </Button>
+            {localStorage.getItem('role') !=='chief secretary' && <button
+            className="bg-[#2d3748] text-white px-4 py-2 rounded-lg"
+            onClick={() => setShowModal(true)}
+          >
+            Add On
+          </button>}
+          </>
+          )}
+          
+        </div>
+
       </Box>
       {tabData.map((tab, index) => (
         <CustomTabPanel key={index} value={value} index={index}>
@@ -245,5 +264,7 @@ const handleExportPoliceTraining = async () => {
         </CustomTabPanel>
       ))}
     </Box>
+    <ModalComponent open={showModal} type="forensic" onClose={() => setShowModal(false)} />
+    </>
   );
 }

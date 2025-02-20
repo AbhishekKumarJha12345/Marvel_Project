@@ -146,7 +146,7 @@ useEffect(() => {
         {/* <button className="bg-green-600 text-white px-4 py-2 rounded-lg" onClick={downloadReport}>
           Download Report
         </button> */}
-       { localStorage.getItem('role') !=='chief secretary' &&  <button
+        {/* <button
           className="bg-blue-500 text-white px-4 py-2 rounded-lg"
           style={{backgroundColor:'#2d3748'}}
           onClick={() => {
@@ -155,7 +155,7 @@ useEffect(() => {
           }}
         >
           Add On
-        </button>}
+        </button> */}
       </div>
       <div className="h-[400px] w-full">
         <Bar data={data} options={{ responsive: true, maintainAspectRatio: false }} />
