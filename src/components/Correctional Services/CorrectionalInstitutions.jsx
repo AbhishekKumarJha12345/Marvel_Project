@@ -6,6 +6,10 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 const CorrectionalInstitutions = () => {  
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const host = import.meta.env.VITE_APP_API_URL;
+
+
   const [selectedOption, setSelectedOption] = useState('fillForm');
   const [formData, setFormData] = useState({
     correctional_institution: 0,      
@@ -15,7 +19,7 @@ const CorrectionalInstitutions = () => {
   });
   console.log('formDataaaa:',formData)
   const fetchPersonnelData = () => {
-    fetch('https://sjci.marvel.pinacalabs.com/api/fetchCorrectionalInstitutions')
+    fetch(`${host}/fetchCorrectionalInstitutions`)
       .then((response) => response.json())
       .then((data) => {
         console.log('Fetched Data:', data);
@@ -106,7 +110,7 @@ const CorrectionalInstitutions = () => {
     e.preventDefault();
   
     try {
-      const response = await fetch('https://sjci.marvel.pinacalabs.com/api/saveCorrecntionaldata', {
+      const response = await fetch(`${host}/saveCorrecntionaldata`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -143,7 +147,7 @@ const CorrectionalInstitutions = () => {
       formData.append('file', file); 
       // Log FormData to ensure it's populated correctly
       console.log("FormData being sent:", formData);     
-      fetch('https://sjci.marvel.pinacalabs.com/api/upload_correctional_instituion_data', {
+      fetch(`${host}/upload_correctional_instituion_data`, {
         method: 'POST',
         body: formData,
       })

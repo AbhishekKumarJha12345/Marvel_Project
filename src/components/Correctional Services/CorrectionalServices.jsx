@@ -7,7 +7,12 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const CorrectionalServices = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const host = import.meta.env.VITE_APP_API_URL;
+
   const [selectedOption, setSelectedOption] = useState('fillForm');
+  const [selectedFile, setSelectedFile] = useState(null);
+  
   const [formData, setFormData] = useState({
     class1_strength: '',
     class1_trained: '',
@@ -17,7 +22,7 @@ const CorrectionalServices = () => {
     class3_trained: '',
   });
   useEffect(() => {
-    fetch('https://sjci.marvel.pinacalabs.com/api/get_personnel_trained')
+    fetch(`${host}/get_personnel_trained`)
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -99,7 +104,7 @@ const CorrectionalServices = () => {
     e.preventDefault();
   
     // Send form data to the backend and update the data in the `personnel_trained` table
-    fetch('https://sjci.marvel.pinacalabs.com/api/add_personnel_trained', {
+    fetch(`${host}/add_personnel_trained`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -131,10 +136,19 @@ const CorrectionalServices = () => {
         console.error('Error:', error);
       });
   };
+
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
   
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+  
+  const handleFileUpload = (file) => {
+    if (!file) {
+      alert('Please select a file before uploading');
+      return;
+    }
+  
+
       const formData = new FormData();
       console.log("File selected:", file);  // Log to check the selected file
       formData.append('file', file);
@@ -142,7 +156,7 @@ const CorrectionalServices = () => {
       // Log FormData to ensure it's populated correctly
       console.log("FormData being sent:", formData);
       
-      fetch('https://sjci.marvel.pinacalabs.com/api/upload_personnel_data', {
+      fetch(`${host}/upload_personnel_data`, {
         method: 'POST',
         body: formData,
       })
@@ -164,14 +178,11 @@ const CorrectionalServices = () => {
           console.error('Error:', error);
           alert('File upload failed');
         });
-    } else {
-      console.error('No file selected');
-      alert('Please select a file to upload');
-    }
+    
   };
   
   const fetchPersonnelData = () => {
-    fetch('https://sjci.marvel.pinacalabs.com/api/get_personnel_trained')
+    fetch(`${host}/get_personnel_trained`)
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -339,13 +350,13 @@ const CorrectionalServices = () => {
                 <input
                   type="file"
                   accept=".csv, .xlsx, .xls"
-                  onChange={handleFileUpload}
+                  onChange={handleFileChange}
                   className="mb-4 border border-gray-300 p-3 rounded w-full"
                 />
                 <button
                   type="button"
                   className="bg-gray-700 text-white py-2 px-4 rounded mt-3"
-                  onClick={() => console.log('File upload initiated')}
+                  onClick={() => handleFileUpload(selectedFile)} 
                 >
                   Upload File
                 </button>
