@@ -19,7 +19,7 @@ const ComplianceSection479 = () => {
 
   const fetchPersonnelData = async () => {
     try {
-      const response = await fetch('http://localhost:5555/api/fetchCaomplaincesection479');
+      const response = await fetch('https://sjci.marvel.pinacalabs.com/api/fetchCaomplaincesection479');
       const data = await response.json();
       if (data.success && data.data.length > 0) {
         setFormData(data.data[0]); // Ensure we're setting an object, not an array
@@ -66,7 +66,7 @@ const ComplianceSection479 = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5555/api/addComplainceSection479', {
+      const response = await fetch('https://sjci.marvel.pinacalabs.com/api/addComplainceSection479', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -92,7 +92,7 @@ const ComplianceSection479 = () => {
       formData.append('file', file);
 
       try {
-        const response = await fetch('http://localhost:5555/api/upload_479', {
+        const response = await fetch('https://sjci.marvel.pinacalabs.com/api/upload_479', {
           method: 'POST',
           body: formData,
         });

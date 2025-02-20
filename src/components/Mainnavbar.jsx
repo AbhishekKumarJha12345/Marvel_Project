@@ -32,6 +32,7 @@ function Mainnavbar() {
     prosecution: logocs,
     police: logo,
     "chief secretary": logocs,
+    admin: logocs,
     court: logocs,
     forensic: Forensic_logo,
     correctionalservices: Correctional_service_logo,

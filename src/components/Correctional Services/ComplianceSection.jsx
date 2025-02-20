@@ -46,7 +46,7 @@ const ComplianceSection = () => {
   };
 
   const fetchComplianceData = () => {
-    fetch('http://localhost:5555/api/get_compliance_data')
+    fetch('https://sjci.marvel.pinacalabs.com/api/get_compliance_data')
       .then((response) => response.json())
       .then((data) => {
         if (data.error) {
@@ -99,7 +99,7 @@ const ComplianceSection = () => {
       Inmates_percentage: formData.Inmates_percentage,
     };
   
-    fetch('http://localhost:5555/api/submit_compliance_data', {
+    fetch('https://sjci.marvel.pinacalabs.com/api/submit_compliance_data', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -130,7 +130,7 @@ const ComplianceSection = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      fetch('http://localhost:5555/api/upload', {
+      fetch('https://sjci.marvel.pinacalabs.com/api/upload', {
         method: 'POST',
         body: formData,
       })

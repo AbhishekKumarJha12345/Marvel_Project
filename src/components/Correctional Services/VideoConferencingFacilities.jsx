@@ -18,7 +18,7 @@ const VideoConferencingFacilities = () => {
     }, []);
     
     const fetchVideoConferenceData = () => {
-      fetch('http://localhost:5555/api/fetchVideoConferenceData')
+      fetch('https://sjci.marvel.pinacalabs.com/api/fetchVideoConferenceData')
         .then((response) => response.json())
         .then((data) => {
           if (data.success && data.data.length > 0) {
@@ -50,7 +50,7 @@ const VideoConferencingFacilities = () => {
         const formData = new FormData();
         formData.append('file', file);
     
-        fetch('http://localhost:5555/api/video_conference_upload', {
+        fetch('https://sjci.marvel.pinacalabs.com/api/video_conference_upload', {
           method: 'POST',
           body: formData,
         })
@@ -76,7 +76,7 @@ const VideoConferencingFacilities = () => {
       e.preventDefault();
     
       try {
-        const response = await fetch('http://localhost:5555/api/storeVideoConferenceData', {
+        const response = await fetch('https://sjci.marvel.pinacalabs.com/api/storeVideoConferenceData', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

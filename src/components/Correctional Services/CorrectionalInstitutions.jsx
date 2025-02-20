@@ -15,7 +15,7 @@ const CorrectionalInstitutions = () => {
   });
   console.log('formDataaaa:',formData)
   const fetchPersonnelData = () => {
-    fetch('http://localhost:5555/api/fetchCorrectionalInstitutions')
+    fetch('https://sjci.marvel.pinacalabs.com/api/fetchCorrectionalInstitutions')
       .then((response) => response.json())
       .then((data) => {
         console.log('Fetched Data:', data);
@@ -106,7 +106,7 @@ const CorrectionalInstitutions = () => {
     e.preventDefault();
   
     try {
-      const response = await fetch('http://localhost:5555/api/saveCorrecntionaldata', {
+      const response = await fetch('https://sjci.marvel.pinacalabs.com/api/saveCorrecntionaldata', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -143,7 +143,7 @@ const CorrectionalInstitutions = () => {
       formData.append('file', file); 
       // Log FormData to ensure it's populated correctly
       console.log("FormData being sent:", formData);     
-      fetch('http://localhost:5555/api/upload_correctional_instituion_data', {
+      fetch('https://sjci.marvel.pinacalabs.com/api/upload_correctional_instituion_data', {
         method: 'POST',
         body: formData,
       })
