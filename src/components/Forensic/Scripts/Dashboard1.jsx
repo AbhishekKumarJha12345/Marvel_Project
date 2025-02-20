@@ -45,7 +45,8 @@ function a11yProps(index) {
 export default function Dashboard1() {
   const [value, setValue] = useState(0);
     const [showModal, setShowModal] = useState(false);
-  
+    const [rloading,setRloading]=useState(false)
+
   const trainingRef = useRef(null); // Reference to PoliceTraining component
 
   const handleChange = (_, newValue) => {
@@ -112,6 +113,8 @@ In conclusion, over the eight-month period, there has been a decrease in the num
     return currentY + 6; // Return new Y position
   };
 const handleExportPoliceTraining = async () => {
+  setRloading(true)
+  
   const pdf = new jsPDF("p", "mm", "a4"); // Create A4 size PDF
   const margin = 10;
   let yPosition = 20; // Start position for text
@@ -175,6 +178,8 @@ const handleExportPoliceTraining = async () => {
 
   // Save the PDF
   pdf.save("Forensic_Department_Analysis.pdf");
+  setRloading(false)
+
 };
 
   return (
@@ -237,6 +242,7 @@ const handleExportPoliceTraining = async () => {
                 border: "2px solid #65558F",
                 padding: "5px 9px",
                 borderRadius: "8px",
+                minWidth:'80px',
                 "&:hover": {
                   backgroundColor: "#65558F",
                   color: "white",
@@ -244,7 +250,8 @@ const handleExportPoliceTraining = async () => {
               }}
               onClick={handleExportPoliceTraining}
             >
-              Export
+              {!rloading ? 'Export' : <><span className="spinner-border spinner-border-sm me-2"></span></>}
+
             </Button>
             {localStorage.getItem('role') !=='chief secretary' && <button
             className="bg-[#2d3748] text-white px-4 py-2 rounded-lg"

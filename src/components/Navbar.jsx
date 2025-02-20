@@ -179,8 +179,9 @@ export default function Dashboard({ users }) {
   }, []);
 
   const trainingRef = useRef(null); // Reference to PoliceTraining component
-
+  const [rloading,setRloading]=useState(false)
   const handleExportPoliceTraining = async () => {
+    setRloading(true)
     const pdf = new jsPDF("p", "mm", "a4"); // Create A4 size PDF
     const margin = 10;
     let yPosition = 20; // Start position for text
@@ -242,6 +243,7 @@ export default function Dashboard({ users }) {
   
     // 📌 Save the PDF
     pdf.save("PoliceTraining_Report.pdf");
+    setRloading(false)
   };
   
  
@@ -252,7 +254,11 @@ export default function Dashboard({ users }) {
       <div className="ContentSpace">
         <h1 className="heading" style={{marginLeft:"40rem"}}>Police - Training</h1>
         <div className="button-container flex space-x-2">
-          <button className="ExportButton" onClick={handleExportPoliceTraining}>Export</button>
+          <button className="ExportButton" style={{minWidth:'80px'}} onClick={handleExportPoliceTraining}>
+          {!rloading ? 'Export' : <><span className="spinner-border spinner-border-sm me-2"></span></>}
+
+
+            </button>
           {localStorage.getItem('role') !=='chief secretary' &&  <button 
             className="bg-blue-500 text-white px-4 py-2 rounded-lg"
             style={{ backgroundColor: '#2d3748' }} 
