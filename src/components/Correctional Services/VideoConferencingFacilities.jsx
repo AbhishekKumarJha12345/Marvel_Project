@@ -7,6 +7,8 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 const VideoConferencingFacilities = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState('fillForm');
+    const [selectedFile, setSelectedFile] = useState(null);
+
     const [formData, setFormData] = useState({
       correctionalInstitution: 0,
       courts_count: 0,
@@ -43,10 +45,17 @@ const VideoConferencingFacilities = () => {
       console.log('Form Data Submitted:', formData);
       setIsModalOpen(false); // Close modal after submitting
     };
-  
-    const handleFileUpload = (e) => {
-      const file = e.target.files[0];
-      if (file) {
+    const handleFileChange = (e) => {
+      setSelectedFile(e.target.files[0]);
+      };
+
+    const handleFileUpload = (file) => {
+      if (!file) {
+        alert('Please select a file before uploading');
+        return;
+      }
+
+      
         const formData = new FormData();
         formData.append('file', file);
     
@@ -58,6 +67,7 @@ const VideoConferencingFacilities = () => {
           .then((data) => {
             if (data.success) {
               alert('File uploaded and data updated successfully');
+              setIsModalOpen(false)
               fetchVideoConferenceData(); // Refetch data
             } else {
               console.error('Error:', data.error);
@@ -68,7 +78,7 @@ const VideoConferencingFacilities = () => {
             console.error('Error:', error);
             alert('File upload failed');
           });
-      }
+      
     };
     
 
@@ -261,13 +271,13 @@ const VideoConferencingFacilities = () => {
                 <input
                   type="file"
                   accept=".csv, .xlsx, .xls"
-                  onChange={handleFileUpload}
+                  onChange={handleFileChange} 
                   className="mb-4 border border-gray-300 p-3 rounded w-full"
                 />
                 <button
                   type="button"
                   className="bg-gray-700 text-white py-2 px-4 rounded"
-                  onClick={() => console.log('File upload initiated')}
+                  onClick={() => handleFileUpload(selectedFile)} 
                 >
                   Upload File
                 </button>

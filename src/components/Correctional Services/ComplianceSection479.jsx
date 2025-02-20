@@ -6,6 +6,8 @@ import { RxCross1 } from "react-icons/rx";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const ComplianceSection479 = () => {
+  const [selectedFile, setSelectedFile] = useState(null);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('fillForm');
   const [formData, setFormData] = useState({
@@ -19,7 +21,7 @@ const ComplianceSection479 = () => {
 
   const fetchPersonnelData = async () => {
     try {
-      const response = await fetch('https://sjci.marvel.pinacalabs.com/api/fetchCaomplaincesection479');
+      const response = await fetch('http://localhost:5555/api/fetchCaomplaincesection479');
       const data = await response.json();
       if (data.success && data.data.length > 0) {
         setFormData(data.data[0]); // Ensure we're setting an object, not an array
@@ -66,7 +68,7 @@ const ComplianceSection479 = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('https://sjci.marvel.pinacalabs.com/api/addComplainceSection479', {
+      const response = await fetch('http://localhost:5555/api/addComplainceSection479', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -84,40 +86,45 @@ const ComplianceSection479 = () => {
       alert('An error occurred while uploading the data.');
     }
   };
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append('file', file);
+  const handleFileUpload = async () => {
+    if (!selectedFile) {
+      alert("Please select a file before uploading.");
+      return;
+    }
 
-      try {
-        const response = await fetch('https://sjci.marvel.pinacalabs.com/api/upload_479', {
-          method: 'POST',
-          body: formData,
-        });
+    const formData = new FormData();
+    formData.append("file", selectedFile);
 
-        const data = await response.json();
-        if (data.success) {
-          alert('File uploaded successfully!');
-          fetchPersonnelData(); // Fetch updated data instead of refreshing
-          setIsModalOpen(false);
-        } else {
-          alert(`Error: ${data.error}`);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('File upload failed');
+    try {
+      const response = await fetch("http://localhost:5555/api/upload_479", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        alert("File uploaded successfully!");
+        fetchPersonnelData();
+        setIsModalOpen(false);
+      } else {
+        alert(`Error: ${data.error}`);
       }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("File upload failed");
     }
   };
 
   return (
     <div>
-      <div className="w-full flex justify-end">
-        {localStorage.getItem('role') !== 'chief secretary' && <button onClick={() => setIsModalOpen(true)} className="bg-gray-700 text-white py-2 px-4 rounded">
-          Add
-        </button>}
+     <div className="w-full flex justify-end">   
+      {localStorage.getItem('role') !== 'chief secretary' && <button onClick={() => setIsModalOpen(true)} className="bg-gray-700 text-white py-2 px-4 rounded">
+  Add
+</button>}
       </div>
       <div className="bg-white p-6 mx-auto rounded-lg w-[90%] h-[500px]">
 
@@ -182,9 +189,10 @@ const ComplianceSection479 = () => {
 
   {/* File upload section */}
   {selectedOption === 'upload' && (
-<input type="file" accept=".csv, .xlsx, .xls" onChange={handleFileUpload} className="mb-4 border border-gray-300 p-2 rounded w-full" />
-)}
-
+    <div className='flex flex-col items-end mb-4 mt-4'>
+                  <input type="file" accept=".csv, .xlsx, .xls" onChange={handleFileChange} className="mb-4 border border-gray-300 p-2 rounded w-full" />
+                  <button onClick={handleFileUpload} className="bg-gray-700 text-white py-2 px-4 rounded">Upload File</button>
+                </div>)}
           </div>
         </div>
         </div>
