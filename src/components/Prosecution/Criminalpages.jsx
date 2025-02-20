@@ -85,7 +85,7 @@ export default function CriminalPages() {
       ),
     },
     { label: "Prosecution", component: <Prosecution /> },
-    { label: "Glimpses of Training Session", component: <Carousel /> },
+    // { label: "Glimpses of Training Session", component: <Carousel /> },
   ];
 
   const handleChange = (_, newValue) => {

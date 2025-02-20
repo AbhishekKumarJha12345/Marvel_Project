@@ -608,12 +608,12 @@ doc.text("In summary, the data reveals that there is a general increase in the n
                         </button>
                       </div>
                     )}
-                    <button
+                    {/* <button
                       className="dropdown-item"
                       onClick={() => handleSectionClick("awareness/campaign")}
                     >
                       Awareness/Campaign
-                    </button>
+                    </button> */}
                     <button
                       className="dropdown-item"
                       onClick={() => handleSectionClick("forensic/visits")}

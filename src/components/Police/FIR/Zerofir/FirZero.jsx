@@ -65,33 +65,33 @@ function FirZero() {
   return (
     <div>
       {/* Tabs */}
-      <div className="flex space-x-4 border-b border-gray-300">
+      <div className="flex space-x-4 mt-3">
         <button
           onClick={() => handleTabChange("home")}
-          className={`py-2 px-4 text-lg font-medium ${
+           className={`py-2 px-4 text-[14px] font-[Work Sans] ${
             activeTab === "home"
-              ? "border-b-2 border-[#03045E] text-[#03045E]"
-              : "text-gray-500 hover:text-blue-500"
+            ? "relative text-[#03045E] font-bold after:content-[''] after:absolute after:left-1/2 after:transform after:-translate-x-1/2 after:w-12 after:h-[2px] after:bg-[#03045E] after:bottom-0"
+            : "text-[#8B8A8A]"
           }`}
         >
           Home
         </button>
         <button
           onClick={() => handleTabChange("newCriminals")}
-          className={`py-2 px-4 text-lg font-medium ${
+          className={`py-2 px-4 text-[14px] font-[Work Sans] ${
             activeTab === "newCriminals"
-              ? "border-b-2 border-[#03045E] text-[#03045E]"
-              : "text-gray-500 hover:text-blue-500"
+            ? "relative text-[#03045E] font-bold after:content-[''] after:absolute after:left-1/2 after:transform after:-translate-x-1/2 after:w-16 after:h-[2px] after:bg-[#03045E] after:bottom-0"
+            : "text-[#8B8A8A]"
           }`}
         >
           Zero FIR
         </button>
         <button
           onClick={() => handleTabChange("transferred/receivedzerofir")}
-          className={`py-2 px-4 text-lg font-medium ${
+          className={`py-2 px-4 text-[14px] font-[Work Sans] ${
             activeTab === "transferred/receivedzerofir"
-              ? "border-b-2 border-[#03045E] text-[#03045E]"
-              : "text-gray-500 hover:text-blue-500"
+            ? "relative text-[#03045E] font-bold after:content-[''] after:absolute after:left-1/2 after:transform after:-translate-x-1/2 after:w-48 after:h-[2px] after:bg-[#03045E] after:bottom-0"
+            : "text-[#8B8A8A]"
           }`}
         >
           Transferred/Received Zero FIR

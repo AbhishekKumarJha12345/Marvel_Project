@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 const AdminUserTable = () => {
   const [users, setUsers] = useState([]);
-  const [filters, setFilters] = useState({ username: "", role: "", rank: "", station: "", created_on: "", created_by: "" });
+  const [filters, setFilters] = useState({ username: "", role: "", station: "", created_on: "", created_by: "" });
   const [filteredData, setFilteredData] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -46,7 +46,7 @@ const AdminUserTable = () => {
   const columns = [
     { name: "Username", selector: (row) => row.username, sortable: true, filterKey: "username" },
     { name: "Role", selector: (row) => row.role, sortable: true, filterKey: "role" },
-    { name: "Rank", selector: (row) => row.rank, sortable: true, filterKey: "rank" },
+    // { name: "Rank", selector: (row) => row.rank, sortable: true, filterKey: "rank" },
     { name: "Station", selector: (row) => row.station, sortable: true, filterKey: "station" },
     { name: "Created On", selector: (row) => row.created_on, sortable: true, filterKey: "created_on" },
     { name: "Created By", selector: (row) => row.created_by, sortable: true, filterKey: "created_by" }
@@ -58,7 +58,7 @@ const AdminUserTable = () => {
          <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold">Admin Users</h2>
                 <button 
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                    className="bg-[#2d3748] text-white px-4 py-2 rounded"
                     onClick={() => setIsOpen(true)}
                 >
                     Open Registration
