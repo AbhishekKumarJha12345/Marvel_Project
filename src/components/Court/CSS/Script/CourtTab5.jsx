@@ -163,6 +163,11 @@ const [showModal, setShowModal] = useState(false);
     Testing: parseInt(item.testing || 0),
     Implementation: parseInt(item.implementation || 0),
   }));
+
+  const recentEntryDate = new Date(implementationData?.[0]?.month).toLocaleString("en-US", {
+    month: "short",
+    year: "numeric",
+  })
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
       <div className="ContentSpace">
@@ -264,7 +269,7 @@ const [showModal, setShowModal] = useState(false);
             </div>
         </div>
         <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
-          <h1 className="text-2xl font-bold">Live</h1>
+          <h1 className="text-2xl font-bold">Recent Entry : {recentEntryDate}</h1>
 
           {/* Deployment Status and Impact on Judicial Processes (Stacked Bar Chart) */}
           <div className="bg-white p-4 rounded-xl shadow-md">

@@ -131,7 +131,10 @@ const CourtTab1 = () => {
         { name: "Pending", value: 0 },
         { name: "Completed", value: 0 },
       ];
-
+  const recentEntryDate = new Date(icjsData?.[0]?.month).toLocaleString("en-US", {
+    month: "short",
+    year: "numeric",
+  })
   const caseData = icjsData?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
       month: "short",
@@ -241,7 +244,7 @@ const CourtTab1 = () => {
 
         {/* Pie Chart */}
         <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
-          <h1 className="text-2xl font-bold">Live</h1>
+          <h1 className="text-2xl font-bold">Recent Entry : {recentEntryDate}</h1>
           <div className="bg-white p-4 rounded-xl shadow-md">
             <h3 className="text-xl font-semibold mb-4">
               Case Status Distribution

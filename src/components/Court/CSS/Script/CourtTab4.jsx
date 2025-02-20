@@ -180,6 +180,11 @@ const CourtTab4 = () => {
     Forensic: item?.forensic_effectiveness,
   }));
 
+  const recentEntryDate = new Date(forensicData?.[0]?.month).toLocaleString("en-US", {
+    month: "short",
+    year: "numeric",
+  })
+
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
       <div className="ContentSpace">
@@ -256,7 +261,7 @@ const CourtTab4 = () => {
         </div>
       </div>
       <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
-        <h1 className="text-2xl font-bold">Live</h1>
+        <h1 className="text-2xl font-bold">Recent Entry : {recentEntryDate}</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Percentage of Cases Using Forensic Data (Pie Chart) */}
           <div className="bg-white p-4 rounded-xl shadow-md">
