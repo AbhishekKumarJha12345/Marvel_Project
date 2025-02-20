@@ -1,11 +1,24 @@
-import React, {useRef, useState, useEffect} from 'react';
+import React, { useRef, useState, useEffect } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import axiosInstance from '../../../../utils/axiosInstance';
+import axiosInstance from "../../../../utils/axiosInstance";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell, LineChart, Line, AreaChart, Area
-} from 'recharts';
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+} from "recharts";
 
 const CourtRefDetails = `Generated Summary:
 2024 witnessed significant advancements and improvements in the legal system, as evidenced by the analysis of key metrics such as eSummons deliveries electronically, total cases, case resolution times, backlog reduction, and adoption rate.
@@ -24,21 +37,19 @@ const CourtRefDetails = `Generated Summary:
 
 🔹 In summary, the legal system in 2024 became more efficient with the adoption of digital tools and backlog reduction. The ongoing improvements indicate a commitment to modernization, streamlined case management, and accessibility enhancements.`;
 
-
-
 const responseTimeData = [
-  { month: 'Jan', responseTime: 5 },
-  { month: 'Feb', responseTime: 6 },
-  { month: 'Mar', responseTime: 4 },
-  { month: 'Apr', responseTime: 3 },
-  { month: 'May', responseTime: 7 },
-  { month: 'Jun', responseTime: 5 },
-  { month: 'Jul', responseTime: 4 },
-  { month: 'Aug', responseTime: 3 },
-  { month: 'Sep', responseTime: 6 },
-  { month: 'Oct', responseTime: 5 },
-  { month: 'Nov', responseTime: 4 },
-  { month: 'Dec', responseTime: 3 },
+  { month: "Jan", responseTime: 5 },
+  { month: "Feb", responseTime: 6 },
+  { month: "Mar", responseTime: 4 },
+  { month: "Apr", responseTime: 3 },
+  { month: "May", responseTime: 7 },
+  { month: "Jun", responseTime: 5 },
+  { month: "Jul", responseTime: 4 },
+  { month: "Aug", responseTime: 3 },
+  { month: "Sep", responseTime: 6 },
+  { month: "Oct", responseTime: 5 },
+  { month: "Nov", responseTime: 4 },
+  { month: "Dec", responseTime: 3 },
 ];
 
 // Colors for Pie chart segments
@@ -52,7 +63,7 @@ const COLORS = [
   "#ff9a76", // Muted Coral
   "#74b49b", // Muted Teal
   "#c08497", // Mauve
-  "#b0a8b9" // Dusty Lilac
+  "#b0a8b9", // Dusty Lilac
 ];
 
 const CourtTab4 = () => {
@@ -125,104 +136,160 @@ const CourtTab4 = () => {
   };
 
   const dataSharingEffectivenessData = [
-    { department: 'Judicial', effectiveness: parseInt(forensicData?.[0].judicial_effectiveness || 0) },
-    { department: 'Prosecution', effectiveness: parseInt(forensicData?.[0].prosecution_effectiveness || 0)  },
-    { department: 'Forensic', effectiveness: parseInt(forensicData?.[0].forensic_effectiveness || 0)  },
+    {
+      department: "Judicial",
+      effectiveness: parseInt(forensicData?.[0].judicial_effectiveness || 0),
+    },
+    {
+      department: "Prosecution",
+      effectiveness: parseInt(forensicData?.[0].prosecution_effectiveness || 0),
+    },
+    {
+      department: "Forensic",
+      effectiveness: parseInt(forensicData?.[0].forensic_effectiveness || 0),
+    },
   ];
-  
+
   const forensicDataUsageData = [
-    { name: 'Used Forensic Data', value: parseInt(forensicData?.[0].percentage_of_cases_using_forensic_data || 0)  },
-    { name: 'Did Not Use Forensic Data', value: parseInt(100 - forensicData?.[0].percentage_of_cases_using_forensic_data || 0) },
+    {
+      name: "Used Forensic Data",
+      value: parseInt(
+        forensicData?.[0].percentage_of_cases_using_forensic_data || 0
+      ),
+    },
+    {
+      name: "Did Not Use Forensic Data",
+      value: parseInt(
+        100 - forensicData?.[0].percentage_of_cases_using_forensic_data || 0
+      ),
+    },
   ];
 
-  const responseTimeData = forensicData?.map((item)=> (
-    { month: item.month, responseTime: item.response_time_for_evidence_retrieval }
+  const responseTimeData = forensicData?.map((item) => ({
+    month: item.month,
+    responseTime: item.response_time_for_evidence_retrieval,
+  }));
 
-  ))
-
-  const dataSharingEffectiveData = forensicData?.map((item) => (
-    { month: item.month, Judicial: item.judicial_effectiveness, Prosecution: item.prosecution_effectiveness, Forensic:item.forensic_effectiveness }
-  ))
+  const dataSharingEffectiveData = forensicData?.map((item) => ({
+    month: item.month,
+    Judicial: item.judicial_effectiveness,
+    Prosecution: item.prosecution_effectiveness,
+    Forensic: item.forensic_effectiveness,
+  }));
 
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
       <div className="ContentSpace">
-      <h1 className="text-2xl font-bold mb-6">Prosecution & Forensic Departments Dashboard</h1>
+        <h1 className="text-2xl font-bold mb-6">
+          Prosecution & Forensic Departments Dashboard
+        </h1>
         <button className="ExportButton" onClick={handleExport}>
           Export
         </button>
       </div>
-      <div ref={exportRef} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div ref={exportRef}>
+      <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <h1 className="text-2xl font-bold">Deviation</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <h3 className="text-xl font-semibold mb-4">
+              Data-Sharing Effectivness
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={dataSharingEffectiveData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="Judicial"
+                  stroke="#8884d8"
+                  name="Disposed Cases"
+                />
+                <Line
+                  type="monotone"
+                  dataKey="Prosecution"
+                  stroke="#82ca9d"
+                  name="Backlog Reduction"
+                />
+                <Line
+                  type="monotone"
+                  dataKey="Forensic"
+                  stroke="#6a8caf"
+                  name="Backlog Reduction"
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
 
-                {/* Percentage of Cases Using Forensic Data (Pie Chart) */}
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <h3 className="text-xl font-semibold mb-4">Percentage of Cases Using Forensic Data</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Tooltip />
-              <Pie
-                data={forensicDataUsageData}
-                dataKey="value"
-                nameKey="name"
-                outerRadius={100}
-                fill="#8884d8"
-                label
-              >
-                {forensicDataUsageData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-            </PieChart>
-          </ResponsiveContainer>
+          {/* Response Time for Evidence Retrieval (Line Chart) */}
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <h3 className="text-xl font-semibold mb-4">
+              Response Time for Evidence Retrieval
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={responseTimeData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="responseTime" stroke="#FF6347" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-        
-        {/* Effectiveness of Data Sharing Mechanisms (Bar Chart) */}
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <h3 className="text-xl font-semibold mb-4">Effectiveness of Data-Sharing Mechanisms</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={dataSharingEffectivenessData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="department" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="effectiveness" fill="#82ca9d" />
-            </BarChart>
-          </ResponsiveContainer>
+      </div>
+      <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <h1 className="text-2xl font-bold">Live</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Percentage of Cases Using Forensic Data (Pie Chart) */}
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <h3 className="text-xl font-semibold mb-4">
+              Percentage of Cases Using Forensic Data
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Tooltip />
+                <Pie
+                  data={forensicDataUsageData}
+                  dataKey="value"
+                  nameKey="name"
+                  outerRadius={100}
+                  fill="#8884d8"
+                  label
+                >
+                  {forensicDataUsageData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Effectiveness of Data Sharing Mechanisms (Bar Chart) */}
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <h3 className="text-xl font-semibold mb-4">
+              Effectiveness of Data-Sharing Mechanisms
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={dataSharingEffectivenessData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="department" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="effectiveness" fill="#82ca9d" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <h3 className="text-xl font-semibold mb-4">Data-Sharing Effectivness</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={dataSharingEffectiveData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="Judicial" stroke="#8884d8" name="Disposed Cases" />
-              <Line type="monotone" dataKey="Prosecution" stroke="#82ca9d" name="Backlog Reduction" />
-              <Line type="monotone" dataKey="Forensic" stroke="#6a8caf" name="Backlog Reduction" />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-
-
-        {/* Response Time for Evidence Retrieval (Line Chart) */}
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <h3 className="text-xl font-semibold mb-4">Response Time for Evidence Retrieval</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={responseTimeData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="responseTime" stroke="#FF6347" />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+      </div>
       </div>
     </div>
   );

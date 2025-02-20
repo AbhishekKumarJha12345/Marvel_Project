@@ -117,8 +117,6 @@ const CourtTab1 = () => {
     pdf.save("Court System.pdf");
   };
 
-
-
   // Dynamic pie chart data
   const caseStatusData = icjsData
     ? [
@@ -146,80 +144,93 @@ const CourtTab1 = () => {
           Export
         </button>
       </div>
-      <div ref={exportRef} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Pie Chart */}
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <h3 className="text-xl font-semibold mb-4">
-            Case Status Distribution
-          </h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={caseStatusData}
-                dataKey="value"
-                nameKey="name"
-                outerRadius={100}
-                fill="#8884d8"
-              >
-                {caseStatusData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={index % 2 === 0 ? "#82ca9d" : "#8884d8"}
+      <div ref={exportRef}>
+        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+          <h1 className="text-2xl font-bold">Deviation</h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Line Chart */}
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <h3 className="text-xl font-semibold mb-4">
+                Cases Processed Over Time
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={caseData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="total"
+                    stroke={chartColors[0]}
+                    activeDot={{ r: 8 }}
                   />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+                  <Line
+                    type="monotone"
+                    dataKey="pending"
+                    stroke={chartColors[1]}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="completed"
+                    stroke={chartColors[2]}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Area Chart */}
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <h3 className="text-xl font-semibold mb-4">
+                Average Resolution Time Over Time
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <AreaChart data={caseData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Area
+                    type="monotone"
+                    dataKey="avgResolutionTime"
+                    fill={chartColors[0]}
+                    stroke="#8884d8"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
 
-        {/* Line Chart */}
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <h3 className="text-xl font-semibold mb-4">
-            Cases Processed Over Time
-          </h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={caseData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="total"
-                stroke={chartColors[0]}
-                activeDot={{ r: 8 }}
-              />
-              <Line type="monotone" dataKey="pending" stroke={chartColors[1]} />
-              <Line
-                type="monotone"
-                dataKey="completed"
-                stroke={chartColors[2]}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Area Chart */}
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <h3 className="text-xl font-semibold mb-4">
-            Average Resolution Time Over Time
-          </h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={caseData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Area
-                type="monotone"
-                dataKey="avgResolutionTime"
-                fill={chartColors[0]}
-                stroke="#8884d8"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+        {/* Pie Chart */}
+        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+          <h1 className="text-2xl font-bold">Live</h1>
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <h3 className="text-xl font-semibold mb-4">
+                Case Status Distribution
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={caseStatusData}
+                    dataKey="value"
+                    nameKey="name"
+                    outerRadius={100}
+                    fill="#8884d8"
+                  >
+                    {caseStatusData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={index % 2 === 0 ? "#82ca9d" : "#8884d8"}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+        
         </div>
       </div>
     </div>

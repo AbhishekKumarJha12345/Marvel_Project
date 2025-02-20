@@ -140,9 +140,13 @@ const CourtTab2 = () => {
           Export
         </button>
       </div>
-      <div ref={exportRef} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div ref={exportRef}>
 
-        {/* Adoption Rate Line Chart */}
+      <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <h1 className="text-2xl font-bold">Deviation
+      </h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+             {/* Adoption Rate Line Chart */}
         <div className="bg-white p-4 rounded-xl shadow-md">
           <h3 className="text-xl font-semibold mb-4">Adoption Rate of eSummons & Digital Case Records</h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -171,6 +175,13 @@ const CourtTab2 = () => {
             </BarChart>
           </ResponsiveContainer>
         </div>
+      </div>
+
+      </div>
+      <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <h1 className="text-2xl font-bold">Live
+      </h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
         {/* Updated Pie Chart for Compliance */}
         <div className="bg-white p-4 rounded-xl shadow-md">
@@ -203,6 +214,9 @@ const CourtTab2 = () => {
         </div>
 
       </div>
+      </div>
+      </div>
+      
     </div>
   );
 };
