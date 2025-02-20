@@ -140,7 +140,7 @@ const CourtTab1 = () => {
     total: parseInt(item.pending) + parseInt(item.completed),
     pending: parseInt(item.pending),
     completed: parseInt(item.completed),
-    avgResolutionTime: item.average_resolution_time,
+    avgResolutionTime: parseInt(item.average_resolution_time),
   }));
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
