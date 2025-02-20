@@ -209,25 +209,10 @@ const CourtTab1 = () => {
             </div>
 
             {/* Area Chart */}
-            <div className="bg-white p-4 rounded-xl shadow-md">
+            {/* <div className="bg-white p-4 rounded-xl shadow-md">
               <h3 className="text-xl font-semibold mb-4">
                 Average Resolution Time Over Time
               </h3>
-              {/* <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={caseData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" angle={-45} textAnchor="end" />
-                  <YAxis domain={[0, "auto"]} />
-                  <Tooltip />
-                  <Area
-                    type="monotone"
-                    dataKey="avgResolutionTime"
-                    fill={chartColors[0]}
-                    stroke="#8884d8"
-                    fillOpacity={0.5} // Ensure proper transparency
-                  />
-                </AreaChart>
-              </ResponsiveContainer> */}
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={caseData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -241,6 +226,20 @@ const CourtTab1 = () => {
                     name="Avg Resolution Time"
                   />
                 </BarChart>
+              </ResponsiveContainer>
+            </div> */}
+            {/* Line Chart - Average Resolution Time Over Time */}
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <h3 className="text-xl font-semibold mb-4">Average Resolution Time Over Time</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={caseData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="avgResolutionTime" stroke={chartColors[0]} strokeWidth={2} />
+                </LineChart>
               </ResponsiveContainer>
             </div>
           </div>
