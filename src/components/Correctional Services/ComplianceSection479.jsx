@@ -8,6 +8,9 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const ComplianceSection479 = () => {
   const [selectedFile, setSelectedFile] = useState(null);
 
+  const host = import.meta.env.VITE_APP_API_URL;
+
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('fillForm');
   const [formData, setFormData] = useState({
@@ -21,7 +24,7 @@ const ComplianceSection479 = () => {
 
   const fetchPersonnelData = async () => {
     try {
-      const response = await fetch('http://localhost:5555/api/fetchCaomplaincesection479');
+      const response = await fetch(`${host}/fetchCaomplaincesection479`);
       const data = await response.json();
       if (data.success && data.data.length > 0) {
         setFormData(data.data[0]); // Ensure we're setting an object, not an array
@@ -68,7 +71,7 @@ const ComplianceSection479 = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5555/api/addComplainceSection479', {
+      const response = await fetch(`${host}/addComplainceSection479`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -100,7 +103,7 @@ const ComplianceSection479 = () => {
     formData.append("file", selectedFile);
 
     try {
-      const response = await fetch("http://localhost:5555/api/upload_479", {
+      const response = await fetch(`${host}/upload_479`, {
         method: "POST",
         body: formData,
       });

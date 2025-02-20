@@ -11,6 +11,8 @@ const ComplianceSection = () => {
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
   };
+
+  const host = import.meta.env.VITE_APP_API_URL;
   
   
   const [chartData, setChartData] = useState({
@@ -52,7 +54,7 @@ const ComplianceSection = () => {
   };
 
   const fetchComplianceData = () => {
-    fetch('http://localhost:5555/api/get_compliance_data')
+    fetch(`${host}/get_compliance_data`)
       .then((response) => response.json())
       .then((data) => {
         if (data.error) {
@@ -105,7 +107,7 @@ const ComplianceSection = () => {
       Inmates_percentage: formData.Inmates_percentage,
     };
   
-    fetch('http://localhost:5555/api/submit_compliance_data', {
+    fetch(`${host}/submit_compliance_data`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -139,7 +141,7 @@ const ComplianceSection = () => {
     const formData = new FormData();
     formData.append('file', file);
   
-    fetch('http://localhost:5555/api/upload', {
+    fetch(`${host}/upload`, {
       method: 'POST',
       body: formData,
     })

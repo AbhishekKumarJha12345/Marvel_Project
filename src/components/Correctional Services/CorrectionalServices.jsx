@@ -7,6 +7,9 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const CorrectionalServices = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const host = import.meta.env.VITE_APP_API_URL;
+
   const [selectedOption, setSelectedOption] = useState('fillForm');
   const [selectedFile, setSelectedFile] = useState(null);
   
@@ -19,7 +22,7 @@ const CorrectionalServices = () => {
     class3_trained: '',
   });
   useEffect(() => {
-    fetch('https://sjci.marvel.pinacalabs.com/api/get_personnel_trained')
+    fetch(`${host}/get_personnel_trained`)
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -101,7 +104,7 @@ const CorrectionalServices = () => {
     e.preventDefault();
   
     // Send form data to the backend and update the data in the `personnel_trained` table
-    fetch('https://sjci.marvel.pinacalabs.com/api/add_personnel_trained', {
+    fetch(`${host}/add_personnel_trained`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -153,7 +156,7 @@ const CorrectionalServices = () => {
       // Log FormData to ensure it's populated correctly
       console.log("FormData being sent:", formData);
       
-      fetch('https://sjci.marvel.pinacalabs.com/api/upload_personnel_data', {
+      fetch(`${host}/upload_personnel_data`, {
         method: 'POST',
         body: formData,
       })
@@ -179,7 +182,7 @@ const CorrectionalServices = () => {
   };
   
   const fetchPersonnelData = () => {
-    fetch('https://sjci.marvel.pinacalabs.com/api/get_personnel_trained')
+    fetch(`${host}/get_personnel_trained`)
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
