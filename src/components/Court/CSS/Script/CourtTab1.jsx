@@ -254,6 +254,8 @@ const CourtTab1 = () => {
             </h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
+              <Legend />
+
                 <Pie
                   data={caseStatusData}
                   dataKey="value"
