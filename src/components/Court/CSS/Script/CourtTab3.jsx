@@ -123,18 +123,18 @@ const VideoConferencingDashboard = () => {
 
   const caseDisposalData = confrenceDisposalData?.map((item) => ({
     month: new Date(item.month).toLocaleString('en-US', { month: 'short', year: 'numeric' }),
-    disposedCases: item.disposed_cases,
-    backlogReduction: item.backlog_reduction,
+    disposedCases: item.disposed_cases || 0,
+    backlogReduction: item.backlog_reduction || 0,
   }));
 
   const readinessData = [
     {
       subject: "Backlog Reduction",
-      value: parseInt(confrenceDisposalData?.[0].backlog_reduction || 0),
+      value: parseInt(confrenceDisposalData?.[0]?.backlog_reduction || 0),
     },
     {
       subject: "Disposed Cases",
-      value: parseInt(confrenceDisposalData?.[0].disposed_cases || 0),
+      value: parseInt(confrenceDisposalData?.[0]?.disposed_cases || 0),
     },
   ];
 
