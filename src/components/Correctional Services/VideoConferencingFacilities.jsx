@@ -195,7 +195,8 @@ const VideoConferencingFacilities = () => {
       cx="50%"
       cy="50%"
       outerRadius={100}
-      label
+      label={({ name, percent }) => ` ${(percent * 100).toFixed(1)}%`}
+
     >
       {pieChartData.map((entry, index) => (
         <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />

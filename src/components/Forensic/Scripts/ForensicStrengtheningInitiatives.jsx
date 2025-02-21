@@ -143,7 +143,10 @@ const ForensicStrengtheningInitiatives = () => {
         <div className="flex justify-center w-full">
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
-              <Pie data={recruitmentData} dataKey="value" nameKey="name" outerRadius={100} label>
+              <Pie data={recruitmentData} dataKey="value" nameKey="name" outerRadius={100}
+                   label={({ name, percent }) => ` ${(percent * 100).toFixed(1)}%`}
+
+               >
                 {recruitmentData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
