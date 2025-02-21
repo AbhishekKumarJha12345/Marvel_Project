@@ -24,10 +24,11 @@ export default function Tabledata({setData}) {
           received_cases: parseInt(item.received_cases.replace(/,/g, ""), 10),
           received_exhibits: parseInt(item.received_exhibits.replace(/,/g, ""), 10),
         }));
+        let data=processedData.reverse()
 
         setForensicDevelopmentData(processedData);
         // console.log('recent data',processedData[processedData.length-1])
-        setData(processedData[0])
+        setData(processedData[processedData?.length -1])
         console.log("Pendancy Data is:", processedData[0]);
       } catch (error) {
         console.log("Errors occurred:", error);
@@ -56,7 +57,8 @@ export default function Tabledata({setData}) {
           <LineChart data={forensicDevelopmentData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
-            <YAxis />
+            <YAxis  
+            />
             <Tooltip />
             <Legend />
             {/* Lines for each category */}

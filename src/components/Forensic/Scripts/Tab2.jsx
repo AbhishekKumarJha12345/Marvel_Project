@@ -89,8 +89,7 @@ export default function Tab2() {
       console.log('dat dtad ============',vanDeploymentData?.status_counts)
       const transformedData = vanDeploymentData.status_counts.map(transformToPieChartData);
       console.log('jdandbsasf',transformedData)
-      setlinechatdata(vanDeploymentData?.status_counts
-      )
+      setlinechatdata(vanDeploymentData?.status_counts)
 
       // setlinechatdata(transformedData)
     }
@@ -184,8 +183,9 @@ setPieChartData(transformToPieChartData(linechartdata[linechartdata.length-1]))}
         {/* Response Times Bar Chart */}
         <div className="bg-white p-4 rounded-xl shadow-md">
           <h2 className="text-xl font-semibold mb-4">
-            Response Times by Region
+            Response Times by Region 
           </h2>
+          <p><strong>Recent Entry:</strong>{formattedData[formattedData.length-1]?.month}</p>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={dataResponseTimes}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -216,7 +216,7 @@ setPieChartData(transformToPieChartData(linechartdata[linechartdata.length-1]))}
             stroke="#6b7280"
             tick={{ fontSize: 14 }}
             label={{
-              value: "Response Time (mins)",
+              value: "Expansion Demand",
               angle: -90,
               position: "insideLeft",
               offset: 0,
@@ -252,6 +252,8 @@ setPieChartData(transformToPieChartData(linechartdata[linechartdata.length-1]))}
           <h2 className="text-xl font-semibold mb-4">
             Expansion Demand by Region
           </h2>
+          <p><strong>Recent Entry:</strong>{formattedData[formattedData.length-1]?.month}</p>
+
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={dataExpansionDemand}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -265,7 +267,7 @@ setPieChartData(transformToPieChartData(linechartdata[linechartdata.length-1]))}
         </div>
 
         <div className="bg-white p-4 rounded-lg shadow-md">
-      <h2 className="text-lg font-bold mb-4">Monthly Expansion Demand by Region</h2>
+      <h2 className="text-lg font-bold mb-4">Monthly Van Availability</h2>
       <ResponsiveContainer width="100%" height={400}>
         <LineChart data={linechartdata}>
           <XAxis
@@ -282,7 +284,7 @@ setPieChartData(transformToPieChartData(linechartdata[linechartdata.length-1]))}
             stroke="#6b7280"
             tick={{ fontSize: 14 }}
             label={{
-              value: "Response Time (mins)",
+              value: "Van Availability ",
               angle: -90,
               position: "insideLeft",
               offset: 0,
@@ -317,6 +319,8 @@ setPieChartData(transformToPieChartData(linechartdata[linechartdata.length-1]))}
         {/* Availability Pie Chart */}
         <div className="bg-white p-4 rounded-xl shadow-md">
           <h2 className="text-xl font-semibold mb-4">Van Availability</h2>
+          <p><strong>Recent Entry:</strong>{linechartdata[linechartdata.length-1]?.month_year}</p>
+ 
           <ResponsiveContainer width="100%" height={300}>
   <PieChart>
     <Pie
