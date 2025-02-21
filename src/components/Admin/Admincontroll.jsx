@@ -31,7 +31,7 @@ const AdminRegister = ({ onRegister, onClose }) => {
   };
 
   return (
-    <Card className="max-w-md mx-auto shadow-lg rounded-2xl p-6">
+    <Card className="max-w-md  mx-auto shadow-lg rounded-2xl p-6 ">
       <CardContent>
         <h2 className="text-xl font-semibold text-center mb-4">Register Admin</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -73,8 +73,8 @@ const AdminRegister = ({ onRegister, onClose }) => {
               <option value="chief secretary">Chief Secretary</option>
               <option value="police">Police</option>
               <option value="Prosecutor">Prosecutor</option>
-              <option value="Correction">Correction Services</option>
-              <option value="Court">Court</option>
+              <option value="Correction">Correctional Services</option>
+              <option value="Court">Courts</option>
               <option value="Forensic">Forensic</option>
             </select>
           </div>
@@ -91,7 +91,7 @@ const AdminRegister = ({ onRegister, onClose }) => {
             />
           </div> */}
           <div>
-            <Label htmlFor="station">Station</Label>
+            <Label htmlFor="station">Location</Label>
             <input
               type="text"
               id="station"

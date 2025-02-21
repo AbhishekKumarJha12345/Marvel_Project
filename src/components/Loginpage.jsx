@@ -40,7 +40,7 @@ function Login() {
       ) {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("role", response.data.role);
-        navigate("/mainnavbar", { state: { users: response.data.role } });
+        navigate("/mainnavbar", { state: { users: response.data.role,userName:response.data.userName } });
       } else {
         setError("User doesn't have access to log in.");
       }
@@ -57,6 +57,12 @@ function Login() {
       return () => clearTimeout(timer); // Cleanup on unmount
     }
   }, [error]);
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+    handleLogin();
+    }
+    };
 
   return (
     <div className="flex items-center justify-center min-h-screen" style={{backgroundColor:"#f4f4f4"}}>
@@ -98,6 +104,7 @@ function Login() {
                 ref={usernameRef}
                 type="text"
                 placeholder="User Name"
+                onKeyDown={handleKeyDown}
                 className="w-full px-10 py-2 text-gray-900 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#2d3748] placeholder-gray-500"
               />
             </div>
@@ -111,6 +118,7 @@ function Login() {
                 ref={passwordRef}
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
+                onKeyDown={handleKeyDown}
                 className="w-full px-10 py-2 text-gray-900 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#2d3748] placeholder-gray-500"
               />
               <span
@@ -122,7 +130,7 @@ function Login() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center  justify-between">
             <button
               className="w-full px-4 py-2 font-bold text-white rounded-sm"
               style={{ backgroundColor: "#2d3748" }}
@@ -133,16 +141,6 @@ function Login() {
           </div>
         </div>
 
-        <p className="text-sm text-center text-gray-600 pt-5 font-medium">
-          Not registered?{" "}
-          <a
-            href="#"
-            className="font-bold underline"
-            style={{ color: "#2d3748" }}
-          >
-            Create an account
-          </a>
-        </p>
       </div>
     </div>
   );
