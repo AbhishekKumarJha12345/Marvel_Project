@@ -25,18 +25,17 @@ function Login() {
       const allowedRoles = [
         "chief secretary",
         "police",
-        "prosecution",
+        "Prosecutor",
         "court",
         "correctionalservices",
-        "forensic",
+        "Forensic",
         "admin"
       ];
 
       console.log("Response received:", response.data);
 
       if (
-        response.status === 200 &&
-        allowedRoles.includes(response.data.role?.toLowerCase())
+        response.status === 200
       ) {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("role", response.data.role);
