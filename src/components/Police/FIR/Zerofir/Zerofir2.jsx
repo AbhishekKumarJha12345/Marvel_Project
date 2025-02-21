@@ -1,35 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { 
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+  PieChart, Pie, Cell, Legend 
+} from "recharts";
 import axiosInstance from "../../../../utils/axiosInstance";
 
-const ZeroFir2 = () => {
+const ZeroFir2 = ({ type }) => {
   const [data, setData] = useState([]);
-  const chartColors = [
-    "#8884d8", // Muted Purple
-    "#82ca9d", // Soft Green
-    "#f2c57c", // Warm Sand
-    "#6a8caf", // Steel Blue
-    "#d4a5a5", // Soft Rose
-    "#a28bd3", // Lavender
-    "#ff9a76", // Muted Coral
-    "#74b49b", // Muted Teal
-    "#c08497", // Mauve
-    "#b0a8b9" // Dusty Lilac
-  ];
-  function convertMonthFormat(yyyy_mm) {
-    if (!yyyy_mm || !yyyy_mm.includes("-")) return yyyy_mm; // Handle invalid input
+  const chartColors = ["#8884d8", "#82ca9d", "#f2c57c"];
 
-    const [year, month] = yyyy_mm.split("-"); // Split by "-"
-    return month+'-' + year; // Rearrange to MMYYYY format
-}
+  function convertMonthFormat(yyyy_mm) {
+    if (!yyyy_mm || !yyyy_mm.includes("-")) return yyyy_mm;
+    const [year, month] = yyyy_mm.split("-");
+    return `${month}-${year}`; 
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axiosInstance.get("/live_data?type=line_fir_4");
-        
-        // Axios automatically parses JSON, no need for response.json()
+
         if (response.data.data_dict) {
-          // Parse and sort data by month
           const sortedData = response.data.data_dict
             .map(item => ({
               month: convertMonthFormat(item.month),
@@ -37,7 +28,7 @@ const ZeroFir2 = () => {
               yet_to_be_registered_zero_fir: parseInt(item.yet_to_be_registered_zero_fir, 10) || 0,
               zero_fir: parseInt(item.zero_fir, 10) || 0,
             }))
-            .sort((a, b) => new Date(a.month) - new Date(b.month)); // Sort by month
+            .sort((a, b) => new Date(a.month) - new Date(b.month));
 
           setData(sortedData);
         }
@@ -49,19 +40,50 @@ const ZeroFir2 = () => {
     fetchData();
   }, []);
 
+  const firstDataItem = data.length > 0 ? data[0] : null;
+  const pieData = firstDataItem
+    ? [
+        { name: "Regular FIR", value: firstDataItem.regular_fir },
+        { name: "Yet to Register Zero FIR", value: firstDataItem.yet_to_be_registered_zero_fir },
+        { name: "Zero FIR", value: firstDataItem.zero_fir }
+      ]
+    : [];
+
   return (
-    <div style={{ width: "80%", height: 350, margin: "auto" }}>
-      <h2 style={{ textAlign: "center" }}>FIR Trends Over Time</h2>
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
-          <YAxis />
-          <Tooltip />
-          <Line type="monotone" dataKey="regular_fir" stroke={chartColors[0]} strokeWidth={2} name="Regular FIR"/>
-          <Line type="monotone" dataKey="yet_to_be_registered_zero_fir" stroke={chartColors[1]} strokeWidth={2} name="Yet to Regularly Zero FIR"/>
-          <Line type="monotone" dataKey="zero_fir" stroke={chartColors[2]} strokeWidth={2} name="Zero FIR" />
-        </LineChart>
+    <div style={{ width: "100%", height: 350, padding: "1.8rem 0rem", backgroundColor: "white", margin: "auto" }}>
+     {type === "recent"? <h2 style={{ textAlign: "center" }}>FIR Trends - Recent</h2>: <h2 style={{ textAlign: "center" }}>FIR Trends Over Time</h2>}
+
+     <ResponsiveContainer width="100%" height={type === "recent" ? "80%" : "100%"}>
+
+      {type === "recent" && firstDataItem ? (
+    <PieChart>
+      <Pie
+        data={pieData}
+        cx="50%"
+        cy="50%"
+        outerRadius={80} // Reduced outer radius
+        fill="#8884d8"
+        dataKey="value"
+        label
+      >
+        {pieData.map((entry, index) => (
+          <Cell key={`cell-${index}`} fill={chartColors[index]} />
+        ))}
+      </Pie>
+      <Tooltip />
+      <Legend />
+    </PieChart>
+        ) : (
+          <LineChart data={data} margin={{ top: 20, right: 30, left: 50, bottom: 40 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="month" label={{ value: "Month", position: "bottom", offset: 3 }} />
+            <YAxis label={{ value: "FIR Count", angle: -90, position: "insideLeft", dy: 40 }} />
+            <Tooltip />
+            <Line type="monotone" dataKey="regular_fir" stroke={chartColors[0]} strokeWidth={2} name="Regular FIR"/>
+            <Line type="monotone" dataKey="yet_to_be_registered_zero_fir" stroke={chartColors[1]} strokeWidth={2} name="Yet to Register Zero FIR"/>
+            <Line type="monotone" dataKey="zero_fir" stroke={chartColors[2]} strokeWidth={2} name="Zero FIR" />
+          </LineChart>
+        )}
       </ResponsiveContainer>
     </div>
   );

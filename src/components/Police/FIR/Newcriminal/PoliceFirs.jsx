@@ -1,5 +1,5 @@
 import { React, useState } from "react";
-import { Pie } from "react-chartjs-2";
+import { Bar, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import ModalComponent from "../../ModalComponent";
 import FirBarGraph from "./FirBarGraph";
@@ -62,7 +62,7 @@ const PoliceFirs = ({ apidata, downloadReport }) => {
   return (
     <div className="bg-white p-6 mx-auto rounded-lg w-[100%] h-[600px] shadow-lg">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6"  >
         <h2 className="text-2xl font-semibold text-center flex-grow">FIRs New Criminal Laws</h2>
         <div className="flex space-x-4">
          { localStorage.getItem('role') !=='chief secretary' && <button
@@ -81,15 +81,30 @@ const PoliceFirs = ({ apidata, downloadReport }) => {
       </div>
 
       {/* Charts Section */}
-      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "20px" }}>
+      <div style={{width:"100%", display: "flex", gap: "20px" }}>
   {/* First Chart (Pie Chart) */}
-  <div style={{ flex: "1 1 45%", maxWidth: "100%", height: "400px", display: "flex", justifyContent: "center" }}>
-    <Pie data={data} options={options} />
+  <div style={{ flex: "1 1 45%", backgroundColor:"#f4f4f4",padding:"1rem",maxWidth: "100%", height: "400px", display: "flex", justifyContent: "center" }}>
+  <div style={{backgroundColor:"white",width:"100%",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
+
+  <Bar 
+  data={data} 
+  options={{
+    ...options,
+    maintainAspectRatio: false, // Allows custom height & width
+  }} 
+  width={600}  // Set custom width
+  height={400} // Set custom height
+/>
+
+  </div>
   </div>
 
   {/* Second Chart (FirBarGraph) */}
-  <div style={{ flex: "1 1 45%", maxWidth: "100%", height: "30vh", display: "flex", justifyContent: "center" }}>
+  <div style={{ flex: "1 1 45%",backgroundColor:"#f4f4f4",padding:"1rem", maxWidth: "100%", height: "400px", display: "flex", justifyContent: "center" }}>
+  <div style={{backgroundColor:"white",width:"100%",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
+
     <FirBarGraph />
+  </div>
   </div>
 </div>
 
