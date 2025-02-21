@@ -1,75 +1,90 @@
-import React from 'react';
-import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import React, { useEffect, useState } from 'react';
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import axiosInstance from '../../utils/axiosInstance'; 
+import ModalComponent from './ModalComponent';
 
-// Register required chart components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+// Register chart components
+ChartJS.register(ArcElement, Tooltip, Legend);
 
-const PoliceOfficers = () => {
-  // Data for the bar graph
+const PoliceOfficers = ({ getDate }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [trainingData, setTrainingData] = useState([]);
+
+  const formatRank = (rank) => {
+    return rank.replace(/\b[a-z]/g, (char) => char.toUpperCase()) // Capitalize first letter outside parentheses
+               .replace(/\((.*?)\)/g, (match, p1) => `(${p1.toUpperCase()})`); // Convert text inside parentheses to uppercase
+  };
+
+  const getTrainingData = async () => {
+    try {
+      const response = await axiosInstance.get('/live_data');
+      console.log(response.data, 'Training data response ----------');
+      const formattedData = response.data.latest_trainings.map((item) => ({
+        ...item,
+        rank: formatRank(item.rank),
+        available_officers: parseInt(item.available_officers, 10),
+        trained_officers: parseInt(item.trained_officers, 10),
+      }));
+      setTrainingData(formattedData);
+
+      if (formattedData.length > 0) {
+        getDate(formattedData[0].uploaded_date);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getTrainingData();
+  }, []);
+
+  console.log(trainingData, 'training props data------');
+
+  const totalOfficers = trainingData.reduce((acc, item) => acc + item.trained_officers, 0);
+  const availableOfficers = trainingData.reduce((acc, item) => acc + item.available_officers, 0);
+
   const data = {
-    labels: ['Police Officers(PSI to SP/DCP)', 'Police Personnel(PC to ASI)'], // Labels for the two roles
+    labels: ['Total Trained Officers', 'Available Officers'],
     datasets: [
       {
-        label: 'Available Officers',
-        data: [13247, 152363], // Available Officers for AP and TS
-        backgroundColor: '#4CAF50', // Green color for Available Officers
-        borderColor: '#388E3C', // Darker green border
-        borderWidth: 1,
-        barThickness: 20,
-      },
-      {
-        label: 'Total Trained Officers',
-        data: [12234, 137901], // Total Trained Officers for AP and TS
-        backgroundColor: '#2196F3', // Blue color for Trained Officers
-        borderColor: '#1976D2', // Darker blue border
-        borderWidth: 1,
-        barThickness: 20,
+        label: 'Officers Data',
+        data: [totalOfficers, availableOfficers],
+        backgroundColor: ['#82ca9d', '#8884d8'],
+        hoverBackgroundColor: ['#4CAF50', '#2196F3'],
       },
     ],
   };
 
-  // Custom tooltip content (percentage display for each group)
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'top',
+        position: 'bottom',
       },
       title: {
         display: true,
-        text: 'Officers Data Comparison',
-      },
-      tooltip: {
-        callbacks: {
-          // Custom tooltip label (percentage for each group)
-          label: function (tooltipItem) {
-            const label = tooltipItem.dataset.label || '';
-            const dataIndex = tooltipItem.dataIndex;
-            let percentage = '';
-
-            // Predefined percentages for the whole groups
-            if (dataIndex === 0) { // Police Officers(PSI to SP/DCP) group
-              percentage = '92.35%'; // Percentage for Police Officers group
-            } else if (dataIndex === 1) { // Police Personnel(PC to ASI) group
-              percentage = '90.50%'; // Percentage for Police Personnel group
-            }
-
-            // Return custom label with percentage for the group
-            return `${label}: ${percentage}`;
-          },
-        },
+        // text: 'Officers Data Comparison',
       },
     },
   };
 
   return (
-    <div className="bg-white p-6 mx-auto rounded-lg w-[60%] h-[500px]">
-    <h1 className="text-4xl font-bold mb-8">Police Officers</h1>
-    <div className="h-[250px]">
-      <Bar data={data} options={options} />
+    <div className="bg-white p-6 rounded-lg w-[50%] h-[500px] text-center rounded-xl shadow-md">
+      <div className="flex items-left mb-8">
+        <h1 className="text-xl" style={{ fontWeight: '600' }}>Police Officers</h1>
+      </div>
+      <div className="h-[400px] w-full">
+        <Pie data={data} options={options} />
+      </div>
+      <ModalComponent
+        open={showModal}
+        type="police"
+        onClose={() => setShowModal(false)}
+      />
     </div>
-  </div>
   );
 };
 

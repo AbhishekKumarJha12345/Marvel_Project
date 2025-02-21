@@ -1,52 +1,54 @@
-import React from 'react';
-import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import React from "react";
+import { Pie } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
 // Register required chart components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+const chartColors = [
+  "#8884d8", // Muted Purple
+  "#82ca9d", // Soft Green
+];
 
 const PolicePunishment = () => {
-  // Data for the bar graph
+  // Data for the pie chart
   const data = {
-    labels: ['No. of Cases Registered', 'Cases in which Forensic Team Visited'], // Labels for both categories
+    labels: ["No. of Cases Registered", "Cases in which Forensic Team Visited"],
     datasets: [
       {
-        label: 'No. of Cases Registered', // Label for the first dataset
-        data: [13939, 0], // Only data for "No. of Cases Registered"
-        backgroundColor: '#FF5733', // Orange for "No. of Cases Registered"
-        borderColor: '#D84315', // Darker border shade
+        label: "Case Distribution",
+        data: [13939, 2587],
+        backgroundColor: chartColors,
+        borderColor: chartColors,
         borderWidth: 1,
-        barThickness: 50,
-      },
-      {
-        label: 'Cases in which Forensic Team Visited', // Label for the second dataset
-        data: [0, 2587], // Only data for "Cases in which Forensic Team Visited"
-        backgroundColor: '#2196F3', // Blue for "Cases in which Forensic Team Visited"
-        borderColor: '#1976D2', // Darker border shade
-        borderWidth: 1,
-        barThickness: 50,
       },
     ],
   };
 
-  // Custom tooltip content (showing percentage for both bars)
+  // Custom tooltip content (showing percentage for each slice)
   const options = {
     responsive: true,
     plugins: {
       legend: {
-        display: true,  // ✅ Enables the legend
-        position: 'top',
+        display: true,
+        position: "top",
       },
       title: {
         display: true,
-        text: 'Cases & Forensic Team Visits',
+        text: "Cases & Forensic Team Visits",
       },
       tooltip: {
         callbacks: {
           label: function (tooltipItem) {
-            const value = tooltipItem.raw;
-            const percentage = '18.55%'; // Fixed percentage for both bars
-            return `${tooltipItem.label}: ${value} (${percentage})`;
+            const value = data.datasets[0].data[tooltipItem.dataIndex];
+            const total = data.datasets[0].data.reduce((acc, val) => acc + val, 0);
+            const percentage = ((value / total) * 100).toFixed(2) + "%";
+            return `${data.labels[tooltipItem.dataIndex]}: ${value} (${percentage})`;
           },
         },
       },
@@ -54,10 +56,9 @@ const PolicePunishment = () => {
   };
 
   return (
-    <div className="bg-white p-6 mx-auto rounded-lg w-[60%] h-[500px]">
-      <h1 className="text-4xl font-bold mb-8">Cases & Forensic Team Visits</h1>
-      <div className="h-[250px]">
-        <Bar data={data} options={options} />
+    <div className="p-6 rounded-lg flex flex-col" style={{backgroundColor:"white",width:"48%",display:"flex",justifyContent:"center"}}>
+      <div className="h-[360px]" style={{display:"flex",justifyContent:"center"}}>
+        <Pie data={data} options={options} />
       </div>
     </div>
   );

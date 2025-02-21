@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Card, Button, Table, Pagination, Form } from "react-bootstrap";
-
+import DataTable from "react-data-table-component"; 
+import "tailwindcss/tailwind.css";
+import ModalComponent from '../Police/ModalComponent'
 const data = [
   { role: "Assistant Public Prosecutor", posts: 491, date: "2025-02-01" },
   { role: "Additional Public Prosecutor", posts: 244, date: "2025-03-15" },
@@ -9,20 +11,12 @@ const data = [
   { role: "Chief Prosecutor", posts: 10, date: "2025-06-05" },
 ];
 
-const rowsPerPageOptions = [10, 20, 30, 50];
 
 const Prosecution = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [showModal, setShowModal] = useState(false);
 
-  const totalPages = Math.ceil(data.length / rowsPerPage);
-  const indexOfLastRow = currentPage * rowsPerPage;
-  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = data.slice(indexOfFirstRow, indexOfLastRow);
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+const [filters, setFilters] = useState({ role: "", posts: "", date: "" });
+  const [filteredData, setFilteredData] = useState(data);
 
   const styles = {
     container: {
@@ -37,7 +31,7 @@ const Prosecution = () => {
       margin: "10px",
       padding: "15px",
       borderRadius: "10px",
-      boxShadow: "2px 2px 10px rgba(0, 0, 0, 0.1)",
+      boxShadow: "2px 6px 10px rgba(0, 0, 0, 0.1)",
       transition: "transform 0.3s ease-in-out",
     },
     cardHover: {
@@ -64,28 +58,65 @@ const Prosecution = () => {
     },
   };
 
+  const handleFilter = (event, key) => {
+    const newFilters = { ...filters, [key]: event.target.value.toLowerCase() };
+    setFilters(newFilters);
+
+    setFilteredData(
+      data.filter((row) =>
+        // Exclude 'Action' column from the filtering
+        Object.keys(newFilters).every((filterKey) =>
+          filterKey !== "action" && row[filterKey]?.toString().toLowerCase().includes(newFilters[filterKey])
+        )
+      )
+    );
+  };
+
+  const columns = [
+    {
+      name: <span className="font-semibold text-[14px]">Role</span>,
+      selector: (row) => row.role,
+      sortable: true,
+      filterKey: "role",
+    },
+    {
+      name: <span className="font-semibold text-[14px]">Post</span>,
+      selector: (row) => row.posts,
+      sortable: true,
+      filterKey: "posts",
+    },
+    {
+      name: <span className="font-semibold text-[14px]">Date</span>,
+      selector: (row) => row.date,
+      sortable: true,
+      filterKey: "date",
+    },
+
+  ];
+
   return (
-    <div style={styles.container}>
+    <div className="rounded-lg w-full max-w-full h-auto">
+      {/* <h1 className="text-2xl font-bold mb-6">Features</h1> */}
       <div style={styles.cardContainer}>
-        <Card style={styles.card}>
+        <Card style={styles.card} className="bg-white">
           <Card.Body>
-            <Card.Title style={styles.cardTitle}>Recent Appointment</Card.Title>
+            <Card.Title className=" text-xl font-semibold mb-4">Recent Appointment</Card.Title>
             <Card.Text style={styles.cardText}>
               491 New Assistant Public Prosecutors appointed.
             </Card.Text>
           </Card.Body>
         </Card>
-        <Card style={styles.card}>
+        <Card style={styles.card} className="bg-white">
           <Card.Body>
-            <Card.Title style={styles.cardTitle}>Training Program</Card.Title>
+            <Card.Title className="text-xl font-semibold mb-4">Training Program</Card.Title>
             <Card.Text style={styles.cardText}>
               6 weeks training in 4 batches at Maharashtra Police Academy, Nashik.
             </Card.Text>
           </Card.Body>
         </Card>
-        <Card style={styles.card}>
+        <Card style={styles.card} className="bg-white">
           <Card.Body>
-            <Card.Title style={styles.cardTitle}>Recruitment Proposal</Card.Title>
+            <Card.Title className="text-xl font-semibold mb-4">Recruitment Proposal</Card.Title>
             <Card.Text style={styles.cardText}>
               Proposal for 244 Addl. PPs through MPSC under process.
             </Card.Text>
@@ -93,26 +124,27 @@ const Prosecution = () => {
         </Card>
       </div>
 
-      <div style={styles.table}>
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>Role</th>
-              <th>No of Posts</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentRows.map((item, index) => (
-              <tr key={index}>
-                <td>{item.role}</td>
-                <td>{item.posts}</td>
-                <td>{item.date}</td>
-              </tr>
+     
+      <div className="mt-5">
+      <h2 className="text-2xl font-bold mb-6">Mobile Forensic Vans Details</h2>
+      <div className="bg-white p-4 rounded-xl shadow-md">
+        {/* Filters */}
+        <div className="mb-4">
+          <div className="grid grid-cols-3 gap-2">
+            {columns.filter((col) => col.filterKey && col.filterKey !== "action").map((col, index) => (
+              <input
+                key={index}
+                type="text"
+                placeholder={`Search by ${col.name.props.children}`}
+                value={filters[col.filterKey]}
+                onChange={(e) => handleFilter(e, col.filterKey)}
+                className="p-2 border border-gray-300 rounded-md w-full text-sm"
+              />
             ))}
-          </tbody>
-        </Table>
-
+          </div>
+        </div>
+        {/* <p onClick={() =>{console.log('set'); setShowModal(true)}}>open modal</p> */}
+    <ModalComponent open={showModal} onClose={() => setShowModal(false)} />
         {/* <div style={styles.pagination}>
           <Form.Select
             value={rowsPerPage}
@@ -131,29 +163,22 @@ const Prosecution = () => {
 
           <div>
             Page {currentPage} of {totalPages}
+>>>>>>> dhanu
           </div>
+        </div>
 
-          <Pagination>
-            <Pagination.Prev
-              disabled={currentPage === 1}
-              onClick={() => handlePageChange(currentPage - 1)}
-            />
-            {Array.from({ length: totalPages }, (_, index) => (
-              <Pagination.Item
-                key={index + 1}
-                active={index + 1 === currentPage}
-                onClick={() => handlePageChange(index + 1)}
-              >
-                {index + 1}
-              </Pagination.Item>
-            ))}
-            <Pagination.Next
-              disabled={currentPage === totalPages}
-              onClick={() => handlePageChange(currentPage + 1)}
-            />
-          </Pagination>
-        </div> */}
+        {/* Data Table */}
+        <DataTable
+          columns={columns}
+          data={filteredData}
+          pagination
+          highlightOnHover
+          striped
+          responsive
+        />
       </div>
+
+    </div>
     </div>
   );
 };

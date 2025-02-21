@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   PieChart,
+  LineChart,
+  Line,
   Pie,
   Cell,
   Tooltip,
@@ -12,22 +14,23 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
-import ImageCarousel from "./ImageCarousel"; // Import ImageCarousel
-import VanAvailability from "./VanAvailability";
 
-// Dummy data
-const dataAvailability = [
-  { name: "Available", value: 45 },
-  { name: "In Use", value: 30 },
-  { name: "Under Maintenance", value: 15 },
-  { name: "Out of Service", value: 10 },
-];
+import ImageCarousel from "./ImageCarousel";
+import VanAvailability from "./VanAvailability";
+import axios from "axios";
+import axiosInstance from "../../../utils/axiosInstance";
 
 const dataResponseTimes = [
   { region: "North", responseTime: 20 },
   { region: "South", responseTime: 25 },
   { region: "East", responseTime: 30 },
   { region: "West", responseTime: 15 },
+];
+const formattedData = [
+  { month: "Jan 2024", North: 20, South: 25, East: 30, West: 15 },
+  { month: "Feb 2024", North: 22, South: 28, East: 32, West: 18 },
+  { month: "Mar 2024", North: 19, South: 27, East: 31, West: 16 },
+  { month: "Apr 2024", North: 24, South: 29, East: 33, West: 20 },
 ];
 
 const dataExpansionDemand = [
@@ -36,57 +39,153 @@ const dataExpansionDemand = [
   { region: "East", demand: 60 },
   { region: "West", demand: 40 },
 ];
+const formattedExpansionDemand = [
+  { month: "Jan 2024", North: 20, South: 25, East: 30, West: 15 },
+  { month: "Feb 2024", North: 22, South: 28, East: 32, West: 18 },
+  { month: "Mar 2024", North: 19, South: 27, East: 31, West: 16 },
+  { month: "Apr 2024", North: 50, South: 70, East: 60, West: 40 },
+];
 
-
-const COLORS = ["#00C49F", "#FFBB28", "#FF8042", "#FF0000"];
-
+// const chartColors = [ "#FFBB28", "#FF8042", "#FF0000", "#00C49F"];
+const chartColors = [
+  "#8884d8", // Muted Purple
+  "#82ca9d", // Soft Green
+  "#f2c57c", // Warm Sand
+  "#6a8caf", // Steel Blue
+  "#d4a5a5", // Soft Rose
+  "#a28bd3", // Lavender
+  "#ff9a76", // Muted Coral
+  "#74b49b", // Muted Teal
+  "#c08497", // Mauve
+  "#b0a8b9" // Dusty Lilac
+  ];
 export default function Tab2() {
+  const [vanDeploymentData, setVanDeploymentData] = useState(null);
+  const [pieChartData, setPieChartData] = useState([]);
+  const[linechartdata,setlinechatdata]=useState([])
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axiosInstance.get("/live_data", {
+          params: { type: "forensic_van" },
+        });
 
+        setVanDeploymentData(response.data);
+        console.log("====================================",response.data);
 
+        console.log("Van deployment Data is:", response.data);
+      } catch (error) {
+        console.log("Erros occurred:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (vanDeploymentData?.status_counts) {
+      // Directly use status_counts, no need to use Object.entries for an array.
+      console.log('dat dtad ============',vanDeploymentData?.status_counts)
+      const transformedData = vanDeploymentData.status_counts.map(transformToPieChartData);
+      console.log('jdandbsasf',transformedData)
+      setlinechatdata(vanDeploymentData?.status_counts
+      )
+
+      // setlinechatdata(transformedData)
+    }
+  }, [vanDeploymentData]);
+  const transformToPieChartData = (data) => {
+    return [
+      { name: "Available", value: data.available },
+      { name: "In Use", value: data.in_use },
+      { name: "Out of Service", value: data.out_of_service },
+      { name: "Under Maintenance", value: data.under_maintanence },
+      { name: "Status", value: data.status },
+    ];
+  };
+  useEffect(()=>{
+    if(linechartdata.length>0)
+    {console.log('piechart data',linechartdata[linechartdata.length-1])
+setPieChartData(transformToPieChartData(linechartdata[linechartdata.length-1]))}
+  },[linechartdata])
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto" style={{ fontFamily: "Work Sans" }}>
-      <h1 className="text-2xl font-bold mb-6">Mobile Forensic Vans Dashboard</h1>
+    <div
+      className="rounded-lg w-full max-w-full h-auto"
+      style={{ fontFamily: "Work Sans", maxWidth: "90.7vw" }}
+    >
+      <h1 className="text-2xl font-bold mb-6">
+        Mobile Forensic Vans Dashboard
+      </h1>
 
       {/* Image Carousel Over Van Availability */}
-      <div className="relative z-10 mb-6">
+      {/* <div className="relative mb-6">
         <ImageCarousel />
-      </div>
+      </div> */}
 
       {/* Van Availability Table */}
 
-      <div className="relative z-10 mb-6">
-        <VanAvailability />
+      <div className="relative mb-6">
+        <VanAvailability vanData={vanDeploymentData?.data} />
       </div>
 
-     
-      {/* Van Availability Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Availability Pie Chart */}
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Van Availability</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={dataAvailability}
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-                label
-              >
-                {dataAvailability.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+        
+        
+        <div className="bg-white p-4 rounded-lg shadow-md">
+      <h2 className="text-lg font-bold mb-4">Monthly Response Time by Region</h2>
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart data={formattedData}>
+          <XAxis
+            dataKey="month"
+            stroke="#6b7280"
+            tick={{ fontSize: 14 }}
+            label={{
+              value: "Month",
+              position: "insideBottom",
+              offset: -5,
+            }}
+          />
+          <YAxis
+            stroke="#6b7280"
+            tick={{ fontSize: 14 }}
+            label={{
+              value: "Response Time (mins)",
+              angle: -90,
+              position: "insideLeft",
+              offset: 0,
+              style: { textAnchor: "middle" },
+            }}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: "#f9fafb",
+              borderRadius: "8px",
+              border: "1px solid #e5e7eb",
+            }}
+          />
+          <Legend iconType="circle" wrapperStyle={{ paddingBottom: 10, paddingTop: 10 }} />
 
+          {/* Dynamic Lines for Each Region */}
+          {["North", "South", "East", "West"].map((region, index) => (
+            <Line
+              key={region}
+              type="monotone"
+              dataKey={region}
+              stroke={chartColors[index]}
+              strokeWidth={3}
+              dot={{ r: 5 }}
+              name={region}
+            />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
         {/* Response Times Bar Chart */}
         <div className="bg-white p-4 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Response Times by Region</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            Response Times by Region
+          </h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={dataResponseTimes}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -99,9 +198,60 @@ export default function Tab2() {
           </ResponsiveContainer>
         </div>
 
+        <div className="bg-white p-4 rounded-lg shadow-md">
+      <h2 className="text-lg font-bold mb-4">Monthly Expansion Demand by Region</h2>
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart data={formattedExpansionDemand}>
+          <XAxis
+            dataKey="month"
+            stroke="#6b7280"
+            tick={{ fontSize: 14 }}
+            label={{
+              value: "Month",
+              position: "insideBottom",
+              offset: -5,
+            }}
+          />
+          <YAxis
+            stroke="#6b7280"
+            tick={{ fontSize: 14 }}
+            label={{
+              value: "Response Time (mins)",
+              angle: -90,
+              position: "insideLeft",
+              offset: 0,
+              style: { textAnchor: "middle" },
+            }}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: "#f9fafb",
+              borderRadius: "8px",
+              border: "1px solid #e5e7eb",
+            }}
+          />
+          <Legend iconType="circle" wrapperStyle={{ paddingBottom: 10, paddingTop: 10 }} />
+
+          {/* Dynamic Lines for Each Region */}
+          {["North", "South", "East", "West"].map((region, index) => (
+            <Line
+              key={region}
+              type="monotone"
+              dataKey={region}
+              stroke={chartColors[index]}
+              strokeWidth={3}
+              dot={{ r: 5 }}
+              name={region}
+            />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
         {/* Expansion Demand Bar Chart */}
         <div className="bg-white p-4 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Expansion Demand by Region</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            Expansion Demand by Region
+          </h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={dataExpansionDemand}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -112,6 +262,86 @@ export default function Tab2() {
               <Bar dataKey="demand" fill="#82ca9d" barSize={50} />
             </BarChart>
           </ResponsiveContainer>
+        </div>
+
+        <div className="bg-white p-4 rounded-lg shadow-md">
+      <h2 className="text-lg font-bold mb-4">Monthly Expansion Demand by Region</h2>
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart data={linechartdata}>
+          <XAxis
+            dataKey="month_year"
+            stroke="#6b7280"
+            tick={{ fontSize: 14 }}
+            label={{
+              value: "Month",
+              position: "insideBottom",
+              offset: -5,
+            }}
+          />
+          <YAxis
+            stroke="#6b7280"
+            tick={{ fontSize: 14 }}
+            label={{
+              value: "Response Time (mins)",
+              angle: -90,
+              position: "insideLeft",
+              offset: 0,
+              style: { textAnchor: "middle" },
+            }}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: "#f9fafb",
+              borderRadius: "8px",
+              border: "1px solid #e5e7eb",
+            }}
+          />
+          <Legend iconType="circle" wrapperStyle={{ paddingBottom: 10, paddingTop: 10 }} />
+
+          {/* Dynamic Lines for Each Region */}
+           {  ["available","in_use","out_of_service","under_aintenance","status"].map((region, index) => ( 
+
+            <Line
+              key={region}
+              type="monotone"
+              dataKey={region}
+              stroke={chartColors[index]}
+              strokeWidth={3}
+              dot={{ r: 5 }}
+              name={region}
+            />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+        {/* Availability Pie Chart */}
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Van Availability</h2>
+          <ResponsiveContainer width="100%" height={300}>
+  <PieChart>
+    <Pie
+      data={pieChartData}
+      cx="50%"
+      cy="50%"
+      outerRadius={80}
+      fill="#8884d8"
+      dataKey="value"
+      label
+    >
+      {pieChartData && pieChartData.length > 0 && pieChartData.map((entry, index) => (
+        <Cell
+          key={`cell-${index}`}
+          fill={chartColors[index % chartColors.length]}
+        />
+      ))}
+    </Pie>
+    <Tooltip />
+    {/* <Legend verticalAlign="middle" align="right" layout="vertical" /> */}
+    <Legend />
+
+  </PieChart>
+</ResponsiveContainer>
+
         </div>
       </div>
     </div>

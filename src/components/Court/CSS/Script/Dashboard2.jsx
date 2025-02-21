@@ -4,25 +4,22 @@ import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-// import Tab1 from '../../../Forensic/Scripts/Tab1';
-// import Tab1 from '';
-
-// import Tab2 from '../../../Forensic/Scripts/Tab2';
 import CourtTab1 from './CourtTab1';
 import CourtTab2 from './CourtTab2';
 import CourtTab3 from './CourtTab3';
 import CourtTab4 from './CourtTab4';
 import CourtTab5 from './CourtTab5';
 
+
+
 const tabData = [
-  { label: 'Number of Cases Processed through ICJS', component: <CourtTab1 /> },
-  { label: 'Use of eSummons & Digital Case Records', component: <CourtTab2 /> },
-  { label: 'Video Conferencing Hearings & Case Disposal Rate', component: <CourtTab3 /> },
-  { label: 'Integration with Prosecution & Forensic Departments', component: <CourtTab4 /> },
-  { label: 'NYAYSHRUTI Project Implementation Progress', component: <CourtTab5 /> },
-//   { label: 'Forensic Strengthening Initiatives', component: <ForensicStrengtheningInitiatives /> },
-//   { label: 'MoU with NFSU & Infrastructure Growth', component: <Tab4 /> },
+  { label: 'ICJS Case Processing', component: <CourtTab1 /> },
+  { label: 'eSummons & Digital Records', component: <CourtTab2 /> },
+  { label: 'Video Hearings & Disposal Rate', component: <CourtTab3 /> },
+  { label: 'Prosecution & Forensics Integration', component: <CourtTab4 /> },
+  { label: 'NYAYSHRUTI Implementation', component: <CourtTab5 /> },
 ];
+
 
 function CustomTabPanel({ children, value, index }) {
   return (

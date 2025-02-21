@@ -1,62 +1,119 @@
-import React from 'react';
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import React, { useState } from "react";
+import { Bar } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from "chart.js";
+import ModalComponent from "../../ModalComponent";
+import FirBarGraph from "./FirBarGraph";
 
-// Register the necessary chart components
-ChartJS.register(ArcElement, Tooltip, Legend);
+// Register necessary chart components
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
 
-const PoliceFirs = () => {
-  // Data for the Pie Chart
+const chartColors = [
+  "#8884d8", "#82ca9d", "#f2c57c", "#6a8caf", "#d4a5a5",
+  "#a28bd3", "#ff9a76", "#74b49b", "#c08497", "#b0a8b9",
+];
+
+const PoliceFirs = ({ apidata, downloadReport }) => {
+  const [showModal, setShowModal] = useState(false);
+
+  // Ensure `apidata` is valid and use default values if it's undefined
   const data = {
     labels: [
-      'FIRs Registered (BNS & IPC)',
-      'FIRs Registered (BNS)',
-      'FIRs under BNS (%)',
-      'Chargesheets Filed (BNS)',
-      'Chargesheets Not Filed',
-      'Chargesheets Filed (%)',
+      "FIRs Registered (BNS & IPC)",
+      "FIRs Registered (BNS)",
+      "FIRs under BNS (%)",
+      "Chargesheets Filed (BNS)",
+      "Chargesheets Not Filed",
+      "Chargesheets Filed (%)",
     ],
     datasets: [
       {
-        data: [221008, 207273, 94, 71107, 35480, 34.30], // Corresponding values for each section
-        backgroundColor: ['#FF5733', '#33FF57', '#3357FF', '#FF8C00', '#DAF7A6', '#900C3F'], // Different colors for each section
-        borderColor: ['#FF5733', '#33FF57', '#3357FF', '#FF8C00', '#DAF7A6', '#900C3F'], // Border colors to match
+        label: "FIR Statistics",
+        data: [
+          Number(apidata?.total_no_fir_registered_under_bns_ipc) || 0,
+          Number(apidata?.no_of_fir_registered_under_bns) || 0,
+          Number(apidata?.percentage_of_fir_under_bns_against_total_firs) || 0,
+          Number(apidata?.no_of_chargesheets_filed_under_bns) || 0,
+          Number(apidata?.no_of_chargesheets_not_filed_within_the_stipulated_time) || 0,
+          Number(apidata?.percentage_of_chargesheets_filed_on_the_basis_of_firs_under_bns) || 0,
+        ],
+        backgroundColor: chartColors,
+        borderColor: chartColors,
         borderWidth: 1,
       },
     ],
   };
 
-  // Options for the Pie chart
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
-      legend: {
-        position: 'top',
+      title: {
+        display: false, // Ensures there's no title at the top of the bar graph
       },
-      tooltip: {
-        callbacks: {
-          label: function (tooltipItem) {
-            const label = tooltipItem.label || '';
-            const value = tooltipItem.raw || 0;
-
-            // If the label is related to percentage, add the '%' sign.
-            if (label.includes('Percentage')) {
-              return `${label}: ${value.toFixed(2)}%`; // Formatting the percentage to two decimals
-            } else {
-              return `${label}: ${value.toLocaleString()}`; // Formatting numbers with commas
-            }
-          },
+      legend: {
+        display: false, // Hides the legend if not needed
+      },
+    },
+    scales: {
+      x: {
+        type: "category",
+        title: {
+          display: true,
+          text: "FIR Categories",
+        },
+        ticks: {
+          autoSkip: false,
+          maxRotation: 45,
+          minRotation: 0,
+        },
+      },
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Number of FIRs",
         },
       },
     },
   };
+  
 
   return (
-    <div className="bg-white p-6 mx-auto rounded-lg w-[60%] h-[500px]">
-      <h1 className="text-4xl font-bold mb-8">FIRs New Criminal Laws</h1>
-      <div className="h-full">
-        <Pie data={data} options={options} />
+    <div className="bg-white p-6 mx-auto rounded-lg shadow-lg mt-6">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-semibold text-center flex-grow">FIRs New Criminal Laws</h2>
+        <div className="flex space-x-4">
+          {localStorage.getItem("role") !== "chief secretary" && (
+            <button
+              className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-all"
+              onClick={() => setShowModal(true)}
+            >
+              Add On
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* Charts Section */}
+      <div style={{ width: "100%", display: "flex", gap: "20px" }}>
+        {/* First Chart (Bar Chart) */}
+        <div style={{ flex: "1 1 45%", backgroundColor: "#f4f4f4", padding: "1rem", maxWidth: "100%", height: "400px", display: "flex", justifyContent: "center" }}>
+          <div style={{ backgroundColor: "white", width: "100%", padding: "1rem", display: "flex", justifyContent: "space-around", borderRadius: "5px" }}>
+            <Bar data={data} options={options} width={600} height={400} />
+          </div>
+        </div>
+
+        {/* Second Chart (FirBarGraph) */}
+        <div style={{ flex: "1 1 45%", backgroundColor: "#f4f4f4", padding: "1rem", maxWidth: "100%", height: "400px", display: "flex", justifyContent: "center" }}>
+          <div style={{ backgroundColor: "white", width: "100%", padding: "1rem", display: "flex", justifyContent: "space-around", borderRadius: "5px" }}>
+            <FirBarGraph />
+          </div>
+        </div>
+      </div>
+
+      {/* Modal Component */}
+      <ModalComponent open={showModal} type="fir_1" onClose={() => setShowModal(false)} />
     </div>
   );
 };

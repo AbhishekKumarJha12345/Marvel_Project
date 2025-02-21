@@ -3,7 +3,7 @@ import React from 'react';
 
 export const Card = ({ children }) => {
   return (
-    <div className="card">
+    <div className="card" style={{border:"none"}}>
       {children}
     </div>
   );

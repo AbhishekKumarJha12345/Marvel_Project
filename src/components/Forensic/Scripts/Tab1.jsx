@@ -1,51 +1,67 @@
-import React from "react";
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import React, { useState, forwardRef } from "react";
 import Tabledata from "./Tabledata";
 import Tab1_1 from "./Tab1_1";
+import ModalComponent from "../../Police/ModalComponent";
+import BarGraph from "./BarGraph";
+import OfficersGraph from "./OfficersGraph";
+const Tab1 = forwardRef((props, ref) => {  
+  const [showModal, setShowModal] = useState(false);
+  const [data, setData] = useState([]);
 
-const dataMoUs = [
-  { name: "Signed", value: 40 },
-  { name: "In Progress", value: 30 },
-  { name: "Pending", value: 20 },
-  { name: "Expired", value: 10 },
-];
 
-const dataMoUs2 = [
-  { name: "Approved", value: 50 },
-  { name: "Rejected", value: 25 },
-  { name: "Under Review", value: 25 },
-];
-
-const COLORS_MOUS = ["#4CAF50", "#FFC107", "#FF9800", "#F44336"];
-const COLORS_MOUS2 = ["#2196F3", "#3F51B5", "#673AB7"];
-
-export default function Tab1() {
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-full h-auto">
-
-      <h1 className="text-2xl font-bold mb-6">Forensic Development Dashboard</h1>
-
-      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold">Total Cases Received</h2>
-          <p className="text-3xl font-bold">1,200</p>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold">Cases Processed</h2>
-          <p className="text-3xl font-bold">950</p>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold">Pending Cases</h2>
-          <p className="text-3xl font-bold">250</p>
-        </div>
-      </div> */}
-
+    <div className="rounded-lg w-full max-w-full h-auto" ref={ref}>
+      <div className="flex justify-between items-center ">
+        <h1 className="text-2xl font-bold">Forensic Development Dashboard</h1>
+      </div>
      
-      <Tab1_1 />
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px", width: "100%" }}>
+  
+      <div style={{ backgroundColor: "#f4f4f4", padding: "1rem", borderRadius: "5px" }}>
+  {/* Deviation Section */}
+  <div style={{ background: "white", margin: "10px 0", padding: "10px", borderRadius: "10px", overflow: "auto", border: "1px solid #ddd" }}>
+    <h2 style={{ textAlign: "left", fontSize: "1.5rem", fontWeight: "bold" }}>Deviation</h2>
+    <div style={{ display: "flex", gap: "20px", width: "100%", minHeight: "300px", overflow: "auto" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", borderRight: "1px solid #ddd", paddingRight: "10px" }}>
+        <div style={{ flexGrow: 1, height: "auto", overflow: "auto" }}>
+          <OfficersGraph />
+        </div>
+      </div>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", paddingLeft: "10px" }}>
+        <div style={{ flexGrow: 1, height: "auto", overflow: "auto" }}>
+          <Tabledata setData={setData} />
+        </div>
+      </div>
+    </div>
+  </div>
 
-      <Tabledata />
+  {/* Recent Entry Section */}
+  <div style={{ background: "white", margin: "10px 0", padding: "10px", borderRadius: "10px", overflow: "auto", border: "1px solid #ddd" }}>
+    <h2 style={{ textAlign: "left", fontSize: "1.5rem", fontWeight: "bold" }}>Recent Entry {data && data[0]?.month}</h2>
+    <div style={{ display: "flex", gap: "20px", width: "100%", minHeight: "300px", overflow: "auto" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", borderRight: "1px solid #ddd", paddingRight: "10px" }}>
+        <div style={{ flexGrow: 1, height: "auto", overflow: "auto" }}>
+          <Tab1_1 />
+        </div>
+      </div>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", paddingLeft: "10px" }}>
+        <div style={{ flexGrow: 1, height: "auto", overflow: "auto" }}>
+          <BarGraph data={data} />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+      </div>
+
+
+
+      <ModalComponent open={showModal} type="forensic" onClose={() => setShowModal(false)} />
     </div>
   );
-}
+});
+
+export default Tab1;

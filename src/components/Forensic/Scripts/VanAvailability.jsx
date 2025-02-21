@@ -1,17 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DataTable from "react-data-table-component"; 
 import "tailwindcss/tailwind.css";
 
 // Dummy van data
-const vanData = [
-  { vanId: "VAN001", city: "New York", date: "2024-07-01", count: 2 },
-  { vanId: "VAN002", city: "Los Angeles", date: "2024-07-02", count: 1 },
-  { vanId: "VAN003", city: "Chicago", date: "2024-07-03", count: 3 },
-  { vanId: "VAN004", city: "Houston", date: "2024-07-04", count: 1 },
-  { vanId: "VAN005", city: "Phoenix", date: "2024-07-05", count: 2 },
-];
+// const vanData = [
+//   { vanId: "VAN001", city: "New York", date: "2024-07-01", count: 2 },
+//   { vanId: "VAN002", city: "Los Angeles", date: "2024-07-02", count: 1 },
+//   { vanId: "VAN003", city: "Chicago", date: "2024-07-03", count: 3 },
+//   { vanId: "VAN004", city: "Houston", date: "2024-07-04", count: 1 },
+//   { vanId: "VAN005", city: "Phoenix", date: "2024-07-05", count: 2 },
+// ];
 
-const VanAvailability = () => {
+const VanAvailability = ({vanData}) => {
   const [filters, setFilters] = useState({ vanId: "", city: "", date: "", count: "" });
   const [filteredData, setFilteredData] = useState(vanData);
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
@@ -26,6 +26,15 @@ const VanAvailability = () => {
     setIsModalOpen(false); // Close modal
     setSelectedVan(null);  // Reset selected van
   };
+
+
+  useEffect(() => {
+  console.log("Van Table Data is:", vanData)
+
+    if (vanData && Array.isArray(vanData)) {
+      setFilteredData(vanData);
+    }
+  }, [vanData]);
 
   const handleFilter = (event, key) => {
     const newFilters = { ...filters, [key]: event.target.value.toLowerCase() };
@@ -71,7 +80,7 @@ const VanAvailability = () => {
       cell: (row) => (
         <button
           onClick={() => handleOpenModal(row)}
-          className="bg-blue-500 text-white py-1 px-4 rounded-lg hover:bg-blue-600"
+          className="bg-grey text-black py-1 px-4 border border-black-900 rounded-lg hover:bg-white"
         >
           View Facility
         </button>
@@ -82,7 +91,7 @@ const VanAvailability = () => {
   return (
     <div className="mt-5">
       <h2 className="text-center text-2xl font-semibold mb-4">Mobile Forensic Vans Dashboard</h2>
-      <div className="p-6 w-[98%] mx-auto bg-white shadow-lg rounded-lg">
+      <div className="bg-white p-4 rounded-xl shadow-md">
         {/* Filters */}
         <div className="mb-4">
           <div className="grid grid-cols-4 gap-2">
