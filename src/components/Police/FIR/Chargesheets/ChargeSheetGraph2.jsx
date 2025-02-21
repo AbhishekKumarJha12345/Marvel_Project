@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label
 } from "recharts";
-import axiosInstance from "../../../../utils/axiosInstance"; // Make sure this path is correct!
+import axiosInstance from "../../../../utils/axiosInstance"; // Ensure this path is correct!
 
 const ChargeSheetGraph2 = () => {
   const [data, setData] = useState([]);
@@ -37,10 +37,10 @@ const ChargeSheetGraph2 = () => {
   }, []);
 
   return (
-    <div style={{ width: "100%",padding:"3rem", height: 500, margin: "auto",backgroundColor:"white" }}>
+    <div style={{ width: "100%", padding: "3rem", height: 500, margin: "auto", backgroundColor: "white" }}>
       <h2 style={{ textAlign: "center" }}>FIR Data by Section</h2>
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart 
+        <BarChart 
           data={data} 
           margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
         >
@@ -53,10 +53,10 @@ const ChargeSheetGraph2 = () => {
           </YAxis>
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="total_registered" stroke={chartColors[0]} name="Total Registered" />
-          <Line type="monotone" dataKey="chargesheeted" stroke={chartColors[1]} name="Chargesheeted" />
-          <Line type="monotone" dataKey="under_investigation" stroke={chartColors[2]} name="Under Investigation" />
-        </LineChart>
+          <Bar dataKey="total_registered" fill={chartColors[0]} name="Total Registered" />
+          <Bar dataKey="chargesheeted" fill={chartColors[1]} name="Chargesheeted" />
+          <Bar dataKey="under_investigation" fill={chartColors[2]} name="Under Investigation" />
+        </BarChart>
       </ResponsiveContainer>
     </div>
   );

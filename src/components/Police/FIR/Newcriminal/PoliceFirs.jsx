@@ -46,6 +46,14 @@ const PoliceFirs = ({ apidata, downloadReport }) => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    plugins: {
+      title: {
+        display: false, // Ensures there's no title at the top of the bar graph
+      },
+      legend: {
+        display: false, // Hides the legend if not needed
+      },
+    },
     scales: {
       x: {
         type: "category",
@@ -68,6 +76,7 @@ const PoliceFirs = ({ apidata, downloadReport }) => {
       },
     },
   };
+  
 
   return (
     <div className="bg-white p-6 mx-auto rounded-lg shadow-lg mt-6">
