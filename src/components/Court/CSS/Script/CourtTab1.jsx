@@ -251,6 +251,7 @@ const CourtTab1 = () => {
                   nameKey="name"
                   outerRadius={100}
                   fill="#8884d8"
+                  label
                 >
                   {caseStatusData.map((entry, index) => (
                     <Cell

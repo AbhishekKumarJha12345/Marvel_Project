@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import axiosInstance from '../../utils/axiosInstance'; 
-import ModalComponent from './ModalComponent';
+import React, { useEffect, useState } from "react";
+// import { Pie } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip } from "chart.js";
+import {  ResponsiveContainer,PieChart, Pie, Cell,Legend } from "recharts";
+import axiosInstance from "../../utils/axiosInstance"; 
+import ModalComponent from "./ModalComponent";
 
-// Register chart components
-ChartJS.register(ArcElement, Tooltip, Legend);
+// Register necessary Chart.js elements
+ChartJS.register(ArcElement, Tooltip);
+
 
 const PoliceOfficers = ({ getDate }) => {
   const [showModal, setShowModal] = useState(false);
   const [trainingData, setTrainingData] = useState([]);
-
+  const chartColors = ["#82ca9d", "#8884d8"]; 
   const formatRank = (rank) => {
     return rank.replace(/\b[a-z]/g, (char) => char.toUpperCase()) // Capitalize first letter outside parentheses
                .replace(/\((.*?)\)/g, (match, p1) => `(${p1.toUpperCase()})`); // Convert text inside parentheses to uppercase
@@ -45,31 +47,36 @@ const PoliceOfficers = ({ getDate }) => {
   const totalOfficers = trainingData.reduce((acc, item) => acc + item.trained_officers, 0);
   const availableOfficers = trainingData.reduce((acc, item) => acc + item.available_officers, 0);
 
-  const data = {
-    labels: ['Total Trained Officers', 'Available Officers'],
-    datasets: [
-      {
-        label: 'Officers Data',
-        data: [totalOfficers, availableOfficers],
-        backgroundColor: ['#82ca9d', '#8884d8'],
-        hoverBackgroundColor: ['#4CAF50', '#2196F3'],
-      },
-    ],
-  };
+  // const data = {
+  //   labels: ['Total Trained Officers', 'Available Officers'],
+  //   datasets: [
+  //     {
+  //       label: 'Officers Data',
+  //       data: [totalOfficers, availableOfficers],
+  //       backgroundColor: ['#82ca9d', '#8884d8'],
+  //       hoverBackgroundColor: ['#4CAF50', '#2196F3'],
+  //     },
+  //   ],
+  // };
+  // const options = {
+  //   responsive: true,
+  //   maintainAspectRatio: false,
+  //   plugins: {
+  //     legend: {
+  //       position: 'bottom',
+  //     },
+  //     title: {
+  //       display: true,
+  //       // text: 'Officers Data Comparison',
+  //     },
+  //   },
+  // };
+    const pieData = [
+      { name: "Total Trained Officers", value: totalOfficers },
+      { name: "Available Officers", value: availableOfficers },
+    ];
 
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'bottom',
-      },
-      title: {
-        display: true,
-        // text: 'Officers Data Comparison',
-      },
-    },
-  };
+
 
   return (
     <div className="bg-white p-6 rounded-lg w-[50%] h-[500px] text-center rounded-xl shadow-md">
@@ -77,7 +84,29 @@ const PoliceOfficers = ({ getDate }) => {
         <h1 className="text-xl" style={{ fontWeight: '600' }}>Police Officers</h1>
       </div>
       <div className="h-[400px] w-full">
-        <Pie data={data} options={options} />
+        {/* <Pie data={data} options={options} /> */}
+        <ResponsiveContainer width="100%" height={300}>
+      
+        <PieChart width={400} height={400}>
+          <Pie 
+            data={pieData} 
+            dataKey="value" 
+            nameKey="name" 
+            cx="50%" 
+            cy="50%" 
+            outerRadius={100} 
+            label
+          >
+            {pieData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend verticalAlign="bottom" align="center" layout="horizontal" />
+        </PieChart>
+
+      
+        </ResponsiveContainer>
       </div>
       <ModalComponent
         open={showModal}
