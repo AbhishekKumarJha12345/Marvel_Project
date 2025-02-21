@@ -393,7 +393,6 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
             dateFormat="yyyy-MM-dd"
             className="border border-gray-300 rounded-md p-2 w-full cursor-pointer"
             placeholderText="Select from date"
-            isClearable
           />
         </div>
         <div>
@@ -404,7 +403,6 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
             dateFormat="yyyy-MM-dd"
             className="border border-gray-300 rounded-md p-2 w-full cursor-pointer"
             placeholderText="Select to date"
-            isClearable
           />
         </div>
       </div>
