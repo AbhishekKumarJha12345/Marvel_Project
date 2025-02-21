@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { UploadCloud } from "lucide-react";
 import { IoMdClose } from "react-icons/io";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+
 import {
   PieChart,
   Pie,
@@ -15,12 +19,18 @@ import {
 } from "recharts";
 import axiosInstance from "../../utils/axiosInstance";
 
+import LoginChart from './Logineprosecutor'
+
 const Home = ({ prosecutiondata = {}, fetchData }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("fill");
   const [selectedGraph, setSelectedGraph] = useState("");
   const [file, setFile] = useState(null);
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#A569BD"];
+
+  const [loginData, setLoginData] = useState(null);
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
 
   const ProsecutionSanctionedPositions = [
     {
@@ -94,6 +104,13 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
 
   const LoginDataStatistics = [
     {
+      name: "E_prosecution Login Date",
+      value:
+        Number(
+          prosecutiondata?.logindatastatistics?.additional_public_prosecutor
+        ) || 0,
+    },
+    {
       name: "Additional Public Prosecutor",
       value:
         Number(
@@ -125,9 +142,9 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
     return data.map((entry, index) => {
       if (
         data === ProsecutorsbyCadre &&
-        (entry.name === "ADPP" || 
-        entry.name === "Additional Public Prosecutors" || 
-        entry.name === "Assistant Public Prosecutors")
+        (entry.name === "ADPP" ||
+          entry.name === "Additional Public Prosecutors" ||
+          entry.name === "Assistant Public Prosecutors")
       ) {
         return (
           <div key={index}>
@@ -159,9 +176,9 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
           <div key={index}>
             {/* Name Input Field */}
             <div className="mb-4">
-              {/* <label htmlFor={entry.name} className="block text-left">{entry.name}</label> */}
+              <label htmlFor={entry.name} className="block text-left">{entry.name}</label>
               <input
-                type="text"
+                type={entry.name === 'E_prosecution Login Date' ? 'date' : 'text'}
                 id={entry.name}
                 name={entry.name}
                 placeholder={`${entry.name}`}
@@ -172,7 +189,7 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
         );
       }
     });
-  };  
+  };
 
   const handleSubmit = async () => {
     const fields = [];
@@ -220,6 +237,8 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
         setModalOpen(false);
         setFile(null);
         fetchData();
+    fetchLoginData();
+
       } else {
         alert(response.data.error);
       }
@@ -257,9 +276,44 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
       setModalOpen(false);
       setFile(null);
       fetchData();
+    fetchLoginData();
+
     } catch (error) {
       console.error("Error:", error);
       alert("Failed to upload file.");
+    }
+  };
+
+
+  useEffect(() => {
+    fetchLoginData();
+  }, [fromDate, toDate]);
+
+  const fetchLoginData = async () => {
+    try {
+      const params = {};
+      if (fromDate) params.from_date = fromDate.toISOString().split("T")[0];
+      if (toDate) params.to_date = toDate.toISOString().split("T")[0];
+
+      const response = await axiosInstance.get("/login-data", { params });
+      const data = response.data;
+
+      if (!data || Object.keys(data).length === 0) return;
+
+      const roleNames = Object.keys(data);
+      const labels = data[roleNames[0]].dates || [];
+
+      const datasets = roleNames.map((role, index) => ({
+        label: role,
+        data: data[role].logins,
+        borderColor: `hsl(${(index * 137.5) % 360}, 70%, 50%)`,
+        backgroundColor: `hsl(${(index * 137.5) % 360}, 70%, 70%)`,
+        fill: false,
+      }));
+
+      setLoginData({ labels, datasets });
+    } catch (error) {
+      console.error("Error fetching login data:", error);
     }
   };
 
@@ -278,11 +332,14 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
           >
             Add Data
           </button> */}
+
+
+
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">
               Prosecution Sanctioned Positions
             </h2>
-            {localStorage.getItem('role') !=='chief secretary' && <button
+            {localStorage.getItem('role') !== 'chief secretary' && <button
               onClick={() => handleOpenModal("first")}
               className="bg-gray-700 text-white px-4 py-2 rounded"
             >
@@ -314,40 +371,45 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold">Login Data Statistics</h2>
-            {localStorage.getItem('role') !=='chief secretary' && <button
+
+          
+          <div className="p-4 bg-white rounded-lg shadow-md w-full h-full">
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-semibold">Login Data Statistics for E-Prosecution</h2>
+        {localStorage.getItem('role') !== 'chief secretary' && <button
               onClick={() => handleOpenModal("third")}
               className="bg-gray-700 text-white px-4 py-2 rounded"
             >
               Add Data
             </button>}
-          </div>
-          <div className="flex justify-center items-center w-full h-full">
-            <PieChart width={400} height={400}>
-              <Pie
-                data={LoginDataStatistics}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                label
-              >
-                {LoginDataStatistics.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </div>
+      </div>
+
+      <div className="flex gap-4 mb-4">
+        <div>
+          <label>From:</label>
+          <DatePicker
+            selected={fromDate}
+            onChange={setFromDate}
+            dateFormat="yyyy-MM-dd"
+            className="border border-gray-300 rounded-md p-2 w-full cursor-pointer"
+            placeholderText="Select from date"
+          />
         </div>
+        <div>
+          <label>To:</label>
+          <DatePicker
+            selected={toDate}
+            onChange={setToDate}
+            dateFormat="yyyy-MM-dd"
+            className="border border-gray-300 rounded-md p-2 w-full cursor-pointer"
+            placeholderText="Select to date"
+          />
+        </div>
+      </div>
+
+      <LoginChart data={loginData} />
+    </div>
+
       </div>
 
       <div className="bg-white p-4 rounded-xl shadow-md mt-6 w-1/2">
@@ -355,7 +417,7 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
           <h2 className="text-xl font-semibold mb-4 text-left">
             Number of Prosecutors by Cadre
           </h2>
-         {localStorage.getItem('role') !=='chief secretary' && <button
+          {localStorage.getItem('role') !== 'chief secretary' && <button
             onClick={() => handleOpenModal("second")}
             className="bg-gray-700 text-white px-4 py-2 rounded"
           >
@@ -395,21 +457,19 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
               <div className="p-6">
                 <div className="flex gap-4 rounded-sm px-8 py-3 mb-4 mt-2">
                   <button
-                    className={`w-1/2 p-2.5 text-sm font-semibold rounded-md ${
-                      selectedOption === "fill"
+                    className={`w-1/2 p-2.5 text-sm font-semibold rounded-md ${selectedOption === "fill"
                         ? "bg-gray-700 text-white"
                         : "text-gray-600 border"
-                    }`}
+                      }`}
                     onClick={() => setSelectedOption("fill")}
                   >
                     Fill Form
                   </button>
                   <button
-                    className={`w-1/2 py-2.5 text-sm font-semibold rounded-md ${
-                      selectedOption === "upload"
+                    className={`w-1/2 py-2.5 text-sm font-semibold rounded-md ${selectedOption === "upload"
                         ? "bg-gray-700 text-white"
                         : "text-gray-600 border"
-                    }`}
+                      }`}
                     onClick={() => setSelectedOption("upload")}
                   >
                     Upload File
