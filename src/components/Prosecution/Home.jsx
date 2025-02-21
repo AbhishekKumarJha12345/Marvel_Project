@@ -1,10 +1,6 @@
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
 import { UploadCloud } from "lucide-react";
 import { IoMdClose } from "react-icons/io";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-
-
 import {
   PieChart,
   Pie,
@@ -16,10 +12,13 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
+  LineChart,
+  Line,
+  ResponsiveContainer
 } from "recharts";
-import axiosInstance from "../../utils/axiosInstance";
 
-import LoginChart from './Logineprosecutor'
+
+import axiosInstance from "../../utils/axiosInstance";
 
 const Home = ({ prosecutiondata = {}, fetchData }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -28,44 +27,43 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
   const [file, setFile] = useState(null);
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#A569BD"];
 
-  const [loginData, setLoginData] = useState(null);
-  const [fromDate, setFromDate] = useState(null);
-  const [toDate, setToDate] = useState(null);
-
   const ProsecutionSanctionedPositions = [
     {
       name: "Director",
       value:
         Number(
-          prosecutiondata?.prosecutionsanctionedpositions?.director
+          prosecutiondata?.prosecutionsanctionedpositions?.[0]?.director
         ) || 0,
     },
     {
       name: "Deputy Director",
       value:
         Number(
-          prosecutiondata?.prosecutionsanctionedpositions?.deputy_director
+          prosecutiondata?.prosecutionsanctionedpositions?.[0]?.deputy_director
         ) || 0,
     },
     {
       name: "Assistant Director Public Prosecutor",
       value:
         Number(
-          prosecutiondata?.prosecutionsanctionedpositions?.assistant_director_public_prosecutor
+          prosecutiondata?.prosecutionsanctionedpositions?.[0]
+            ?.assistant_director_public_prosecutor
         ) || 0,
     },
     {
       name: "Additional Public Prosecutor",
       value:
         Number(
-          prosecutiondata?.prosecutionsanctionedpositions?.additional_public_prosecutor
+          prosecutiondata?.prosecutionsanctionedpositions?.[0]
+            ?.additional_public_prosecutor
         ) || 0,
     },
     {
       name: "Assistant Public Prosecutors",
       value:
         Number(
-          prosecutiondata?.prosecutionsanctionedpositions?.assistant_public_prosecutors
+          prosecutiondata?.prosecutionsanctionedpositions?.[0]
+            ?.assistant_public_prosecutors
         ) || 0,
     },
   ];
@@ -74,64 +72,145 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
     {
       name: "ADPP",
       prosecutors:
-        Number(prosecutiondata?.prosecutorsbycadre?.adpp_prosecutors) || 0,
+        Number(prosecutiondata?.prosecutorsbycadre?.[0]?.adpp_prosecutors) || 0,
       percentage:
-        Number(prosecutiondata?.prosecutorsbycadre?.adpp_percentage) || 0,
+        Number(prosecutiondata?.prosecutorsbycadre?.[0]?.adpp_percentage) || 0,
     },
     {
       name: "Additional Public Prosecutors",
       prosecutors:
         Number(
-          prosecutiondata?.prosecutorsbycadre?.additional_public_prosecutors_prosecutors
+          prosecutiondata?.prosecutorsbycadre?.[0]
+            ?.additional_public_prosecutors_prosecutors
         ) || 0,
       percentage:
         Number(
-          prosecutiondata?.prosecutorsbycadre?.additional_public_prosecutors_percentage
+          prosecutiondata?.prosecutorsbycadre?.[0]
+            ?.additional_public_prosecutors_percentage
         ) || 0,
     },
     {
       name: "Assistant Public Prosecutors",
       prosecutors:
         Number(
-          prosecutiondata?.prosecutorsbycadre?.assistant_public_prosecutors_prosecutors
+          prosecutiondata?.prosecutorsbycadre?.[0]
+            ?.assistant_public_prosecutors_prosecutors
         ) || 0,
       percentage:
         Number(
-          prosecutiondata?.prosecutorsbycadre?.assistant_public_prosecutors_percentage
+          prosecutiondata?.prosecutorsbycadre?.[0]
+            ?.assistant_public_prosecutors_percentage
         ) || 0,
     },
   ];
 
+
+  // const ProsecutorsbyCadres = prosecutiondata?.prosecutorsbycadre?.map((item) => ({
+  //   month: item?.month || "Unknown",
+  //   ADPP: Number(item?.adpp_prosecutors) || 0,
+  //   ADPP_Percentage: Number(item?.adpp_percentage) || 0,
+  //   Additional_PP: Number(item?.additional_public_prosecutors_prosecutors) || 0,
+  //   Additional_PP_Percentage: Number(item?.additional_public_prosecutors_percentage) || 0,
+  //   Assistant_PP: Number(item?.assistant_public_prosecutors_prosecutors) || 0,
+  //   Assistant_PP_Percentage: Number(item?.assistant_public_prosecutors_percentage) || 0,
+  // })) || [];
+
+
+
+
+  // Convert "MM/YYYY" to an object with month name and year
+  const monthOrder = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  // const ProsecutorsbyCadres = (prosecutiondata?.prosecutorsbycadre || [])
+  //   .map((item) => {
+  //     const [monthNum, year] = item?.month_year?.split("/") || ["", ""]; // Extract month & year
+  //     const monthIndex = parseInt(monthNum, 10) - 1; // Convert to zero-based index (0 = Jan, 1 = Feb, etc.)
+
+  //     return {
+  //       monthYearLabel: monthIndex >= 0 ? `${monthOrder[monthIndex]}${year}` : "Unknown", // Format "February2025"
+  //       month: monthIndex,
+  //       year: parseInt(year, 10) || 0,
+  //       ADPP: Number(item?.adpp_prosecutors) || 0,
+  //       ADPP_Percentage: Number(item?.adpp_percentage) || 0,
+  //       Additional_PP: Number(item?.additional_public_prosecutors_prosecutors) || 0,
+  //       Additional_PP_Percentage: Number(item?.additional_public_prosecutors_percentage) || 0,
+  //       Assistant_PP: Number(item?.assistant_public_prosecutors_prosecutors) || 0,
+  //       Assistant_PP_Percentage: Number(item?.assistant_public_prosecutors_percentage) || 0,
+  //     };
+  //   })
+  //   // Sort by year first, then by month number
+  //   .sort((a, b) => a.year - b.year || a.month - b.month);
+
+  // // Format X-axis labels as "Month Year"
+  // const formattedData = ProsecutorsbyCadres.map(item => ({
+  //   ...item,
+  //   monthYear: `${item.month} ${item.year}`
+  // }));
+
+
+  const [selectedCategory, setSelectedCategory] = useState("Prosecutors");
+  const [startMonthYear, setStartMonthYear] = useState("");
+  const [endMonthYear, setEndMonthYear] = useState("");
+
+  // Transform raw data
+  const ProsecutorsbyCadres = (prosecutiondata?.prosecutorsbycadre || []).map((item) => {
+    const [monthNum, year] = item?.month_year?.split("/") || ["", ""]; // Extract MM/YYYY
+    const monthIndex = parseInt(monthNum, 10) - 1; // Convert MM to index (0 = Jan)
+
+    return {
+      monthYearLabel: monthIndex >= 0 ? `${monthOrder[monthIndex]} ${year}` : "Unknown", // Format "February 2025"
+      month: monthIndex,
+      year: parseInt(year, 10) || 0,
+      numericDate: parseInt(`${year}${monthNum}`), // Convert to YYYYMM format for easy comparison
+      ADPP: Number(item?.adpp_prosecutors) || 0,
+      ADPP_Percentage: Number(item?.adpp_percentage) || 0,
+      Additional_PP: Number(item?.additional_public_prosecutors_prosecutors) || 0,
+      Additional_PP_Percentage: Number(item?.additional_public_prosecutors_percentage) || 0,
+      Assistant_PP: Number(item?.assistant_public_prosecutors_prosecutors) || 0,
+      Assistant_PP_Percentage: Number(item?.assistant_public_prosecutors_percentage) || 0,
+    };
+  }).sort((a, b) => a.numericDate - b.numericDate);
+
+  // Convert start & end range to YYYYMM format
+  const startNumericDate = startMonthYear ? parseInt(startMonthYear.replace("-", "")) : null;
+  const endNumericDate = endMonthYear ? parseInt(endMonthYear.replace("-", "")) : null;
+
+  // Filter data based on selected month-year range
+  const filteredData = ProsecutorsbyCadres.filter((item) => {
+    if (startNumericDate && item.numericDate < startNumericDate) return false;
+    if (endNumericDate && item.numericDate > endNumericDate) return false;
+    return true;
+  });
+
   const LoginDataStatistics = [
-    {
-      name: "E_prosecution Login Date",
-      value:
-        Number(
-          prosecutiondata?.logindatastatistics?.additional_public_prosecutor
-        ) || 0,
-    },
     {
       name: "Additional Public Prosecutor",
       value:
         Number(
-          prosecutiondata?.logindatastatistics?.additional_public_prosecutor
+          prosecutiondata?.logindatastatistics?.[0]
+            ?.additional_public_prosecutor
         ) || 0,
     },
     {
       name: "Assistant Public Prosecutor",
       value:
         Number(
-          prosecutiondata?.logindatastatistics?.assistant_public_prosecutor
+          prosecutiondata?.logindatastatistics?.[0]?.assistant_public_prosecutor
         ) || 0,
     },
     {
       name: "Assistant Public Prosecutor Appointed",
       value:
         Number(
-          prosecutiondata?.logindatastatistics?.assistant_public_prosecutor_appointed
+          prosecutiondata?.logindatastatistics?.[0]
+            ?.assistant_public_prosecutor_appointed
         ) || 0,
     },
   ];
+  console.log("prosecutiondata:", prosecutiondata)
 
   const handleOpenModal = (graphType) => {
     setSelectedGraph(graphType);
@@ -139,56 +218,30 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
   };
 
   const getInputFields = (data) => {
-    return data.map((entry, index) => {
-      if (
-        data === ProsecutorsbyCadre &&
-        (entry.name === "ADPP" ||
-          entry.name === "Additional Public Prosecutors" ||
-          entry.name === "Assistant Public Prosecutors")
-      ) {
-        return (
-          <div key={index}>
-            <div className="mb-4">
-              {/* <label htmlFor={`${entry.name}_prosecutors`} className="block text-left">{`${entry.name}_prosecutors`}</label> */}
-              <input
-                type="text"
-                id={`${entry.name}_prosecutors`}
-                name={`${entry.name}_prosecutors`}
-                placeholder={`${entry.name}_prosecutors`}
-                className="mt-1 p-3 border border-gray-300 rounded w-full"
-              />
-            </div>
-            {/* Percentage Input Field */}
-            <div className="mb-4">
-              {/* <label htmlFor={`${entry.name}_percentage`} className="block text-left">{`${entry.name}_percentage`}</label> */}
-              <input
-                type="text"
-                id={`${entry.name}_percentage`}
-                name={`${entry.name}_percentage`}
-                placeholder={`${entry.name}_percentage`}
-                className="mt-1 p-3 border border-gray-300 rounded w-full"
-              />
-            </div>
+    return data.map((entry, index) => (
+      <div key={index}>
+        <div className="mb-4">
+          <input
+            type="text"
+            id={`${entry.name}_prosecutors`}
+            name={`${entry.name}_prosecutors`}
+            placeholder={`${entry.name}_prosecutors`}
+            className="mt-1 p-3 border border-gray-300 rounded w-full"
+          />
+        </div>
+        {entry.prosecutors !== undefined && (
+          <div className="mb-4">
+            <input
+              type="text"
+              id={`${entry.name}_percentage`}
+              name={`${entry.name}_percentage`}
+              placeholder={`${entry.name}_percentage`}
+              className="mt-1 p-3 border border-gray-300 rounded w-full"
+            />
           </div>
-        );
-      } else {
-        return (
-          <div key={index}>
-            {/* Name Input Field */}
-            <div className="mb-4">
-              <label htmlFor={entry.name} className="block text-left">{entry.name}</label>
-              <input
-                type={entry.name === 'E_prosecution Login Date' ? 'date' : 'text'}
-                id={entry.name}
-                name={entry.name}
-                placeholder={`${entry.name}`}
-                className="mt-1 p-3 border border-gray-300 rounded w-full"
-              />
-            </div>
-          </div>
-        );
-      }
-    });
+        )}
+      </div>
+    ));
   };
 
   const handleSubmit = async () => {
@@ -237,8 +290,6 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
         setModalOpen(false);
         setFile(null);
         fetchData();
-    fetchLoginData();
-
       } else {
         alert(response.data.error);
       }
@@ -276,8 +327,6 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
       setModalOpen(false);
       setFile(null);
       fetchData();
-    fetchLoginData();
-
     } catch (error) {
       console.error("Error:", error);
       alert("Failed to upload file.");
@@ -285,37 +334,72 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
   };
 
 
-  useEffect(() => {
-    fetchLoginData();
-  }, [fromDate, toDate]);
+  // const rawData = [
+  //   {
+  //     month: "Jan",
+  //     additional_public_prosecutors_percentage: 15,
+  //     additional_public_prosecutors_prosecutors: 30,
+  //     adpp_percentage: 45,
+  //     adpp_prosecutors: 35,
+  //     assistant_public_prosecutors_percentage: 25,
+  //     assistant_public_prosecutors_prosecutors: 40,
+  //   },
 
-  const fetchLoginData = async () => {
-    try {
-      const params = {};
-      if (fromDate) params.from_date = fromDate.toISOString().split("T")[0];
-      if (toDate) params.to_date = toDate.toISOString().split("T")[0];
+  // ];
 
-      const response = await axiosInstance.get("/login-data", { params });
-      const data = response.data;
+  // const countOptions = [
+  //   { key: "additional_public_prosecutors_prosecutors", label: "Additional Public Prosecutors Count" },
+  //   { key: "adpp_prosecutors", label: "ADPP Count" },
+  //   { key: "assistant_public_prosecutors_prosecutors", label: "Assistant Public Prosecutors Count" },
+  // ];
 
-      if (!data || Object.keys(data).length === 0) return;
+  // // Percentages (Option 2)
+  // const percentageOptions = [
+  //   { key: "additional_public_prosecutors_percentage", label: "Additional Public Prosecutors %" },
+  //   { key: "adpp_percentage", label: "ADPP %" },
+  //   { key: "assistant_public_prosecutors_percentage", label: "Assistant Public Prosecutors %" },
+  // ];
 
-      const roleNames = Object.keys(data);
-      const labels = data[roleNames[0]].dates || [];
+  //   const [selectedCategory, setSelectedCategory] = useState("Prosecutors");
 
-      const datasets = roleNames.map((role, index) => ({
-        label: role,
-        data: data[role].logins,
-        borderColor: `hsl(${(index * 137.5) % 360}, 70%, 50%)`,
-        backgroundColor: `hsl(${(index * 137.5) % 360}, 70%, 70%)`,
-        fill: false,
-      }));
+  //   const dataToDisplay =
+  //     selectedCategory === "Prosecutors" ? countOptions : percentageOptions;
 
-      setLoginData({ labels, datasets });
-    } catch (error) {
-      console.error("Error fetching login data:", error);
-    }
-  };
+
+
+
+  // const [selectedCategory, setSelectedCategory] = useState("Prosecutors");
+  // const [startMonthYear, setStartMonthYear] = useState("");
+  // const [endMonthYear, setEndMonthYear] = useState("");
+
+  // const dataKeys =
+  //   selectedCategory === "Prosecutors"
+  //     ? [
+  //         { key: "ADPP", label: "ADPP Prosecutors", color: "#34d399" },
+  //         { key: "Additional_PP", label: "Additional PP", color: "#6366f1" },
+  //         { key: "Assistant_PP", label: "Assistant PP", color: "#f59e0b" },
+  //       ]
+  //     : [
+  //         { key: "ADPP_Percentage", label: "ADPP %", color: "#34d399" },
+  //         { key: "Additional_PP_Percentage", label: "Additional PP %", color: "#6366f1" },
+  //         { key: "Assistant_PP_Percentage", label: "Assistant PP %", color: "#f59e0b" },
+  //       ];
+
+
+
+  const dataKeys =
+    selectedCategory === "Prosecutors"
+      ? [
+        { key: "ADPP", label: "ADPP Prosecutors", color: "#34d399" },
+        { key: "Additional_PP", label: "Additional PP", color: "#6366f1" },
+        { key: "Assistant_PP", label: "Assistant PP", color: "#f59e0b" },
+      ]
+      : [
+        { key: "ADPP_Percentage", label: "ADPP %", color: "#34d399" },
+        { key: "Additional_PP_Percentage", label: "Additional PP %", color: "#6366f1" },
+        { key: "Assistant_PP_Percentage", label: "Assistant PP %", color: "#f59e0b" },
+      ];
+
 
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
@@ -323,28 +407,17 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-4 rounded-xl shadow-md">
-          {/* <h2 className="text-xl font-semibold mb-4">
-            Prosecution Sanctioned Positions
-          </h2>
-          <button
-            onClick={() => handleOpenModal("first")}
-            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Add Data
-          </button> */}
-
-
 
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">
               Prosecution Sanctioned Positions
             </h2>
-            {localStorage.getItem('role') !== 'chief secretary' && <button
+            <button
               onClick={() => handleOpenModal("first")}
               className="bg-gray-700 text-white px-4 py-2 rounded"
             >
               Add Data
-            </button>}
+            </button>
           </div>
 
           <div className="flex justify-center items-center w-full h-full">
@@ -371,76 +444,118 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
           </div>
         </div>
 
-
-          
-          <div className="p-4 bg-white rounded-lg shadow-md w-full h-full">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Login Data Statistics for E-Prosecution</h2>
-        {localStorage.getItem('role') !== 'chief secretary' && <button
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold">Login Data Statistics</h2>
+            <button
               onClick={() => handleOpenModal("third")}
               className="bg-gray-700 text-white px-4 py-2 rounded"
             >
               Add Data
-            </button>}
-      </div>
-
-      <div className="flex gap-4 mb-4">
-        <div>
-          <label>From:</label>
-          <DatePicker
-            selected={fromDate}
-            onChange={setFromDate}
-            dateFormat="yyyy-MM-dd"
-            className="border border-gray-300 rounded-md p-2 w-full cursor-pointer"
-            placeholderText="Select from date"
-            isClearable
-          />
+            </button>
+          </div>
+          <div className="flex justify-center items-center w-full h-full">
+            <PieChart width={400} height={400}>
+              <Pie
+                data={LoginDataStatistics}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={100}
+                label
+              >
+                {LoginDataStatistics.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </div>
         </div>
-        <div>
-          <label>To:</label>
-          <DatePicker
-            selected={toDate}
-            onChange={setToDate}
-            dateFormat="yyyy-MM-dd"
-            className="border border-gray-300 rounded-md p-2 w-full cursor-pointer"
-            placeholderText="Select to date"
-            isClearable
-          />
-        </div>
       </div>
 
-      <LoginChart data={loginData} />
-    </div>
-
-      </div>
-
-      <div className="bg-white p-4 rounded-xl shadow-md mt-6 w-1/2">
+      <div className="bg-white p-4 rounded-xl shadow-md mt-6">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold mb-4 text-left">
             Number of Prosecutors by Cadre
           </h2>
-          {localStorage.getItem('role') !== 'chief secretary' && <button
+          <button
             onClick={() => handleOpenModal("second")}
             className="bg-gray-700 text-white px-4 py-2 rounded"
           >
             Add Data
-          </button>}
+          </button>
         </div>
 
+        <div className="flex items-center justify-center gap-2">
+          <label className="text-sm font-medium text-gray-700 w-50">Select Month-Year Range:</label>
+          <input
+            type="month"
+            value={startMonthYear}
+            onChange={(e) => setStartMonthYear(e.target.value)}
+            className="border p-1 h-8 w-40 text-sm rounded"
+          />
+          <span className="text-gray-700 font-medium">to</span>
+          <input
+            type="month"
+            value={endMonthYear}
+            onChange={(e) => setEndMonthYear(e.target.value)}
+            className="border p-1 h-8 w-40 text-sm rounded"
+          />
+
+
+          {/* Category Selection */}
+
+          <label className="text-sm font-medium text-gray-700 w-30">Select Category:</label>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="border p-1 h-8 w-48 text-sm rounded"
+          >
+            <option value="Prosecutors">Prosecutors</option>
+            <option value="Percentages">Percentages</option>
+          </select>
+
+        </div>
         <div className="flex justify-center">
-          <BarChart width={800} height={300} data={ProsecutorsbyCadre}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip
-              formatter={(value, name) =>
-                name === "percentage" ? `${value}% ` : value
-              }
-            />
-            <Legend className="relative left-0" />
-            <Bar dataKey="prosecutors" fill="#82ca9d" />
-            <Bar dataKey="percentage" fill="#48CAE4" />
-          </BarChart>
+
+
+          <div className="mt-6 w-full h-[400px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={filteredData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="monthYearLabel" stroke="#6b7280" tick={{ fontSize: 14 }} />
+                <YAxis stroke="#6b7280" tick={{ fontSize: 14 }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#f9fafb",
+                    borderRadius: "8px",
+                    border: "1px solid #e5e7eb",
+                  }}
+                />
+                <Legend iconType="circle" wrapperStyle={{ paddingBottom: 10 }} />
+
+                {dataKeys.map((metric) => (
+                  <Line
+                    key={metric.key}
+                    type="monotone"
+                    dataKey={metric.key}
+                    stroke={metric.color}
+                    strokeWidth={4}
+                    dot={{ r: 5 }}
+                    name={metric.label}
+                  />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
         </div>
 
         {modalOpen && (
