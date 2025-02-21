@@ -3,6 +3,7 @@ import PolicePunishment from '../Police/PolicePunishment ';
 import PolicevisitsforensicTeams from '../Police/Policevisitsforensicteams';
 import Policevisitsforensic from '../Police/Policevisitsforesic';
 import axiosInstance from '../../utils/axiosInstance';
+import PolicePunishment2 from './PolicePunishment2';
 
 
 
@@ -76,16 +77,17 @@ function Forensicvisits() {
       {/* Tab Content */}
       <div className="mt-4">
         {activeTab === 'home' ? (
-         <div className="col-6">
-         <div className="card shadow-sm bg-white text-right p-2">
+         <div className="col-6" style={{width:"100%"}}>
+         <div className="card shadow-sm bg-white text-right p-2" style={{width:"100%"}}>
          {/* <button
                   onClick={generateReport}
                   className="mt-4 px-4 py-2 bg-[#2d3748] text-white rounded"
                 >
                   Download Report
                 </button> */}
-           <div className="card-body">
+           <div className="card-body" style={{display:"flex",justifyContent:"space-around",backgroundColor:"#f4f4f4"}}>
              <PolicePunishment />
+             <PolicePunishment2 />
            </div>
          </div>
        </div>

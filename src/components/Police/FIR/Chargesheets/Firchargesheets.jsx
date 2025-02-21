@@ -154,29 +154,27 @@ const [recentData,setRecentData] =useState('')
       <h2 className="text-xl font-semibold">Deviation</h2>
       <div style={{display:"flex",gap:"0.5rem"}}>
 
-        <div style={{backgroundColor:"#f4f4f4",width:"49%",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
+        <div style={{backgroundColor:"#f4f4f4",width:"100%",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
               <CaseStatus />
               </div>
               <br/>
               <hr/>
-        <div style={{backgroundColor:"#f4f4f4",width:"49%",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
-              <ChargeSheetGraph2 />
-            </div>
+       
             </div>
             <h1 className="text-xl font-semibold mb-4" style={{marginTop:"1rem"}}>
   Recent Entry  :
    {recentData.toLocaleString()}
   {/* {trainingData && trainingData[0] && new Date(trainingData[0].uploaded_date).toLocaleString()} */}
 </h1>
-        <div style={{backgroundColor:"#f4f4f4",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
+<div style={{width:"100%",display:"flex",gap:"2rem"}}>
+        <div style={{backgroundColor:"#f4f4f4",width:"40%",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
         <CaseStatus getrecentdatatime={getrecentdatatime} type='recent'/>
-
-        {/* <PoliceOfficers getDate={getDate}/> */}
-          
-
         <br/>
-        {/* <MasterTrainers /> */}
         </div>
+        <div style={{backgroundColor:"#f4f4f4",width:"60%",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
+              <ChargeSheetGraph2 />
+            </div>
+            </div>
             </div>
             </div>
           </div>

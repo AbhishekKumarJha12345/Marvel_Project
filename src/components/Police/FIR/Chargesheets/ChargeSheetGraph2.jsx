@@ -37,7 +37,7 @@ const ChargeSheetGraph2 = () => {
   }, []);
 
   return (
-    <div style={{ width: "100%",padding:"3rem", height: 400, margin: "auto",backgroundColor:"white" }}>
+    <div style={{ width: "100%",padding:"3rem", height: 500, margin: "auto",backgroundColor:"white" }}>
       <h2 style={{ textAlign: "center" }}>FIR Data by Section</h2>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart 

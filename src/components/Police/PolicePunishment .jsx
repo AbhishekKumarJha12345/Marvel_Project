@@ -56,8 +56,8 @@ const PolicePunishment = () => {
   };
 
   return (
-    <div className="p-6 rounded-lg flex flex-col">
-      <div className="h-[450px]">
+    <div className="p-6 rounded-lg flex flex-col" style={{backgroundColor:"white",width:"48%",display:"flex",justifyContent:"center"}}>
+      <div className="h-[360px]" style={{display:"flex",justifyContent:"center"}}>
         <Pie data={data} options={options} />
       </div>
     </div>

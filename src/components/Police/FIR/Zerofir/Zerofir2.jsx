@@ -5,7 +5,7 @@ import {
 } from "recharts";
 import axiosInstance from "../../../../utils/axiosInstance";
 
-const ZeroFir2 = ({ type }) => {
+const ZeroFir2 = ({ getRecentDate,type }) => {
   const [data, setData] = useState([]);
   const chartColors = ["#8884d8", "#82ca9d", "#f2c57c"];
 
@@ -21,6 +21,7 @@ const ZeroFir2 = ({ type }) => {
         const response = await axiosInstance.get("/live_data?type=line_fir_4");
 
         if (response.data.data_dict) {
+          getRecentDate(response.data.data_dict[0].month)
           const sortedData = response.data.data_dict
             .map(item => ({
               month: convertMonthFormat(item.month),

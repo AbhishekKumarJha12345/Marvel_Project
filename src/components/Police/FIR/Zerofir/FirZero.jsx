@@ -61,6 +61,11 @@ function FirZero() {
       console.error("Error downloading report:", error);
     }
   };
+const [recentDate,setRecentDate]=useState('')
+const getRecentDate =(data)=>{
+  setRecentDate(data)
+
+}
 
   return (
     <div>
@@ -126,7 +131,7 @@ function FirZero() {
                 <div style={{width:"100%",display:"flex",flexDirection:"column",gap:"0.5rem"}}>
                   <div style={{display:"flex",gap:"39rem"}}>
                 <h2 className="text-xl font-semibold">Deviation </h2>
-                <h2 className="text-xl font-semibold">Recent Entry </h2>  
+                <h2 className="text-xl font-semibold">Recent Entry :{recentDate}</h2>  
                 </div>
 <div style={{display:"flex",gap:"0.5rem"}}>
 <div style={{backgroundColor:"#f4f4f4",width:"49%",height:"400px",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
@@ -136,7 +141,7 @@ function FirZero() {
       <br/>
       <hr/>
 <div style={{backgroundColor:"#f4f4f4",width:"49%",height:"400px",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
-<ZeroFir2 type='recent' />
+<ZeroFir2 type='recent' getRecentDate={getRecentDate}/>
 
     </div>
     </div>
