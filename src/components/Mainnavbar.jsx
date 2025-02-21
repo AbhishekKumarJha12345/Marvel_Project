@@ -122,10 +122,10 @@ function Mainnavbar() {
           <div className="relative">
             <button
               onClick={() => toggleDropdown("profile")}
-              className="flex items-center space-x-2 text-gray-700 hover:[#2d3748]"
+              className="flex items-center space-x-2 text-gray-700 hover:[#2d3748]" style={{display:"flex",alignItems:"center"}}
             >
               <FaUser size={22} />
-              <p>{toCamelCase(users)}</p>
+              <span>{toCamelCase(users)}</span>
 
               <FaChevronDown size={16} className="text-gray-400" />
             </button>
