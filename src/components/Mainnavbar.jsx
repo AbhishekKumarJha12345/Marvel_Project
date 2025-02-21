@@ -130,12 +130,12 @@ function Mainnavbar() {
               <FaChevronDown size={16} className="text-gray-400" />
             </button>
             {isOpen.profile && (
-              <div className="absolute right-0 mt-2 w-36 bg-white shadow-md rounded-lg">
+              <div className="absolute right-0 mt-2 w-36 bg-white shadow-md rounded-lg" style={{zIndex:"1"}}>
                 {/* <button className="block px-4 py-2 w-full text-left hover:bg-gray-100">
                   Profile
                 </button> */}
                 <button
-                  className="block px-4 py-2 w-full rounded-lg text-left text-white z-1 bg-[#ef3535]"
+                  className="block px-4 py-2 w-full rounded-lg text-left text-white bg-[#ef3535]"
                   onClick={handelLogout}
                 >
                   Logout
