@@ -184,8 +184,9 @@ export default function ForensicDashboard() {
       
       {/* Infrastructure Development Bar Chart */}
       <div className="bg-white p-4 rounded-xl shadow-md">
+      <h2 className="text-xl font-semibold mb-4">Recent Entry:{dataInfrastructureMonthly[dataInfrastructureMonthly.length-1]?.month}</h2>
+
         <h2 className="text-xl font-semibold mb-4">Infrastructure Development Projects</h2>
-        <h2 className="text-xl font-semibold mb-4">Recent Entry:{dataInfrastructureMonthly[dataInfrastructureMonthly.length-1]?.month}</h2>
 
         <ResponsiveContainer width="100%" height={300}>
 <PieChart>
@@ -197,7 +198,8 @@ export default function ForensicDashboard() {
     cy="50%" 
     outerRadius={100} 
     fill="#8884d8" 
-    label
+    label={({ name, percent }) => ` ${(percent * 100).toFixed(1)}%`}
+
   >
     {dataInfrastructure.map((entry, index) => (
       <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
@@ -212,8 +214,9 @@ export default function ForensicDashboard() {
 
       {/* MoUs Pie Chart */}
       <div className="bg-white p-4 rounded-xl shadow-md">
+      <h2 className="text-xl font-semibold mb-4">Recent Entry:{dataMoUsMonthly[dataMoUsMonthly.length-1]?.month}</h2>
+
                 <h2 className="text-xl font-semibold mb-4">MoUs with NFSU</h2>
-        <h2 className="text-xl font-semibold mb-4">Recent Entry:{dataMoUsMonthly[dataMoUsMonthly.length-1]?.month}</h2>
 
                 <ResponsiveContainer width="100%" height={300}>
         <PieChart>
@@ -224,7 +227,8 @@ export default function ForensicDashboard() {
             outerRadius={100}
             fill="#8884d8"
             dataKey="value"
-            label
+            label={({ name, percent }) => ` ${(percent * 100).toFixed(1)}%`}
+
           >
             {dataMoUs.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />

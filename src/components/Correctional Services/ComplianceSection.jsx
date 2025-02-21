@@ -171,7 +171,8 @@ const ComplianceSection = () => {
       outerRadius={80}
       dataKey="value"
       nameKey="name"
-      label
+      label={({ name, percent }) => ` ${(percent * 100).toFixed(1)}%`}
+
     >
       {pieChartData.map((entry, index) => (
         <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />

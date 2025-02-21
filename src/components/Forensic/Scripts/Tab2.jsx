@@ -330,7 +330,8 @@ setPieChartData(transformToPieChartData(linechartdata[linechartdata.length-1]))}
       outerRadius={80}
       fill="#8884d8"
       dataKey="value"
-      label
+      label={({ name, percent }) => ` ${(percent * 100).toFixed(1)}%`}
+
     >
       {pieChartData && pieChartData.length > 0 && pieChartData.map((entry, index) => (
         <Cell
