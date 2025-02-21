@@ -1,27 +1,15 @@
 import { useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
-<<<<<<< HEAD
-// import { Card, CardContent } from "@/components/ui/card";
-import { Card, CardContent } from "@/components/Ui/Card.jsx";
-
-import { Button } from "@/components/Ui/Button.jsx";
-import { Label } from "@/components/Ui/Label.jsx";
-=======
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
->>>>>>> eaebbae245f31b9ecd28b429db6c35c14b53a700
 
 const AdminRegister = ({ onRegister, onClose }) => {
   const [formData, setFormData] = useState({
     user_name: "",
     password: "",
     role: "",
-<<<<<<< HEAD
-    rank: "",
-=======
     // rank: "",
->>>>>>> eaebbae245f31b9ecd28b429db6c35c14b53a700
     station: "",
     created_on: new Date().toISOString().split("T")[0],
     created_by: "admin",
@@ -43,11 +31,7 @@ const AdminRegister = ({ onRegister, onClose }) => {
   };
 
   return (
-<<<<<<< HEAD
-    <Card className="max-w-md mx-auto shadow-lg rounded-2xl p-6">
-=======
     <Card className="max-w-md  mx-auto shadow-lg rounded-2xl p-6 ">
->>>>>>> eaebbae245f31b9ecd28b429db6c35c14b53a700
       <CardContent>
         <h2 className="text-xl font-semibold text-center mb-4">Register Admin</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -86,16 +70,6 @@ const AdminRegister = ({ onRegister, onClose }) => {
               className="w-full p-2 border rounded-md bg-white"
             >
               <option value="">Select Role</option>
-<<<<<<< HEAD
-              <option value="police">Police</option>
-              <option value="Prosecutor">Prosecutor</option>
-              <option value="Correction">Correction Services</option>
-              <option value="Court">Court</option>
-              <option value="Forensic">Forensic</option>
-            </select>
-          </div>
-          <div>
-=======
               <option value="chief secretary">Chief Secretary</option>
               <option value="police">Police</option>
               <option value="Prosecutor">Prosecutor</option>
@@ -105,7 +79,6 @@ const AdminRegister = ({ onRegister, onClose }) => {
             </select>
           </div>
           {/* <div>
->>>>>>> eaebbae245f31b9ecd28b429db6c35c14b53a700
             <Label htmlFor="rank">Rank</Label>
             <input
               type="text"
@@ -116,15 +89,9 @@ const AdminRegister = ({ onRegister, onClose }) => {
               required
               className="w-full p-2 border rounded-md"
             />
-<<<<<<< HEAD
-          </div>
-          <div>
-            <Label htmlFor="station">Station</Label>
-=======
           </div> */}
           <div>
             <Label htmlFor="station">Location</Label>
->>>>>>> eaebbae245f31b9ecd28b429db6c35c14b53a700
             <input
               type="text"
               id="station"
@@ -136,13 +103,6 @@ const AdminRegister = ({ onRegister, onClose }) => {
             />
           </div>
           <div className="flex justify-between gap-4">
-<<<<<<< HEAD
-            <Button type="submit" className="w-full">Register</Button>
-            {onClose && (
-              <Button type="button" variant="outline" onClick={onClose} className="w-full">
-                Cancel
-              </Button>
-=======
             <button type="submit" className="w-full" style={{
                   backgroundColor: "#2d3748",
                   color: "white",
@@ -160,7 +120,6 @@ const AdminRegister = ({ onRegister, onClose }) => {
           }}>
                 Cancel
               </button>
->>>>>>> eaebbae245f31b9ecd28b429db6c35c14b53a700
             )}
           </div>
         </form>
