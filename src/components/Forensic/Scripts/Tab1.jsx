@@ -2,25 +2,62 @@ import React, { useState, forwardRef } from "react";
 import Tabledata from "./Tabledata";
 import Tab1_1 from "./Tab1_1";
 import ModalComponent from "../../Police/ModalComponent";
-
+import BarGraph from "./BarGraph";
+import OfficersGraph from "./OfficersGraph";
 const Tab1 = forwardRef((props, ref) => {  
   const [showModal, setShowModal] = useState(false);
+  const [data, setData] = useState([]);
+
 
   return (
     <div className="rounded-lg w-full max-w-full h-auto" ref={ref}>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center ">
         <h1 className="text-2xl font-bold">Forensic Development Dashboard</h1>
-        
-        {/* <button
-          className="bg-[#2d3748] text-white px-4 py-2 rounded-lg"
-          onClick={() => setShowModal(true)}
-        >
-          Add On
-        </button> */}
       </div>
      
-      <Tab1_1 />
-      <Tabledata />
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px", width: "100%" }}>
+  
+      <div style={{ backgroundColor: "#f4f4f4", padding: "1rem", borderRadius: "5px" }}>
+  {/* Deviation Section */}
+  <div style={{ background: "white", margin: "10px 0", padding: "10px", borderRadius: "10px", overflow: "auto", border: "1px solid #ddd" }}>
+    <h2 style={{ textAlign: "left", fontSize: "1.5rem", fontWeight: "bold" }}>Deviation</h2>
+    <div style={{ display: "flex", gap: "20px", width: "100%", minHeight: "300px", overflow: "auto" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", borderRight: "1px solid #ddd", paddingRight: "10px" }}>
+        <div style={{ flexGrow: 1, height: "auto", overflow: "auto" }}>
+          <OfficersGraph />
+        </div>
+      </div>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", paddingLeft: "10px" }}>
+        <div style={{ flexGrow: 1, height: "auto", overflow: "auto" }}>
+          <Tabledata setData={setData} />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* Recent Entry Section */}
+  <div style={{ background: "white", margin: "10px 0", padding: "10px", borderRadius: "10px", overflow: "auto", border: "1px solid #ddd" }}>
+    <h2 style={{ textAlign: "left", fontSize: "1.5rem", fontWeight: "bold" }}>Recent Entry {data && data[0]?.month}</h2>
+    <div style={{ display: "flex", gap: "20px", width: "100%", minHeight: "300px", overflow: "auto" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", borderRight: "1px solid #ddd", paddingRight: "10px" }}>
+        <div style={{ flexGrow: 1, height: "auto", overflow: "auto" }}>
+          <Tab1_1 />
+        </div>
+      </div>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", paddingLeft: "10px" }}>
+        <div style={{ flexGrow: 1, height: "auto", overflow: "auto" }}>
+          <BarGraph data={data} />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+      </div>
+
+
 
       <ModalComponent open={showModal} type="forensic" onClose={() => setShowModal(false)} />
     </div>

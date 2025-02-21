@@ -1,5 +1,5 @@
 import React from "react";
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, RadialBarChart, RadialBar } from "recharts";
+import { PieChart, Pie,LineChart,Line, Cell, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, RadialBarChart, RadialBar } from "recharts";
 import { UserPlus, ShieldCheck, TrendingUp, BarChart as BarChartIcon } from "lucide-react";
 const chartColors = [
   "#8884d8", // Muted Purple
@@ -27,6 +27,37 @@ const cyberForensicData = [
   { name: "Blockchain Security", value: 65, color: chartColors[5] }, // Muted Coral
   { name: "Automation", value: 90, color: chartColors[6] }, // Muted Teal
 ];
+const recruitmentMonthlyData = [
+  { month: "Jan 2024", ForensicExperts: 3, Analysts: 2, Technicians: 1 },
+  { month: "Feb 2024", ForensicExperts: 4, Analysts: 3, Technicians: 2 },
+  { month: "Mar 2024", ForensicExperts: 5, Analysts: 3, Technicians: 2 },
+  { month: "Apr 2024", ForensicExperts: 4, Analysts: 4, Technicians: 3 },
+  { month: "May 2024", ForensicExperts: 6, Analysts: 5, Technicians: 3 },
+  { month: "Jun 2024", ForensicExperts: 7, Analysts: 5, Technicians: 4 },
+  { month: "Jul 2024", ForensicExperts: 6, Analysts: 6, Technicians: 4 },
+  { month: "Aug 2024", ForensicExperts: 5, Analysts: 4, Technicians: 3 },
+  { month: "Sep 2024", ForensicExperts: 7, Analysts: 6, Technicians: 5 },
+  { month: "Oct 2024", ForensicExperts: 8, Analysts: 7, Technicians: 6 },
+  { month: "Nov 2024", ForensicExperts: 9, Analysts: 8, Technicians: 6 },
+  { month: "Dec 2024", ForensicExperts: 10, Analysts: 9, Technicians: 7 },
+];
+
+// 📌 Monthly Data for Cyber Forensic Advancements
+const cyberForensicMonthlyData = [
+  { month: "Jan 2024", AIinForensics: 70, CloudEvidenceAnalysis: 60, BlockchainSecurity: 50, Automation: 80 },
+  { month: "Feb 2024", AIinForensics: 75, CloudEvidenceAnalysis: 58, BlockchainSecurity: 55, Automation: 85 },
+  { month: "Mar 2024", AIinForensics: 72, CloudEvidenceAnalysis: 65, BlockchainSecurity: 53, Automation: 82 },
+  { month: "Apr 2024", AIinForensics: 78, CloudEvidenceAnalysis: 62, BlockchainSecurity: 57, Automation: 88 },
+  { month: "May 2024", AIinForensics: 74, CloudEvidenceAnalysis: 70, BlockchainSecurity: 52, Automation: 85 },
+  { month: "Jun 2024", AIinForensics: 80, CloudEvidenceAnalysis: 66, BlockchainSecurity: 60, Automation: 90 },
+  { month: "Jul 2024", AIinForensics: 77, CloudEvidenceAnalysis: 74, BlockchainSecurity: 58, Automation: 92 },
+  { month: "Aug 2024", AIinForensics: 85, CloudEvidenceAnalysis: 71, BlockchainSecurity: 63, Automation: 88 },
+  { month: "Sep 2024", AIinForensics: 83, CloudEvidenceAnalysis: 78, BlockchainSecurity: 61, Automation: 95 },
+  { month: "Oct 2024", AIinForensics: 87, CloudEvidenceAnalysis: 74, BlockchainSecurity: 67, Automation: 91 },
+  { month: "Nov 2024", AIinForensics: 89, CloudEvidenceAnalysis: 79, BlockchainSecurity: 65, Automation: 100 },
+  { month: "Dec 2024", AIinForensics: 84, CloudEvidenceAnalysis: 81, BlockchainSecurity: 69, Automation: 98 },
+];
+
 
 // ✅ Updated Dummy Data for Operational Efficiency (Gauge Chart)
 const efficiencyData = [{ name: "Compliance", value: 92, fill: chartColors[7] }]; // Mauve
@@ -40,7 +71,57 @@ const ForensicStrengtheningInitiatives = () => {
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Recruitment Trends */}
+      <div className="bg-white p-4 rounded-lg shadow-md">
+        <h2 className="text-lg font-bold mb-4">Recruitment Trends Over Months</h2>
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={recruitmentMonthlyData}>
+            <XAxis dataKey="month" stroke="#6b7280" tick={{ fontSize: 14 }} />
+            <YAxis stroke="#6b7280" tick={{ fontSize: 14 }} />
+            <Tooltip />
+            <Legend />
 
+            {/* Dynamic Lines for Each Role */}
+            {["ForensicExperts", "Analysts", "Technicians"].map((role, index) => (
+              <Line
+                key={role}
+                type="monotone"
+                dataKey={role}
+                stroke={chartColors[index]}
+                strokeWidth={3}
+                dot={{ r: 5 }}
+                name={role}
+              />
+            ))}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Cyber Forensic Advancements */}
+      <div className="bg-white p-4 rounded-lg shadow-md">
+        <h2 className="text-lg font-bold mb-4">Cyber Forensic Advancements Over Months</h2>
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={cyberForensicMonthlyData}>
+            <XAxis dataKey="month" stroke="#6b7280" tick={{ fontSize: 14 }} />
+            <YAxis stroke="#6b7280" tick={{ fontSize: 14 }} />
+            <Tooltip />
+            <Legend />
+
+            {/* Dynamic Lines for Each Advancement */}
+            {["AIinForensics", "CloudEvidenceAnalysis", "BlockchainSecurity", "Automation"].map((tech, index) => (
+              <Line
+                key={tech}
+                type="monotone"
+                dataKey={tech}
+                stroke={chartColors[index + 3]} // Adjusting colors for forensic advancements
+                strokeWidth={3}
+                dot={{ r: 5 }}
+                name={tech.replace(/([A-Z])/g, " $1").trim()} // Format labels
+              />
+            ))}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
       {/* Recruitment Efforts with Pie Chart */}
       <div className="bg-white p-4 rounded-xl shadow-md">
         <div className="flex justify-between items-center mb-2">
@@ -102,7 +183,7 @@ const ForensicStrengtheningInitiatives = () => {
       </div>
 
       {/* Operational Efficiency - Gauge Chart */}
-      <div className="bg-white p-4 rounded-xl shadow-md">
+      {/* <div className="bg-white p-4 rounded-xl shadow-md">
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
             <TrendingUp size={24} className="text-purple-600" />
@@ -114,7 +195,7 @@ const ForensicStrengtheningInitiatives = () => {
           Evaluating efficiency and ensuring adherence to forensic best practices.
         </p>
 
-        {/* Gauge Chart */}
+        Gauge Chart
         <div className="flex justify-center w-full">
           <ResponsiveContainer width="100%" height={250}>
             <RadialBarChart innerRadius="80%" outerRadius="100%" data={efficiencyData} startAngle={90} endAngle={-270}>
@@ -125,7 +206,7 @@ const ForensicStrengtheningInitiatives = () => {
         </div>
 
         <p className="text-sm text-gray-500 mt-1">Target: 95% Compliance</p>
-      </div>
+      </div> */}
       </div>
     </div>
   );
