@@ -1,27 +1,25 @@
 import React, { useEffect, useState } from "react";
-// import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip } from "chart.js";
-import {  ResponsiveContainer,PieChart, Pie, Cell,Legend } from "recharts";
-import axiosInstance from "../../utils/axiosInstance"; 
+import { ResponsiveContainer, PieChart, Pie, Cell, Legend, Tooltip as RechartsTooltip } from "recharts";
+import axiosInstance from "../../utils/axiosInstance";
 import ModalComponent from "./ModalComponent";
 
 // Register necessary Chart.js elements
 ChartJS.register(ArcElement, Tooltip);
 
-
 const PoliceOfficers = ({ getDate }) => {
   const [showModal, setShowModal] = useState(false);
   const [trainingData, setTrainingData] = useState([]);
-  const chartColors = ["#82ca9d", "#8884d8"]; 
+  const chartColors = ["#82ca9d", "#8884d8"];
+
   const formatRank = (rank) => {
-    return rank.replace(/\b[a-z]/g, (char) => char.toUpperCase()) // Capitalize first letter outside parentheses
-               .replace(/\((.*?)\)/g, (match, p1) => `(${p1.toUpperCase()})`); // Convert text inside parentheses to uppercase
+    return rank.replace(/\b[a-z]/g, (char) => char.toUpperCase()) 
+               .replace(/\((.*?)\)/g, (match, p1) => `(${p1.toUpperCase()})`); 
   };
 
   const getTrainingData = async () => {
     try {
       const response = await axiosInstance.get('/live_data');
-      console.log(response.data, 'Training data response ----------');
       const formattedData = response.data.latest_trainings.map((item) => ({
         ...item,
         rank: formatRank(item.rank),
@@ -42,77 +40,42 @@ const PoliceOfficers = ({ getDate }) => {
     getTrainingData();
   }, []);
 
-  console.log(trainingData, 'training props data------');
-
   const totalOfficers = trainingData.reduce((acc, item) => acc + item.trained_officers, 0);
   const availableOfficers = trainingData.reduce((acc, item) => acc + item.available_officers, 0);
+  const total = totalOfficers + availableOfficers;
 
-  // const data = {
-  //   labels: ['Total Trained Officers', 'Available Officers'],
-  //   datasets: [
-  //     {
-  //       label: 'Officers Data',
-  //       data: [totalOfficers, availableOfficers],
-  //       backgroundColor: ['#82ca9d', '#8884d8'],
-  //       hoverBackgroundColor: ['#4CAF50', '#2196F3'],
-  //     },
-  //   ],
-  // };
-  // const options = {
-  //   responsive: true,
-  //   maintainAspectRatio: false,
-  //   plugins: {
-  //     legend: {
-  //       position: 'bottom',
-  //     },
-  //     title: {
-  //       display: true,
-  //       // text: 'Officers Data Comparison',
-  //     },
-  //   },
-  // };
-    const pieData = [
-      { name: "Total Trained Officers", value: totalOfficers },
-      { name: "Available Officers", value: availableOfficers },
-    ];
-
-
+  const pieData = [
+    { name: "Total Trained Officers", value: totalOfficers, percentage: total ? (totalOfficers / total) * 100 : 0 },
+    { name: "Available Officers", value: availableOfficers, percentage: total ? (availableOfficers / total) * 100 : 0 },
+  ];
 
   return (
-    <div className="bg-white p-6 rounded-lg w-[50%] h-[500px] text-center rounded-xl shadow-md">
+    <div className="bg-white  rounded-lg w-[100%] h-[500px] text-center rounded-xl shadow-md">
       <div className="flex items-left mb-8">
-        <h1 className="text-xl" style={{ fontWeight: '600' }}>Police Officers</h1>
+        <h1 className="text-xl font-semibold">Police Officers</h1>
       </div>
       <div className="h-[400px] w-full">
-        {/* <Pie data={data} options={options} /> */}
-        <ResponsiveContainer width="100%" height={300}>
-      
-        <PieChart width={400} height={400}>
-          <Pie 
-            data={pieData} 
-            dataKey="value" 
-            nameKey="name" 
-            cx="50%" 
-            cy="50%" 
-            outerRadius={100} 
-            label
-          >
-            {pieData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
-            ))}
-          </Pie>
-          <Tooltip />
-          <Legend verticalAlign="bottom" align="center" layout="horizontal" />
-        </PieChart>
-
-      
+        <ResponsiveContainer width="100%" height={300} style={{}}>
+          <PieChart width={400} height={400}>
+            <Pie
+              data={pieData}
+              dataKey="percentage"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              outerRadius={100}
+              label={({ name, percentage }) => `${name}: ${percentage.toFixed(1)}%`}
+            >
+              {pieData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
+              ))}
+            </Pie>
+            <RechartsTooltip formatter={(value) => `${value.toFixed(1)}%`} />
+            <Legend verticalAlign="bottom" align="center" layout="horizontal" />
+          </PieChart>
         </ResponsiveContainer>
       </div>
-      <ModalComponent
-        open={showModal}
-        type="police"
-        onClose={() => setShowModal(false)}
-      />
+      <ModalComponent open={showModal} type="police" onClose={() => setShowModal(false)} />
     </div>
   );
 };

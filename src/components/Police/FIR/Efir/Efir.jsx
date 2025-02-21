@@ -71,7 +71,7 @@ function Efir() {
       </div>
       <br/>
       <hr/>
-<div style={{backgroundColor:"#f4f4f4",width:"49%",height:"430px",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
+<div style={{backgroundColor:"#f4f4f4",width:"50%",height:"430px",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
 <Efirgraph generateReport={generateReport} />
 
 

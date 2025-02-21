@@ -50,6 +50,7 @@ const CaseStatus = ({ getrecentdatatime,type }) => {
           { name: "Pending", value: data[0].pending },
           { name: "Total Charge Sheeted", value: data[0].total_charge_sheeted },
         ]
+        
       : [];
 
   // Custom Tooltip for Pie Chart
