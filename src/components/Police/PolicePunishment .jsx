@@ -1,14 +1,15 @@
 import React from "react";
-import { Pie } from "react-chartjs-2";
+// import { Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   ArcElement,
   Tooltip,
-  Legend,
+  
 } from "chart.js";
+import {  ResponsiveContainer,PieChart, Pie, Cell,Legend } from "recharts";
 
 // Register required chart components
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip);
 
 const chartColors = [
   "#8884d8", // Muted Purple
@@ -17,18 +18,11 @@ const chartColors = [
 
 const PolicePunishment = () => {
   // Data for the pie chart
-  const data = {
-    labels: ["No. of Cases Registered", "Cases in which Forensic Team Visited"],
-    datasets: [
-      {
-        label: "Case Distribution",
-        data: [13939, 2587],
-        backgroundColor: chartColors,
-        borderColor: chartColors,
-        borderWidth: 1,
-      },
-    ],
-  };
+  const pieData = [
+    { name: "No. of Cases Registered", value: 13939 },
+    { name: "Cases in which Forensic Team Visited", value: 2587 },
+  ];
+  
 
   // Custom tooltip content (showing percentage for each slice)
   const options = {
@@ -36,7 +30,7 @@ const PolicePunishment = () => {
     plugins: {
       legend: {
         display: true,
-        position: "top",
+        position: "bottom",
       },
       title: {
         display: true,
@@ -58,7 +52,27 @@ const PolicePunishment = () => {
   return (
     <div className="p-6 rounded-lg flex flex-col" style={{backgroundColor:"white",width:"48%",display:"flex",justifyContent:"center"}}>
       <div className="h-[360px]" style={{display:"flex",justifyContent:"center"}}>
-        <Pie data={data} options={options} />
+        {/* <Pie data={data} options={options} /> */}
+        <ResponsiveContainer width="100%" height={300}>
+  <PieChart>
+    <Pie 
+      data={pieData} 
+      dataKey="value" 
+      nameKey="name" 
+      cx="50%" 
+      cy="50%" 
+      outerRadius={100} 
+      label
+    >
+      {pieData.map((entry, index) => (
+        <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
+      ))}
+    </Pie>
+    <Tooltip />
+    <Legend verticalAlign="bottom" align="center" layout="horizontal" />
+  </PieChart>
+</ResponsiveContainer>
+
       </div>
     </div>
   );
