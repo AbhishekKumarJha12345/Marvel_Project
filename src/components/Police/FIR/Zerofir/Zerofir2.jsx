@@ -21,7 +21,10 @@ const ZeroFir2 = ({ getRecentDate,type }) => {
         const response = await axiosInstance.get("/live_data?type=line_fir_4");
 
         if (response.data.data_dict) {
-          getRecentDate(response.data.data_dict[0].month)
+          if(type === "recent"){
+            getRecentDate(response.data.data_dict[0].month)
+
+          }
           const sortedData = response.data.data_dict
             .map(item => ({
               month: convertMonthFormat(item.month),
@@ -32,6 +35,7 @@ const ZeroFir2 = ({ getRecentDate,type }) => {
             .sort((a, b) => new Date(a.month) - new Date(b.month));
 
           setData(sortedData);
+          console.log(sortedData,'ssssssssssssss')
         }
       } catch (error) {
         console.error("Error fetching data:", error);
