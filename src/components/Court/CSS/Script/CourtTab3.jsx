@@ -128,7 +128,7 @@ const VideoConferencingDashboard = () => {
     }),
     disposedCases: item.disposed_cases || 0,
     backlogReduction: item.backlog_reduction || 0,
-  }));
+  })).sort((a, b) => new Date(a.month) - new Date(b.month));
 
   const readinessData = [
     {
@@ -192,8 +192,8 @@ const VideoConferencingDashboard = () => {
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={caseDisposalData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
+                <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
+                <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
                 <Tooltip />
                 <Legend />
                 <Line
@@ -240,7 +240,7 @@ const VideoConferencingDashboard = () => {
                   nameKey="subject"
                   outerRadius={100}
                   fill="#8884d8"
-                  label
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
                 >
                   {readinessData.map((entry, index) => (
                     <Cell

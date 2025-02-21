@@ -152,7 +152,7 @@ const CourtTab5 = () => {
       year: "numeric",
     }),
     progress: parseInt(item.ai_transcription_integration || 0),
-  }));
+  })).sort((a, b) => new Date(a.month) - new Date(b.month));
 
   const monthlyUserFeedbackData = implementationData?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
@@ -162,7 +162,7 @@ const CourtTab5 = () => {
     Judges: item.judges_feedback,
     "Legal Professionals": item.legal_professionals_feedback,
     "Administrative Staff": item.administrative_staff_feedback,
-  }));
+  })).sort((a, b) => new Date(a.month) - new Date(b.month));
 
   const latestFeedbackData = [
     {
@@ -192,7 +192,7 @@ const CourtTab5 = () => {
     Development: parseInt(item.development || 0),
     Testing: parseInt(item.testing || 0),
     Implementation: parseInt(item.implementation || 0),
-  }));
+  })).sort((a, b) => new Date(a.month) - new Date(b.month));
 
   const recentEntryDate = new Date(
     implementationData?.[0]?.month
@@ -236,8 +236,8 @@ const CourtTab5 = () => {
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={monthlyProgressData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
+                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
+                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
                   <Tooltip />
                   <Legend />
                   <Line
@@ -278,8 +278,8 @@ const CourtTab5 = () => {
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={monthlyUserFeedbackData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
+                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
+                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
                   <Tooltip />
                   <Legend />
                   <Line
@@ -332,7 +332,7 @@ const CourtTab5 = () => {
                     nameKey="name"
                     outerRadius={100}
                     fill="#8884d8"
-                    label
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
                   >
                     {deploymentStatusData?.map((entry, index) => (
                       <Cell
@@ -358,7 +358,7 @@ const CourtTab5 = () => {
                     nameKey="name"
                     outerRadius={100}
                     fill="#8884d8"
-                    label
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
                   >
                     {latestFeedbackData?.map((entry, index) => (
                       <Cell
@@ -381,13 +381,13 @@ const CourtTab5 = () => {
               <h3 className="text-xl font-semibold">
                 Speech-to-Text & AI Transcription Integration
               </h3>
-              <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${speechToTextIntegrationData?.[0]?.progress}`}</h4>
+              <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${speechToTextIntegrationData?.[speechToTextIntegrationData.length - 1]?.progress}`}</h4>
             </div>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={speechToTextIntegrationData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
+                <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
+                <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
                 <Tooltip />
                 <Legend />
                 <Line
