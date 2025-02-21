@@ -792,6 +792,8 @@ doc.text("In summary, the data reveals that there is a general increase in the n
 
           {(users === "chief secretary" || users === "Forensic") && (
             <>
+
+            
               {/* Forensic Science Section */}
               <li
                 className={`nav-link ${
@@ -801,7 +803,23 @@ doc.text("In summary, the data reveals that there is a general increase in the n
               >
                 <BiotechIcon size={25} /> Forensic Science Department
               </li>
+
+              {(users === "chief secretary" ) ?
+              
+              (<li
+                className={`nav-link ${
+                  activeSection?.section === "report" ? "active" : ""
+                }`}
+                onClick={() => {
+                  handleSectionClick("report");
+                  generatePDF();
+                }}
+              >
+                <PictureAsPdfIcon size={25} /> Generate Report
+              </li>) : null
             
+            }
+
             </>
           )}
         </ul>
