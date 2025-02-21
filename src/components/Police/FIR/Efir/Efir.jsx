@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Efirgraph from "./EFIRGraph";
 import axiosInstance from '../../../../utils/axiosInstance';
+import EFIRsChart2 from "./EFIRGraph2";
 
 
 function Efir() {
@@ -53,11 +54,33 @@ function Efir() {
 
       <div className="mt-4">
         {activeTab === "home" ? (
-          <div className="row pb-6">
-            <div className="col-6">
+          <div className="row pb-6" >
+            <div className="col-6" style={{width:"100%"}}>
               <div className="card shadow-sm bg-white">
                 <div className="card-body">
-                  <Efirgraph generateReport={generateReport} />
+                <div style={{width:"100%",display:"flex",flexDirection:"column",gap:"0.5rem"}}>
+                  <div style={{display:"flex",gap:"40rem"}}>
+                <h2 className="text-xl font-semibold">Deviation </h2>
+                <h2 className="text-xl font-semibold">Recent Entry </h2>  
+                </div>
+<div style={{display:"flex",gap:"0.5rem"}}>
+<div style={{backgroundColor:"#f4f4f4",width:"49%",height:"430px",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
+<EFIRsChart2 generateReport={generateReport} />
+
+
+      </div>
+      <br/>
+      <hr/>
+<div style={{backgroundColor:"#f4f4f4",width:"49%",height:"430px",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
+<Efirgraph generateReport={generateReport} />
+
+
+    </div>
+    </div>
+    </div>
+                  {/* <EFIRsChart2 generateReport={generateReport} />
+                  <Efirgraph generateReport={generateReport} /> */}
+
                   {/* <button
                     onClick={generateReport}
                     className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"

@@ -25,7 +25,7 @@ const PoliceTraining = forwardRef((props, ref) => {
   Recent Entry  : {entryDate.toLocaleString()}
   {/* {trainingData && trainingData[0] && new Date(trainingData[0].uploaded_date).toLocaleString()} */}
 </h1>
-        <div style={{backgroundColor:"#f4f4f4",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
+        <div style={{backgroundColor:"#f4f4f4",padding:"1rem",display:"flex",gap:"1rem",justifyContent:"space-around",borderRadius:"5px"}}>
 
         <PoliceOfficers getDate={getDate}/>
           

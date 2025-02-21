@@ -43,7 +43,7 @@ const EFIRsChart = ({ generateReport }) => {
   };
 
   return (
-    <div className="bg-white p-6 mx-auto rounded-lg w-[80%] h-[600px] shadow-lg">
+    <div className="bg-white p-6 mx-auto rounded-lg w-[100%] h-[400px] ">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-3xl font-semibold text-center flex-grow">eFIRs Overview</h2>
         <div className="flex space-x-4">
@@ -58,7 +58,7 @@ const EFIRsChart = ({ generateReport }) => {
         </div>
       </div>
 
-      <div className="h-[350px]">
+      <div className="h-[250px]">
         <Pie data={data} options={options} />
       </div>
 

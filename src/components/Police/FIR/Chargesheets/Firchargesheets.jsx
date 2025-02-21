@@ -90,7 +90,11 @@ function Firchargesheets() {
       console.error("Error downloading Charge Sheet report:", error);
     }
   };
+const [recentData,setRecentData] =useState('')
+  const getrecentdatatime = (data) =>{
+    setRecentData(data)
 
+  }
   return (
     <div>
       {/* Navigation Tabs */}
@@ -120,11 +124,12 @@ function Firchargesheets() {
       <div className="mt-4">
       
         {activeTab === 'home' ? (
-          <div className="col-6" style={{width:"100%"}}>
+          <div className="col-6" style={{width:"100%",height:"100%"
+          }}>
           <div className="card shadow-sm bg-white">
-            <div className="card-body" style={{padding:"24px",display:"flex",flexDirection:"column",gap:"1rem"}}>
+            <div className="card-body" style={{height:"100%",padding:"24px",display:"flex",flexDirection:"column",gap:"1rem"}}>
               {/* <PoliceChargeSheet apidata={trainingData}/> */}
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-semibold text-center flex-grow">
                 FIR Charge Sheets
                 </h2>
@@ -145,11 +150,33 @@ function Firchargesheets() {
         </button> */}
       {/* </div> */}
               </div>
-              <div style={{display:"flex",width:"100%",height:"60vh",marginBottom:"2rem"}}>
+              <div style={{display:"flex",flexDirection:"column",gap:"0.5rem",width:"100%",height:"100%",marginBottom:"3rem"}}>
+      <h2 className="text-xl font-semibold">Deviation</h2>
+      <div style={{display:"flex",gap:"0.5rem"}}>
+
+        <div style={{backgroundColor:"#f4f4f4",width:"49%",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
               <CaseStatus />
+              </div>
               <br/>
               <hr/>
+        <div style={{backgroundColor:"#f4f4f4",width:"49%",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
               <ChargeSheetGraph2 />
+            </div>
+            </div>
+            <h1 className="text-xl font-semibold mb-4" style={{marginTop:"1rem"}}>
+  Recent Entry  :
+   {recentData.toLocaleString()}
+  {/* {trainingData && trainingData[0] && new Date(trainingData[0].uploaded_date).toLocaleString()} */}
+</h1>
+        <div style={{backgroundColor:"#f4f4f4",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
+        <CaseStatus getrecentdatatime={getrecentdatatime} type='recent'/>
+
+        {/* <PoliceOfficers getDate={getDate}/> */}
+          
+
+        <br/>
+        {/* <MasterTrainers /> */}
+        </div>
             </div>
             </div>
           </div>

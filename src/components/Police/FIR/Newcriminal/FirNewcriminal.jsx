@@ -102,10 +102,10 @@ function FirNewcriminal() {
       {/* Tab Content */}
       <div className="mt-1">
         {activeTab === 'home' ? (
-          <div className="col-6">
+          <div className="col-6" style={{width:"100%"}}>
             <div className="card">
               
-              <div className="card-body" style={{ paddingBottom: "5rem" }}>
+              <div className="card-body" style={{ paddingBottom: "5rem",width:"100%"  }}>
                 {/* Download Report Button */}
       {/* <div className="mt-4">
         <button className="bg-green-600 text-white px-4 py-2 rounded-lg" onClick={downloadReport}>

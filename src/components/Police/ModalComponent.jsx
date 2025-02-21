@@ -90,9 +90,9 @@ const ModalComponent = ({ open,type, onClose }) => {
 
 
   // Handle Form Data Change
-  const handleChange = (event) => {
-    setFormData({ ...formData, [event.target.name]: event.target.value });
-  };
+  // const handleChange = (event) => {
+  //   setFormData({ ...formData, [event.target.name]: event.target.value });
+  // };
 
   // Handle File Upload
   const handleFileUpload = (event) => {
@@ -185,7 +185,12 @@ const ModalComponent = ({ open,type, onClose }) => {
     }
   };
   
-  
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (/^\d*$/.test(value) || value === "") {  // Allow only numbers
+      setFormData({ ...formData, [name]: value });
+    }
+  };
   
 
 
@@ -330,26 +335,32 @@ const ModalComponent = ({ open,type, onClose }) => {
     </Select>
   </FormControl>
   <TextField
-    label="Available Officers"
-    name="available_officers"
-    value={formData.available_officers}
-    onChange={handleChange}
-    fullWidth
-  />
-  <TextField
-    label="Trained Officers"
-    name="trained_officers"
-    value={formData.trained_officers}
-    onChange={handleChange}
-    fullWidth
-  />
-  <TextField
-    label="Percentage"
-    name="percentage"
-    value={formData.percentage}
-    onChange={handleChange}
-    fullWidth
-  />
+      label="Available Officers"
+      name="available_officers"
+      type="number"
+      value={formData.available_officers}
+      onChange={handleChange}
+      fullWidth
+      inputProps={{ min: 0 }}
+    />
+    <TextField
+      label="Trained Officers"
+      name="trained_officers"
+      type="number"
+      value={formData.trained_officers}
+      onChange={handleChange}
+      fullWidth
+      inputProps={{ min: 0 }}
+    />
+    <TextField
+      label="Percentage"
+      name="percentage"
+      type="number"
+      value={formData.percentage}
+      onChange={handleChange}
+      fullWidth
+      inputProps={{ min: 0, max: 100 }}
+    />
 
   {/* First Dropdown for Rank */}
   

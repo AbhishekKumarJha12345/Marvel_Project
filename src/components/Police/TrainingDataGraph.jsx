@@ -69,7 +69,7 @@ const TrainingDataGraph = () => {
   );
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-md" style={{width:"48%"}}>
+    <div className="bg-white p-4 rounded-xl shadow-md" style={{width:"48%",height:"500px"}}>
       <div className="flex justify-between mb-4">
         <h2 className="">Training Data Graph</h2>
         {/* Dropdown for selecting metric */}
