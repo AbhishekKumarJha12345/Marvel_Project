@@ -1,9 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+// import { Pie } from 'react-chartjs-2';
+// import { Chart as ChartJS, ArcElement } from 'chart.js';
 import { RxCross1 } from "react-icons/rx";
-
-ChartJS.register(ArcElement, Tooltip, Legend);
+import {
+  PieChart,
+  LineChart,
+  Line,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Legend,
+} from "recharts";
+// ChartJS.register(ArcElement, Tooltip, Legend);
 const VideoConferencingFacilities = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -141,24 +155,26 @@ const VideoConferencingFacilities = () => {
       },
     ],
   };
-
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-      tooltip: {
-        callbacks: {
-          label: function (tooltipItem) {
-            const label = tooltipItem.label || '';
-            const value = tooltipItem.raw || 0;
-            return `${label}: ${value}`;
-          },
-        },
-      },
-    },
-  };
+  const pieChartData = [
+    { name: "No. of Correctional Institutions", value: dataValues[0] },
+    { name: "No. of Courts", value: dataValues[1] },
+    { name: "No. of V.C. Sets available in Correctional Institutions", value: dataValues[2] },
+    { name: "No. of separate cubicles (Cabin) available in Correctional Institutions for V.C.", value: dataValues[3] },
+  ];
+  
+  const chartColors = [
+    "#8884d8", // Muted Purple
+    "#82ca9d", // Soft Green
+    "#f2c57c", // Warm Sand
+    "#6a8caf", // Steel Blue
+    "#d4a5a5", // Soft Rose
+    "#a28bd3", // Lavender
+    "#ff9a76", // Muted Coral
+    "#74b49b", // Muted Teal
+    "#c08497", // Mauve
+    "#b0a8b9" // Dusty Lilac
+    ];
+  
   return (
     <div>
       {/* Add Button */}
@@ -170,7 +186,26 @@ const VideoConferencingFacilities = () => {
       <div className="bg-white p-6 mx-auto rounded-lg w-[100%] h-[500px]">
         <h1 className="text-4xl font-bold mb-8 text-center">Video Conferencing Facilities</h1>
         <div className="h-[400px] w-[400px] w-full flex justify-center items-center">
-          <Pie data={data} />
+        <ResponsiveContainer width="100%" height={300}>
+  <PieChart>
+    <Pie
+      data={pieChartData}
+      dataKey="value"
+      nameKey="name"
+      cx="50%"
+      cy="50%"
+      outerRadius={100}
+      label
+    >
+      {pieChartData.map((entry, index) => (
+        <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
+      ))}
+    </Pie>
+    <Tooltip />
+    <Legend verticalAlign="bottom" align="center" />
+  </PieChart>
+</ResponsiveContainer>
+
         </div>
       </div>
       {/* Modal */}

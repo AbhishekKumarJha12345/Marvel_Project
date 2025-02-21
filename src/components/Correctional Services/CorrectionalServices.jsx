@@ -35,23 +35,34 @@ const CorrectionalServices = () => {
         console.error('Error fetching data:', error);
       });
   }, []);
-
+  const chartColors = [
+    "#8884d8", // Muted Purple
+    "#82ca9d", // Soft Green
+    "#f2c57c", // Warm Sand
+    "#6a8caf", // Steel Blue
+    "#d4a5a5", // Soft Rose
+    "#a28bd3", // Lavender
+    "#ff9a76", // Muted Coral
+    "#74b49b", // Muted Teal
+    "#c08497", // Mauve
+    "#b0a8b9" // Dusty Lilac
+    ];
   const data = {
     labels: ['Class-1', 'Class-2', 'Class-3'],
     datasets: [
       {
         label: 'Available Strength',
         data: [formData.class1_strength, formData.class2_strength, formData.class3_strength],
-        backgroundColor: '#FF5733', 
-        borderColor: '#D84315',
+        backgroundColor: chartColors[0], 
+        borderColor: chartColors[0],
         borderWidth: 1,
         barThickness: 50,
       },
       {
         label: 'No. of Personnel Trained in New Laws',
         data: [formData.class1_trained, formData.class2_trained, formData.class3_trained],
-        backgroundColor: '#2196F3',
-        borderColor: '#1976D2',
+        backgroundColor: chartColors[1],
+        borderColor: chartColors[1],
         borderWidth: 1,
         barThickness: 50,
       },
@@ -65,7 +76,7 @@ const CorrectionalServices = () => {
     plugins: {
       legend: {
         display: true, // Display legend at the top
-        position: 'top',
+        position: 'bottom',
       },
       title: {
         display: true,

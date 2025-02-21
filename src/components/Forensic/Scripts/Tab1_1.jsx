@@ -31,8 +31,25 @@ export default function Tab1_1() {
           <ResponsiveContainer width="100%" height={400}>
             <BarChart data={gradeData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="grade" />
-              <YAxis />
+              <XAxis 
+                dataKey="grade" 
+                label={{ 
+                  value: "Officers Grade", 
+                  position: "insideBottom", 
+                  offset: -5 
+                }} 
+              />
+
+              <YAxis 
+                label={{ 
+                  value: "No. of Officers", 
+                  angle: -90, 
+                  position: "insideLeft",
+                offset: 0,
+                style: { textAnchor: "middle" },
+                }} 
+              />
+
               <Legend />
               <Tooltip
                 formatter={(value, name, props) => {
