@@ -14,6 +14,36 @@ const dataInfrastructure = [
   { project: "Facility Expansion", count: 35 },
 ];
 
+const dataMoUsMonthly = [
+  { month: "Jan 2024", Signed: 5, InProgress: 8, Pending: 4, Expired: 2 },
+  { month: "Feb 2024", Signed: 7, InProgress: 9, Pending: 5, Expired: 3 },
+  { month: "Mar 2024", Signed: 6, InProgress: 7, Pending: 3, Expired: 1 },
+  { month: "Apr 2024", Signed: 9, InProgress: 10, Pending: 6, Expired: 4 },
+  { month: "May 2024", Signed: 8, InProgress: 12, Pending: 7, Expired: 3 },
+  { month: "Jun 2024", Signed: 10, InProgress: 14, Pending: 8, Expired: 5 },
+  { month: "Jul 2024", Signed: 11, InProgress: 13, Pending: 6, Expired: 4 },
+  { month: "Aug 2024", Signed: 9, InProgress: 11, Pending: 5, Expired: 2 },
+  { month: "Sep 2024", Signed: 7, InProgress: 10, Pending: 4, Expired: 3 },
+  { month: "Oct 2024", Signed: 10, InProgress: 12, Pending: 6, Expired: 2 },
+  { month: "Nov 2024", Signed: 8, InProgress: 9, Pending: 5, Expired: 3 },
+  { month: "Dec 2024", Signed: 6, InProgress: 8, Pending: 4, Expired: 2 },
+];
+const dataInfrastructureMonthly = [
+  { month: "Jan 2024", NewLabs: 2, TechUpgradation: 4, FacilityExpansion: 3 },
+  { month: "Feb 2024", NewLabs: 3, TechUpgradation: 5, FacilityExpansion: 4 },
+  { month: "Mar 2024", NewLabs: 2, TechUpgradation: 4, FacilityExpansion: 3 },
+  { month: "Apr 2024", NewLabs: 4, TechUpgradation: 6, FacilityExpansion: 5 },
+  { month: "May 2024", NewLabs: 3, TechUpgradation: 7, FacilityExpansion: 4 },
+  { month: "Jun 2024", NewLabs: 5, TechUpgradation: 8, FacilityExpansion: 6 },
+  { month: "Jul 2024", NewLabs: 6, TechUpgradation: 7, FacilityExpansion: 5 },
+  { month: "Aug 2024", NewLabs: 4, TechUpgradation: 6, FacilityExpansion: 4 },
+  { month: "Sep 2024", NewLabs: 3, TechUpgradation: 5, FacilityExpansion: 3 },
+  { month: "Oct 2024", NewLabs: 5, TechUpgradation: 7, FacilityExpansion: 4 },
+  { month: "Nov 2024", NewLabs: 4, TechUpgradation: 6, FacilityExpansion: 5 },
+  { month: "Dec 2024", NewLabs: 3, TechUpgradation: 5, FacilityExpansion: 3 },
+];
+
+
 const dataResourceAllocation = [
   { category: "Land Acquisition", value: 50 },
   { category: "Resource Allocation", value: 70 },
@@ -52,88 +82,189 @@ export default function ForensicDashboard() {
       <h1 className="text-2xl font-bold mb-6">Forensic Development Dashboard</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-       
-        {/* Infrastructure Development Bar Chart */}
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Infrastructure Development Projects</h2>
-          <ResponsiveContainer width="100%" height={300}>
-  <PieChart>
-    <Pie 
-      data={dataInfrastructure} 
-      dataKey="count" 
-      nameKey="project" 
-      cx="50%" 
-      cy="50%" 
-      outerRadius={100} 
-      fill="#8884d8" 
-      label
-    >
-      {dataInfrastructure.map((entry, index) => (
-        <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
-      ))}
-    </Pie>
-    <Tooltip />
-    <Legend />
-  </PieChart>
+
+        {/* MOnthly Infrastructure Development Bar Chart */}
+      <div className="bg-white p-4 rounded-lg shadow-md">
+        <h2 className="text-lg font-bold mb-4">Monthly Infrastructure Development Projects</h2>
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={dataInfrastructureMonthly}>
+            <XAxis
+              dataKey="month"
+              stroke="#6b7280"
+              tick={{ fontSize: 14 }}
+              label={{
+                value: "Month",
+                position: "insideBottom",
+                offset: -5,
+              }}
+            />
+            <YAxis
+              stroke="#6b7280"
+              tick={{ fontSize: 14 }}
+              label={{
+                value: "Count",
+                angle: -90,
+                position: "insideLeft",
+                offset: 0,
+                style: { textAnchor: "middle" },
+              }}
+            />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "#f9fafb",
+                borderRadius: "8px",
+                border: "1px solid #e5e7eb",
+              }}
+            />
+            <Legend iconType="circle" wrapperStyle={{ paddingBottom: 10, paddingTop: 10 }} />
+            {["NewLabs", "TechUpgradation", "FacilityExpansion"].map((key, index) => (
+              <Line
+                key={key}
+                type="monotone"
+                dataKey={key}
+                stroke={chartColors[index]}
+                strokeWidth={3}
+                dot={{ r: 5 }}
+                name={key}
+              />
+            ))}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+        {/* monthly MoUs Chart */}
+
+      <div className="bg-white p-4 rounded-lg shadow-md">
+        <h2 className="text-lg font-bold mb-4">Monthly MoUs with NFSU</h2>
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={dataMoUsMonthly}>
+            <XAxis
+              dataKey="month"
+              stroke="#6b7280"
+              tick={{ fontSize: 14 }}
+              label={{
+                value: "Month",
+                position: "insideBottom",
+                offset: -5,
+              }}
+            />
+            <YAxis
+              stroke="#6b7280"
+              tick={{ fontSize: 14 }}
+              label={{
+                value: "Count",
+                angle: -90,
+                position: "insideLeft",
+                offset: 0,
+                style: { textAnchor: "middle" },
+              }}
+            />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "#f9fafb",
+                borderRadius: "8px",
+                border: "1px solid #e5e7eb",
+              }}
+            />
+            <Legend iconType="circle" wrapperStyle={{ paddingBottom: 10, paddingTop: 10 }} />
+            {["Signed", "InProgress", "Pending", "Expired"].map((key, index) => (
+              <Line
+                key={key}
+                type="monotone"
+                dataKey={key}
+                stroke={chartColors[index]}
+                strokeWidth={3}
+                dot={{ r: 5 }}
+                name={key}
+              />
+            ))}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+      
+      {/* Infrastructure Development Bar Chart */}
+      <div className="bg-white p-4 rounded-xl shadow-md">
+        <h2 className="text-xl font-semibold mb-4">Infrastructure Development Projects</h2>
+        <ResponsiveContainer width="100%" height={300}>
+<PieChart>
+  <Pie 
+    data={dataInfrastructure} 
+    dataKey="count" 
+    nameKey="project" 
+    cx="50%" 
+    cy="50%" 
+    outerRadius={100} 
+    fill="#8884d8" 
+    label
+  >
+    {dataInfrastructure.map((entry, index) => (
+      <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
+    ))}
+  </Pie>
+  <Tooltip />
+  <Legend />
+</PieChart>
 </ResponsiveContainer>
 
-        </div>
+      </div>
 
-        {/* Resource Allocation Line Chart */}
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Resource Allocation & Facility Expansion</h2>
-          <ResponsiveContainer width="100%" height={300}>
-  <BarChart data={dataResourceAllocation}>
-    <CartesianGrid strokeDasharray="3 3" />
-    <XAxis dataKey="category" />
-    <YAxis />
-    <Tooltip />
-    <Legend />
-    <Bar dataKey="value" fill="#82ca9d" />
-  </BarChart>
+      {/* MoUs Pie Chart */}
+      <div className="bg-white p-4 rounded-xl shadow-md">
+                <h2 className="text-xl font-semibold mb-4">MoUs with NFSU</h2>
+                <ResponsiveContainer width="100%" height={300}>
+        <PieChart>
+          <Pie
+            data={dataMoUs}
+            cx="50%"
+            cy="50%"
+            outerRadius={100}
+            fill="#8884d8"
+            dataKey="value"
+            label
+          >
+            {dataMoUs.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend/>
+        </PieChart>
+      </ResponsiveContainer>
+
+      </div>
+
+      {/* Resource Allocation Line Chart */}
+      <div className="bg-white p-4 rounded-xl shadow-md">
+        <h2 className="text-xl font-semibold mb-4">Resource Allocation & Facility Expansion</h2>
+        <ResponsiveContainer width="100%" height={300}>
+<BarChart data={dataResourceAllocation}>
+  <CartesianGrid strokeDasharray="3 3" />
+  <XAxis dataKey="category" />
+  <YAxis />
+  <Tooltip />
+  <Legend />
+  <Bar dataKey="value" fill="#82ca9d" />
+</BarChart>
 </ResponsiveContainer>
 
-        </div>
+      </div>
 
-        {/* Recruitment Line Chart */}
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Recruitment & Hiring of Forensic Experts</h2>
-          <ResponsiveContainer width="100%" height={300}>
-  <BarChart data={dataRecruitment}>
-    <CartesianGrid strokeDasharray="3 3" />
-    <XAxis dataKey="category" />
-    <YAxis />
-    <Tooltip />
-    <Legend />
-    <Bar dataKey="value" fill="#FF8042" barSize={30} />
-  </BarChart>
+      {/* Recruitment Line Chart */}
+      <div className="bg-white p-4 rounded-xl shadow-md">
+        <h2 className="text-xl font-semibold mb-4">Recruitment & Hiring of Forensic Experts</h2>
+        <ResponsiveContainer width="100%" height={300}>
+<BarChart data={dataRecruitment}>
+  <CartesianGrid strokeDasharray="3 3" />
+  <XAxis dataKey="category" />
+  <YAxis />
+  <Tooltip />
+  <Legend />
+  <Bar dataKey="value" fill="#FF8042" barSize={30} />
+</BarChart>
 </ResponsiveContainer>
 
-        </div>
-         {/* MoUs Pie Chart */}
-         <div className="bg-white p-4 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">MoUs with NFSU</h2>
-          <ResponsiveContainer width="100%" height={300}>
-  <PieChart>
-    <Pie
-      data={dataMoUs}
-      cx="50%"
-      cy="50%"
-      outerRadius={80}
-      fill="#8884d8"
-      dataKey="value"
-      label
-    >
-      {dataMoUs.map((entry, index) => (
-        <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
-      ))}
-    </Pie>
-    <Tooltip />
-    <Legend layout="vertical" align="right" verticalAlign="middle" />
-  </PieChart>
-</ResponsiveContainer>
-
-        </div>
+      </div>
+        
       </div>
     </div>
   );

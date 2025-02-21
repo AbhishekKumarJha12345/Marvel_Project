@@ -13,21 +13,22 @@ import {
 
 
 const gradeData = [
-  { grade: "Director", available: 1, provided: 1 },
-  { grade: "Dy Director", available: 12, provided: 12 },
-  { grade: "Assistant Director", available: 39, provided: 39 },
-  { grade: "Assistant Chemical Analyzer", available: 207, provided: 207 },
-  { grade: "Scientific Officers", available: 38, provided: 38 },
+  {  grade: "Director", available: 9, provided: 13 },
+  {  grade: "Dy Director", available: 15, provided: 20 },
+  { grade: "Assistant Director", available: 40, provided: 42 },
+  {  grade: "Assistant Chemical Analyzer", available: 80, provided: 125 },
+  { grade: "Scientific Officers", available: 35, provided: 37 },
 ];
+
 
 export default function Tab1_1() {
   return (
     <div className="p-0">
       <div className="mt-6">
         {/* Bar Chart for Available vs Training Provided */}
-        <div className="bg-white p-4 rounded-xl shadow-md">
+        <div className="bg-white p-4 rounded-xl ">
           <h2 className="text-xl font-semibold mb-4">Training Data by Grade</h2>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={400}>
             <BarChart data={gradeData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="grade" />

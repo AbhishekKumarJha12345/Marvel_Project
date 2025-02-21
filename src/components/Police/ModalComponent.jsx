@@ -135,13 +135,15 @@ const ModalComponent = ({ open,type, onClose }) => {
     
       // Append current date
       const currentDate = new Date().toISOString().split("T")[0];
-      formDataToSend.append("date", currentDate);
+      console.log('timestamp',currentDate)
+      if(type!=="forensic") formDataToSend.append("date", currentDate);
       let url='/add_forms'
       if(type==='police') formDataToSend.append("type", selectedOption);
 
       if(['fir_1','fir_2','fir_3','fir_4','fir_5'].includes(type)) {console.log('type',type); formDataToSend.append("type", type)}
       if(type==='forensic'){
         formDataToSend.append("type", selectedOption);
+        formDataToSend.append("date_of_file", currentDate);
         url='/forensic_form'
       }
       // Append files if any

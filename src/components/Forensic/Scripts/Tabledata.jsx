@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import axiosInstance from "../../../utils/axiosInstance";
 
-export default function Tabledata() {
+export default function Tabledata({setData}) {
   const [forensicDevelopmentData, setForensicDevelopmentData] = useState(null);
 
   useEffect(() => {
@@ -26,7 +26,9 @@ export default function Tabledata() {
         }));
 
         setForensicDevelopmentData(processedData);
-        console.log("Pendancy Data is:", processedData);
+        // console.log('recent data',processedData[processedData.length-1])
+        setData(processedData[0])
+        console.log("Pendancy Data is:", processedData[0]);
       } catch (error) {
         console.log("Errors occurred:", error);
       }
@@ -48,9 +50,9 @@ export default function Tabledata() {
 
   return (
     <div className="mt-6">
-      <div className="bg-white p-4 rounded-xl shadow-md mt-6">
+      <div className="bg-white p-4 rounded-xl mt-6">
         <h2 className="text-xl font-semibold mb-4">Monthly Cases & Exhibits Overview</h2>
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={400}>
           <LineChart data={forensicDevelopmentData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
