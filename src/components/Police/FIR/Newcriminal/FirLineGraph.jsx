@@ -125,6 +125,7 @@ const FirLineGraph = () => {
   }, []);
 
   return (
+
     <div style={{ width: "70%", height: "50vh", margin: "auto" }}>
       <h2 style={{ textAlign: "center" }}>FIR & Chargesheet Data (Monthly)</h2>
       <ResponsiveContainer width="100%" height="100%">

@@ -71,10 +71,10 @@ const CourtTab1 = () => {
     ICJSCaseData();
   }, []);
   const [showModal, setShowModal] = useState(false);
-  const [rloading,setRloading]=useState(false)
-  
+  const [rloading, setRloading] = useState(false);
+
   const handleExport = async () => {
-  setRloading(true)
+    setRloading(true);
 
     const pdf = new jsPDF("p", "mm", "a4");
     const margin = 10;
@@ -122,7 +122,7 @@ const CourtTab1 = () => {
 
     //  Save the PDF
     pdf.save("Court System.pdf");
-    setRloading(false)
+    setRloading(false);
   };
 
   // Dynamic pie chart data
@@ -135,10 +135,7 @@ const CourtTab1 = () => {
         { name: "Pending", value: 0 },
         { name: "Completed", value: 0 },
       ];
-  const recentEntryDate = new Date(icjsData?.[0]?.month).toLocaleString("en-US", {
-    month: "short",
-    year: "numeric",
-  })
+
   const caseData = icjsData?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
       month: "short",
@@ -149,14 +146,33 @@ const CourtTab1 = () => {
     completed: parseInt(item.completed),
     avgResolutionTime: parseInt(item.average_resolution_time),
   }));
+
+  const recentEntryDate = new Date(icjsData?.[0]?.month).toLocaleString(
+    "en-US",
+    {
+      month: "short",
+      year: "numeric",
+    }
+  );
+
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
       <div className="ContentSpace flex justify-between items-center">
         <h1 className="text-2xl font-bold">Court System Dashboard</h1>
 
         <div className="flex space-x-2">
-          <button className="ExportButton" style={{minWidth:'80px'}} onClick={handleExport}>
-          {!rloading ? 'Export' : <><span className="spinner-border spinner-border-sm me-2"></span></>}
+          <button
+            className="ExportButton"
+            style={{ minWidth: "80px" }}
+            onClick={handleExport}
+          >
+            {!rloading ? (
+              "Export"
+            ) : (
+              <>
+                <span className="spinner-border spinner-border-sm me-2"></span>
+              </>
+            )}
           </button>
           {localStorage.getItem("role") !== "chief secretary" && (
             <button
@@ -175,108 +191,105 @@ const CourtTab1 = () => {
       <div ref={exportRef}>
         <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">Deviation</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Line Chart */}
-            <div className="bg-white p-4 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold mb-4">
-                Cases Processed Over Time
-              </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={caseData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="total"
-                    stroke={chartColors[0]}
-                    activeDot={{ r: 8 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="pending"
-                    stroke={chartColors[1]}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="completed"
-                    stroke={chartColors[2]}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
 
-            {/* Area Chart */}
-            {/* <div className="bg-white p-4 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold mb-4">
-                Average Resolution Time Over Time
-              </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={caseData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar
-                    dataKey="avgResolutionTime"
-                    fill={chartColors[0]}
-                    name="Avg Resolution Time"
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div> */}
-            {/* Line Chart - Average Resolution Time Over Time */}
-            <div className="bg-white p-4 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold mb-4">Average Resolution Time Over Time</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={caseData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="avgResolutionTime" stroke={chartColors[0]} strokeWidth={2} />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+          {/* Line Chart */}
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <h3 className="text-xl font-semibold mb-4">
+              Cases Processed Over Time
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={caseData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="total"
+                  stroke={chartColors[0]}
+                  activeDot={{ r: 8 }}
+                  strokeWidth={2}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="pending"
+                  stroke={chartColors[1]}
+                  activeDot={{ r: 8 }}
+                  strokeWidth={2}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="completed"
+                  stroke={chartColors[2]}
+                  activeDot={{ r: 8 }}
+                  strokeWidth={2}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Pie Chart */}
         <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
-          <h1 className="text-2xl font-bold">Recent Entry : {recentEntryDate}</h1>
+          <h1 className="text-2xl font-bold">
+            Recent Entry : {recentEntryDate}
+          </h1>
           <div className="bg-white p-4 rounded-xl shadow-md">
             <h3 className="text-xl font-semibold mb-4">
               Case Status Distribution
             </h3>
             <ResponsiveContainer width="100%" height={300}>
-  <PieChart>
-    <Legend 
-      layout="horizontal" 
-      align="center" 
-      verticalAlign="bottom" 
-    />
-    <Pie
-      data={caseStatusData}
-      dataKey="value"
-      nameKey="name"
-      outerRadius={100}
-      fill="#8884d8"
-    >
-      {caseStatusData.map((entry, index) => (
-        <Cell
-          key={`cell-${index}`}
-          fill={index % 2 === 0 ? "#82ca9d" : "#8884d8"}
-        />
-      ))}
-    </Pie>
-    <Tooltip />
-  </PieChart>
-</ResponsiveContainer>
+              <PieChart>
+                <Legend
+                  layout="horizontal"
+                  align="center"
+                  verticalAlign="bottom"
+                />
+                <Pie
+                  data={caseStatusData}
+                  dataKey="value"
+                  nameKey="name"
+                  outerRadius={100}
+                  fill="#8884d8"
+                >
+                  {caseStatusData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={index % 2 === 0 ? "#82ca9d" : "#8884d8"}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+          <h1 className="text-2xl font-bold">Deviation With Recent Entry</h1>
+          {/* Line Chart - Average Resolution Time Over Time */}
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <div className="mb-4 flex flex-row justify-between items-center">
+              <h3 className="text-xl font-semibold">
+                Average Resolution Time Over Time
+              </h3>
+              <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${caseData?.[0]?.avgResolutionTime}`}</h4>
+            </div>
 
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={caseData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="avgResolutionTime"
+                  stroke={chartColors[0]}
+                  strokeWidth={2}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>

@@ -2,14 +2,22 @@ import { React, useState } from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import ModalComponent from "../../ModalComponent";
-import FirBarGraph from "./FirBarGraph";
+import FirLineGraph from "./FirLineGraph";
 
 // Register chart components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const chartColors = [
-  "#8884d8", "#82ca9d", "#f2c57c", "#6a8caf", "#d4a5a5",
-  "#a28bd3", "#ff9a76", "#74b49b", "#c08497", "#b0a8b9"
+  "#8884d8",
+  "#82ca9d",
+  "#f2c57c",
+  "#6a8caf",
+  "#d4a5a5",
+  "#a28bd3",
+  "#ff9a76",
+  "#74b49b",
+  "#c08497",
+  "#b0a8b9",
 ];
 
 const PoliceFirs = ({ apidata, downloadReport }) => {
@@ -31,8 +39,12 @@ const PoliceFirs = ({ apidata, downloadReport }) => {
           apidata ? apidata.no_of_fir_registered_under_bns : "",
           apidata ? apidata.percentage_of_fir_under_bns_against_total_firs : "",
           apidata ? apidata.no_of_chargesheets_filed_under_bns : "",
-          apidata ? apidata.no_of_chargesheets_not_filed_within_the_stipulated_time : "",
-          apidata ? apidata.percentage_of_chargesheets_filed_on_the_basis_of_firs_under_bns : "",
+          apidata
+            ? apidata.no_of_chargesheets_not_filed_within_the_stipulated_time
+            : "",
+          apidata
+            ? apidata.percentage_of_chargesheets_filed_on_the_basis_of_firs_under_bns
+            : "",
         ],
         backgroundColor: chartColors,
         borderColor: chartColors,
@@ -60,17 +72,21 @@ const PoliceFirs = ({ apidata, downloadReport }) => {
   };
 
   return (
-    <div className="bg-white p-6 mx-auto rounded-lg w-[100%] h-[600px] shadow-lg">
+    <div className="bg-white p-6 mx-auto rounded-lg shadow-lg mt-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold text-center flex-grow">FIRs New Criminal Laws</h2>
+        <h2 className="text-2xl font-semibold text-center flex-grow">
+          FIRs New Criminal Laws
+        </h2>
         <div className="flex space-x-4">
-         { localStorage.getItem('role') !=='chief secretary' && <button
-            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-all"
-            onClick={() => setShowModal(true)}
-          >
-            Add On
-          </button>}
+          {localStorage.getItem("role") !== "chief secretary" && (
+            <button
+              className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-all"
+              onClick={() => setShowModal(true)}
+            >
+              Add On
+            </button>
+          )}
           {/* <button
             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all"
             onClick={downloadReport}
@@ -81,20 +97,24 @@ const PoliceFirs = ({ apidata, downloadReport }) => {
       </div>
 
       {/* Charts Section */}
-      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "20px" }}>
-  {/* First Chart (Pie Chart) */}
-  <div style={{ flex: "1 1 45%", maxWidth: "100%", height: "400px", display: "flex", justifyContent: "center" }}>
-    <Pie data={data} options={options} />
-  </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* First Chart (Pie Chart) */}
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <Pie data={data} options={options} />
+        </div>
 
-  {/* Second Chart (FirBarGraph) */}
-  <div style={{ flex: "1 1 45%", maxWidth: "100%", height: "30vh", display: "flex", justifyContent: "center" }}>
-    <FirBarGraph />
-  </div>
-</div>
+        {/* Second Chart (FirLineGraph) */}
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <FirLineGraph />
+        </div>
+      </div>
 
       {/* Modal Component */}
-      <ModalComponent open={showModal} type="fir_1" onClose={() => setShowModal(false)} />
+      <ModalComponent
+        open={showModal}
+        type="fir_1"
+        onClose={() => setShowModal(false)}
+      />
     </div>
   );
 };
