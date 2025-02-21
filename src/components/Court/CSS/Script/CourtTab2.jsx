@@ -127,7 +127,7 @@ const CourtTab2 = () => {
     }),
     Compliant: item.data_security_complaints || 0,
     NonComplaints: item.data_security_non_complaints || 0,
-  }));
+  })).sort((a, b) => new Date(a.month) - new Date(b.month));
 
   const complianceData = summonsDigitalData
     ? [
@@ -154,7 +154,8 @@ const CourtTab2 = () => {
     }),
     accessible: parseInt(item.accessibility_complaints) || 0,
     inAccessible: parseInt(item.accessibility_non_complaints) || 0,
-  }));
+  })).sort((a, b) => new Date(a.month) - new Date(b.month));
+
   const accessibilityData = summonsDigitalData
     ? [
         {
@@ -166,6 +167,7 @@ const CourtTab2 = () => {
           value: parseInt(
             summonsDigitalData[0]?.accessibility_non_complaints || 0
           ),
+
         },
       ]
     : [
@@ -181,7 +183,7 @@ const CourtTab2 = () => {
       }),
       deliveredElectronically: parseInt(item.electronic_court_summons),
     };
-  });
+  }).sort((a, b) => new Date(a.month) - new Date(b.month));
 
   const adoptionData = Array.isArray(summonsDigitalData)
     ? summonsDigitalData.map((item) => ({
@@ -190,7 +192,7 @@ const CourtTab2 = () => {
           year: "numeric",
         }),
         adoptionRate: parseInt(item?.adoption_rate) || 0, // Handle null/undefined values safely
-      }))
+      })).sort((a, b) => new Date(a.month) - new Date(b.month))
     : [];
   const recentEntryDate = new Date(
     summonsDigitalData?.[0]?.month
@@ -236,8 +238,8 @@ const CourtTab2 = () => {
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={securityComiplanceData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
+                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
+                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
                   <Tooltip />
                   <Legend />
                   <Line
@@ -266,8 +268,8 @@ const CourtTab2 = () => {
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={accessibilityComiplanceData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
+                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
+                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
                   <Tooltip />
                   <Legend />
                   <Line
@@ -312,7 +314,7 @@ const CourtTab2 = () => {
                     nameKey="name"
                     outerRadius={100}
                     fill="#8884d8"
-                    label
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
                   >
                     {complianceData.map((entry, index) => (
                       <Cell
@@ -341,7 +343,7 @@ const CourtTab2 = () => {
                     nameKey="name"
                     outerRadius={100}
                     fill="#82ca9d"
-                    label
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
                   >
                     {accessibilityData.map((entry, index) => (
                       <Cell
@@ -364,14 +366,14 @@ const CourtTab2 = () => {
                 <h3 className="text-xl font-semibold">
                   Court Summons Delivered Electronically
                 </h3>
-                <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${summonsData?.[0]?.deliveredElectronically}`}</h4>
+                <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${summonsData?.[summonsData.length - 1]?.deliveredElectronically}`}</h4>
               </div>
 
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={summonsData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
+                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
+                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
                   {/* <YAxis 
                     domain={[
                       0, 
@@ -397,15 +399,15 @@ const CourtTab2 = () => {
                 Adoption Rate of eSummons & Digital Case Records
 
                 </h3>
-                <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${adoptionData?.[0]?.adoptionRate}`}</h4>
+                <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${adoptionData?.[adoptionData.length - 1]?.adoptionRate}`}</h4>
               </div>
              
 
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={adoptionData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis
+                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
+                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}
                     domain={[
                       0,
                       Math.max(
