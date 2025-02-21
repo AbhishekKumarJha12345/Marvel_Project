@@ -2,7 +2,8 @@ import { React, useState } from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import ModalComponent from "../../ModalComponent";
-import FirLineGraph from "./FirLineGraph";
+// import FirLineGraph from "./FirLineGraph";
+import FirBarGraph from "./FirBarGraph";
 
 // Register chart components
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -105,7 +106,7 @@ const PoliceFirs = ({ apidata, downloadReport }) => {
 
         {/* Second Chart (FirLineGraph) */}
         <div className="bg-white p-4 rounded-xl shadow-md">
-          <FirLineGraph />
+          <FirBarGraph />
         </div>
       </div>
 
