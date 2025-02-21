@@ -65,7 +65,7 @@ const COLORS = [
   "#c08497", // Mauve
   "#b0a8b9", // Dusty Lilac
 ];
-import Courtform from './Courtform.jsx'
+import Courtform from "./Courtform.jsx";
 
 const CourtTab4 = () => {
   const exportRef = useRef(null); // Reference to content to be exported
@@ -138,21 +138,6 @@ const CourtTab4 = () => {
     pdf.save("Prosecution & Forensic Departments Dashboard.pdf");
   };
 
-  const dataSharingEffectivenessData = [
-    {
-      department: "Judicial",
-      effectiveness: parseInt(forensicData?.[0]?.judicial_effectiveness || 0),
-    },
-    {
-      department: "Prosecution",
-      effectiveness: parseInt(forensicData?.[0]?.prosecution_effectiveness || 0),
-    },
-    {
-      department: "Forensic",
-      effectiveness: parseInt(forensicData?.[0]?.forensic_effectiveness || 0),
-    },
-  ];
-
   const forensicDataUsageData = [
     {
       name: "Used Forensic Data",
@@ -168,22 +153,54 @@ const CourtTab4 = () => {
     },
   ];
 
+  const casesForensicData = forensicData?.map((item) => ({
+    month: new Date(item.month).toLocaleString("en-US", {
+      month: "short",
+      year: "numeric",
+    }),
+    used: item?.percentage_of_cases_using_forensic_data,
+    notUsed: 100 - item?.percentage_of_cases_using_forensic_data,
+  }));
+
   const responseTimeData = forensicData?.map((item) => ({
-    month: new Date(item.month).toLocaleString('en-US', { month: 'short', year: 'numeric' }),
+    month: new Date(item.month).toLocaleString("en-US", {
+      month: "short",
+      year: "numeric",
+    }),
     responseTime: item?.response_time_for_evidence_retrieval,
   }));
 
   const dataSharingEffectiveData = forensicData?.map((item) => ({
-    month: new Date(item.month).toLocaleString('en-US', { month: 'short', year: 'numeric' }),
+    month: new Date(item.month).toLocaleString("en-US", {
+      month: "short",
+      year: "numeric",
+    }),
     Judicial: item?.judicial_effectiveness,
     Prosecution: item?.prosecution_effectiveness,
     Forensic: item?.forensic_effectiveness,
   }));
 
-  const recentEntryDate = new Date(forensicData?.[0]?.month).toLocaleString("en-US", {
-    month: "short",
-    year: "numeric",
-  })
+  const recentdataSharingEffectiveData = [
+    {
+      name: "Judicial",
+      value: parseInt(forensicData?.[0]?.judicial_effectiveness || 0),
+    },
+    {
+      name: "Prosecution",
+      value: parseInt(forensicData?.[0]?.prosecution_effectiveness || 0),
+    },
+    {
+      name: "Forensic",
+      value: parseInt(forensicData?.[0]?.forensic_effectiveness || 0),
+    },
+  ];
+  const recentEntryDate = new Date(forensicData?.[0]?.month).toLocaleString(
+    "en-US",
+    {
+      month: "short",
+      year: "numeric",
+    }
+  );
 
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
@@ -192,61 +209,171 @@ const CourtTab4 = () => {
           Prosecution & Forensic Departments Dashboard
         </h1>
         <div className="flex space-x-2">
-        <button className="ExportButton" onClick={handleExport}>
-          Export
-        </button>
-        {localStorage.getItem('role') !=='chief secretary' && <button 
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-          style={{backgroundColor:'#2d3748'}} onClick={() => {
-            console.log("Open modal");
-            setShowModal(true);
-          }}>
-            Add on
-          </button>}
-          </div>
+          <button className="ExportButton" onClick={handleExport}>
+            Export
+          </button>
+          {localStorage.getItem("role") !== "chief secretary" && (
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+              style={{ backgroundColor: "#2d3748" }}
+              onClick={() => {
+                console.log("Open modal");
+                setShowModal(true);
+              }}
+            >
+              Add on
+            </button>
+          )}
+        </div>
       </div>
       <div ref={exportRef}>
-      <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
-        <h1 className="text-2xl font-bold">Deviation</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-4 rounded-xl shadow-md">
-            <h3 className="text-xl font-semibold mb-4">
-              Data-Sharing Effectivness
-            </h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={dataSharingEffectiveData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="Judicial"
-                  stroke="#8884d8"
-                  name="Disposed Cases"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="Prosecution"
-                  stroke="#82ca9d"
-                  name="Backlog Reduction"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="Forensic"
-                  stroke="#6a8caf"
-                  name="Backlog Reduction"
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+          <h1 className="text-2xl font-bold">Deviation</h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <h3 className="text-xl font-semibold mb-4">
+                Data-Sharing Effectivness
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={dataSharingEffectiveData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="Judicial"
+                    stroke="#8884d8"
+                    name="Judicial"
+                    activeDot={{ r: 8 }}
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="Prosecution"
+                    stroke="#82ca9d"
+                    name="Prosecution"
+                    activeDot={{ r: 8 }}
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="Forensic"
+                    stroke="#f2c57c"
+                    name="Forensic"
+                    activeDot={{ r: 8 }}
+                    strokeWidth={2}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
 
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <h3 className="text-xl font-semibold mb-4">
+                Cases Using Forensic Data
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={casesForensicData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="used"
+                    stroke="#8884d8"
+                    name="Used Forensic Data"
+                    activeDot={{ r: 8 }}
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="notUsed"
+                    stroke="#82ca9d"
+                    name="Not Used Forensic Data"
+                    activeDot={{ r: 8 }}
+                    strokeWidth={2}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+          <h1 className="text-2xl font-bold">
+            Recent Entry : {recentEntryDate}
+          </h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Effectiveness of Data Sharing Mechanisms (Bar Chart) */}
+
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <h3 className="text-xl font-semibold mb-4">
+                Effectiveness of Data-Sharing Mechanisms
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Tooltip />
+                  <Legend />
+                  <Pie
+                    data={recentdataSharingEffectiveData}
+                    dataKey="value"
+                    nameKey="name"
+                    outerRadius={100}
+                    fill="#8884d8"
+                    label
+                  >
+                    {recentdataSharingEffectiveData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            {/* Percentage of Cases Using Forensic Data (Pie Chart) */}
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <h3 className="text-xl font-semibold mb-4">
+                Percentage of Cases Using Forensic Data
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Tooltip />
+                  <Legend />
+                  <Pie
+                    data={forensicDataUsageData}
+                    dataKey="value"
+                    nameKey="name"
+                    outerRadius={100}
+                    fill="#8884d8"
+                    label
+                  >
+                    {forensicDataUsageData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+          <h1 className="text-2xl font-bold">Deviation With Recent Entry</h1>
           {/* Response Time for Evidence Retrieval (Line Chart) */}
           <div className="bg-white p-4 rounded-xl shadow-md">
-            <h3 className="text-xl font-semibold mb-4">
-              Response Time for Evidence Retrieval
-            </h3>
+            <div className="mb-4 flex flex-row justify-between items-center">
+              <h3 className="text-xl font-semibold">
+                Response Time for Evidence Retrieval
+              </h3>
+              <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${responseTimeData?.[0]?.responseTime}`}</h4>
+            </div>
+
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={responseTimeData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -254,61 +381,17 @@ const CourtTab4 = () => {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="responseTime" stroke="#FF6347" />
+                <Line
+                  type="monotone"
+                  dataKey="responseTime"
+                  stroke="#FF6347"
+                  activeDot={{ r: 8 }}
+                  strokeWidth={2}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
-      </div>
-      <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
-        <h1 className="text-2xl font-bold">Recent Entry : {recentEntryDate}</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Percentage of Cases Using Forensic Data (Pie Chart) */}
-          <div className="bg-white p-4 rounded-xl shadow-md">
-            <h3 className="text-xl font-semibold mb-4">
-              Percentage of Cases Using Forensic Data
-            </h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Tooltip />
-                <Legend/>
-                <Pie
-                  data={forensicDataUsageData}
-                  dataKey="value"
-                  nameKey="name"
-                  outerRadius={100}
-                  fill="#8884d8"
-                  label
-                >
-                  {forensicDataUsageData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Effectiveness of Data Sharing Mechanisms (Bar Chart) */}
-          <div className="bg-white p-4 rounded-xl shadow-md">
-            <h3 className="text-xl font-semibold mb-4">
-              Effectiveness of Data-Sharing Mechanisms
-            </h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={dataSharingEffectivenessData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="department" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="effectiveness" fill="#82ca9d" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
       </div>
       <Courtform
         open={showModal}

@@ -13,6 +13,9 @@ import {
   ResponsiveContainer,
   LineChart,
   Line,
+  PieChart,
+  Pie,
+  Cell,
   RadarChart,
   Radar,
   PolarGrid,
@@ -51,8 +54,7 @@ const chartColors = [
   "#b0a8b9", // Dusty Lilac
 ];
 
-import Courtform from './Courtform.jsx'
-
+import Courtform from "./Courtform.jsx";
 
 const CourtTab5 = () => {
   const exportRef = useRef(null); // Reference to content to be exported
@@ -74,7 +76,7 @@ const CourtTab5 = () => {
   useEffect(() => {
     fetchImplementationData();
   }, []);
-const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const handleExport = async () => {
     const pdf = new jsPDF("p", "mm", "a4");
@@ -127,47 +129,77 @@ const [showModal, setShowModal] = useState(false);
 
   const deploymentStatusData = [
     {
-      stage: "Planning",
-      progress: parseInt(implementationData?.[0]?.planning || 0),
+      name: "Planning",
+      value: parseInt(implementationData?.[0]?.planning || 0),
     },
     {
-      stage: "Development",
-      progress: parseInt(implementationData?.[0]?.development || 0),
+      name: "Development",
+      value: parseInt(implementationData?.[0]?.development || 0),
     },
     {
-      stage: "Testing",
-      progress: parseInt(implementationData?.[0]?.testing || 0),
+      name: "Testing",
+      value: parseInt(implementationData?.[0]?.testing || 0),
     },
     {
-      stage: "Implementation",
-      progress: parseInt(implementationData?.[0]?.implementation || 0),
+      name: "Implementation",
+      value: parseInt(implementationData?.[0]?.implementation || 0),
     },
   ];
 
   const speechToTextIntegrationData = implementationData?.map((item) => ({
-    month: new Date(item.month).toLocaleString('en-US', { month: 'short', year: 'numeric' }),
+    month: new Date(item.month).toLocaleString("en-US", {
+      month: "short",
+      year: "numeric",
+    }),
     progress: parseInt(item.ai_transcription_integration || 0),
   }));
 
-  const userFeedbackDatas = implementationData?.map((item) => ({
-    month: new Date(item.month).toLocaleString('en-US', { month: 'short', year: 'numeric' }),
+  const monthlyUserFeedbackData = implementationData?.map((item) => ({
+    month: new Date(item.month).toLocaleString("en-US", {
+      month: "short",
+      year: "numeric",
+    }),
     Judges: item.judges_feedback,
     "Legal Professionals": item.legal_professionals_feedback,
     "Administrative Staff": item.administrative_staff_feedback,
   }));
 
+  const latestFeedbackData = [
+    {
+      name: "Judges",
+      value: parseInt(implementationData?.[0]?.judges_feedback || 0),
+    },
+    {
+      name: "Legal Professionals",
+      value: parseInt(
+        implementationData?.[0]?.legal_professionals_feedback || 0
+      ),
+    },
+    {
+      name: "Administrative Staff",
+      value: parseInt(
+        implementationData?.[0]?.administrative_staff_feedback || 0
+      ),
+    },
+  ];
+
   const monthlyProgressData = implementationData?.map((item) => ({
-    month: new Date(item.month).toLocaleString('en-US', { month: 'short', year: 'numeric' }),
+    month: new Date(item.month).toLocaleString("en-US", {
+      month: "short",
+      year: "numeric",
+    }),
     Planning: parseInt(item.planning || 0),
     Development: parseInt(item.development || 0),
     Testing: parseInt(item.testing || 0),
     Implementation: parseInt(item.implementation || 0),
   }));
 
-  const recentEntryDate = new Date(implementationData?.[0]?.month).toLocaleString("en-US", {
+  const recentEntryDate = new Date(
+    implementationData?.[0]?.month
+  ).toLocaleString("en-US", {
     month: "short",
     year: "numeric",
-  })
+  });
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
       <div className="ContentSpace">
@@ -175,30 +207,34 @@ const [showModal, setShowModal] = useState(false);
           NYAYSHRUTI Project Implementation Progress
         </h1>
         <div className="flex space-x-2">
-        <button className="ExportButton" onClick={handleExport}>
-          Export
-        </button>
-        {localStorage.getItem('role') !=='chief secretary' && <button 
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-          style={{backgroundColor:'#2d3748'}} onClick={() => {
-            console.log("Open modal");
-            setShowModal(true);
-          }}>
-            Add on
-          </button>}
-          </div>
+          <button className="ExportButton" onClick={handleExport}>
+            Export
+          </button>
+          {localStorage.getItem("role") !== "chief secretary" && (
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+              style={{ backgroundColor: "#2d3748" }}
+              onClick={() => {
+                console.log("Open modal");
+                setShowModal(true);
+              }}
+            >
+              Add on
+            </button>
+          )}
+        </div>
       </div>
       <div ref={exportRef}>
         <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">Deviation</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Integration of Speech-to-Text & AI Transcription (Line Chart) */}
             <div className="bg-white p-4 rounded-xl shadow-md">
               <h3 className="text-xl font-semibold mb-4">
-                Speech-to-Text & AI Transcription Integration
+                Monthly Progress of Deployment Status & Impact on Judicial
+                Processes
               </h3>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={speechToTextIntegrationData}>
+                <LineChart data={monthlyProgressData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
@@ -206,20 +242,41 @@ const [showModal, setShowModal] = useState(false);
                   <Legend />
                   <Line
                     type="monotone"
-                    dataKey="progress"
+                    dataKey="Planning"
+                    stroke={chartColors[0]}
+                    activeDot={{ r: 8 }}
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="Development"
                     stroke={chartColors[1]}
+                    activeDot={{ r: 8 }}
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="Testing"
+                    stroke={chartColors[2]}
+                    activeDot={{ r: 8 }}
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="Implementation"
+                    stroke={chartColors[3]}
+                    activeDot={{ r: 8 }}
                     strokeWidth={2}
                   />
                 </LineChart>
               </ResponsiveContainer>
             </div>
-
             <div className="bg-white p-4 rounded-xl shadow-md">
               <h3 className="text-xl font-semibold mb-4">
                 User Adoption & Feedback
               </h3>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={userFeedbackDatas}>
+                <LineChart data={monthlyUserFeedbackData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
@@ -229,62 +286,118 @@ const [showModal, setShowModal] = useState(false);
                     type="monotone"
                     dataKey="Judges"
                     stroke="#8884d8"
-                    name="Disposed Cases"
+                    name="Judges"
+                    activeDot={{ r: 8 }}
+                    strokeWidth={2}
                   />
                   <Line
                     type="monotone"
                     dataKey="Legal Professionals"
                     stroke="#82ca9d"
-                    name="Backlog Reduction"
+                    name="Legal Professionals"
+                    activeDot={{ r: 8 }}
+                    strokeWidth={2}
                   />
                   <Line
                     type="monotone"
                     dataKey="Administrative Staff"
-                    stroke="#6a8caf"
-                    name="Backlog Reduction"
+                    stroke="#f2c57c"
+                    name="Administrative Staff"
+                    activeDot={{ r: 8 }}
+                    strokeWidth={2}
                   />
                 </LineChart>
               </ResponsiveContainer>
             </div>
-            
           </div>
-          <div className="bg-white p-4 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold mb-4">
-                Monthly Progress of Deployment Status & Impact on Judicial
-                Processes
-              </h3>
-              <ResponsiveContainer width="100%" height={300}>
-  <LineChart data={monthlyProgressData}>
-    <CartesianGrid strokeDasharray="3 3" />
-    <XAxis dataKey="month" />
-    <YAxis />
-    <Tooltip />
-    <Legend />
-    <Line type="monotone" dataKey="Planning" stroke={chartColors[0]} />
-    <Line type="monotone" dataKey="Development" stroke={chartColors[1]} />
-    <Line type="monotone" dataKey="Testing" stroke={chartColors[2]} />
-    <Line type="monotone" dataKey="Implementation" stroke={chartColors[3]} />
-  </LineChart>
-</ResponsiveContainer>
-            </div>
         </div>
         <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
-          <h1 className="text-2xl font-bold">Recent Entry : {recentEntryDate}</h1>
+          <h1 className="text-2xl font-bold">
+            Recent Entry : {recentEntryDate}
+          </h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Deployment Status and Impact on Judicial Processes (Stacked Bar Chart) */}
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <h3 className="text-xl font-semibold mb-4">
+                Deployment Status & Impact on Judicial Processes
+              </h3>
 
-          {/* Deployment Status and Impact on Judicial Processes (Stacked Bar Chart) */}
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Tooltip />
+                  <Legend />
+                  <Pie
+                    data={deploymentStatusData}
+                    dataKey="value"
+                    nameKey="name"
+                    outerRadius={100}
+                    fill="#8884d8"
+                    label
+                  >
+                    {deploymentStatusData?.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={chartColors[index % chartColors.length]}
+                      />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <h3 className="text-xl font-semibold mb-4">
+                User Adoption & Feedback
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Tooltip />
+                  <Legend />
+                  <Pie
+                    data={latestFeedbackData}
+                    dataKey="value"
+                    nameKey="name"
+                    outerRadius={100}
+                    fill="#8884d8"
+                    label
+                  >
+                    {latestFeedbackData?.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={chartColors[index % chartColors.length]}
+                      />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+          <h1 className="text-2xl font-bold">Deviation With Recent Entry</h1>
+          {/* Integration of Speech-to-Text & AI Transcription (Line Chart) */}
           <div className="bg-white p-4 rounded-xl shadow-md">
-            <h3 className="text-xl font-semibold mb-4">
-              Deployment Status & Impact on Judicial Processes
-            </h3>
+            <h3 className="text-xl font-semibold mb-4"></h3>
+            <div className="mb-4 flex flex-row justify-between items-center">
+              <h3 className="text-xl font-semibold">
+                Speech-to-Text & AI Transcription Integration
+              </h3>
+              <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${speechToTextIntegrationData?.[0]?.progress}`}</h4>
+            </div>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={deploymentStatusData}>
+              <LineChart data={speechToTextIntegrationData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="stage" />
+                <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="progress" stackId="a" fill={chartColors[0]} />
-              </BarChart>
+                <Line
+                  type="monotone"
+                  dataKey="progress"
+                  stroke={chartColors[1]}
+                  strokeWidth={2}
+                  activeDot={{ r: 8 }}
+                />
+              </LineChart>
             </ResponsiveContainer>
           </div>
         </div>

@@ -49,7 +49,7 @@ const COLORS = [
   "#c08497", // Mauve
   "#b0a8b9", // Dusty Lilac
 ];
-import Courtform from './Courtform.jsx'
+import Courtform from "./Courtform.jsx";
 
 const VideoConferencingDashboard = () => {
   const exportRef = useRef(null); // Reference to content to be exported
@@ -70,7 +70,7 @@ const VideoConferencingDashboard = () => {
   };
   useEffect(() => {
     fetchConfrenceDisposalData();
-  }, []);  
+  }, []);
   const [showModal, setShowModal] = useState(false);
   const handleExport = async () => {
     const pdf = new jsPDF("p", "mm", "a4");
@@ -122,27 +122,31 @@ const VideoConferencingDashboard = () => {
   };
 
   const caseDisposalData = confrenceDisposalData?.map((item) => ({
-    month: new Date(item.month).toLocaleString('en-US', { month: 'short', year: 'numeric' }),
+    month: new Date(item.month).toLocaleString("en-US", {
+      month: "short",
+      year: "numeric",
+    }),
     disposedCases: item.disposed_cases || 0,
     backlogReduction: item.backlog_reduction || 0,
   }));
 
   const readinessData = [
     {
-      subject: "Backlog Reduction",
-      value: parseInt(confrenceDisposalData?.[0]?.backlog_reduction || 0),
-    },
-    {
       subject: "Disposed Cases",
       value: parseInt(confrenceDisposalData?.[0]?.disposed_cases || 0),
     },
+    {
+      subject: "Backlog Reduction",
+      value: parseInt(confrenceDisposalData?.[0]?.backlog_reduction || 0),
+    },
   ];
 
-  const recentEntryDate = new Date(confrenceDisposalData?.[0]?.month).toLocaleString("en-US", {
+  const recentEntryDate = new Date(
+    confrenceDisposalData?.[0]?.month
+  ).toLocaleString("en-US", {
     month: "short",
     year: "numeric",
-  })
-
+  });
 
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
@@ -153,20 +157,26 @@ const VideoConferencingDashboard = () => {
         </button>
       </div> */}
       <div className="ContentSpace flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Video Conferencing Hearings & Case Disposal Rate Dashboard</h1>
+        <h1 className="text-2xl font-bold">
+          Video Conferencing Hearings & Case Disposal Rate Dashboard
+        </h1>
 
         <div className="flex space-x-2">
           <button className="ExportButton" onClick={handleExport}>
             Export
           </button>
-         { localStorage.getItem('role') !=='chief secretary' &&  <button 
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-          style={{backgroundColor:'#2d3748'}} onClick={() => {
-            console.log("Open modal");
-            setShowModal(true);
-          }}>
-            Add on
-          </button>}
+          {localStorage.getItem("role") !== "chief secretary" && (
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+              style={{ backgroundColor: "#2d3748" }}
+              onClick={() => {
+                console.log("Open modal");
+                setShowModal(true);
+              }}
+            >
+              Add on
+            </button>
+          )}
         </div>
       </div>
       <div ref={exportRef}>
@@ -178,52 +188,43 @@ const VideoConferencingDashboard = () => {
             <h3 className="text-xl font-semibold mb-4">
               Case Disposal & Backlog Reduction
             </h3>
-            {/* <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={caseDisposalData}>
+         
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={caseDisposalData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar
-                  dataKey="disposedCases"
-                  fill="#8884d8"
-                  name="Disposed Cases"
-                />
-                <Bar
-                  dataKey="backlogReduction"
-                  fill="#82ca9d"
-                  name="Backlog Reduction"
-                />
-              </BarChart>
-            </ResponsiveContainer> */}
-            <ResponsiveContainer width="100%" height={300}>
-  <LineChart data={caseDisposalData}>
-    <CartesianGrid strokeDasharray="3 3" />
-    <XAxis dataKey="month" />
-    <YAxis />
-    <Tooltip />
-    <Legend />
-    <Line
-      type="monotone"
-      dataKey="disposedCases"
-      stroke="#8884d8"
-      name="Disposed Cases"
-      activeDot={{ r: 8 }}
-    />
-    <Line
-      type="monotone"
-      dataKey="backlogReduction"
-      stroke="#82ca9d"
-      name="Backlog Reduction"
-    />
-  </LineChart>
-</ResponsiveContainer>
+                <Line
+                  type="monotone"
+                  stroke="#8884d8"
 
+                  dataKey="disposedCases"
+                  name="Disposed Cases"
+                  activeDot={{ r: 8 }}
+                  strokeWidth={2}
+
+                />
+                <Line
+                  type="monotone"
+                  stroke="#82ca9d"
+
+                  dataKey="backlogReduction"
+                  name="Backlog Reduction"
+                  activeDot={{ r: 8 }}
+                  strokeWidth={2}
+
+
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
         <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
-          <h1 className="text-2xl font-bold">Recent Entry : {recentEntryDate}</h1>
+          <h1 className="text-2xl font-bold">
+            Recent Entry : {recentEntryDate}
+          </h1>
           {/* Infrastructure Readiness Pie Chart */}
           <div className="bg-white p-4 rounded-xl shadow-md">
             <h3 className="text-xl font-semibold mb-4">
@@ -232,7 +233,7 @@ const VideoConferencingDashboard = () => {
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Tooltip />
-                <Legend/>
+                <Legend />
                 <Pie
                   data={readinessData}
                   dataKey="value"
