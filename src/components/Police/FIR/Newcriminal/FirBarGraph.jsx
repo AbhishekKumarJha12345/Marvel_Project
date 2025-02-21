@@ -86,7 +86,7 @@ const chartColors = [
   "#6a8caf", // Steel Blue
 ];
 
-const FirLineGraph = () => {
+const FirBarGraph = () => {
   const [data, setData] = useState([]);
 
   function convertMonthFormat(yyyy_mm) {
@@ -144,4 +144,4 @@ const FirLineGraph = () => {
   );
 };
 
-export default FirLineGraph;
+export default FirBarGraph;

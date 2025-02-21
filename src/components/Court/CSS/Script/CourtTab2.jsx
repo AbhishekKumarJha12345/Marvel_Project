@@ -120,6 +120,15 @@ const CourtTab2 = () => {
     pdf.save("eSummons & Digital Case Records.pdf");
   };
 
+  const securityComiplanceData = summonsDigitalData?.map((item) => ({
+    month: new Date(item.month).toLocaleString("en-US", {
+      month: "short",
+      year: "numeric",
+    }),
+    Compliant: item.data_security_complaints || 0,
+    NonComplaints: item.data_security_non_complaints || 0,
+  }));
+
   const complianceData = summonsDigitalData
     ? [
         {
@@ -138,6 +147,14 @@ const CourtTab2 = () => {
         { name: "Non-Compliant", value: 0 },
       ];
 
+  const accessibilityComiplanceData = summonsDigitalData?.map((item) => ({
+    month: new Date(item.month).toLocaleString("en-US", {
+      month: "short",
+      year: "numeric",
+    }),
+    accessible: parseInt(item.accessibility_complaints) || 0,
+    inAccessible: parseInt(item.accessibility_non_complaints) || 0,
+  }));
   const accessibilityData = summonsDigitalData
     ? [
         {
@@ -166,16 +183,21 @@ const CourtTab2 = () => {
     };
   });
 
-  const adoptionData = Array.isArray(summonsDigitalData) 
-  ? summonsDigitalData.map(item => ({
-      month: new Date(item?.month || "").toLocaleString('en-US', { month: 'short', year: 'numeric' }),
-      adoptionRate: parseInt(item?.adoption_rate) || 0 // Handle null/undefined values safely
-    })) 
-  : [];
-  const recentEntryDate = new Date(summonsDigitalData?.[0]?.month).toLocaleString("en-US", {
+  const adoptionData = Array.isArray(summonsDigitalData)
+    ? summonsDigitalData.map((item) => ({
+        month: new Date(item?.month || "").toLocaleString("en-US", {
+          month: "short",
+          year: "numeric",
+        }),
+        adoptionRate: parseInt(item?.adoption_rate) || 0, // Handle null/undefined values safely
+      }))
+    : [];
+  const recentEntryDate = new Date(
+    summonsDigitalData?.[0]?.month
+  ).toLocaleString("en-US", {
     month: "short",
     year: "numeric",
-  })
+  });
 
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
@@ -206,12 +228,145 @@ const CourtTab2 = () => {
         <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">Deviation</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* eSummons Delivered Electronically Bar Chart */}
             <div className="bg-white p-4 rounded-xl shadow-md">
               <h3 className="text-xl font-semibold mb-4">
-                Percentage of Court Summons Delivered Electronically
+                Monthly Data Security Compliance
               </h3>
-              
+
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={securityComiplanceData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="Compliant"
+                    stroke="#8884d8"
+                    strokeWidth={2}
+                    name="Complaints"
+                    activeDot={{ r: 8 }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="NonComplaints"
+                    stroke="#82ca9d"
+                    strokeWidth={2}
+                    name="Non-Complaints"
+                    activeDot={{ r: 8 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <h3 className="text-xl font-semibold mb-4">
+                Monthly Accessibility Compliance
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={accessibilityComiplanceData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    stroke="#8884d8"
+                    dataKey="accessible"
+                    name="Accessible"
+                    activeDot={{ r: 8 }}
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    stroke="#82ca9d"
+                    dataKey="inAccessible"
+                    name="In Accessible"
+                    activeDot={{ r: 8 }}
+                    strokeWidth={2}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+          <h1 className="text-2xl font-bold">
+            Recent Entry : {recentEntryDate}
+          </h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Updated Pie Chart for Compliance */}
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <h3 className="text-xl font-semibold mb-4">
+                Data Security Compliance
+              </h3>
+
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Tooltip />
+                  <Legend />
+                  <Pie
+                    data={complianceData}
+                    dataKey="value"
+                    nameKey="name"
+                    outerRadius={100}
+                    fill="#8884d8"
+                    label
+                  >
+                    {complianceData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Updated Pie Chart for Accessibility */}
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <h3 className="text-xl font-semibold mb-4">
+                Accessibility Compliance
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Tooltip />
+                  <Legend />
+
+                  <Pie
+                    data={accessibilityData}
+                    dataKey="value"
+                    nameKey="name"
+                    outerRadius={100}
+                    fill="#82ca9d"
+                    label
+                  >
+                    {accessibilityData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+          <h1 className="text-2xl font-bold">Deviation With Recent Entry</h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* eSummons Delivered Electronically Bar Chart */}
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <div className="mb-4 flex flex-row justify-between items-center">
+                <h3 className="text-xl font-semibold">
+                  Court Summons Delivered Electronically
+                </h3>
+                <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${summonsData?.[0]?.deliveredElectronically}`}</h4>
+              </div>
+
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={summonsData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -237,18 +392,28 @@ const CourtTab2 = () => {
             </div>
             {/* Adoption Rate Line Chart */}
             <div className="bg-white p-4 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold mb-4">
+            <div className="mb-4 flex flex-row justify-between items-center">
+                <h3 className="text-xl font-semibold">
                 Adoption Rate of eSummons & Digital Case Records
-              </h3>
-              
+
+                </h3>
+                <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${adoptionData?.[0]?.adoptionRate}`}</h4>
+              </div>
+             
+
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={adoptionData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
-                  <YAxis 
+                  <YAxis
                     domain={[
-                      0, 
-                      Math.max(0, ...(adoptionData?.map(item => item.adoptionRate) || [0])) + 50
+                      0,
+                      Math.max(
+                        0,
+                        ...(adoptionData?.map((item) => item.adoptionRate) || [
+                          0,
+                        ])
+                      ) + 50,
                     ]}
                     tickCount={6}
                   />
@@ -257,71 +422,10 @@ const CourtTab2 = () => {
                   <Line
                     type="monotone"
                     dataKey="adoptionRate"
-                    stroke={COLORS[1]}  // Updated to use COLORS[0] from the second chart
+                    stroke={COLORS[1]} // Updated to use COLORS[0] from the second chart
                     activeDot={{ r: 8 }}
                   />
                 </LineChart>
-              </ResponsiveContainer>
-
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
-          <h1 className="text-2xl font-bold">Recent Entry : {recentEntryDate}</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Updated Pie Chart for Compliance */}
-            <div className="bg-white p-4 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold mb-4">
-                Data Security Compliance
-              </h3>
-              
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Tooltip />
-                  <Legend />
-                  <Pie
-                    data={complianceData}
-                    dataKey="value"
-                    nameKey="name"
-                    outerRadius={100}
-                    fill="#8884d8"
-                    label
-                  >
-                    {complianceData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-
-            </div>
-
-            {/* Updated Pie Chart for Accessibility */}
-            <div className="bg-white p-4 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold mb-4">
-                Accessibility Compliance
-              </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Tooltip />
-    <Legend />
-
-                  <Pie
-                    data={accessibilityData}
-                    dataKey="value"
-                    nameKey="name"
-                    outerRadius={100}
-                    fill="#82ca9d"
-                    label
-                  >
-                    {accessibilityData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                </PieChart>
               </ResponsiveContainer>
             </div>
           </div>
