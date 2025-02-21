@@ -275,7 +275,7 @@ export default function Dashboard({ users }) {
       </div>
       <PoliceTraining ref={trainingRef}/>
     </div>,
-    "awareness/campaign"    : <div className="content"><h1 className="heading">Awareness Campaigns</h1><Carousel /></div>,
+    // "awareness/campaign"    : <div className="content"><h1 className="heading">Awareness Campaigns</h1><Carousel /></div>,
     "forensic/visits"       : <div className="content"><h1 className="heading">Forensic Visits</h1><Forensicvisits /></div>,
     "court"                 : <div className="content"><h1 className="heading">Court Visits</h1><Dashboard2 /></div>,
     "science"               : <div className="content"><h1 className="heading">Forensic Science Department</h1><Dashboard1 /></div>,
@@ -701,7 +701,7 @@ doc.text("In summary, the data reveals that there is a general increase in the n
                   </div>
                 )}
 
-                <button
+                {/* <button
                   className={`nav-link ${
                     activeSection?.section === "awareness/campaign"
                       ? "active"
@@ -715,7 +715,7 @@ doc.text("In summary, the data reveals that there is a general increase in the n
                     className="nav-icon"
                   />
                   Awareness/Campaign
-                </button>
+                </button> */}
 
                 <div className="nav-divider"></div>
 
