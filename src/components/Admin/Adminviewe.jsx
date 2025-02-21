@@ -48,14 +48,13 @@ const AdminUserTable = () => {
     { name: "Username", selector: (row) => row.username, sortable: true, filterKey: "username" },
     {
       name: "Role", selector: (row) => {
-        if (row.role === "Court") return "Courts";
         if (row.role === "chief secretary") return "Chief Secretry";
-        if (row.role === "correctionalservices") return "Correctional Services";
-        if (row.role === "forensic") return "Forensic";
+        if (row.role === "Correction") return "Correctional Services";
+        if (row.role === "Forensic") return "Forensic";
         if (row.role === "police") return "Police";
-        if (row.role === "prosecution") return "Prosecution";
+        if (row.role === "Prosecutor") return "Prosecution";
         if (row.role === "admin") return "Admin";
-        if (row.role === "court") return "Courts";
+        if (row.role === "Court") return "Courts"
         return row.role;
       }, sortable: true, filterKey: "station"
     },

@@ -739,7 +739,7 @@ doc.text("In summary, the data reveals that there is a general increase in the n
             <div className="nav-divider"></div>
           ) : null}
 
-          {(users === "chief secretary" || users === "prosecution") && (
+          {(users === "chief secretary" || users === "Prosecutor") && (
             <li
               className={`nav-link ${
                 activeSection?.section === "prosecution" ? "active" : ""
@@ -755,7 +755,7 @@ doc.text("In summary, the data reveals that there is a general increase in the n
             <div className="nav-divider"></div>
           ) : null}
 
-          {(users === "chief secretary" || users === "court") && (
+          {(users === "chief secretary" || users === "Court") && (
             <li
               className={`nav-link ${
                 activeSection?.section === "court" ? "active" : ""
@@ -772,7 +772,7 @@ doc.text("In summary, the data reveals that there is a general increase in the n
           ) : null}
 
           {(users === "chief secretary" ||
-            users === "correctionalservices") && (
+            users === "Correction") && (
             <li
               className={`nav-link ${
                 activeSection?.section === "correctionalservices"
@@ -790,7 +790,7 @@ doc.text("In summary, the data reveals that there is a general increase in the n
             <div className="nav-divider"></div>
           ) : null}
 
-          {(users === "chief secretary" || users === "forensic") && (
+          {(users === "chief secretary" || users === "Forensic") && (
             <>
               {/* Forensic Science Section */}
               <li
@@ -801,17 +801,7 @@ doc.text("In summary, the data reveals that there is a general increase in the n
               >
                 <BiotechIcon size={25} /> Forensic Science Department
               </li>
-              <li
-                className={`nav-link ${
-                  activeSection?.section === "report" ? "active" : ""
-                }`}
-                onClick={() => {
-                  handleSectionClick("report");
-                  generatePDF();
-                }}
-              >
-                <PictureAsPdfIcon size={25} /> Generate Report
-              </li>
+            
             </>
           )}
         </ul>
@@ -833,9 +823,9 @@ doc.text("In summary, the data reveals that there is a general increase in the n
 
 
           ) : contentMap[activeSection?.section] || (users === "police" ? contentMap["training"]
-            : users === "court" ? contentMap["court"]
-              : users === "forensic" ? contentMap["science"]
-                : users === "prosecution" ? contentMap["prosecution"]
+            : users === "Court" ? contentMap["court"]
+              : users === "Forensic" ? contentMap["science"]
+                : users === "Prosecutor" ? contentMap["prosecution"]
                 : users === "admin" ? contentMap["admin"]
                   : contentMap["correctionalservices"])
       }

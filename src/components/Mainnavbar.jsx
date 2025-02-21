@@ -29,13 +29,13 @@ function Mainnavbar() {
 
   const navigate = useNavigate();
   const logoMapping = {
-    prosecution: logocs,
+    Prosecutor: logocs,
     police: logo,
     "chief secretary": logocs,
     admin: logocs,
-    court: logocs,
-    forensic: Forensic_logo,
-    correctionalservices: Correctional_service_logo,
+    Court: logocs,
+    Forensic: Forensic_logo,
+    Correction: Correctional_service_logo,
   };
   const userLogo = logoMapping[users];
 
@@ -78,10 +78,11 @@ function Mainnavbar() {
             src={userLogo}
             alt="Logo"
             className={
-              users === "prosecution" ||
+              users === "Prosecutor" ||
               users === "chief secretary" ||
-              users === "court" ||
-              users == "forensic"
+              users === "Court" ||
+              users == "Forensic" ||
+              users == "Correction"
                 ? "w-10"
                 : "w-20"
             }
