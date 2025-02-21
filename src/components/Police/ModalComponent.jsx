@@ -187,7 +187,9 @@ const ModalComponent = ({ open,type, onClose }) => {
   
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (/^\d*$/.test(value) || value === "") {  // Allow only numbers
+    if(name === 'act' || name === 'section'){
+      setFormData({ ...formData, [name]: value });
+    }else if (/^\d*$/.test(value) || value === "") {  // Allow only numbers
       setFormData({ ...formData, [name]: value });
     }
   };
