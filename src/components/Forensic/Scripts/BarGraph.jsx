@@ -74,16 +74,29 @@ const BarGraph = ({ data }) => {
   const options = {
     responsive: true,
     plugins: {
-      legend: { position: "bottom" }, // Show legend at the top
+      legend: { position: "bottom" }, // Show legend at the bottom
       title: {
-        display: true,
-        text: "Forensic Statistics",
+        display: false,
+        // text: "Forensic Statistics",
       },
     },
     scales: {
-      y: { beginAtZero: true },
+      x: {
+        title: {
+          display: true,
+          text: "Categories", // X-axis label
+        },
+      },
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "No of cases", // Y-axis label
+        },
+      },
     },
   };
+  
   
   return (
   // <div className="bg-white p-4 rounded-xl shadow-md">

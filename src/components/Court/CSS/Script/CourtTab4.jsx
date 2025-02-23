@@ -160,7 +160,7 @@ const CourtTab4 = () => {
     }),
     used: item?.percentage_of_cases_using_forensic_data,
     notUsed: 100 - item?.percentage_of_cases_using_forensic_data,
-  }));
+  })).sort((a, b) => new Date(a.month) - new Date(b.month));
 
   const responseTimeData = forensicData?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
@@ -168,7 +168,7 @@ const CourtTab4 = () => {
       year: "numeric",
     }),
     responseTime: item?.response_time_for_evidence_retrieval,
-  }));
+  })).sort((a, b) => new Date(a.month) - new Date(b.month));
 
   const dataSharingEffectiveData = forensicData?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
@@ -178,7 +178,7 @@ const CourtTab4 = () => {
     Judicial: item?.judicial_effectiveness,
     Prosecution: item?.prosecution_effectiveness,
     Forensic: item?.forensic_effectiveness,
-  }));
+  })).sort((a, b) => new Date(a.month) - new Date(b.month));
 
   const recentdataSharingEffectiveData = [
     {
@@ -237,8 +237,8 @@ const CourtTab4 = () => {
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={dataSharingEffectiveData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
+                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
+                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
                   <Tooltip />
                   <Legend />
                   <Line
@@ -276,8 +276,8 @@ const CourtTab4 = () => {
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={casesForensicData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
+                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
+                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
                   <Tooltip />
                   <Legend />
                   <Line
@@ -322,7 +322,7 @@ const CourtTab4 = () => {
                     nameKey="name"
                     outerRadius={100}
                     fill="#8884d8"
-                    label
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
                   >
                     {recentdataSharingEffectiveData.map((entry, index) => (
                       <Cell
@@ -349,7 +349,7 @@ const CourtTab4 = () => {
                     nameKey="name"
                     outerRadius={100}
                     fill="#8884d8"
-                    label
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
                   >
                     {forensicDataUsageData.map((entry, index) => (
                       <Cell
@@ -371,14 +371,14 @@ const CourtTab4 = () => {
               <h3 className="text-xl font-semibold">
                 Response Time for Evidence Retrieval
               </h3>
-              <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${responseTimeData?.[0]?.responseTime}`}</h4>
+              <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${responseTimeData?.[responseTimeData.length -1]?.responseTime}`}</h4>
             </div>
 
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={responseTimeData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
+                <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
+                <YAxis label={{ value: 'Evidence Retrived', angle: -90, position: 'center', dx: -30 }}/>
                 <Tooltip />
                 <Legend />
                 <Line

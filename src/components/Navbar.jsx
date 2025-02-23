@@ -585,7 +585,7 @@ doc.text("In summary, the data reveals that there is a general increase in the n
                       className="dropdown-item"
                       onClick={() => toggleSubMenu(1)}
                     >
-                      FIR's
+                      FIR
                     </button>
 
                     {activeSubMenu === 1 && (

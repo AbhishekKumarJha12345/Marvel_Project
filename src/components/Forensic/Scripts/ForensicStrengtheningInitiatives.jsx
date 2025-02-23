@@ -131,15 +131,22 @@ const ForensicStrengtheningInitiatives = () => {
           </h3>
           <span className="text-gray-600 text-sm">Total: 33 Recruits</span>
         </div>
+        <p>
+        <strong>Recent entry:{recruitmentMonthlyData[recruitmentMonthlyData?.length-1]?.month}</strong>
+        </p>
         <p className="text-gray-600 mb-3">
           Keeps track of recruitment efforts for forensic experts, analysts, and technicians.
         </p>
+        
 
         {/* Pie Chart */}
         <div className="flex justify-center w-full">
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
-              <Pie data={recruitmentData} dataKey="value" nameKey="name" outerRadius={100} label>
+              <Pie data={recruitmentData} dataKey="value" nameKey="name" outerRadius={100}
+                   label={({ name, percent }) => ` ${(percent * 100).toFixed(1)}%`}
+
+               >
                 {recruitmentData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
@@ -160,6 +167,9 @@ const ForensicStrengtheningInitiatives = () => {
           </h3>
           <span className="text-gray-600 text-sm">Overall Adoption: 80%</span>
         </div>
+        <p>
+        <strong>Recent entry:{cyberForensicMonthlyData[cyberForensicMonthlyData?.length-1]?.month}</strong>
+        </p>
         <p className="text-gray-600 mb-3">
           Monitors advancements in cyber forensic tools, digital evidence analysis, and automation.
         </p>

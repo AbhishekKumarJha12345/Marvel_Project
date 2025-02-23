@@ -36,6 +36,18 @@ const CorrectionalInstitutions = () => {
   useEffect(() => {
     fetchPersonnelData();
   }, []);
+  const chartColors = [
+    "#8884d8", // Muted Purple
+    "#82ca9d", // Soft Green
+    "#f2c57c", // Warm Sand
+    "#6a8caf", // Steel Blue
+    "#d4a5a5", // Soft Rose
+    "#a28bd3", // Lavender
+    "#ff9a76", // Muted Coral
+    "#74b49b", // Muted Teal
+    "#c08497", // Mauve
+    "#b0a8b9" // Dusty Lilac
+    ];
   useEffect(() => {
     console.log("Updated formData:", formData);
   }, [formData]);
@@ -50,8 +62,8 @@ const CorrectionalInstitutions = () => {
           formData.Admission || 0,
           formData.Inmates_percentage || 0
         ],
-        backgroundColor: ['#FF5733', '#2196F3', '#FFEB3B', '#4CAF50'],
-        borderColor: ['#D84315', '#1976D2', '#FBC02D', '#388E3C'],
+        backgroundColor: chartColors,
+        borderColor: chartColors,
         borderWidth: 1,
         barThickness: 50,
       },
@@ -63,7 +75,7 @@ const CorrectionalInstitutions = () => {
     plugins: {
       legend: {
         display: true,
-        position: "top",
+        position: "bottom",
         labels: {
           generateLabels: (chart) => {
             const dataset = chart.data.datasets[0];

@@ -42,24 +42,35 @@ const ComplianceSection479 = () => {
     console.log("Updated formData:", formData);
   }, [formData]);     
 
-  
+  const chartColors = [
+    "#8884d8", // Muted Purple
+    "#82ca9d", // Soft Green
+    "#f2c57c", // Warm Sand
+    "#6a8caf", // Steel Blue
+    "#d4a5a5", // Soft Rose
+    "#a28bd3", // Lavender
+    "#ff9a76", // Muted Coral
+    "#74b49b", // Muted Teal
+    "#c08497", // Mauve
+    "#b0a8b9" // Dusty Lilac
+    ];
   const data = {
     labels: ['First Time UTPs', 'Other UTPs'],
     datasets: [
       {
         label: 'No. of UTPs who have served 1/3rd of the maximum sentence',
         data: [formData.count_served_by_onethird_maxsentence || 0, formData.count_served_by_halfof_maxsentence || 0], 
-        backgroundColor: '#FF5733',
+        backgroundColor: chartColors[0],
       },
       {
         label: 'No. of applications preferred in the Court by Jail Superintendent',
         data: [formData.application_count || 0, formData.other_application_count || 0], 
-        backgroundColor: '#2196F3',
+        backgroundColor: chartColors[1],
       },
       {
         label: 'No. of UTPs released on bond',
         data: [formData.bond_count || 0, formData.other_bond_count || 0], 
-        backgroundColor: '#4CAF50',
+        backgroundColor: chartColors[2],
       },
     ],
   };
@@ -134,7 +145,18 @@ const ComplianceSection479 = () => {
 
       <h1 className="text-4xl font-bold text-center">Compliance of Section 479 of BNSS</h1>   
       <div className="h-[400px] w-[400px] w-full flex justify-center items-center">
-        <Bar data={data} options={{ responsive: true }} />    
+      <Bar 
+  data={data} 
+  options={{
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom', // Correct placement of position
+      },
+    },
+  }} 
+/>
+   
       </div>
 </div>
       {isModalOpen && (

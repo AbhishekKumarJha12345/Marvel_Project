@@ -37,7 +37,7 @@ const Tab1 = forwardRef((props, ref) => {
 
   {/* Recent Entry Section */}
   <div style={{ background: "white", margin: "10px 0", padding: "10px", borderRadius: "10px", overflow: "auto", border: "1px solid #ddd" }}>
-    <h2 style={{ textAlign: "left", fontSize: "1.5rem", fontWeight: "bold" }}>Recent Entry {data && data[0]?.month}</h2>
+    <h2 style={{ textAlign: "left", fontSize: "1.5rem", fontWeight: "bold" }}>Recent Entry: {data && data?.month}</h2>
     <div style={{ display: "flex", gap: "20px", width: "100%", minHeight: "300px", overflow: "auto" }}>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", borderRight: "1px solid #ddd", paddingRight: "10px" }}>
         <div style={{ flexGrow: 1, height: "auto", overflow: "auto" }}>

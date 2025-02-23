@@ -1,57 +1,53 @@
 import React, { useState, useEffect } from 'react';
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+// import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement } from 'chart.js';
 import { RxCross1 } from "react-icons/rx";
-
-
-ChartJS.register(ArcElement, Tooltip, Legend);
+import {
+  PieChart,
+  LineChart,
+  Line,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Legend,
+} from "recharts";
+ChartJS.register(ArcElement);
 
 const ComplianceSection = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
   };
+  const chartColors = [
+    "#8884d8", // Muted Purple
+    "#82ca9d", // Soft Green
+    "#f2c57c", // Warm Sand
+    "#6a8caf", // Steel Blue
+    "#d4a5a5", // Soft Rose
+    "#a28bd3", // Lavender
+    "#ff9a76", // Muted Coral
+    "#74b49b", // Muted Teal
+    "#c08497", // Mauve
+    "#b0a8b9" // Dusty Lilac
+    ];
 
   const host = import.meta.env.VITE_APP_API_URL;
   
   
-  const [chartData, setChartData] = useState({
-    labels: [
-      'Correctional Institutions',
-      'Prisoners awarded Death Sentence',
-      'Prisoners Appeals/Confirmed Death Sentence',
-      'Prisoners filed Mercy Petition (u/s 472 of BNSS)',
-    ],
-    datasets: [
-      {
-        data: [0, 0, 0, 0], 
-        backgroundColor: ['#FF5733', '#33FF57', '#3357FF', '#FFD700'],
-        borderColor: ['#FF5733', '#33FF57', '#3357FF', '#FFD700'],
-        borderWidth: 1,
-      },
-    ],
-  });
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false, // Allow the chart to resize freely
-
-    plugins: {
-      legend: {
-        position: 'top',
-
-      },
-      tooltip: {
-        callbacks: {
-          label: function (tooltipItem) {
-            const label = tooltipItem.label || '';
-            const value = tooltipItem.raw || 0;
-            return `${label}: ${value}`;
-          },
-        },
-      },
-    },
-  };
+  const [chartData, setChartData] = useState([]);
+  const pieChartData = [
+    { name: "Confirmed Death Sentence", value: chartData?.confirmed_death_sentence },
+    { name: "Correctional Institutions", value: chartData?.correctional_institutions },
+    { name: "Death Sentence", value: chartData?.death_sentence },
+    { name: "Mercy Petition", value: chartData?.mercy_petition },
+  ];
+  
 
   const fetchComplianceData = () => {
     fetch(`${host}/get_compliance_data`)
@@ -60,20 +56,8 @@ const ComplianceSection = () => {
         if (data.error) {
           console.error('Error fetching data:', data.error);
         } else {
-          setChartData((prevState) => ({
-            ...prevState,
-            datasets: [
-              {
-                ...prevState.datasets[0],
-                data: [
-                  data.correctional_institutions,
-                  data.death_sentence,
-                  data.confirmed_death_sentence,
-                  data.mercy_petition,
-                ],
-              },
-            ],
-          }));
+          console.log('data===================== ',data)
+          setChartData(data);
         }
       })
       .catch((error) => {
@@ -177,7 +161,28 @@ const ComplianceSection = () => {
       <div className="bg-white p-6 mx-auto rounded-lg w-[100%] h-[500px] flex flex-col items-center justify-center text-center relative">
         <h1 className="text-4xl font-bold ">Compliance of Section 472 of BNSS</h1>
         <div className="h-[500px] w-[500px] flex items-center justify-center">
-          <Pie data={chartData} options={options} />
+          {/* <Pie data={chartData} options={options} /> */}
+          <ResponsiveContainer width="100%" height={300}>
+  <PieChart>
+    <Pie
+      data={pieChartData}
+      cx="50%"
+      cy="50%"
+      outerRadius={80}
+      dataKey="value"
+      nameKey="name"
+      label={({ name, percent }) => ` ${(percent * 100).toFixed(1)}%`}
+
+    >
+      {pieChartData.map((entry, index) => (
+        <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
+      ))}
+    </Pie>
+    <Tooltip />
+    <Legend verticalAlign="bottom" align="center" />
+  </PieChart>
+</ResponsiveContainer>
+
         </div>
       </div>
 

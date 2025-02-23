@@ -126,16 +126,23 @@ const CourtTab1 = () => {
   };
 
   // Dynamic pie chart data
+
   const caseStatusData = icjsData
     ? [
-        { name: "Pending", value: parseInt(icjsData[0]?.pending || 0) },
-        { name: "Completed", value: parseInt(icjsData[0]?.completed || 0) },
+        { 
+          name: "Pending", 
+          value: parseInt(icjsData?.[0]?.pending || 0), 
+        },
+        { 
+          name: "Completed", 
+          value: parseInt(icjsData?.[0]?.completed || 0), 
+        }
       ]
     : [
-        { name: "Pending", value: 0 },
-        { name: "Completed", value: 0 },
+        { name: "Pending", value: 0},
+        { name: "Completed", value: 0}
       ];
-
+  
   const caseData = icjsData?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
       month: "short",
@@ -145,7 +152,7 @@ const CourtTab1 = () => {
     pending: parseInt(item.pending),
     completed: parseInt(item.completed),
     avgResolutionTime: parseInt(item.average_resolution_time),
-  }));
+  })).sort((a, b) => new Date(a.month) - new Date(b.month));;
 
   const recentEntryDate = new Date(icjsData?.[0]?.month).toLocaleString(
     "en-US",
@@ -200,8 +207,8 @@ const CourtTab1 = () => {
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={caseData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
+                <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
+                <YAxis label={{ value: 'Number of Cases', angle: -90, position: 'center', dx: -30 }}/>
                 <Tooltip />
                 <Legend />
                 <Line
@@ -251,6 +258,7 @@ const CourtTab1 = () => {
                   nameKey="name"
                   outerRadius={100}
                   fill="#8884d8"
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
                 >
                   {caseStatusData.map((entry, index) => (
                     <Cell
@@ -272,14 +280,14 @@ const CourtTab1 = () => {
               <h3 className="text-xl font-semibold">
                 Average Resolution Time Over Time
               </h3>
-              <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${caseData?.[0]?.avgResolutionTime}`}</h4>
+              <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${caseData?.[caseData?.length - 1]?.avgResolutionTime}`}</h4>
             </div>
 
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={caseData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
+                <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
+                <YAxis label={{ value: 'Average resolution Time', angle: -90, position: 'center', dx: -30 }}/>
                 <Tooltip />
                 <Legend />
                 <Line

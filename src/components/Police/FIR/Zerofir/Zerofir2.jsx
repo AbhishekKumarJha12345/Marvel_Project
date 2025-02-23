@@ -5,7 +5,7 @@ import {
 } from "recharts";
 import axiosInstance from "../../../../utils/axiosInstance";
 
-const ZeroFir2 = ({ getRecentDate,type }) => {
+const ZeroFir2 = ({ getRecentDate, type }) => {
   const [data, setData] = useState([]);
   const chartColors = ["#8884d8", "#82ca9d", "#f2c57c"];
 
@@ -21,9 +21,8 @@ const ZeroFir2 = ({ getRecentDate,type }) => {
         const response = await axiosInstance.get("/live_data?type=line_fir_4");
 
         if (response.data.data_dict) {
-          if(type === "recent"){
-            getRecentDate(response.data.data_dict[0].month)
-
+          if (type === "recent") {
+            getRecentDate(response.data.data_dict[0].month);
           }
           const sortedData = response.data.data_dict
             .map(item => ({
@@ -35,7 +34,6 @@ const ZeroFir2 = ({ getRecentDate,type }) => {
             .sort((a, b) => new Date(a.month) - new Date(b.month));
 
           setData(sortedData);
-          console.log(sortedData,'ssssssssssssss')
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -54,30 +52,41 @@ const ZeroFir2 = ({ getRecentDate,type }) => {
       ]
     : [];
 
+  const total = pieData.reduce((sum, entry) => sum + entry.value, 0);
+
+  // Function to format labels with percentage
+  const renderCustomizedLabel = ({ name, value }) => {
+    const percentage = total ? ((value / total) * 100).toFixed(1) : 0;
+    return `${name} (${percentage}%)`;
+  };
+
   return (
     <div style={{ width: "100%", height: 350, padding: "1.8rem 0rem", backgroundColor: "white", margin: "auto" }}>
-     {type === "recent"? <h2 style={{ textAlign: "center" }}>FIR Trends - Recent</h2>: <h2 style={{ textAlign: "center" }}>FIR Trends Over Time</h2>}
+      {type === "recent" ? (
+        <h2 style={{ textAlign: "center" }}>FIR Trends - Recent</h2>
+      ) : (
+        <h2 style={{ textAlign: "center" }}>FIR Trends Over Time</h2>
+      )}
 
-     <ResponsiveContainer width="100%" height={type === "recent" ? "80%" : "100%"}>
-
-      {type === "recent" && firstDataItem ? (
-    <PieChart>
-      <Pie
-        data={pieData}
-        cx="50%"
-        cy="50%"
-        outerRadius={80} // Reduced outer radius
-        fill="#8884d8"
-        dataKey="value"
-        label
-      >
-        {pieData.map((entry, index) => (
-          <Cell key={`cell-${index}`} fill={chartColors[index]} />
-        ))}
-      </Pie>
-      <Tooltip />
-      <Legend />
-    </PieChart>
+      <ResponsiveContainer width={type === "recent" ? "113%" : "100%"} height={type === "recent" ? "80%" : "100%"}>
+        {type === "recent" && firstDataItem ? (
+          <PieChart>
+            <Pie
+              data={pieData}
+              cx="50%"
+              cy="50%"
+              outerRadius={100}
+              fill="#8884d8"
+              dataKey="value"
+              label={renderCustomizedLabel} // Custom label function
+            >
+              {pieData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={chartColors[index]} />
+              ))}
+            </Pie>
+            <Tooltip formatter={(value) => `${value} (${((value / total) * 100).toFixed(1)}%)`} />
+            <Legend />
+          </PieChart>
         ) : (
           <LineChart data={data} margin={{ top: 20, right: 30, left: 50, bottom: 40 }}>
             <CartesianGrid strokeDasharray="3 3" />
