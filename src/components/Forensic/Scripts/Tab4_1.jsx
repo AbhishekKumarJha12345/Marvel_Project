@@ -1,4 +1,4 @@
-import React from "react";
+import {React,useState,useEffect} from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
 
 const dataMoUs = [
@@ -24,11 +24,65 @@ const dataInfrastructure = [
 const COLORS_MOUS = ["#4CAF50", "#FFC107", "#FF9800", "#F44336"];
 const COLORS_MOUS2 = ["#2196F3", "#3F51B5", "#673AB7"];
 const COLORS_INFRA = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 export default function Tab4_1() {
+   
   return (
     <div className="p-6">
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <div className="flex justify-between items-center mb-4">
       <h1 className="text-2xl font-bold mb-6">Forensic Development Dashboard</h1>
+      
+            <div className="flex items-center gap-4">
+          <div>
+             
+            <DatePicker
+            label='From'
+              views={["year", "month"]}
+              value={fromDate}
+              onChange={setFromDate}
+              slotProps={{
+                textField: { 
+                  variant: "outlined",
+                  size: "small",
+                  sx: { width: "140px", fontSize: "12px" },
+                }
+              }}
+              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+            />
+          </div>
+
+          <div>
+              
+            <DatePicker
+            label='To'
+              views={["year", "month"]}
+              value={toDate}
+              onChange={setToDate}
+              slotProps={{
+                textField: { 
+                  variant: "outlined",
+                  size: "small",
+                  sx: { width: "140px", fontSize: "12px" },
+                }
+              }}
+              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+            />
+          </div>
+
+          <button 
+            onClick={Clearfilter} 
+            className="bg-blue-500 text-white px-3 py-1 rounded-md "
+            style={{ backgroundColor: "#2d3748" }}>
+            Clear Filter
+          </button>
+        </div>
+
+      </div>
+    </LocalizationProvider>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Card 1 - Total Cases Received */}

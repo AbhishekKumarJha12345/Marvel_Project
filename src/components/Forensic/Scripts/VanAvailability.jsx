@@ -90,7 +90,7 @@ const VanAvailability = ({vanData}) => {
 
   return (
     <div className="mt-5">
-      <h2 className="text-center text-2xl font-semibold mb-4">Mobile Forensic Vans Dashboard</h2>
+      {/* <h2 className="text-center text-2xl font-semibold mb-4">Mobile Forensic Vans Dashboard</h2> */}
       <div className="bg-white p-4 rounded-xl shadow-md">
         {/* Filters */}
         <div className="mb-4">

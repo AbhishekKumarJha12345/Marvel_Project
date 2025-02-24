@@ -1,4 +1,4 @@
-import React from "react";
+import {React,useState,useEffect} from "react";
 import { PieChart, Pie,LineChart,Line, Cell, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, RadialBarChart, RadialBar } from "recharts";
 import { UserPlus, ShieldCheck, TrendingUp, BarChart as BarChartIcon } from "lucide-react";
 const chartColors = [
@@ -61,21 +61,100 @@ const cyberForensicMonthlyData = [
 
 // ✅ Updated Dummy Data for Operational Efficiency (Gauge Chart)
 const efficiencyData = [{ name: "Compliance", value: 92, fill: chartColors[7] }]; // Mauve
-
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+ 
 const ForensicStrengtheningInitiatives = () => {
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
+  const [filteredRecruitment, setFilteredRecruitment] = useState(recruitmentMonthlyData);
+  const [filteredCyberForensic, setFilteredCyberForensic] = useState(cyberForensicMonthlyData);
+  
+    const Clearfilter = () => {
+      setFromDate(null);
+      setToDate(null);
+      setFilteredRecruitment(recruitmentMonthlyData);
+      setFilteredCyberForensic(cyberForensicMonthlyData);
+    };
+  
+    const filterDataByDate = (data, fromDate, toDate) => {
+      return data.filter((item) => {
+        const itemDate = dayjs(item.month, "MMM YYYY");
+        return (
+          (!fromDate || itemDate.isAfter(dayjs(fromDate).subtract(1, "month"))) &&
+          (!toDate || itemDate.isBefore(dayjs(toDate).add(1, "month")))
+        );
+      });
+    };
+  
+    useEffect(() => {
+      if (fromDate || toDate) {
+        setFilteredRecruitment(filterDataByDate(recruitmentMonthlyData, fromDate, toDate));
+        setFilteredCyberForensic(filterDataByDate(cyberForensicMonthlyData, fromDate, toDate));
+      }
+    }, [fromDate, toDate]);
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
+      
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <div className="flex justify-between items-center mb-4">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
         <BarChartIcon size={28} className="text-blue-600" />
         Forensic Strengthening Initiatives
-      </h2>
+      </h2>        <div className="flex items-center gap-4">
+          <div>
+            
+            <DatePicker
+            label='From'
+              views={["year", "month"]}
+              value={fromDate}
+              onChange={setFromDate}
+              slotProps={{
+                textField: { 
+                  variant: "outlined",
+                  size: "small",
+                  sx: { width: "140px", fontSize: "12px" },
+                }
+              }}
+              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+            />
+          </div>
 
+          <div>
+           
+            <DatePicker
+            label='To'
+              views={["year", "month"]}
+              value={toDate}
+              onChange={setToDate}
+              slotProps={{
+                textField: { 
+                  variant: "outlined",
+                  size: "small",
+                  sx: { width: "140px", fontSize: "12px" },
+                }
+              }}
+              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+            />
+          </div>
+
+          <button 
+            onClick={Clearfilter} 
+            className="bg-blue-500 text-white px-3 py-1 rounded-md "
+            style={{ backgroundColor: "#2d3748" }}>
+            Clear Filter
+          </button>
+        </div>
+
+      </div>
+    </LocalizationProvider>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Recruitment Trends */}
       <div className="bg-white p-4 rounded-lg shadow-md">
         <h2 className="text-lg font-bold mb-4">Recruitment Trends Over Months</h2>
         <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={recruitmentMonthlyData}>
+          <LineChart data={filteredRecruitment}>
             <XAxis dataKey="month" stroke="#6b7280" tick={{ fontSize: 14 }} />
             <YAxis stroke="#6b7280" tick={{ fontSize: 14 }} />
             <Tooltip />
@@ -101,7 +180,7 @@ const ForensicStrengtheningInitiatives = () => {
       <div className="bg-white p-4 rounded-lg shadow-md">
         <h2 className="text-lg font-bold mb-4">Cyber Forensic Advancements Over Months</h2>
         <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={cyberForensicMonthlyData}>
+          <LineChart data={filteredCyberForensic}>
             <XAxis dataKey="month" stroke="#6b7280" tick={{ fontSize: 14 }} />
             <YAxis stroke="#6b7280" tick={{ fontSize: 14 }} />
             <Tooltip />
@@ -132,7 +211,7 @@ const ForensicStrengtheningInitiatives = () => {
           <span className="text-gray-600 text-sm">Total: 33 Recruits</span>
         </div>
         <p>
-        <strong>Recent entry:{recruitmentMonthlyData[recruitmentMonthlyData?.length-1]?.month}</strong>
+        <strong>Recent entry:{filteredRecruitment[filteredRecruitment?.length-1]?.month}</strong>
         </p>
         <p className="text-gray-600 mb-3">
           Keeps track of recruitment efforts for forensic experts, analysts, and technicians.
@@ -168,7 +247,7 @@ const ForensicStrengtheningInitiatives = () => {
           <span className="text-gray-600 text-sm">Overall Adoption: 80%</span>
         </div>
         <p>
-        <strong>Recent entry:{cyberForensicMonthlyData[cyberForensicMonthlyData?.length-1]?.month}</strong>
+        <strong>Recent entry:{filteredCyberForensic[filteredCyberForensic?.length-1]?.month}</strong>
         </p>
         <p className="text-gray-600 mb-3">
           Monitors advancements in cyber forensic tools, digital evidence analysis, and automation.

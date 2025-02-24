@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -55,11 +55,12 @@ const gradeData = [
   { month: "Jun 2024", grade: "Assistant Chemical Analyzer", available: 80, provided: 225 },
   { month: "Jun 2024", grade: "Scientific Officers", available: 35, provided: 37 },
 ];
+import dayjs from "dayjs";
 
 
-const OfficersGraph = () => {
+const OfficersGraph = ({to,from,setGrade}) => {
   const [selectedMetric, setSelectedMetric] = useState("available");
-
+  const [filteredGradeData, setFilteredGradeData] = useState(gradeData);
   // Process data by month instead of grade
   const processedData = gradeData.reduce((acc, entry) => {
     const { month, available, provided } = entry;
@@ -72,8 +73,62 @@ const OfficersGraph = () => {
     return acc;
   }, {});
 
-  const formattedData = Object.values(processedData);
+  const formattedData = Object.values(filteredGradeData);
+  const filterDataByDate = (data, from, to) => {
+    if (!data || typeof data !== "object") {
+      console.error("filterDataByDate received invalid data:", data);
+      return [];
+    }
+  
+    // Convert object to an array of objects
+    const dataArray = Object.values(data);
+    setGrade(dataArray[dataArray.length-1])
+    return dataArray.filter((item) => {
+      const itemDate = dayjs(item.month, "MMM YYYY");
+  
+      return (
+        (!from || itemDate.isAfter(dayjs(from).subtract(1, "month"))) &&
+        (!to || itemDate.isBefore(dayjs(to).add(1, "month")))
+      );
+    });
+  };
+  
+  
+  useEffect(() => {
+    if (from || to) {
+      console.log("Filtering data from:", from, "to:", to);
+      console.log("Raw Processed Data:", processedData);
+  
+      if (processedData && typeof processedData === "object") {
+        const filteredData = filterDataByDate(processedData, from, to);
+        console.log("Filtered Data:", filteredData);
+  
+        setFilteredGradeData(filteredData);
+  
+        if (filteredData.length > 0) {
+          console.log('----------while filtering---------------',filteredData[filteredData.length - 1])
+          setGrade(filteredData[filteredData.length - 1]);
+        }
+      } else {
+        console.error("Processed Data is not an object:", processedData);
+        setFilteredGradeData([]); // Reset if invalid data
+      }
+    }
+    else{
+      setFilteredGradeData(processedData);
+      console.log('----------while filtering---------------',processedData[processedData.length-1])
+      setGrade(processedData[processedData.length-1])
+    }
+  }, [from, to]);
+  
+  
+  useEffect(() => {
+      setFilteredGradeData(processedData);
+      console.log('----------while filtering---------------',processedData)
 
+      setGrade(processedData[processedData.length-1])
+  }, []);
+  
   return (
     <div className="bg-white p-4 rounded-xl  w-full">
       <div className="flex justify-between mb-4 ">

@@ -19,6 +19,9 @@ import {
   Cell,
   Bar,
 } from "recharts";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 const CourtRefDetails = `Generated Summary:
 2024 witnessed significant advancements and improvements in the legal system, as evidenced by the analysis of key metrics such as eSummons deliveries electronically, total cases, case resolution times, backlog reduction, and adoption rate.
@@ -53,23 +56,71 @@ import Courtform from "./Courtform.jsx";
 const CourtTab1 = () => {
   const exportRef = useRef(null);
   const [icjsData, setIcjsData] = useState(null);
+    const [fromDate, setFromDate] = useState(null);
+    const [toDate, setToDate] = useState(null);
+    const[filteredicjs, setFilteredICJSData]=useState(null)
 
   const ICJSCaseData = async () => {
     try {
       const response = await axiosInstance.get("/live_data", {
         params: {
           type: "court_1",
+          from_date:fromDate?.toISOString().split("T")[0],
+          to_date:toDate?.toISOString().split("T")[0],
         },
       });
       const responseData = response.data;
+      console.log('court_1 dtaa',responseData)
       setIcjsData(responseData.data_dict);
+      setFilteredICJSData(responseData.data_dict)
     } catch (error) {
       console.error("Some error occured", error);
     }
   };
+    const Clearfilter=()=>{
+      setFromDate(null);
+      setToDate(null);
+      setFilteredICJSData(icjsData)
+    }
+    const filterDataByDate = (data, fromDate, toDate) => {
+      if (!Array.isArray(data)) {
+        console.error("filterDataByDate received non-array data:", data);
+        return [];
+      }
+    
+      return data.filter((item) => {
+        const itemDate = dayjs(item.month, "YYYY-MM");
+    
+        return (
+          (!fromDate || itemDate.isAfter(dayjs(fromDate).subtract(1, "month"))) &&
+          (!toDate || itemDate.isBefore(dayjs(toDate).add(1, "month")))
+        );
+      });
+    };
+    
+    // useEffect(() => {
+    //   if(fromDate||toDate)
+    //   {
+    //     ICJSCaseData();
+    //   }
+    // }, [fromDate,toDate]);
+
+
+    useEffect(() => {
+      if (fromDate || toDate) {
+        console.log("Filtering data for dates:", fromDate, toDate);
+        
+        // ICJSCaseData()
+          const filteredData = filterDataByDate(icjsData, fromDate, toDate);
+          console.log("Filtered Data:", filteredData);
+          setFilteredICJSData(filteredData);
+      }
+    }, [fromDate, toDate]);
+    
   useEffect(() => {
     ICJSCaseData();
   }, []);
+
   const [showModal, setShowModal] = useState(false);
   const [rloading, setRloading] = useState(false);
 
@@ -127,15 +178,15 @@ const CourtTab1 = () => {
 
   // Dynamic pie chart data
 
-  const caseStatusData = icjsData
+  const caseStatusData = filteredicjs
     ? [
         { 
           name: "Pending", 
-          value: parseInt(icjsData?.[0]?.pending || 0), 
+          value: parseInt(filteredicjs?.[0]?.pending || 0), 
         },
         { 
           name: "Completed", 
-          value: parseInt(icjsData?.[0]?.completed || 0), 
+          value: parseInt(filteredicjs?.[0]?.completed || 0), 
         }
       ]
     : [
@@ -143,7 +194,7 @@ const CourtTab1 = () => {
         { name: "Completed", value: 0}
       ];
   
-  const caseData = icjsData?.map((item) => ({
+  const caseData = filteredicjs?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
       month: "short",
       year: "numeric",
@@ -154,7 +205,7 @@ const CourtTab1 = () => {
     avgResolutionTime: parseInt(item.average_resolution_time),
   })).sort((a, b) => new Date(a.month) - new Date(b.month));;
 
-  const recentEntryDate = new Date(icjsData?.[0]?.month).toLocaleString(
+  const recentEntryDate = new Date(filteredicjs?.[0]?.month).toLocaleString(
     "en-US",
     {
       month: "short",
@@ -197,7 +248,59 @@ const CourtTab1 = () => {
       </div>
       <div ref={exportRef}>
         <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
-          <h1 className="text-2xl font-bold">Deviation</h1>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <div className="flex justify-between items-center mb-4">
+                                  
+                                <h1 className="text-2xl font-bold">Deviation</h1>
+                    
+                          
+                                  <div className="flex items-center gap-4">
+                                    <div>
+                                       
+                                      <DatePicker
+                                      label='From'
+                                        views={["year", "month"]}
+                                        value={fromDate}
+                                        onChange={setFromDate}
+                                        slotProps={{
+                                          textField: { 
+                                            variant: "outlined",
+                                            size: "small",
+                                            sx: { width: "140px", fontSize: "12px" },
+                                          }
+                                        }}
+                                        sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                                      />
+                                    </div>
+                          
+                                    <div>
+                                       
+                                      <DatePicker
+                                      label='To'
+                                        views={["year", "month"]}
+                                        value={toDate}
+                                        onChange={setToDate}
+                                        slotProps={{
+                                          textField: { 
+                                            variant: "outlined",
+                                            size: "small",
+                                            sx: { width: "140px", fontSize: "12px" },
+                                          }
+                                        }}
+                                        sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                                      />
+                                    </div>
+                          
+                                    <button 
+                                      onClick={Clearfilter} 
+                                      className="bg-blue-500 text-white px-3 py-1 rounded-md "
+                                      style={{ backgroundColor: "#2d3748" }}>
+                                      Clear Filter
+                                    </button>
+                                  </div>
+                          
+                                </div>
+                              </LocalizationProvider>
 
           {/* Line Chart */}
           <div className="bg-white p-4 rounded-xl shadow-md">
@@ -282,6 +385,7 @@ const CourtTab1 = () => {
               </h3>
               <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${caseData?.[caseData?.length - 1]?.avgResolutionTime}`}</h4>
             </div>
+            
 
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={caseData}>

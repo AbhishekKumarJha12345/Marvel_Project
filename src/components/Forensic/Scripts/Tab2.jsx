@@ -26,12 +26,7 @@ const dataResponseTimes = [
   { region: "East", responseTime: 30 },
   { region: "West", responseTime: 15 },
 ];
-const formattedData = [
-  { month: "Jan 2024", North: 20, South: 25, East: 30, West: 15 },
-  { month: "Feb 2024", North: 22, South: 28, East: 32, West: 18 },
-  { month: "Mar 2024", North: 19, South: 27, East: 31, West: 16 },
-  { month: "Apr 2024", North: 24, South: 29, East: 33, West: 20 },
-];
+
 
 const dataExpansionDemand = [
   { region: "North", demand: 50 },
@@ -44,6 +39,12 @@ const formattedExpansionDemand = [
   { month: "Feb 2024", North: 22, South: 28, East: 32, West: 18 },
   { month: "Mar 2024", North: 19, South: 27, East: 31, West: 16 },
   { month: "Apr 2024", North: 50, South: 70, East: 60, West: 40 },
+];
+const formattedData = [
+  { month: "Jan 2024", North: 20, South: 25, East: 30, West: 15 },
+  { month: "Feb 2024", North: 22, South: 28, East: 32, West: 18 },
+  { month: "Mar 2024", North: 19, South: 27, East: 31, West: 16 },
+  { month: "Apr 2024", North: 24, South: 29, East: 33, West: 20 },
 ];
 
 // const chartColors = [ "#FFBB28", "#FF8042", "#FF0000", "#00C49F"];
@@ -59,16 +60,27 @@ const chartColors = [
   "#c08497", // Mauve
   "#b0a8b9" // Dusty Lilac
   ];
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 export default function Tab2() {
   const [vanDeploymentData, setVanDeploymentData] = useState(null);
   const [pieChartData, setPieChartData] = useState([]);
   const[linechartdata,setlinechatdata]=useState([])
+  const [filteredExpansion, setFilteredExpansion] = useState(formattedExpansionDemand);
+  const [filteredData, setFilteredData] = useState(formattedData);
+  const [filteredlineData, setFilteredlineData] = useState([]);
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
   
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axiosInstance.get("/live_data", {
-          params: { type: "forensic_van" },
+          params: { type: "forensic_van",
+            from_date:fromDate?.toISOString().split("T")[0],
+          to_date:toDate?.toISOString().split("T")[0],
+           },
         });
 
         setVanDeploymentData(response.data);
@@ -86,15 +98,17 @@ export default function Tab2() {
   useEffect(() => {
     if (vanDeploymentData?.status_counts) {
       // Directly use status_counts, no need to use Object.entries for an array.
-      console.log('dat dtad ============',vanDeploymentData?.status_counts)
+      // console.log('dat dtad ============',vanDeploymentData?.status_counts)
       const transformedData = vanDeploymentData.status_counts.map(transformToPieChartData);
-      console.log('jdandbsasf',transformedData)
+      // console.log('jdandbsasf',transformedData)
       setlinechatdata(vanDeploymentData?.status_counts)
+      setFilteredlineData(vanDeploymentData?.status_counts)
 
       // setlinechatdata(transformedData)
     }
   }, [vanDeploymentData]);
   const transformToPieChartData = (data) => {
+    console.log('------------------',data)
     return [
       { name: "Available", value: data.available },
       { name: "In Use", value: data.in_use },
@@ -105,17 +119,123 @@ export default function Tab2() {
   };
   useEffect(()=>{
     if(linechartdata.length>0)
-    {console.log('piechart data',linechartdata[linechartdata.length-1])
+    {
 setPieChartData(transformToPieChartData(linechartdata[linechartdata.length-1]))}
   },[linechartdata])
+  const Clearfilter=()=>{
+    setFromDate(null);
+    setToDate(null);
+    setFilteredData(formattedData)
+    setFilteredExpansion(formattedExpansionDemand)
+    setFilteredlineData(linechartdata)
+    
+  }
+  const filterDataByDate = (data, fromDate, toDate) => {
+    if (!Array.isArray(data)) {
+      console.error("filterDataByDate received non-array data:", data);
+      return [];
+    }
+  
+    console.log("Filtering data from:", fromDate, "to:", toDate);
+    console.log("Raw Data:", data);
+  
+    return data.filter((item) => {
+      let itemDate = dayjs(item.month, "MMM YYYY"); // Convert to dayjs object
+      let itemDatee = dayjs(item.month, "MMM-YYYY"); // Convert to dayjs object
+      console.log('boolean',!itemDate.isValid(),!itemDatee.isValid())
+      if (!itemDate.isValid()&&!itemDatee.isValid()) {
+        console.error("Invalid date:", item.month);
+        return false;
+      }
+      if(!itemDate.isValid()){itemDate=itemDatee}
+      return (
+        (!fromDate || itemDate.isAfter(dayjs(fromDate, "MMM YYYY").subtract(1, "month"))) &&
+        (!toDate || itemDate.isBefore(dayjs(toDate, "MMM YYYY").add(1, "month")))
+      );
+    });
+  };
+  
+  
+useEffect(() => {
+  if (fromDate || toDate) {
+    console.log("Filtering data for dates:", fromDate, toDate);
+    
+    // ICJSCaseData()
+      const filteredData1 = filterDataByDate(formattedExpansionDemand, fromDate, toDate);
+      const filteredData2 = filterDataByDate(formattedData, fromDate, toDate);
+      // const filteredData3 = filterDataByDate(linechartdata, fromDate, toDate);
+
+      setFilteredData(filteredData2);
+      setFilteredExpansion(filteredData1)
+      // setFilteredlineData(filteredData3)
+      // console.log('kjkkjnbbfcvtrdvst',filteredData3[filteredData3.length-1])
+      // setPieChartData(transformToPieChartData(filteredData3[filteredData3.length-1]))
+      console.log('Monthly Response Time by Region',filteredData2)
+
+  }
+}, [fromDate, toDate]);
+
   return (
     <div
       className="rounded-lg w-full max-w-full h-auto"
       style={{ fontFamily: "Work Sans", maxWidth: "90.7vw" }}
     >
-      <h1 className="text-2xl font-bold mb-6">
+      
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <div className="flex justify-between items-center mb-4">
+          
+        <h1 className="text-2xl font-bold mb-6">
         Mobile Forensic Vans Dashboard
       </h1>
+
+  
+          <div className="flex items-center gap-4">
+            <div>
+               
+              <DatePicker
+              label='From'
+                views={["year", "month"]}
+                value={fromDate}
+                onChange={setFromDate}
+                slotProps={{
+                  textField: { 
+                    variant: "outlined",
+                    size: "small",
+                    sx: { width: "140px", fontSize: "12px" },
+                  }
+                }}
+                sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+              />
+            </div>
+  
+            <div>
+               
+              <DatePicker
+              label='To'
+                views={["year", "month"]}
+                value={toDate}
+                onChange={setToDate}
+                slotProps={{
+                  textField: { 
+                    variant: "outlined",
+                    size: "small",
+                    sx: { width: "140px", fontSize: "12px" },
+                  }
+                }}
+                sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+              />
+            </div>
+  
+            <button 
+              onClick={Clearfilter} 
+              className="bg-blue-500 text-white px-3 py-1 rounded-md "
+              style={{ backgroundColor: "#2d3748" }}>
+              Clear Filter
+            </button>
+          </div>
+  
+        </div>
+      </LocalizationProvider>
 
       {/* Image Carousel Over Van Availability */}
       {/* <div className="relative mb-6">
@@ -127,14 +247,14 @@ setPieChartData(transformToPieChartData(linechartdata[linechartdata.length-1]))}
       <div className="relative mb-6">
         <VanAvailability vanData={vanDeploymentData?.data} />
       </div>
-
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         
         <div className="bg-white p-4 rounded-lg shadow-md">
       <h2 className="text-lg font-bold mb-4">Monthly Response Time by Region</h2>
       <ResponsiveContainer width="100%" height={400}>
-        <LineChart data={formattedData}>
+        <LineChart data={filteredData}>
           <XAxis
             dataKey="month"
             stroke="#6b7280"
@@ -185,7 +305,7 @@ setPieChartData(transformToPieChartData(linechartdata[linechartdata.length-1]))}
           <h2 className="text-xl font-semibold mb-4">
             Response Times by Region 
           </h2>
-          <p><strong>Recent Entry:</strong>{formattedData[formattedData.length-1]?.month}</p>
+          <p><strong>Recent Entry:</strong>{filteredData[filteredData.length-1]?.month}</p>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={dataResponseTimes}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -201,7 +321,7 @@ setPieChartData(transformToPieChartData(linechartdata[linechartdata.length-1]))}
         <div className="bg-white p-4 rounded-lg shadow-md">
       <h2 className="text-lg font-bold mb-4">Monthly Expansion Demand by Region</h2>
       <ResponsiveContainer width="100%" height={400}>
-        <LineChart data={formattedExpansionDemand}>
+        <LineChart data={filteredExpansion}>
           <XAxis
             dataKey="month"
             stroke="#6b7280"
@@ -252,7 +372,7 @@ setPieChartData(transformToPieChartData(linechartdata[linechartdata.length-1]))}
           <h2 className="text-xl font-semibold mb-4">
             Expansion Demand by Region
           </h2>
-          <p><strong>Recent Entry:</strong>{formattedData[formattedData.length-1]?.month}</p>
+          <p><strong>Recent Entry:</strong>{filteredData[filteredData.length-1]?.month}</p>
 
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={dataExpansionDemand}>

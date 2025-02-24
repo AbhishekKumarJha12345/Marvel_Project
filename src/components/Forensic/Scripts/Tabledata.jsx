@@ -1,42 +1,74 @@
 import React, { useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import axiosInstance from "../../../utils/axiosInstance";
+import dayjs from "dayjs";
 
-export default function Tabledata({setData}) {
+export default function Tabledata({setData,to,from}) {
   const [forensicDevelopmentData, setForensicDevelopmentData] = useState(null);
+  const[filteredData,setFiltereddata]=useState([])
+  
+  const fetchData = async () => {
+    try {
+      const response = await axiosInstance.get("/live_data", {
+        params: { type: "forensic_dev",
+          from_date:from?.toISOString().split("T")[0],
+        to_date:to?.toISOString().split("T")[0],
+         },
+      });
 
+      // Process data to parse strings with commas into numbers
+      const processedData = response.data.map((item) => ({
+        ...item,
+        disposal_cases: parseInt(item.disposal_cases.replace(/,/g, ""), 10),
+        disposal_exhibits: parseInt(item.disposal_exhibits.replace(/,/g, ""), 10),
+        earlier_pending: parseInt(item.earlier_pending.replace(/,/g, ""), 10),
+        earlier_pending_exhibits: parseInt(item.earlier_pending_exhibits.replace(/,/g, ""), 10),
+        pending_cases: parseInt(item.pending_cases.replace(/,/g, ""), 10),
+        pending_exhibits: parseInt(item.pending_exhibits.replace(/,/g, ""), 10),
+        received_cases: parseInt(item.received_cases.replace(/,/g, ""), 10),
+        received_exhibits: parseInt(item.received_exhibits.replace(/,/g, ""), 10),
+      }));
+      let data=processedData.reverse()
+
+      setForensicDevelopmentData(processedData);
+      setFiltereddata(processedData)
+      console.log('recent data',processedData)
+      setData(processedData[processedData?.length -1])
+      console.log("Pendancy Data is:", processedData[0]);
+    } catch (error) {
+      console.log("Errors occurred:", error);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axiosInstance.get("/live_data", {
-          params: { type: "forensic_dev" },
-        });
-
-        // Process data to parse strings with commas into numbers
-        const processedData = response.data.map((item) => ({
-          ...item,
-          disposal_cases: parseInt(item.disposal_cases.replace(/,/g, ""), 10),
-          disposal_exhibits: parseInt(item.disposal_exhibits.replace(/,/g, ""), 10),
-          earlier_pending: parseInt(item.earlier_pending.replace(/,/g, ""), 10),
-          earlier_pending_exhibits: parseInt(item.earlier_pending_exhibits.replace(/,/g, ""), 10),
-          pending_cases: parseInt(item.pending_cases.replace(/,/g, ""), 10),
-          pending_exhibits: parseInt(item.pending_exhibits.replace(/,/g, ""), 10),
-          received_cases: parseInt(item.received_cases.replace(/,/g, ""), 10),
-          received_exhibits: parseInt(item.received_exhibits.replace(/,/g, ""), 10),
-        }));
-        let data=processedData.reverse()
-
-        setForensicDevelopmentData(processedData);
-        // console.log('recent data',processedData[processedData.length-1])
-        setData(processedData[processedData?.length -1])
-        console.log("Pendancy Data is:", processedData[0]);
-      } catch (error) {
-        console.log("Errors occurred:", error);
-      }
-    };
-
     fetchData();
   }, []);
+  const filterDataByDate = (data, fromDate, toDate) => {
+    // if (!Array.isArray(data)) {
+    //   console.error("filterDataByDate received non-array data:", data);
+    //   return [];
+    // }
+  
+    return data.filter((item) => {
+      const itemDate = dayjs(item.month, "YYYY-MM");
+  
+      return (
+        (!fromDate || itemDate.isAfter(dayjs(fromDate).subtract(1, "month"))) &&
+        (!toDate || itemDate.isBefore(dayjs(toDate).add(1, "month")))
+      );
+    });
+  };
+useEffect(() => {
+    if (from || to) {
+      console.log("Filtering data for dates:", from, to);
+      
+      // ICJSCaseData()
+        const filteredData = filterDataByDate(forensicDevelopmentData, from, to);
+        console.log("Filtered Data:", filteredData);
+        setFiltereddata(filteredData);
+    }
+    else{setFiltereddata(forensicDevelopmentData)}
+  }, [to, from]);
+
 
   const chartColors = [
     "#8884d8", // Muted Purple
@@ -54,7 +86,7 @@ export default function Tabledata({setData}) {
       <div className="bg-white p-4 rounded-xl mt-6">
         <h2 className="text-xl font-semibold mb-4">Monthly Cases & Exhibits Overview</h2>
         <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={forensicDevelopmentData}>
+          <LineChart data={filteredData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
             <YAxis  

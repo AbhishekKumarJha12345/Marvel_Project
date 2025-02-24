@@ -66,20 +66,29 @@ const COLORS = [
   "#b0a8b9", // Dusty Lilac
 ];
 import Courtform from "./Courtform.jsx";
-
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+ 
 const CourtTab4 = () => {
   const exportRef = useRef(null); // Reference to content to be exported
   const [forensicData, setForensicData] = useState(null);
-
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
+      const[filteredData,setFiltereddata]=useState([])
+  
   const fetchForensicData = async () => {
     try {
       const response = await axiosInstance.get("/live_data", {
         params: {
           type: "court_4",
+          from_date:fromDate?.toISOString().split("T")[0],
+          to_date:toDate?.toISOString().split("T")[0],
         },
       });
       const responseData = response.data;
       setForensicData(responseData.data_dict);
+      setFiltereddata(responseData.data_dict)
     } catch (error) {
       console.error("Some error occured", error);
     }
@@ -87,6 +96,44 @@ const CourtTab4 = () => {
   useEffect(() => {
     fetchForensicData();
   }, []);
+    const Clearfilter=()=>{
+      setFromDate(null);
+      setToDate(null);
+      setFiltereddata(forensicData)
+    }
+    
+    // useEffect(() => {
+    //   if(fromDate||toDate)
+    //   {
+    //     fetchForensicData();}
+    // }, [fromDate,toDate]);
+
+const filterDataByDate = (data, fromDate, toDate) => {
+          if (!Array.isArray(data)) {
+            console.error("filterDataByDate received non-array data:", data);
+            return [];
+          }
+        
+          return data.filter((item) => {
+            const itemDate = dayjs(item.month, "YYYY-MM");
+        
+            return (
+              (!fromDate || itemDate.isAfter(dayjs(fromDate).subtract(1, "month"))) &&
+              (!toDate || itemDate.isBefore(dayjs(toDate).add(1, "month")))
+            );
+          });
+        };
+     useEffect(() => {
+          if (fromDate || toDate) {
+            console.log("Filtering data for dates:", fromDate, toDate);
+            
+            // ICJSCaseData()
+              const filteredData = filterDataByDate(forensicData, fromDate, toDate);
+              console.log("Filtered Data:", filteredData);
+              setFiltereddata(filteredData);
+          }
+        }, [fromDate, toDate]);
+
   const [showModal, setShowModal] = useState(false);
 
   const handleExport = async () => {
@@ -142,18 +189,18 @@ const CourtTab4 = () => {
     {
       name: "Used Forensic Data",
       value: parseInt(
-        forensicData?.[0]?.percentage_of_cases_using_forensic_data || 0
+        filteredData?.[0]?.percentage_of_cases_using_forensic_data || 0
       ),
     },
     {
       name: "Did Not Use Forensic Data",
       value: parseInt(
-        100 - forensicData?.[0]?.percentage_of_cases_using_forensic_data || 0
+        100 - filteredData?.[0]?.percentage_of_cases_using_forensic_data || 0
       ),
     },
   ];
 
-  const casesForensicData = forensicData?.map((item) => ({
+  const casesForensicData = filteredData?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
       month: "short",
       year: "numeric",
@@ -162,7 +209,7 @@ const CourtTab4 = () => {
     notUsed: 100 - item?.percentage_of_cases_using_forensic_data,
   })).sort((a, b) => new Date(a.month) - new Date(b.month));
 
-  const responseTimeData = forensicData?.map((item) => ({
+  const responseTimeData = filteredData?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
       month: "short",
       year: "numeric",
@@ -170,7 +217,7 @@ const CourtTab4 = () => {
     responseTime: item?.response_time_for_evidence_retrieval,
   })).sort((a, b) => new Date(a.month) - new Date(b.month));
 
-  const dataSharingEffectiveData = forensicData?.map((item) => ({
+  const dataSharingEffectiveData = filteredData?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
       month: "short",
       year: "numeric",
@@ -183,18 +230,18 @@ const CourtTab4 = () => {
   const recentdataSharingEffectiveData = [
     {
       name: "Judicial",
-      value: parseInt(forensicData?.[0]?.judicial_effectiveness || 0),
+      value: parseInt(filteredData?.[0]?.judicial_effectiveness || 0),
     },
     {
       name: "Prosecution",
-      value: parseInt(forensicData?.[0]?.prosecution_effectiveness || 0),
+      value: parseInt(filteredData?.[0]?.prosecution_effectiveness || 0),
     },
     {
       name: "Forensic",
-      value: parseInt(forensicData?.[0]?.forensic_effectiveness || 0),
+      value: parseInt(filteredData?.[0]?.forensic_effectiveness || 0),
     },
   ];
-  const recentEntryDate = new Date(forensicData?.[0]?.month).toLocaleString(
+  const recentEntryDate = new Date(filteredData?.[0]?.month).toLocaleString(
     "en-US",
     {
       month: "short",
@@ -226,9 +273,62 @@ const CourtTab4 = () => {
           )}
         </div>
       </div>
+     
       <div ref={exportRef}>
         <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
-          <h1 className="text-2xl font-bold">Deviation</h1>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <div className="flex justify-between items-center mb-4">
+                        
+                      <h1 className="text-2xl font-bold">Deviation</h1>
+          
+                
+                        <div className="flex items-center gap-4">
+                          <div>
+                             
+                            <DatePicker
+                            label='From'
+                              views={["year", "month"]}
+                              value={fromDate}
+                              onChange={setFromDate}
+                              slotProps={{
+                                textField: { 
+                                  variant: "outlined",
+                                  size: "small",
+                                  sx: { width: "140px", fontSize: "12px" },
+                                }
+                              }}
+                              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                            />
+                          </div>
+                
+                          <div>
+                             
+                            <DatePicker
+                            label='To'
+                              views={["year", "month"]}
+                              value={toDate}
+                              onChange={setToDate}
+                              slotProps={{
+                                textField: { 
+                                  variant: "outlined",
+                                  size: "small",
+                                  sx: { width: "140px", fontSize: "12px" },
+                                }
+                              }}
+                              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                            />
+                          </div>
+                
+                          <button 
+                            onClick={Clearfilter} 
+                            className="bg-blue-500 text-white px-3 py-1 rounded-md "
+                            style={{ backgroundColor: "#2d3748" }}>
+                            Clear Filter
+                          </button>
+                        </div>
+                
+                      </div>
+                    </LocalizationProvider>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white p-4 rounded-xl shadow-md">
               <h3 className="text-xl font-semibold mb-4">

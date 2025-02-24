@@ -55,20 +55,28 @@ const chartColors = [
 ];
 
 import Courtform from "./Courtform.jsx";
-
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+ 
 const CourtTab5 = () => {
   const exportRef = useRef(null); // Reference to content to be exported
   const [implementationData, setImplementationData] = useState(null);
-
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
+  const[filteredData,setFiltereddata]=useState([])
   const fetchImplementationData = async () => {
     try {
       const response = await axiosInstance.get("/live_data", {
         params: {
           type: "court_5",
+          from_date:fromDate?.toISOString().split("T")[0],
+          to_date:toDate?.toISOString().split("T")[0],
         },
       });
       const responseData = response.data;
       setImplementationData(responseData.data_dict);
+      setFiltereddata(responseData.data_dict)
     } catch (error) {
       console.error("Some error occured", error);
     }
@@ -76,6 +84,43 @@ const CourtTab5 = () => {
   useEffect(() => {
     fetchImplementationData();
   }, []);
+      const Clearfilter=()=>{
+        setFromDate(null);
+        setToDate(null);
+        setFiltereddata(implementationData)
+      }
+      
+      // useEffect(() => {
+      //   if(fromDate||toDate)
+      //   {
+      //     fetchImplementationData();}
+      // }, [fromDate,toDate]);
+
+      const filterDataByDate = (data, fromDate, toDate) => {
+                if (!Array.isArray(data)) {
+                  console.error("filterDataByDate received non-array data:", data);
+                  return [];
+                }
+              
+                return data.filter((item) => {
+                  const itemDate = dayjs(item.month, "YYYY-MM");
+              
+                  return (
+                    (!fromDate || itemDate.isAfter(dayjs(fromDate).subtract(1, "month"))) &&
+                    (!toDate || itemDate.isBefore(dayjs(toDate).add(1, "month")))
+                  );
+                });
+              };
+           useEffect(() => {
+                if (fromDate || toDate) {
+                  console.log("Filtering data for dates:", fromDate, toDate);
+                  
+                  // ICJSCaseData()
+                    const filteredData = filterDataByDate(implementationData, fromDate, toDate);
+                    console.log("Filtered Data:", filteredData);
+                    setFiltereddata(filteredData);
+                }
+              }, [fromDate, toDate]);
   const [showModal, setShowModal] = useState(false);
 
   const handleExport = async () => {
@@ -130,23 +175,23 @@ const CourtTab5 = () => {
   const deploymentStatusData = [
     {
       name: "Planning",
-      value: parseInt(implementationData?.[0]?.planning || 0),
+      value: parseInt(filteredData?.[0]?.planning || 0),
     },
     {
       name: "Development",
-      value: parseInt(implementationData?.[0]?.development || 0),
+      value: parseInt(filteredData?.[0]?.development || 0),
     },
     {
       name: "Testing",
-      value: parseInt(implementationData?.[0]?.testing || 0),
+      value: parseInt(filteredData?.[0]?.testing || 0),
     },
     {
       name: "Implementation",
-      value: parseInt(implementationData?.[0]?.implementation || 0),
+      value: parseInt(filteredData?.[0]?.implementation || 0),
     },
   ];
 
-  const speechToTextIntegrationData = implementationData?.map((item) => ({
+  const speechToTextIntegrationData = filteredData?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
       month: "short",
       year: "numeric",
@@ -154,7 +199,7 @@ const CourtTab5 = () => {
     progress: parseInt(item.ai_transcription_integration || 0),
   })).sort((a, b) => new Date(a.month) - new Date(b.month));
 
-  const monthlyUserFeedbackData = implementationData?.map((item) => ({
+  const monthlyUserFeedbackData = filteredData?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
       month: "short",
       year: "numeric",
@@ -167,23 +212,23 @@ const CourtTab5 = () => {
   const latestFeedbackData = [
     {
       name: "Judges",
-      value: parseInt(implementationData?.[0]?.judges_feedback || 0),
+      value: parseInt(filteredData?.[0]?.judges_feedback || 0),
     },
     {
       name: "Legal Professionals",
       value: parseInt(
-        implementationData?.[0]?.legal_professionals_feedback || 0
+        filteredData?.[0]?.legal_professionals_feedback || 0
       ),
     },
     {
       name: "Administrative Staff",
       value: parseInt(
-        implementationData?.[0]?.administrative_staff_feedback || 0
+        filteredData?.[0]?.administrative_staff_feedback || 0
       ),
     },
   ];
 
-  const monthlyProgressData = implementationData?.map((item) => ({
+  const monthlyProgressData = filteredData?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
       month: "short",
       year: "numeric",
@@ -195,7 +240,7 @@ const CourtTab5 = () => {
   })).sort((a, b) => new Date(a.month) - new Date(b.month));
 
   const recentEntryDate = new Date(
-    implementationData?.[0]?.month
+    filteredData?.[0]?.month
   ).toLocaleString("en-US", {
     month: "short",
     year: "numeric",
@@ -226,7 +271,59 @@ const CourtTab5 = () => {
       </div>
       <div ref={exportRef}>
         <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
-          <h1 className="text-2xl font-bold">Deviation</h1>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <div className="flex justify-between items-center mb-4">
+                        
+                      <h1 className="text-2xl font-bold">Deviation</h1>
+          
+                
+                        <div className="flex items-center gap-4">
+                          <div>
+                             
+                            <DatePicker
+                            label='From'
+                              views={["year", "month"]}
+                              value={fromDate}
+                              onChange={setFromDate}
+                              slotProps={{
+                                textField: { 
+                                  variant: "outlined",
+                                  size: "small",
+                                  sx: { width: "140px", fontSize: "12px" },
+                                }
+                              }}
+                              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                            />
+                          </div>
+                
+                          <div>
+                             
+                            <DatePicker
+                            label='To'
+                              views={["year", "month"]}
+                              value={toDate}
+                              onChange={setToDate}
+                              slotProps={{
+                                textField: { 
+                                  variant: "outlined",
+                                  size: "small",
+                                  sx: { width: "140px", fontSize: "12px" },
+                                }
+                              }}
+                              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                            />
+                          </div>
+                
+                          <button 
+                            onClick={Clearfilter} 
+                            className="bg-blue-500 text-white px-3 py-1 rounded-md "
+                            style={{ backgroundColor: "#2d3748" }}>
+                            Clear Filter
+                          </button>
+                        </div>
+                
+                      </div>
+                    </LocalizationProvider>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white p-4 rounded-xl shadow-md">
               <h3 className="text-xl font-semibold mb-4">
