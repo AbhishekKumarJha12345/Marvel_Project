@@ -61,12 +61,13 @@ const ZeroFir2 = ({ getRecentDate, type }) => {
     }
 
     const filteredData = originalData.filter(item => {
-      const itemDate = item.dateObj;
-      const from = fromDate ? new Date(fromDate.getFullYear(), fromDate.getMonth(), 1) : null;
-      const to = toDate ? new Date(toDate.getFullYear(), toDate.getMonth() + 1, 0) : null;
-
+      const itemDate = new Date(item.dateObj); // Ensure it's a Date object
+      const from = fromDate ? new Date(new Date(fromDate).getFullYear(), new Date(fromDate).getMonth(), 1) : null;
+      const to = toDate ? new Date(new Date(toDate).getFullYear(), new Date(toDate).getMonth() + 1, 0) : null;
+  
       return (!from || itemDate >= from) && (!to || itemDate <= to);
-    });
+  });
+  
 
     setData(filteredData);
   }, [fromDate, toDate, originalData]);

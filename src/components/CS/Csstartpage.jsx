@@ -70,34 +70,80 @@ const MaharashtraMap = () => {
           weight: 1.5,
         };
       },
+
+      // ----------------- Click function --------------
+
+      // onEachFeature: (feature, layer) => {
+      //   if (feature.properties && feature.properties.dtname) {
+      //     layer.on("click", (e) => {
+      //       if (selectedLayer) {
+      //         selectedLayer.setStyle({
+      //           color: "rgba(151, 151, 151, 0.7)",
+      //           fillOpacity: 0.7,
+      //         });
+      //       }
+      //       if (selectedLayer === layer) {
+      //         selectedLayer = null;
+      //         setSelectedDistrict(null);
+      //         map.closePopup();
+      //       } else {
+      //         layer.setStyle({
+      //           color: "rgb(166, 166, 166)",
+      //           weight: 1,
+      //         });
+      //         selectedLayer = layer;
+      //         setSelectedDistrict(feature);
+      //         L.popup()
+      //           .setLatLng(e.latlng)
+      //           .setContent(`<b>${feature.properties.dtname}</b>`)
+      //           .openOn(map);
+      //       }
+      //     });
+      //   }
+      // },
+      
+      // ----------------- Click function --------------
+      
+      
       onEachFeature: (feature, layer) => {
-        if (feature.properties && feature.properties.dtname) {
-          layer.on("click", (e) => {
-            if (selectedLayer) {
-              selectedLayer.setStyle({
-                color: "rgba(151, 151, 151, 0.7)",
-                fillOpacity: 0.7,
-              });
-            }
+        if (!feature.properties?.dtname) return;
+      
+        const resetStyle = () => layer.setStyle({ color: "rgba(151, 151, 151, 0.7)", fillOpacity: 0.7 });
+        const highlightStyle = () => layer.setStyle({ color: "rgb(166, 166, 166)", weight: 1 });
+      
+        layer.on({
+          click: (e) => {
+            if (selectedLayer) resetStyle();
             if (selectedLayer === layer) {
               selectedLayer = null;
               setSelectedDistrict(null);
               map.closePopup();
             } else {
-              layer.setStyle({
-                color: "rgb(166, 166, 166)",
-                weight: 1,
-              });
+              highlightStyle();
               selectedLayer = layer;
               setSelectedDistrict(feature);
-              L.popup()
-                .setLatLng(e.latlng)
-                .setContent(`<b>${feature.properties.dtname}</b>`)
-                .openOn(map);
+              L.popup().setLatLng(e.latlng).setContent(`<b>${feature.properties.dtname}</b>`).openOn(map);
             }
-          });
-        }
-      },
+          },
+          mouseover: (e) => {
+            const districtData = policeData.find(d => d.district === feature.properties.dtname);
+            const value = districtData ? districtData[selectedCriteria] : "N/A";
+      
+            highlightStyle();
+            L.popup()
+              .setLatLng(e.latlng)
+              .setContent(`<b>${feature.properties.dtname}</b><br/>${selectedCriteria.replace(/_/g, " ").toUpperCase()}: ${value}`)
+              .openOn(map);
+          },
+          mouseout: () => {
+            resetStyle();
+            map.closePopup();
+          },
+        });
+      }
+      
+      
+      
     }).addTo(map);
 
     const bounds = maharashtraLayer.getBounds();
@@ -198,8 +244,52 @@ const MaharashtraMap = () => {
     </div>
   ))}
 </div>
+<div style={{ display: "flex", height: "80vh", width: "100%", position: "relative" }}>
 
-      <div id="map" style={{ flex: 1,borderRadius: '8px' }}></div>
+      {/* Left Card - Population */}
+    <div style={{
+      position: "absolute",
+      left: 20,
+      top: "50%",
+      transform: "translateY(-50%)",
+      padding: "15px",
+      background: "#fff",
+      boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
+      borderRadius: "8px",
+      fontSize: "18px",
+      fontWeight: "bold",
+      textAlign: "center",
+      zIndex:"999"
+    }}>
+      <div>Population</div>
+      <div style={{ fontSize: "22px", color: "#d9534f" }}>12.73 Crore</div>
+    </div>
+
+    {/* Map */}
+    <div id="map" style={{ flex: 1, borderRadius: '8px' }}></div>
+
+    {/* Right Card - Number of Districts */}
+    <div style={{
+      position: "absolute",
+      right: 20,
+      top: "50%",
+      transform: "translateY(-50%)",
+      padding: "15px",
+      background: "#fff",
+      boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
+      borderRadius: "8px",
+      fontSize: "18px",
+      fontWeight: "bold",
+      textAlign: "center",
+      zIndex:"999"
+
+    }}>
+      <div>Districts</div>
+      <div style={{ fontSize: "22px", color: "#0275d8" }}>36</div>
+    </div>
+    </div>
+
+
       <div style={{ width: "25%", padding: "10px", borderLeft: "1px solid #ccc", background: "#f8f9fa",borderRadius: '8px' }}>
         <h3>District Statistics</h3>
         {selectedDistrict ? (
