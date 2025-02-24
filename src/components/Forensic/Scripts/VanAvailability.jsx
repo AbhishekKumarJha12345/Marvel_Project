@@ -98,7 +98,8 @@ const VanAvailability = ({vanData}) => {
             {columns.filter((col) => col.filterKey && col.filterKey !== "action").map((col, index) => (
               <input
                 key={index}
-                type="text"
+                // type="text"
+                type={col.filterKey === 'date' ? 'date' : 'text'}
                 placeholder={`Search by ${col.name.props.children}`}
                 value={filters[col.filterKey]}
                 onChange={(e) => handleFilter(e, col.filterKey)}

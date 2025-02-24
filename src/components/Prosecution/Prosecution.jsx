@@ -86,7 +86,7 @@ const [filters, setFilters] = useState({ role: "", posts: "", date: "" });
       filterKey: "posts",
     },
     {
-      name: <span className="font-semibold text-[14px]">Date</span>,
+      name: <span className="font-semibold text-[14px]">Date</span>,  
       selector: (row) => row.date,
       sortable: true,
       filterKey: "date",
@@ -134,7 +134,10 @@ const [filters, setFilters] = useState({ role: "", posts: "", date: "" });
             {columns.filter((col) => col.filterKey && col.filterKey !== "action").map((col, index) => (
               <input
                 key={index}
-                type="text"
+                // type="text"
+                type={col.filterKey === 'date' ? 'date' : 'text'}
+
+
                 placeholder={`Search by ${col.name.props.children}`}
                 value={filters[col.filterKey]}
                 onChange={(e) => handleFilter(e, col.filterKey)}

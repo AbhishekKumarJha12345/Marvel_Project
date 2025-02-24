@@ -21,10 +21,34 @@ const Policevisitsforensic = () => {
   const [filters, setFilters] = useState({ date: "", unitname: "", count: "" });
   const [filteredData, setFilteredData] = useState(initialData);
 
+  // const handleFilter = (event, key) => {
+  //   const value = event.target.value.toLowerCase();
+  //   const newFilters = { ...filters, [key]: value };
+  //   setFilters(newFilters);
+  //   setFilteredData(
+  //     initialData.filter((row) =>
+  //       Object.keys(newFilters).every((filterKey) =>
+  //         row[filterKey]
+  //           ? row[filterKey].toString().toLowerCase().includes(newFilters[filterKey])
+  //           : true
+  //       )
+  //     )
+  //   );
+  // };
+
+  //added
   const handleFilter = (event, key) => {
-    const value = event.target.value.toLowerCase();
+    let value = event.target.value.toLowerCase();
+  
+    // Convert YYYY-MM-DD to DD-MM-YYYY for date filtering
+    if (key === "date" && value) {
+      const [year, month, day] = value.split("-");
+      value = `${day}-${month}-${year}`; // Convert to DD-MM-YYYY
+    }
+  
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
+    
     setFilteredData(
       initialData.filter((row) =>
         Object.keys(newFilters).every((filterKey) =>
@@ -35,6 +59,8 @@ const Policevisitsforensic = () => {
       )
     );
   };
+
+  
 
   const columns = [
     {
@@ -67,9 +93,17 @@ const Policevisitsforensic = () => {
             {columns.map((col, index) => (
               <div key={index} className="flex flex-col">
                 <input
-                  type="text"
+                  // type="text"
+                  //added
+                  type={col.filterKey === 'date' ? 'date' : 'text'}   
+
                   placeholder={`Search by ${col.name.props.children}`}
-                  value={filters[col.filterKey]}
+                  //added
+                  // value={filters[col.filterKey]}
+                  value={col.filterKey === "date" && filters[col.filterKey] 
+                    ? filters[col.filterKey].split("-").reverse().join("-") 
+                    : filters[col.filterKey]}
+
                   onChange={(e) => handleFilter(e, col.filterKey)}
                   className="p-2 border border-gray-300 rounded-md w-full text-sm"
                 />
