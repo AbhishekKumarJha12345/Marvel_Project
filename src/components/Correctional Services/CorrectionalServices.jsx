@@ -7,12 +7,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const CorrectionalServices = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const host = import.meta.env.VITE_APP_API_URL;
-
   const [selectedOption, setSelectedOption] = useState('fillForm');
-  const [selectedFile, setSelectedFile] = useState(null);
-  
   const [formData, setFormData] = useState({
     class1_strength: '',
     class1_trained: '',
@@ -21,6 +16,12 @@ const CorrectionalServices = () => {
     class3_strength: '',
     class3_trained: '',
   });
+  const [selectedFile, setSelectedFile] = useState(null);
+  const host = import.meta.env.VITE_APP_API_URL;
+
+  const handleFileChange = (e) => {
+  setSelectedFile(e.target.files[0]);
+  };
   useEffect(() => {
     fetch(`${host}/get_personnel_trained`)
       .then((response) => response.json())
@@ -66,13 +67,12 @@ const CorrectionalServices = () => {
         borderWidth: 1,
         barThickness: 50,
       },
-    ]
+    ],
   };
 
 
   const options = {
     responsive: true,
-    maintainAspectRatio: false, // Allow flexible width
     plugins: {
       legend: {
         display: true, // Display legend at the top
@@ -87,7 +87,7 @@ const CorrectionalServices = () => {
           label: function (tooltipItem) {
             const dataset = tooltipItem.dataset;
             const value = tooltipItem.raw;
-            return `${dataset.label}: ${value}`; // Return value for tooltip
+            return `${dataset.label}: ${value}`; // Return the individual value for the tooltip
           },
         },
       },
@@ -95,7 +95,7 @@ const CorrectionalServices = () => {
     scales: {
       x: {
         grid: {
-          offset: true, // Prevent overlap
+          offset: true, // Add offset to prevent overlapping
         },
       },
       y: {
@@ -147,19 +147,10 @@ const CorrectionalServices = () => {
         console.error('Error:', error);
       });
   };
-
-  const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
-  };
   
-  
-  const handleFileUpload = (file) => {
-    if (!file) {
-      alert('Please select a file before uploading');
-      return;
-    }
-  
-
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
       const formData = new FormData();
       console.log("File selected:", file);  // Log to check the selected file
       formData.append('file', file);
@@ -189,7 +180,10 @@ const CorrectionalServices = () => {
           console.error('Error:', error);
           alert('File upload failed');
         });
-    
+    } else {
+      console.error('No file selected');
+      alert('Please select a file to upload');
+    }
   };
   
   const fetchPersonnelData = () => {
@@ -211,12 +205,14 @@ const CorrectionalServices = () => {
     <div className="bg-white mx-auto rounded-lg w-[90%] h-[500px]">
       {/* Button to open the modal */}
       <div className="w-full flex justify-end mb-4">
-        {localStorage.getItem('role') !== 'chief secretary' && <button
+      {localStorage.getItem('role') !== 'chief secretary' && (
+        <button
           onClick={() => setIsModalOpen(true)}
           className="bg-gray-700 text-white py-2 px-4 rounded"
         >
           Add
-        </button>}
+        </button>
+      )}
       </div>
 
       <h1 className="text-4xl font-bold text-center">Personnel Trained in New Laws</h1>
@@ -367,7 +363,7 @@ const CorrectionalServices = () => {
                 <button
                   type="button"
                   className="bg-gray-700 text-white py-2 px-4 rounded mt-3"
-                  onClick={() => handleFileUpload(selectedFile)} 
+                  onClick={() => handleFileUpload(selectedFile)}
                 >
                   Upload File
                 </button>

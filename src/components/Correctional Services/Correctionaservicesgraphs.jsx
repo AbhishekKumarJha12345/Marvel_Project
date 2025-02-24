@@ -1,20 +1,30 @@
-import {React,forwardRef} from 'react';
+import React from 'react';
 import ComplianceSection from './ComplianceSection';
 import ComplianceSection479 from './ComplianceSection479';
 import CorrectionalInstitutions from './CorrectionalInstitutions';
 import CorrectionalServices from './CorrectionalServices';
 import VideoConferencingFacilities from './VideoConferencingFacilities';
 
-const Correctionaservicesgraphs= forwardRef((props, ref) => {
-  return (
-    <div className="grid grid-cols-2 gap-4 p-4" ref={ref}>
-      {[ComplianceSection, ComplianceSection479, CorrectionalInstitutions, CorrectionalServices, VideoConferencingFacilities].map((Component, index) => (
-        <div key={index} className="bg-white shadow-lg rounded-2xl p-4 border border-gray-200">
-          <Component />
-        </div>
-      ))}
-    </div>
-  );
-})
+function Correctionaservicesgraphs() {
+return (
+<div className="grid grid-cols-12 gap-4 p-4">
+<div className="col-span-6 bg-white shadow-lg rounded-2xl p-4 border border-gray-200">
+<ComplianceSection />
+</div>
+<div className="col-span-6 bg-white shadow-lg rounded-2xl p-4 border border-gray-200">
+<ComplianceSection479 />
+</div>
+<div className="col-span-12 bg-white shadow-lg rounded-2xl p-4 border border-gray-200">
+<CorrectionalInstitutions />
+</div>
+<div className="col-span-6 bg-white shadow-lg rounded-2xl p-4 border border-gray-200 ">
+<CorrectionalServices />
+</div>
+<div className="col-span-6 bg-white shadow-lg rounded-2xl p-4 border border-gray-200">
+<VideoConferencingFacilities />
+</div>
+</div>
+);
+}
 
 export default Correctionaservicesgraphs;
