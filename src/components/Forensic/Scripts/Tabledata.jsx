@@ -4,6 +4,7 @@ import axiosInstance from "../../../utils/axiosInstance";
 import dayjs from "dayjs";
 
 export default function Tabledata({setData,to,from}) {
+  console.log('porps data',to,from)
   const [forensicDevelopmentData, setForensicDevelopmentData] = useState(null);
   const[filteredData,setFiltereddata]=useState([])
   
@@ -43,13 +44,14 @@ export default function Tabledata({setData,to,from}) {
     fetchData();
   }, []);
   const filterDataByDate = (data, fromDate, toDate) => {
-    // if (!Array.isArray(data)) {
-    //   console.error("filterDataByDate received non-array data:", data);
-    //   return [];
-    // }
-  
+    if (!Array.isArray(data)) {
+      console.error("filterDataByDate received non-array data:", data);
+      return [];
+    }
+    console.log('---------------------------data tpo be filtered------------------------')
+    console.log(data)
     return data.filter((item) => {
-      const itemDate = dayjs(item.month, "YYYY-MM");
+      const itemDate = dayjs(item.month, "MMM/YY");
   
       return (
         (!fromDate || itemDate.isAfter(dayjs(fromDate).subtract(1, "month"))) &&
