@@ -28,20 +28,64 @@ const PolicevisitsforensicTeams = () => {
   const [filters, setFilters] = useState({ count: "", district: "", city: "", date: "" });
   const [filteredData, setFilteredData] = useState(initialData);
 
+  // const handleFilter = (event, key) => {
+  //   const value = event.target.value.toLowerCase();
+  //   const newFilters = { ...filters, [key]: value };
+  //   setFilters(newFilters);
+  //   setFilteredData(
+  //     initialData.filter((row) =>
+  //       Object.keys(newFilters).every((filterKey) =>
+  //         row[filterKey]
+  //           ? row[filterKey].toString().toLowerCase().includes(newFilters[filterKey])
+  //           : true
+  //       )
+  //     )
+  //   );
+  // };
+
+  //added
   const handleFilter = (event, key) => {
-    const value = event.target.value.toLowerCase();
+    let value = event.target.value.toLowerCase().trim();
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
-    setFilteredData(
-      initialData.filter((row) =>
-        Object.keys(newFilters).every((filterKey) =>
-          row[filterKey]
-            ? row[filterKey].toString().toLowerCase().includes(newFilters[filterKey])
-            : true
-        )
-      )
-    );
+  
+    const filtered = initialData.filter((row) => {
+      return Object.keys(newFilters).every((filterKey) => {
+        if (!newFilters[filterKey]) return true; // Ignore empty filters
+  
+        let cellValue = row[filterKey]?.toString().toLowerCase().trim(); 
+        if (!cellValue) return false;
+  
+        // Convert date formats to YYYY-MM-DD for filtering
+        if (filterKey === "date") {
+          cellValue = normalizeDateFormat(cellValue); 
+          value = normalizeDateFormat(value);
+        }
+  
+        return cellValue.includes(newFilters[filterKey]);
+      });
+    });
+  
+    setFilteredData(filtered);
   };
+  
+//added
+  const normalizeDateFormat = (dateStr) => {
+    if (!dateStr) return "";
+  
+    // If already in YYYY-MM-DD format, return it
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+  
+    // Convert from DD-MM-YYYY or DD.MM.YYYY to YYYY-MM-DD
+    const parts = dateStr.split(/[-.]/); 
+    if (parts.length === 3) {
+      const [day, month, year] = parts;
+      return `${year}-${month}-${day}`; // Convert to YYYY-MM-DD
+    }
+  
+    return dateStr; // Return as is if unknown format
+  };
+  
 
   const columns = [
     {
@@ -80,7 +124,10 @@ const PolicevisitsforensicTeams = () => {
             {columns.map((col, index) => (
               <div key={index} className="flex flex-col">
                 <input
-                  type="text"
+                  // type="text"
+                  //added
+                  type={col.filterKey === 'date' ? 'date' : 'text'}
+
                   placeholder={`Search by ${col.name.props.children}`}
                   value={filters[col.filterKey]}
                   onChange={(e) => handleFilter(e, col.filterKey)}

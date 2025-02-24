@@ -19,32 +19,85 @@ const Chargesheet = () => {
 
   const [showModal, setShowModal] = useState(false);
   
-  const handleFilter = (event, key) => {
-    const value = event.target.value.toLowerCase();
+  // const handleFilter = (event, key) => {
+  //   const value = event.target.value.toLowerCase();
+    
+    
+  //   // Update the filters state
+  //   const newFilters = { ...filters, [key]: value };
+  //   setFilters(newFilters);
   
-    // Update the filters state
+  //   // Filter the data based on all filters
+  //   const filtered = data.filter((row) =>
+  //     Object.keys(newFilters).every((filterKey) =>
+  //       newFilters[filterKey]
+  //         ? row[filterKey]?.toString().toLowerCase().includes(newFilters[filterKey])
+  //         : true
+  //     )
+  //   );
+  
+  //   setFilteredData(filtered);
+  //   console.log('filtered::',filtered)
+
+  // };
+  
+//added
+  const handleFilter = (event, key) => {
+    let value = event.target.value.trim().toLowerCase(); 
+    if (key === "date_of_data" && value) {
+      value = formatDateToYYYYMMDD(value); 
+    }
+
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
-  
-    // Filter the data based on all filters
+
     const filtered = data.filter((row) =>
-      Object.keys(newFilters).every((filterKey) =>
-        newFilters[filterKey]
-          ? row[filterKey]?.toString().toLowerCase().includes(newFilters[filterKey])
-          : true
-      )
+      Object.keys(newFilters).every((filterKey) => {
+        if (!newFilters[filterKey]) return true;
+
+        let cellValue = row[filterKey];
+        if (!cellValue) return false;
+
+        cellValue = cellValue.toString().trim().toLowerCase(); 
+        if (filterKey === "date_of_data") {
+          cellValue = formatDateToYYYYMMDD(cellValue);
+        }
+
+        return cellValue.includes(newFilters[filterKey]);
+      })
     );
-  
+
     setFilteredData(filtered);
   };
-  
 
+
+  
+  //added
+  const formatDateToYYYYMMDD = (dateStr) => {
+    if (!dateStr) return "";
+  
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+  
+    // Convert from DD/MM/YYYY to YYYY-MM-DD
+    const parts = dateStr.split("/");
+    if (parts.length === 3) {
+      const [day, month, year] = parts;
+      return `${year}-${month}-${day}`;
+    }
+  
+    return dateStr; 
+  };
+  
+  
+  
+  
   const columns = [
     { name: <span className="font-semibold text-[14px]">Charge Sheet No</span>, selector: (row) => row.id, sortable: true, filterKey: "id" },
     { name: <span className="font-semibold text-[14px]">State</span>, selector: (row) => row.state, sortable: true, filterKey: "state" },
     { name: <span className="font-semibold text-[14px]">City</span>, selector: (row) => row.city, sortable: true, filterKey: "city" },
     { name: <span className="font-semibold text-[14px]">PS Name</span>, selector: (row) => row.ps_name, sortable: true, filterKey: "ps_name" },
-    { name: <span className="font-semibold text-[14px]">Date of Data</span>, selector: (row) => row.date_of_data, sortable: true, filterKey: "date_of_data" },
+    //added this formatDate(row.date_of_data),
+    { name: <span className="font-semibold text-[14px]">Date of Data</span>, selector: (row) => formatDateToYYYYMMDD(row.date_of_data), sortable: true, filterKey: "date_of_data" },
     { name: <span className="font-semibold text-[14px]">Charge Sheet Type</span>, selector: (row) => row.type_of_data, sortable: true, filterKey: "type_of_data" },
   ];
   
@@ -85,13 +138,17 @@ const Chargesheet = () => {
           Add On
         </button>}
       </div>
-
+          
       <div className="p-6 w-[98%] mx-auto bg-white shadow-lg rounded-lg">
         <div className="grid grid-cols-6 gap-2 mb-4">
           {columns.map((col, index) => (
             <input
               key={index}
-              type="text"
+              // type="text"
+              //added
+              type={col.filterKey === 'date_of_data' ? 'date' : 'text'}
+
+
               placeholder={`Search by ${col.name.props.children}`}
               value={filters[col.filterKey]}
               onChange={(e) => handleFilter(e, col.filterKey)}

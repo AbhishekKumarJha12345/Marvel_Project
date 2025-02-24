@@ -80,7 +80,7 @@ const VanAvailability = ({vanData}) => {
       cell: (row) => (
         <button
           onClick={() => handleOpenModal(row)}
-          className="bg-grey text-black py-1 px-4 border border-black-900 rounded-lg hover:bg-white"
+          className="bg-[#2d3748] text-white py-1 px-4 border border-black-900 rounded-lg "
         >
           View Facility
         </button>
@@ -96,9 +96,11 @@ const VanAvailability = ({vanData}) => {
         <div className="mb-4">
           <div className="grid grid-cols-4 gap-2">
             {columns.filter((col) => col.filterKey && col.filterKey !== "action").map((col, index) => (
+              
               <input
                 key={index}
-                type="text"
+                // type="text"
+                type={col.filterKey === 'date' ? 'date' : 'text'}
                 placeholder={`Search by ${col.name.props.children}`}
                 value={filters[col.filterKey]}
                 onChange={(e) => handleFilter(e, col.filterKey)}
