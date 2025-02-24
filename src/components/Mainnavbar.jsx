@@ -1,5 +1,6 @@
 import React from "react";
 import { useState } from "react";
+
 import {
   FaBell,
   FaEnvelope,
@@ -12,19 +13,23 @@ import { FaRegComment } from "react-icons/fa";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import logo from "../assets/logo.png";
 import Forensic_logo from "../assets/Forensic_logo_1.png";
-import Correctional_service_logo from "../assets/Correctional_service_logo.png";
+import Correctional_service_logo from "../assets/Correctional_service_logo.png";         
 
 import Flag from "react-world-flags";
 import Navbar from "./Navbar";
 import { Routes, Route } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";         
 import logocs from "../assets/cs_court_prosection_logo.png";
+
+
 function Mainnavbar() {
   const [isOpen, setIsOpen] = useState({ language: false });
 
   const location = useLocation(); // Access location state
-  const { users,userName } = location.state || {}; // Extract users from state
+  const { users,userName } = location.state || {}; 
+  // const { users = "", userName = "" } = location.state || {}; // Default to empty string   
+
   console.log(users, "users_details");
 
   const navigate = useNavigate();
@@ -87,9 +92,18 @@ function Mainnavbar() {
                 : "w-20"
             }
           />
-          <div className="text-4xl font-bold mr-5" style={{ color: "#2d3748" }}>
+          {/* <div className="text-4xl font-bold mr-5" style={{ color: "#2d3748" }}>
             ICJS
-          </div>
+          </div>  */}
+
+          <div
+                className="text-4xl font-bold mr-5 cursor-pointer"
+                style={{ color: "#2d3748" }}
+                onClick={() => window.location.reload()}      
+// Navigate to the route
+              >
+                ICJS
+              </div>
           {/* <div className="relative w-[400px] hidden md:block">
             <FaSearch
               className="absolute left-3 top-2.5 text-gray-400"
@@ -127,6 +141,8 @@ function Mainnavbar() {
             >
               <FaUser size={22} />
               <span>{toCamelCase(users)}</span>
+              {/* <span>{users ? toCamelCase(users) : "Guest"}</span> */}
+            
 
               <FaChevronDown size={16} className="text-gray-400" />
             </button>
