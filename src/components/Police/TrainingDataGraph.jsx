@@ -9,21 +9,28 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import axiosInstance from "../../utils/axiosInstance";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { TextField } from "@mui/material";
+import dayjs from "dayjs";
 
 const TrainingDataGraph = () => {
   const [selectedMetric, setSelectedMetric] = useState("available_officers");
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
 
-  // Fetch data from the API
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axiosInstance.get("/live_data", {
           params: { type: "line" },
         });
-        const dummy =response.data.reverse()
+
+        const dummy = response.data.reverse();
         setData(dummy);
         setLoading(false);
       } catch (error) {
@@ -35,20 +42,22 @@ const TrainingDataGraph = () => {
     fetchData();
   }, []);
 
-  // Loading state
   if (loading) return <div>Loading...</div>;
-
-  // Error state
   if (error) return <div>Error: {error}</div>;
-
   if (!Array.isArray(data) || data.length === 0) {
-    return (
-      <div className="text-center p-4 text-gray-500">No data available</div>
-    );
+    return <div className="text-center p-4 text-gray-500">No data available</div>;
   }
 
+  const filteredData = data.filter(entry => {
+    const entryDate = new Date(entry.date);
+    return (
+      (!fromDate || entryDate >= fromDate.toDate()) &&
+      (!toDate || entryDate <= toDate.toDate())
+    );
+  });
+
   const processedData = Object.values(
-    data.reduce((acc, entry) => {
+    filteredData.reduce((acc, entry) => {
       const date = new Date(entry.date).toLocaleDateString("en-US");
 
       if (!acc[date]) {
@@ -69,10 +78,9 @@ const TrainingDataGraph = () => {
   );
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-md" style={{width:"48%",height:"500px"}}>
-      <div className="flex justify-between mb-4">
+    <div className="bg-white p-4 rounded-xl shadow-md" style={{ width: "48%", height: "550px" }}>
+      <div className="flex justify-between mb-2">
         <h2 className="">Training Data Graph</h2>
-        {/* Dropdown for selecting metric */}
         <select
           onChange={(e) => setSelectedMetric(e.target.value)}
           value={selectedMetric}
@@ -83,29 +91,55 @@ const TrainingDataGraph = () => {
         </select>
       </div>
 
-      {/* Line Chart */}
-      <div className="w-full h-auto min-h-[300px] ">
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+  <div className="flex gap-4 mb-4">
+    <DatePicker
+      label="From"
+      value={fromDate}
+      onChange={setFromDate}
+      format="YYYY-MM-DD"
+      slotProps={{ textField: { variant: "outlined", size: "small", sx: { width: "140px" } } }}
+    />
+    <DatePicker
+      label="To"
+      value={toDate}
+      onChange={setToDate}
+      format="YYYY-MM-DD"
+      slotProps={{ textField: { variant: "outlined", size: "small", sx: { width: "140px" } } }}
+    />
+    <button
+      onClick={() => {
+        setFromDate(null);
+        setToDate(null);
+      }}
+      className="p-2 bg-[#2d3748] text-white rounded-lg hover:bg-opacity-90 transition"
+    >
+      Clear Filters
+    </button>
+  </div>
+</LocalizationProvider>
+
+
+      <div className="w-full h-auto min-h-[300px]">
         <ResponsiveContainer width="100%" height={400} padding={1}>
           <LineChart data={processedData}>
-          <XAxis 
-          dataKey="date" 
-          stroke="#6b7280" 
-          tick={{ fontSize: 14 }} 
-          label={{ value: "Date of Training", position: "insideBottom", offset: -5 }} 
-        />
-        <YAxis 
-          stroke="#6b7280" 
-          tick={{ fontSize: 14 }} 
-          // label={{ value: "No of Officer Trained", angle: -90, position: "center", offset: -5 }} 
-          label={{
-            value: "No of Officers Trained",
-            angle: -90,
-            position: "insideLeft",
-            offset: -0, // Moves label further left to prevent overlap
-            style: { textAnchor: "middle" }, 
-          }}
-        />
-
+            <XAxis
+              dataKey="date"
+              stroke="#6b7280"
+              tick={{ fontSize: 14 }}
+              label={{ value: "Date of Training", position: "insideBottom", offset: -5 }}
+            />
+            <YAxis
+              stroke="#6b7280"
+              tick={{ fontSize: 14 }}
+              label={{
+                value: "No of Officers Trained",
+                angle: -90,
+                position: "insideLeft",
+                offset: -0,
+                style: { textAnchor: "middle" },
+              }}
+            />
             <Tooltip
               contentStyle={{
                 backgroundColor: "#f9fafb",
@@ -113,7 +147,7 @@ const TrainingDataGraph = () => {
                 border: "1px solid #e5e7eb",
               }}
             />
-            <Legend iconType="circle" wrapperStyle={{ paddingBottom: 10,paddingTop: 10 }} />
+            <Legend iconType="circle" wrapperStyle={{ paddingBottom: 10, paddingTop: 10 }} />
             <Line
               type="monotone"
               dataKey="psi_sp_dcp"

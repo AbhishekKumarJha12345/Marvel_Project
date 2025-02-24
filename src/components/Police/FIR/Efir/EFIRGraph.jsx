@@ -43,7 +43,7 @@ const EFIRsChart = ({ generateReport }) => {
     <div className="bg-white p-6 mx-auto rounded-lg w-[100%] h-[400px]">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-3xl font-semibold text-center flex-grow">
-          eFIRs Overview
+          E-FIRs Overview
         </h2>
         <div className="flex space-x-4">
           {localStorage.getItem("role") !== "chief secretary" && (
