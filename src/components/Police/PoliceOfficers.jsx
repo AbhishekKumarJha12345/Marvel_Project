@@ -51,7 +51,7 @@ const PoliceOfficers = ({ getDate }) => {
 
   return (
     <div className="bg-white  rounded-lg w-[100%] h-[500px] text-center rounded-xl shadow-md">
-      <div className="flex items-left mb-8">
+      <div className="flex items-left mb-5 p-3">
         <h1 className="text-xl font-semibold">Police Officers</h1>
       </div>
       <div className="h-[400px] w-full">
