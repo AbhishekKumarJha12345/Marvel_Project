@@ -98,14 +98,14 @@ const PoliceFirs = ({ apidata, downloadReport }) => {
       {/* Charts Section */}
       <div style={{ width: "100%", display: "flex", gap: "20px" }}>
         {/* First Chart (Bar Chart) */}
-        <div style={{ flex: "1 1 45%", backgroundColor: "#f4f4f4", padding: "1rem", maxWidth: "100%", height: "400px", display: "flex", justifyContent: "center" }}>
+        <div style={{ flex: "1 1 45%", backgroundColor: "#f4f4f4", padding: "1rem", maxWidth: "100%", height: "500px", display: "flex", justifyContent: "center" }}>
           <div style={{ backgroundColor: "white", width: "100%", padding: "1rem", display: "flex", justifyContent: "space-around", borderRadius: "5px" }}>
             <Bar data={data} options={options} width={600} height={400} />
           </div>
         </div>
 
         {/* Second Chart (FirBarGraph) */}
-        <div style={{ flex: "1 1 45%", backgroundColor: "#f4f4f4", padding: "1rem", maxWidth: "100%", height: "400px", display: "flex", justifyContent: "center" }}>
+        <div style={{ flex: "1 1 45%", backgroundColor: "#f4f4f4", padding: "1rem", maxWidth: "100%", height: "500px", display: "flex", justifyContent: "center" }}>
           <div style={{ backgroundColor: "white", width: "100%", padding: "1rem", display: "flex", justifyContent: "space-around", borderRadius: "5px" }}>
             <FirBarGraph />
           </div>

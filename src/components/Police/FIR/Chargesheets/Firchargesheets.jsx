@@ -143,12 +143,7 @@ const [recentData,setRecentData] =useState('')
                 >
                   Add On
                 </button>}
-                 {/* Download Report Button */}
-      {/* <div className="mt-4"> */}
-        {/* <button className="bg-green-600 text-white px-4 py-2 rounded-lg ml-4" onClick={downloadReport}>
-          Download Charge Sheet Report
-        </button> */}
-      {/* </div> */}
+                
               </div>
               <div style={{display:"flex",flexDirection:"column",gap:"0.5rem",width:"100%",height:"100%",marginBottom:"3rem"}}>
       <h2 className="text-xl font-semibold">Deviation</h2>
@@ -164,7 +159,6 @@ const [recentData,setRecentData] =useState('')
             <h1 className="text-xl font-semibold mb-4" style={{marginTop:"1rem"}}>
   Recent Entry  :
    {recentData.toLocaleString()}
-  {/* {trainingData && trainingData[0] && new Date(trainingData[0].uploaded_date).toLocaleString()} */}
 </h1>
 <div style={{width:"100%",display:"flex",gap:"2rem"}}>
         <div style={{backgroundColor:"#f4f4f4",width:"40%",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>

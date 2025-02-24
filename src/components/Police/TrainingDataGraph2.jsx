@@ -9,91 +9,112 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import axiosInstance from "../../utils/axiosInstance";
+import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { TextField, Button } from "@mui/material";
+import { Height } from "@mui/icons-material";
 
 const TrainingDataGraph2 = () => {
   const [data, setData] = useState([]);
-  function convertMonthFormat(yyyy_mm) {
-    if (!yyyy_mm || !yyyy_mm.includes("-")) return yyyy_mm; // Handle invalid input
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
+  const [error, setError] = useState(null);
 
-    const [year, month] = yyyy_mm.split("-"); // Split by "-"
-    return month+'-' + year; // Rearrange to MMYYYY format
-}
-  const fetchData = async () => {
-    try {
-      const response = await axiosInstance.get("/live_data", {
-        params: {
-          type: "line_workshop",
-        },
-      });
-      const result = response.data;
-      if (result?.data_dict) {
-        const sortedData = result?.data_dict
-          .map((item) => {
-            // Convert the date to dd/mm/yyyy format
-            const date = convertMonthFormat(item.month);
-            // const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`;
-            return {
-              month: date,
-              count: parseInt(item.count, 10),
-            };
-          })
-          .sort((a, b) => new Date(a.month.split('/').reverse().join('-')) - new Date(b.month.split('/').reverse().join('-')));
-  
-        setData(sortedData.reverse());
-      }
-  
-      setLoading(false);
-    } catch (error) {
-      setError(error.message);
-      setLoading(false);
-    }
-  };
-  
+  function convertMonthFormat(yyyy_mm) {
+    if (!yyyy_mm || !yyyy_mm.includes("-")) return yyyy_mm;
+    const [year, month] = yyyy_mm.split("-");
+    return `${month}-${year}`;
+  }
+
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axiosInstance.get("/live_data", {
+          params: { type: "line_workshop" },
+        });
+
+        if (response.data?.data_dict) {
+          const sortedData = response.data.data_dict
+            .map((item) => ({
+              month: convertMonthFormat(item.month),
+              count: parseInt(item.count, 10),
+            }))
+            .sort((a, b) =>
+              new Date(a.month.split("-").reverse().join("-")) -
+              new Date(b.month.split("-").reverse().join("-"))
+            );
+
+          setData(sortedData.reverse());
+        }
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
     fetchData();
   }, []);
 
+  const filteredData = data.filter((item) => {
+    const itemDate = new Date(item.month.split("-").reverse().join("-"));
+    return (
+      (!fromDate || itemDate >= new Date(fromDate.format("YYYY-MM"))) &&
+      (!toDate || itemDate <= new Date(toDate.format("YYYY-MM")))
+    );
+  });
+
   return (
-    <div
-      className="bg-white p-4 rounded-xl shadow-md"
-      style={{ width: "48%", height: 500 }}
+    <div className="bg-white p-4 rounded-xl shadow-md" style={{ width: "48%", height: 550 }}>
+      <h2 className="mb-2">Monthly Workshops Conducted</h2>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+  <div className="flex gap-4 mb-2 items-end">
+    <DatePicker
+      views={["year", "month"]}
+      label="From"
+      value={fromDate}
+      onChange={setFromDate}
+      slotProps={{ textField: { variant: "outlined", size: "small", sx: { width: "140px" } } }}
+    />
+    <DatePicker
+      views={["year", "month"]}
+      label="To"
+      value={toDate}
+      onChange={setToDate}
+      slotProps={{ textField: { variant: "outlined", size: "small", sx: { width: "140px" } } }}
+    />
+    <button
+      onClick={() => {
+        setFromDate(null);
+        setToDate(null);
+      }}
+     className="p-2 bg-[#2d3748] text-white rounded-lg hover:bg-opacity-90 transition"
     >
-      <h2 className="" style={{marginBottom:"1rem"}}>
-        Monthly Workshops Conducted
-      </h2>
-      <ResponsiveContainer width="100%" height="92%">
-        <LineChart data={data}>
+      Clear Filters
+    </button>
+  </div>
+</LocalizationProvider>
+
+
+      <ResponsiveContainer width="100%" height="80%">
+        <LineChart data={filteredData}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis 
-  dataKey="month" 
-  label={{ 
-    //value: "Workshop Month", 
-    value: "Date of workshop", 
-    position: "insideBottom", 
-
-    offset: -3
-  }} 
-/>
-<YAxis
-  tick={{ fontSize: 12  , dx: -5 }} // Moves Y-axis values slightly left
-  label={{
-    value: "No. of Workshops Conducted",
-    angle: -90,
-    position: "insideLeft",
-    offset: -1, // Moves label further left to prevent overlap
-    style: { textAnchor: "middle" }, 
-  }} 
-/>
-
-
-
-          <Tooltip />
-          <Line
-            type="monotone"
-            dataKey="count"
-            stroke="#8884d8"
-            strokeWidth={2}
+          <XAxis
+            dataKey="month"
+            label={{ value: "Date of Workshop", position: "insideBottom", offset: -3 }}
           />
+          <YAxis
+            tick={{ fontSize: 12, dx: -5 }}
+            label={{
+              value: "No. of Workshops Conducted",
+              angle: -90,
+              position: "insideLeft",
+              offset: -1,
+              style: { textAnchor: "middle" },
+            }}
+          />
+          <Tooltip />
+          <Line type="monotone" dataKey="count" stroke="#8884d8" strokeWidth={2} />
         </LineChart>
       </ResponsiveContainer>
     </div>

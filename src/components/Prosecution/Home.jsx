@@ -21,7 +21,7 @@ import axiosInstance from "../../utils/axiosInstance";
 
 import LoginChart from './Logineprosecutor'
 
-const Home = ({ prosecutiondata = {}, fetchData }) => {
+const Home = ({ prosecutiondata , fetchData }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("fill");
   const [selectedGraph, setSelectedGraph] = useState("");
@@ -386,27 +386,35 @@ const Home = ({ prosecutiondata = {}, fetchData }) => {
 
       <div className="flex gap-4 mb-4">
         <div>
-          <label>From:</label>
+         
           <DatePicker
             selected={fromDate}
             onChange={setFromDate}
             dateFormat="yyyy-MM-dd"
             className="border border-gray-300 rounded-md p-2 w-full cursor-pointer"
-            placeholderText="Select from date"
+            placeholderText="From"
             isClearable
           />
         </div>
         <div>
-          <label>To:</label>
           <DatePicker
             selected={toDate}
             onChange={setToDate}
             dateFormat="yyyy-MM-dd"
             className="border border-gray-300 rounded-md p-2 w-full cursor-pointer"
-            placeholderText="Select to date"
+            placeholderText="To"
             isClearable
           />
         </div>
+        <button
+          onClick={() => {
+            setFromDate(null);
+            setToDate(null);
+          }}
+          className="p-2 bg-[#2d3748] text-white rounded-lg hover:bg-opacity-90 transition"
+        >
+          Clear Filters
+        </button>
       </div>
 
       <LoginChart data={loginData} />

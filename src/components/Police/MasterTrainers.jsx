@@ -79,8 +79,8 @@ const MasterTrainers = () => {
 
   return (
     <div className="bg-white p-6 rounded-lg w-full h-[500px] flex flex-col rounded-xl shadow-md" style={{ width: "95%" }}>
-      <div className="flex justify-around items-center mb-8">
-        <h1 className="text-xl font-bold" style={{ textAlign: "center" }}>Mode of Training</h1>
+      <div className="flex mb-8">
+        <h1 className="text-xl font-bold">Mode of Training</h1>
       </div>
       <div className="flex flex-col lg:flex-row w-full justify-center items-center">
         {/* Bar Chart */}
