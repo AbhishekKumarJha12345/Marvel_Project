@@ -1,4 +1,4 @@
-import React from "react";
+import {React,useState,useEffect} from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, LineChart, Line } from "recharts";
 
 const dataMoUs = [
@@ -71,23 +71,105 @@ const chartColors = [
   "#c08497", // Mauve
   "#b0a8b9" // Dusty Lilac
   ];
-// const COLORS_MOUS = chartColors
-// const COLORS_INFRA = chartColors
-// const COLORS_RESOURCE = chartColors
-// const COLORS_RECRUIT = chartColors
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 export default function ForensicDashboard() {
+  const [fromDate, setFromDate] = useState(null);
+      const [toDate, setToDate] = useState(null);
+      const Clearfilter=()=>{
+            setFromDate(null);
+            setToDate(null);
+            setfilteredInfrastructureMonthly(dataInfrastructureMonthly)
+            setfilteredMoUsMonthly(dataMoUsMonthly)
+          }
+          
+          const filterDataByDate = (data, fromDate, toDate) => {
+            if (!fromDate && !toDate) return data;
+            
+            return data.filter(item => {
+              const itemDate = dayjs(item.month, "MMM YYYY");
+              if (fromDate && itemDate.isBefore(dayjs(fromDate))) return false;
+              if (toDate && itemDate.isAfter(dayjs(toDate))) return false;
+              return true;
+            });
+          };
+        const[filteredMoUsMonthly,setfilteredMoUsMonthly]=useState(dataMoUsMonthly)
+        const[filteredInfrastructureMonthly,setfilteredInfrastructureMonthly]=useState(dataInfrastructureMonthly)
+          useEffect(() => {
+            if (fromDate || toDate) {
+              // Example usage:
+              const rand1 = filterDataByDate(dataMoUsMonthly, fromDate, toDate);
+              setfilteredMoUsMonthly(rand1)
+              const rand2 = filterDataByDate(dataInfrastructureMonthly, fromDate, toDate);
+              setfilteredInfrastructureMonthly(rand2)
+              console.log("Filtered MoUs: ", filteredMoUsMonthly);
+              console.log("Filtered Infrastructure: ", filteredInfrastructureMonthly);
+            }
+          }, [fromDate, toDate]);
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
       <h1 className="text-2xl font-bold mb-6">Forensic Development Dashboard</h1>
 
+    <div style={{ background: "white", margin: "10px 0", padding: "10px", borderRadius: "10px", overflow: "auto", border: "1px solid #ddd" }}>
+<LocalizationProvider dateAdapter={AdapterDayjs}>
+      <div className="flex justify-between items-center mb-4">
+      <h2 style={{ textAlign: "left", fontSize: "1.5rem", fontWeight: "bold" }}>Deviation</h2>
+        <div className="flex items-center gap-4">
+          <div>
+             
+            <DatePicker
+            label='From'
+              views={["year", "month"]}
+              value={fromDate}
+              onChange={setFromDate}
+              slotProps={{
+                textField: { 
+                  variant: "outlined",
+                  size: "small",
+                  sx: { width: "140px", fontSize: "12px" },
+                }
+              }}
+              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+            />
+          </div>
+
+          <div>
+              
+            <DatePicker
+            label='To'
+              views={["year", "month"]}
+              value={toDate}
+              onChange={setToDate}
+              slotProps={{
+                textField: { 
+                  variant: "outlined",
+                  size: "small",
+                  sx: { width: "140px", fontSize: "12px" },
+                }
+              }}
+              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+            />
+          </div>
+
+          <button 
+            onClick={Clearfilter} 
+            className="bg-blue-500 text-white px-3 py-1 rounded-md "
+            style={{ backgroundColor: "#2d3748" }}>
+            Clear Filter
+          </button>
+        </div>
+
+      </div>
+    </LocalizationProvider>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
         {/* MOnthly Infrastructure Development Bar Chart */}
       <div className="bg-white p-4 rounded-lg shadow-md">
         <h2 className="text-lg font-bold mb-4">Monthly Infrastructure Development Projects</h2>
         <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={dataInfrastructureMonthly}>
+          <LineChart data={filteredInfrastructureMonthly}>
             <XAxis
               dataKey="month"
               stroke="#6b7280"
@@ -137,7 +219,7 @@ export default function ForensicDashboard() {
       <div className="bg-white p-4 rounded-lg shadow-md">
         <h2 className="text-lg font-bold mb-4">Monthly MoUs with NFSU</h2>
         <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={dataMoUsMonthly}>
+          <LineChart data={filteredMoUsMonthly}>
             <XAxis
               dataKey="month"
               stroke="#6b7280"
@@ -181,10 +263,16 @@ export default function ForensicDashboard() {
           </LineChart>
         </ResponsiveContainer>
       </div>
+      </div>
+      </div>
+      <div style={{ background: "white", margin: "10px 0", padding: "10px", borderRadius: "10px", overflow: "auto", border: "1px solid #ddd" }}>
+      <h2 style={{ textAlign: "left", fontSize: "1.5rem", fontWeight: "bold" }}>Recent Entry:{filteredInfrastructureMonthly[filteredInfrastructureMonthly.length-1]?.month}</h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       
       {/* Infrastructure Development Bar Chart */}
       <div className="bg-white p-4 rounded-xl shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Recent Entry:{dataInfrastructureMonthly[dataInfrastructureMonthly.length-1]?.month}</h2>
+      {/* <h2 className="text-xl font-semibold mb-4">Recent Entry:{dataInfrastructureMonthly[dataInfrastructureMonthly.length-1]?.month}</h2> */}
 
         <h2 className="text-xl font-semibold mb-4">Infrastructure Development Projects</h2>
 
@@ -214,7 +302,7 @@ export default function ForensicDashboard() {
 
       {/* MoUs Pie Chart */}
       <div className="bg-white p-4 rounded-xl shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Recent Entry:{dataMoUsMonthly[dataMoUsMonthly.length-1]?.month}</h2>
+      {/* <h2 className="text-xl font-semibold mb-4">Recent Entry:{dataMoUsMonthly[dataMoUsMonthly.length-1]?.month}</h2> */}
 
                 <h2 className="text-xl font-semibold mb-4">MoUs with NFSU</h2>
 
@@ -274,6 +362,8 @@ export default function ForensicDashboard() {
       </div>
         
       </div>
+      </div>
+
     </div>
   );
 }

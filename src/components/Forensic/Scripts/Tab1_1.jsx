@@ -21,7 +21,8 @@ const gradeData = [
 ];
 
 
-export default function Tab1_1() {
+export default function Tab1_1({gradeeData}) {
+  console.log('object',gradeeData)
   return (
     <div className="p-0">
       <div className="mt-6">

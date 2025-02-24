@@ -50,27 +50,75 @@ const COLORS = [
 // const COLORS = ['#0088FE', '#FF8042'];
 import Courtform from "./Courtform.jsx";
 
+
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+ 
 const CourtTab2 = () => {
   const [showModal, setShowModal] = useState(false);
   const exportRef = useRef(null); // Reference to content to be exported
   const [summonsDigitalData, setSummonsDigitalData] = useState(null);
-
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
+  const[filteredData,setFiltereddata]=useState([])
   const fetchSummonsDigitalData = async () => {
     try {
       const response = await axiosInstance.get("/live_data", {
         params: {
           type: "court_2",
+          from_date:fromDate?.toISOString().split("T")[0],
+          to_date:toDate?.toISOString().split("T")[0],
         },
       });
       const responseData = response.data;
       setSummonsDigitalData(responseData.data_dict);
+      setFiltereddata(responseData.data_dict)
     } catch (error) {
       console.error("Some error occured", error);
     }
   };
+  const filterDataByDate = (data, fromDate, toDate) => {
+        if (!Array.isArray(data)) {
+          console.error("filterDataByDate received non-array data:", data);
+          return [];
+        }
+      
+        return data.filter((item) => {
+          const itemDate = dayjs(item.month, "YYYY-MM");
+      
+          return (
+            (!fromDate || itemDate.isAfter(dayjs(fromDate).subtract(1, "month"))) &&
+            (!toDate || itemDate.isBefore(dayjs(toDate).add(1, "month")))
+          );
+        });
+      };
   useEffect(() => {
     fetchSummonsDigitalData();
   }, []);
+  const Clearfilter=()=>{
+    setFromDate(null);
+    setToDate(null);
+    setFiltereddata(summonsDigitalData)
+  }
+   useEffect(() => {
+        if (fromDate || toDate) {
+          console.log("Filtering data for dates:", fromDate, toDate);
+          
+          // ICJSCaseData()
+            const filteredData = filterDataByDate(summonsDigitalData, fromDate, toDate);
+            console.log("Filtered Data:", filteredData);
+            setFiltereddata(filteredData);
+        }
+      }, [fromDate, toDate]);
+  
+  // useEffect(() => {
+  //   if(fromDate||toDate)
+  //   {
+  //     fetchSummonsDigitalData();}
+  // }, [fromDate,toDate]);
+
+
   const handleExport = async () => {
     const pdf = new jsPDF("p", "mm", "a4");
     const margin = 10;
@@ -120,7 +168,7 @@ const CourtTab2 = () => {
     pdf.save("eSummons & Digital Case Records.pdf");
   };
 
-  const securityComiplanceData = summonsDigitalData?.map((item) => ({
+  const securityComiplanceData = filteredData?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
       month: "short",
       year: "numeric",
@@ -129,16 +177,16 @@ const CourtTab2 = () => {
     NonComplaints: item.data_security_non_complaints || 0,
   })).sort((a, b) => new Date(a.month) - new Date(b.month));
 
-  const complianceData = summonsDigitalData
+  const complianceData = filteredData
     ? [
         {
           name: "Compliant",
-          value: parseInt(summonsDigitalData[0]?.data_security_complaints || 0),
+          value: parseInt(filteredData[0]?.data_security_complaints || 0),
         },
         {
           name: "Non-Compliant",
           value: parseInt(
-            summonsDigitalData[0]?.data_security_non_complaints || 0
+            filteredData[0]?.data_security_non_complaints || 0
           ),
         },
       ]
@@ -147,7 +195,7 @@ const CourtTab2 = () => {
         { name: "Non-Compliant", value: 0 },
       ];
 
-  const accessibilityComiplanceData = summonsDigitalData?.map((item) => ({
+  const accessibilityComiplanceData = filteredData?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
       month: "short",
       year: "numeric",
@@ -156,16 +204,16 @@ const CourtTab2 = () => {
     inAccessible: parseInt(item.accessibility_non_complaints) || 0,
   })).sort((a, b) => new Date(a.month) - new Date(b.month));
 
-  const accessibilityData = summonsDigitalData
+  const accessibilityData = filteredData
     ? [
         {
           name: "Accessible",
-          value: parseInt(summonsDigitalData[0]?.accessibility_complaints || 0),
+          value: parseInt(filteredData[0]?.accessibility_complaints || 0),
         },
         {
           name: "Inaccessible",
           value: parseInt(
-            summonsDigitalData[0]?.accessibility_non_complaints || 0
+            filteredData[0]?.accessibility_non_complaints || 0
           ),
 
         },
@@ -175,7 +223,7 @@ const CourtTab2 = () => {
         { name: "Inaccessible", value: 0 },
       ];
 
-  const summonsData = summonsDigitalData?.map((item) => {
+  const summonsData = filteredData?.map((item) => {
     return {
       month: new Date(item.month).toLocaleString("en-US", {
         month: "short",
@@ -185,8 +233,8 @@ const CourtTab2 = () => {
     };
   }).sort((a, b) => new Date(a.month) - new Date(b.month));
 
-  const adoptionData = Array.isArray(summonsDigitalData)
-    ? summonsDigitalData.map((item) => ({
+  const adoptionData = Array.isArray(filteredData)
+    ? filteredData.map((item) => ({
         month: new Date(item?.month || "").toLocaleString("en-US", {
           month: "short",
           year: "numeric",
@@ -195,7 +243,7 @@ const CourtTab2 = () => {
       })).sort((a, b) => new Date(a.month) - new Date(b.month))
     : [];
   const recentEntryDate = new Date(
-    summonsDigitalData?.[0]?.month
+    filteredData?.[0]?.month
   ).toLocaleString("en-US", {
     month: "short",
     year: "numeric",
@@ -207,11 +255,13 @@ const CourtTab2 = () => {
         <h1 className="text-2xl font-bold">
           eSummons & Digital Case Records Dashboard
         </h1>
+        
 
         <div className="flex space-x-2">
           <button className="ExportButton" onClick={handleExport}>
             Export
           </button>
+          
           {localStorage.getItem("role") !== "chief secretary" && (
             <button
               className="bg-blue-500 text-white px-4 py-2 rounded-lg"
@@ -225,10 +275,64 @@ const CourtTab2 = () => {
             </button>
           )}
         </div>
+        
       </div>
+      
       <div ref={exportRef}>
         <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
-          <h1 className="text-2xl font-bold">Deviation</h1>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <div className="flex justify-between items-center mb-4">
+              
+            <h1 className="text-2xl font-bold">Deviation</h1>
+
+      
+              <div className="flex items-center gap-4">
+                <div>
+                   
+                  <DatePicker
+                  label='From'
+                    views={["year", "month"]}
+                    value={fromDate}
+                    onChange={setFromDate}
+                    slotProps={{
+                      textField: { 
+                        variant: "outlined",
+                        size: "small",
+                        sx: { width: "140px", fontSize: "12px" },
+                      }
+                    }}
+                    sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                  />
+                </div>
+      
+                <div>
+                   
+                  <DatePicker
+                  label='To'
+                    views={["year", "month"]}
+                    value={toDate}
+                    onChange={setToDate}
+                    slotProps={{
+                      textField: { 
+                        variant: "outlined",
+                        size: "small",
+                        sx: { width: "140px", fontSize: "12px" },
+                      }
+                    }}
+                    sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                  />
+                </div>
+      
+                <button 
+                  onClick={Clearfilter} 
+                  className="bg-blue-500 text-white px-3 py-1 rounded-md "
+                  style={{ backgroundColor: "#2d3748" }}>
+                  Clear Filter
+                </button>
+              </div>
+      
+            </div>
+          </LocalizationProvider>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white p-4 rounded-xl shadow-md">
               <h3 className="text-xl font-semibold mb-4">
