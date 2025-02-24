@@ -31,8 +31,8 @@ const CaseStatus = ({ getrecentdatatime,type }) => {
             }))
             .sort((a, b) => new Date(a.month) - new Date(b.month));
 
-          setData(formattedData);
-          getrecentdatatime(formattedData[0].month)
+          setData(formattedData.reverse());
+          getrecentdatatime(formattedData[formattedData.length-1].month)
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -86,7 +86,8 @@ const CaseStatus = ({ getrecentdatatime,type }) => {
               cx="50%"
               cy="50%"
               outerRadius={150}
-              label
+              label={({ name, percent }) => ` ${(percent * 100).toFixed(1)}%`}
+
             >
               {pieData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
