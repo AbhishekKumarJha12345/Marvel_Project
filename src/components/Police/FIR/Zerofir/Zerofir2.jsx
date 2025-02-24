@@ -33,7 +33,7 @@ const ZeroFir2 = ({ getRecentDate, type }) => {
             }))
             .sort((a, b) => new Date(a.month) - new Date(b.month));
 
-          setData(sortedData);
+          setData(sortedData.reverse());
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -43,7 +43,7 @@ const ZeroFir2 = ({ getRecentDate, type }) => {
     fetchData();
   }, []);
 
-  const firstDataItem = data.length > 0 ? data[0] : null;
+  const firstDataItem = data.length > 0 ? data[data.length-1] : null;
   const pieData = firstDataItem
     ? [
         { name: "Regular FIR", value: firstDataItem.regular_fir },

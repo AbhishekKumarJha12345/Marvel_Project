@@ -23,8 +23,8 @@ const TrainingDataGraph = () => {
         const response = await axiosInstance.get("/live_data", {
           params: { type: "line" },
         });
-
-        setData(response.data);
+        const dummy =response.data.reverse()
+        setData(dummy);
         setLoading(false);
       } catch (error) {
         setError(error.message);

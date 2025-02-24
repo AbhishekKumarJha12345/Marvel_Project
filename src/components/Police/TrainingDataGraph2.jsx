@@ -39,7 +39,7 @@ const TrainingDataGraph2 = () => {
           })
           .sort((a, b) => new Date(a.month.split('/').reverse().join('-')) - new Date(b.month.split('/').reverse().join('-')));
   
-        setData(sortedData);
+        setData(sortedData.reverse());
       }
   
       setLoading(false);

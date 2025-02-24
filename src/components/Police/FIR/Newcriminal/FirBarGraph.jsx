@@ -114,7 +114,7 @@ const FirBarGraph = () => {
             }))
             .sort((a, b) => new Date(a.month) - new Date(b.month));
 
-          setData(formattedData);
+          setData(formattedData.reverse());
         }
       } catch (error) {
         console.error('Error fetching data:', error);
