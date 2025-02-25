@@ -77,53 +77,116 @@ import dayjs from "dayjs";
 
 export default function ForensicDashboard() {
   const [fromDate, setFromDate] = useState(null);
-      const [toDate, setToDate] = useState(null);
-      const Clearfilter=()=>{
-            setFromDate(null);
-            setToDate(null);
-            setfilteredInfrastructureMonthly(dataInfrastructureMonthly)
-            setfilteredMoUsMonthly(dataMoUsMonthly)
-          }
-          
-          const filterDataByDate = (data, fromDate, toDate) => {
-            if (!fromDate && !toDate) return data;
-            
-            return data.filter(item => {
-              const itemDate = dayjs(item.month, "MMM YYYY");
-              if (fromDate && itemDate.isBefore(dayjs(fromDate))) return false;
-              if (toDate && itemDate.isAfter(dayjs(toDate))) return false;
-              return true;
-            });
-          };
-        const[filteredMoUsMonthly,setfilteredMoUsMonthly]=useState(dataMoUsMonthly)
-        const[filteredInfrastructureMonthly,setfilteredInfrastructureMonthly]=useState(dataInfrastructureMonthly)
-          useEffect(() => {
-            if (fromDate || toDate) {
-              // Example usage:
-              const rand1 = filterDataByDate(dataMoUsMonthly, fromDate, toDate);
-              setfilteredMoUsMonthly(rand1)
-              const rand2 = filterDataByDate(dataInfrastructureMonthly, fromDate, toDate);
-              setfilteredInfrastructureMonthly(rand2)
-              console.log("Filtered MoUs: ", filteredMoUsMonthly);
-              console.log("Filtered Infrastructure: ", filteredInfrastructureMonthly);
-            }
-          }, [fromDate, toDate]);
+  const [toDate, setToDate] = useState(null);
+  const [fromDate1, setFromDate1] = useState(null);
+  const [toDate1, setToDate1] = useState(null);
+  const[filteredMoUsMonthly,setfilteredMoUsMonthly]=useState(dataMoUsMonthly)
+  const[filteredInfrastructureMonthly,setfilteredInfrastructureMonthly]=useState(dataInfrastructureMonthly)
+  const Clearfilter=(type)=>{
+    if(type==='1')
+        {
+          setFromDate(null);
+        setToDate(null);
+        setfilteredMoUsMonthly(dataMoUsMonthly)
+      }
+        
+        if(type==='2'){
+        setFromDate1(null);
+        setToDate1(null);
+        setfilteredInfrastructureMonthly(dataInfrastructureMonthly)}
+        }
+      
+  const restructureMoUsData = (type) => {
+    // Get the last month's data
+    if(type==='1')
+    {
+
+      const lastMonthData = filteredMoUsMonthly[filteredMoUsMonthly.length - 1];
+      
+      return [
+        { name: "Signed", value: lastMonthData.Signed },
+        { name: "In Progress", value: lastMonthData.InProgress },
+        { name: "Pending", value: lastMonthData.Pending },
+        { name: "Expired", value: lastMonthData.Expired },
+      ];
+    }
+    if(type==='2')
+      {
+        const lastMonthData = filteredInfrastructureMonthly[filteredInfrastructureMonthly.length - 1];
+        return [
+          { name: "New Labs", value: lastMonthData.NewLabs },
+          { name: "Tech Upgradation", value: lastMonthData.TechUpgradation },
+          { name: "Facility Expansion", value: lastMonthData.FacilityExpansion },
+        ];
+      }
+};
+  const filterDataByDate = (data, fromDate, toDate) => {
+    if (!fromDate && !toDate) return data;
+  
+    return data.filter(item => {
+    const itemDate = dayjs(item.month, "MMM YYYY");
+    if (fromDate && itemDate.isBefore(dayjs(fromDate))) return false;
+    if (toDate && itemDate.isAfter(dayjs(toDate))) return false;
+    return true;
+    });
+    };
+    
+    useEffect(() => {
+      if (fromDate || toDate) {
+        // Example usage:
+        const rand1 = filterDataByDate(dataMoUsMonthly, fromDate, toDate);
+        setfilteredMoUsMonthly(rand1)
+      }
+    }, [fromDate, toDate]);
+    useEffect(() => {
+      if (fromDate1 || toDate1) {
+        // Example usage:
+        const rand2 = filterDataByDate(dataInfrastructureMonthly, fromDate1, toDate1);
+        setfilteredInfrastructureMonthly(rand2)
+      }
+    }, [fromDate1, toDate1]);
+  const[dataMoUs,setDataMoUs]=useState(restructureMoUsData('1'))
+  const[dataInfrastructure,setDataInfrastructure]=useState(restructureMoUsData('2'))
+
+
+    useEffect(() => {
+      if (filteredInfrastructureMonthly) {
+        // Example usage:
+        const data=restructureMoUsData('2');
+        setDataInfrastructure(data)
+      }
+      if(filteredMoUsMonthly){
+        const data=restructureMoUsData('1');
+        setDataMoUs(data)
+      }
+    }, [filteredInfrastructureMonthly, filteredMoUsMonthly]);
+    
+
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
       <h1 className="text-2xl font-bold mb-6">Forensic Development Dashboard</h1>
 
     <div style={{ background: "white", margin: "10px 0", padding: "10px", borderRadius: "10px", overflow: "auto", border: "1px solid #ddd" }}>
-<LocalizationProvider dateAdapter={AdapterDayjs}>
+        <h2 style={{ textAlign: "left", fontSize: "1.5rem", fontWeight: "bold" }}>Deviation</h2>
+    
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        {/* MOnthly Infrastructure Development Bar Chart */}
+      <div className="bg-white p-4 rounded-lg shadow-md">
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
       <div className="flex justify-between items-center mb-4">
-      <h2 style={{ textAlign: "left", fontSize: "1.5rem", fontWeight: "bold" }}>Deviation</h2>
+      <h2 className="text-lg font-bold mb-4">Monthly Infrastructure Development Projects</h2>
+
         <div className="flex items-center gap-4">
+          
           <div>
              
             <DatePicker
             label='From'
               views={["year", "month"]}
-              value={fromDate}
-              onChange={setFromDate}
+              value={fromDate1}
+              onChange={setFromDate1}
               slotProps={{
                 textField: { 
                   variant: "outlined",
@@ -140,8 +203,8 @@ export default function ForensicDashboard() {
             <DatePicker
             label='To'
               views={["year", "month"]}
-              value={toDate}
-              onChange={setToDate}
+              value={toDate1}
+              onChange={setToDate1}
               slotProps={{
                 textField: { 
                   variant: "outlined",
@@ -154,20 +217,15 @@ export default function ForensicDashboard() {
           </div>
 
           <button 
-            onClick={Clearfilter} 
+            onClick={() => Clearfilter('2')}
             className="bg-blue-500 text-white px-3 py-1 rounded-md "
             style={{ backgroundColor: "#2d3748" }}>
-            Clear Filter
+            Clear
           </button>
         </div>
 
       </div>
-    </LocalizationProvider>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-        {/* MOnthly Infrastructure Development Bar Chart */}
-      <div className="bg-white p-4 rounded-lg shadow-md">
-        <h2 className="text-lg font-bold mb-4">Monthly Infrastructure Development Projects</h2>
+        </LocalizationProvider>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={filteredInfrastructureMonthly}>
             <XAxis
@@ -217,7 +275,59 @@ export default function ForensicDashboard() {
         {/* monthly MoUs Chart */}
 
       <div className="bg-white p-4 rounded-lg shadow-md">
-        <h2 className="text-lg font-bold mb-4">Monthly MoUs with NFSU</h2>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <div className="flex justify-between items-center mb-4">
+      <h2 className="text-lg font-bold mb-4">Monthly MoUs with NFSU</h2>
+
+
+        <div className="flex items-center gap-4">
+          
+          <div>
+             
+            <DatePicker
+            label='From'
+              views={["year", "month"]}
+              value={fromDate}
+              onChange={setFromDate}
+              slotProps={{
+                textField: { 
+                  variant: "outlined",
+                  size: "small",
+                  sx: { width: "140px", fontSize: "12px" },
+                }
+              }}
+              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+            />
+          </div>
+
+          <div>
+              
+            <DatePicker
+            label='To'
+              views={["year", "month"]}
+              value={toDate}
+              onChange={setToDate}
+              slotProps={{
+                textField: { 
+                  variant: "outlined",
+                  size: "small",
+                  sx: { width: "140px", fontSize: "12px" },
+                }
+              }}
+              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+            />
+          </div>
+
+          <button 
+            onClick={() => Clearfilter('1')}
+            className="bg-blue-500 text-white px-3 py-1 rounded-md "
+            style={{ backgroundColor: "#2d3748" }}>
+            Clear
+          </button>
+        </div>
+
+      </div>
+        </LocalizationProvider>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={filteredMoUsMonthly}>
             <XAxis
@@ -281,7 +391,7 @@ export default function ForensicDashboard() {
   <Pie 
     data={dataInfrastructure} 
     dataKey="count" 
-    nameKey="project" 
+    nameKey="name" 
     cx="50%" 
     cy="50%" 
     outerRadius={100} 
@@ -307,25 +417,25 @@ export default function ForensicDashboard() {
                 <h2 className="text-xl font-semibold mb-4">MoUs with NFSU</h2>
 
                 <ResponsiveContainer width="100%" height={300}>
-        <PieChart>
-          <Pie
-            data={dataMoUs}
-            cx="50%"
-            cy="50%"
-            outerRadius={100}
-            fill="#8884d8"
-            dataKey="value"
-            label={({ name, percent }) => ` ${(percent * 100).toFixed(1)}%`}
+                  <PieChart>
+                    <Pie
+                      data={dataMoUs}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={({ name, percent }) => ` ${(percent * 100).toFixed(1)}%`}
 
-          >
-            {dataMoUs.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
-            ))}
-          </Pie>
-          <Tooltip />
-          <Legend/>
-        </PieChart>
-      </ResponsiveContainer>
+                    >
+                      {dataMoUs.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend/>
+                  </PieChart>
+                </ResponsiveContainer>
 
       </div>
 

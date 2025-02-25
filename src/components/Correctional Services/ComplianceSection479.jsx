@@ -44,26 +44,52 @@ const ComplianceSection479 = () => {
   }, [formData]);
 
 
+
+
   const data = {
     labels: ['First Time UTPs', 'Other UTPs'],
     datasets: [
       {
         label: 'No. of UTPs who have served 1/3rd of the maximum sentence',
         data: [formData.count_served_by_onethird_maxsentence || 0, formData.count_served_by_halfof_maxsentence || 0],
-        backgroundColor: '#FF5733',
+        backgroundColor: '#ff9a76',
       },
       {
         label: 'No. of applications preferred in the Court by Jail Superintendent',
         data: [formData.application_count || 0, formData.other_application_count || 0],
-        backgroundColor: '#2196F3',
+        backgroundColor: '#8884d8',
       },
       {
         label: 'No. of UTPs released on bond',
         data: [formData.bond_count || 0, formData.other_bond_count || 0],
-        backgroundColor: '#4CAF50',
+        backgroundColor: '#82ca9d',
       },
     ],
   };
+
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Classification of UTPs', // X-axis title
+          font: { size: 12 },
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Count', // Y-axis title
+          font: { size: 12 },
+        },
+        beginAtZero: true,
+      },
+    },
+  };
+  
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -138,7 +164,7 @@ const ComplianceSection479 = () => {
 
         <h1 className="text-4xl font-bold text-center">Compliance of Section 479 of BNSS</h1>
         <div className="h-[400px] w-[400px] w-full flex justify-center items-center">
-          <Bar data={data} options={{ responsive: true }} />
+          <Bar data={data} options={options} />
         </div>
       </div>
       {isModalOpen && (

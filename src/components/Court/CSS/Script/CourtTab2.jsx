@@ -54,64 +54,96 @@ import Courtform from "./Courtform.jsx";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
- 
+
 const CourtTab2 = () => {
   const [showModal, setShowModal] = useState(false);
   const exportRef = useRef(null); // Reference to content to be exported
   const [summonsDigitalData, setSummonsDigitalData] = useState(null);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
-  const[filteredData,setFiltereddata]=useState([])
+  const [toSecurity, setToSecurity] = useState(null)
+  const [fromSecurity, setFromSecurity] = useState(null)
+  const [filteredData, setFilteredData] = useState(summonsDigitalData);
+  const [filteredSecurityData, setFilteredSecurityData] = useState(
+    summonsDigitalData
+  );
   const fetchSummonsDigitalData = async () => {
     try {
       const response = await axiosInstance.get("/live_data", {
         params: {
           type: "court_2",
-          from_date:fromDate?.toISOString().split("T")[0],
-          to_date:toDate?.toISOString().split("T")[0],
+          from_date: fromDate?.toISOString().split("T")[0],
+          to_date: toDate?.toISOString().split("T")[0],
         },
       });
       const responseData = response.data;
       setSummonsDigitalData(responseData.data_dict);
-      setFiltereddata(responseData.data_dict)
+      setFilteredData(responseData.data_dict)
+      setFilteredSecurityData(responseData.data_dict)
     } catch (error) {
       console.error("Some error occured", error);
     }
   };
   const filterDataByDate = (data, fromDate, toDate) => {
-        if (!Array.isArray(data)) {
-          console.error("filterDataByDate received non-array data:", data);
-          return [];
-        }
-      
-        return data.filter((item) => {
-          const itemDate = dayjs(item.month, "YYYY-MM");
-      
-          return (
-            (!fromDate || itemDate.isAfter(dayjs(fromDate).subtract(1, "month"))) &&
-            (!toDate || itemDate.isBefore(dayjs(toDate).add(1, "month")))
-          );
-        });
-      };
+    if (!Array.isArray(data)) {
+      console.error("filterDataByDate received non-array data:", data);
+      return [];
+    }
+
+    return data.filter((item) => {
+      const itemDate = dayjs(item.month, "YYYY-MM");
+      return (
+        (!fromDate || itemDate.isAfter(dayjs(fromDate).subtract(1, "month"))) &&
+        (!toDate || itemDate.isBefore(dayjs(toDate).add(1, "month")))
+      );
+    });
+  };
+  const filterSecurityDataByDate = (data, fromSecurity, toSecurity) => {
+    if (!Array.isArray(data)) {
+      console.error("filterSecurityDataByDate received non-array data:", data);
+      return [];
+    }
+
+    return data.filter((item) => {
+      const itemDate = dayjs(item.month, "YYYY-MM");
+      return (
+        (!fromSecurity ||
+          itemDate.isAfter(dayjs(fromSecurity).subtract(1, "month"))) &&
+        (!toSecurity || itemDate.isBefore(dayjs(toSecurity).add(1, "month")))
+      );
+    });
+  };
   useEffect(() => {
     fetchSummonsDigitalData();
   }, []);
-  const Clearfilter=()=>{
+  const ClearFilter = () => {
     setFromDate(null);
     setToDate(null);
-    setFiltereddata(summonsDigitalData)
-  }
-   useEffect(() => {
-        if (fromDate || toDate) {
-          console.log("Filtering data for dates:", fromDate, toDate);
-          
-          // ICJSCaseData()
-            const filteredData = filterDataByDate(summonsDigitalData, fromDate, toDate);
-            console.log("Filtered Data:", filteredData);
-            setFiltereddata(filteredData);
-        }
-      }, [fromDate, toDate]);
-  
+    setFromSecurity(null);
+    setToSecurity(null);
+    setFilteredData(summonsDigitalData);
+    setFilteredSecurityData(summonsDigitalData);
+  };
+  useEffect(() => {
+    if (fromDate || toDate) {
+      console.log("Filtering accessibility compliance data for dates:", fromDate, toDate);
+      const filtered = filterDataByDate(summonsDigitalData, fromDate, toDate);
+      console.log("Filtered Accessibility Data:", filtered);
+      setFilteredData(filtered);
+    }
+  }, [fromDate, toDate]);
+  useEffect(() => {
+    if (fromSecurity || toSecurity) {
+      console.log("Filtering security compliance data for dates:", fromSecurity, toSecurity);
+      const filtered = filterSecurityDataByDate(
+        summonsDigitalData,
+        fromSecurity,
+        toSecurity
+      );
+      console.log("Filtered Security Data:", filtered);
+      setFilteredSecurityData(filtered);
+    }
+  }, [fromSecurity, toSecurity]);
   // useEffect(() => {
   //   if(fromDate||toDate)
   //   {
@@ -168,32 +200,47 @@ const CourtTab2 = () => {
     pdf.save("eSummons & Digital Case Records.pdf");
   };
 
-  const securityComiplanceData = filteredData?.map((item) => ({
-    month: new Date(item.month).toLocaleString("en-US", {
-      month: "short",
-      year: "numeric",
-    }),
-    Compliant: item.data_security_complaints || 0,
-    NonComplaints: item.data_security_non_complaints || 0,
-  })).sort((a, b) => new Date(a.month) - new Date(b.month));
+  const securityComplianceData = filteredSecurityData?.length
+  ? filteredSecurityData
+      .map((item) => ({
+        month: dayjs(item.month, "YYYY-MM").format("MMM YYYY"), // Format as "Jan 2024"
+        Compliant: item.data_security_complaints || 0,
+        NonComplaints: item.data_security_non_complaints || 0,
+      }))
+      .sort((a, b) => dayjs(b.month, "MMM YYYY").toDate() - dayjs(a.month, "MMM YYYY").toDate()) // Newest to Oldest
+  : [];
+
+// Process accessibility compliance data
+const accessibilityComplianceData = filteredData?.length
+  ? filteredData
+      .map((item) => ({
+        month: dayjs(item.month, "YYYY-MM").format("MMM YYYY"),
+        Accessible: item.accessibility_complaints || 0,
+        Inaccessible: item.accessibility_non_complaints || 0,
+      }))
+      .sort((a, b) => dayjs(b.month, "MMM YYYY").toDate() - dayjs(a.month, "MMM YYYY").toDate()) // Newest to Oldest
+  : [];
+
+
+  
 
   const complianceData = filteredData
     ? [
-        {
-          name: "Compliant",
-          value: parseInt(filteredData[0]?.data_security_complaints || 0),
-        },
-        {
-          name: "Non-Compliant",
-          value: parseInt(
-            filteredData[0]?.data_security_non_complaints || 0
-          ),
-        },
-      ]
+      {
+        name: "Compliant",
+        value: parseInt(filteredData[0]?.data_security_complaints || 0),
+      },
+      {
+        name: "Non-Compliant",
+        value: parseInt(
+          filteredData[0]?.data_security_non_complaints || 0
+        ),
+      },
+    ]
     : [
-        { name: "Compliant", value: 0 },
-        { name: "Non-Compliant", value: 0 },
-      ];
+      { name: "Compliant", value: 0 },
+      { name: "Non-Compliant", value: 0 },
+    ];
 
   const accessibilityComiplanceData = filteredData?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
@@ -206,22 +253,22 @@ const CourtTab2 = () => {
 
   const accessibilityData = filteredData
     ? [
-        {
-          name: "Accessible",
-          value: parseInt(filteredData[0]?.accessibility_complaints || 0),
-        },
-        {
-          name: "Inaccessible",
-          value: parseInt(
-            filteredData[0]?.accessibility_non_complaints || 0
-          ),
+      {
+        name: "Accessible",
+        value: parseInt(filteredData[0]?.accessibility_complaints || 0),
+      },
+      {
+        name: "Inaccessible",
+        value: parseInt(
+          filteredData[0]?.accessibility_non_complaints || 0
+        ),
 
-        },
-      ]
+      },
+    ]
     : [
-        { name: "Accessible", value: 0 },
-        { name: "Inaccessible", value: 0 },
-      ];
+      { name: "Accessible", value: 0 },
+      { name: "Inaccessible", value: 0 },
+    ];
 
   const summonsData = filteredData?.map((item) => {
     return {
@@ -235,12 +282,12 @@ const CourtTab2 = () => {
 
   const adoptionData = Array.isArray(filteredData)
     ? filteredData.map((item) => ({
-        month: new Date(item?.month || "").toLocaleString("en-US", {
-          month: "short",
-          year: "numeric",
-        }),
-        adoptionRate: parseInt(item?.adoption_rate) || 0, // Handle null/undefined values safely
-      })).sort((a, b) => new Date(a.month) - new Date(b.month))
+      month: new Date(item?.month || "").toLocaleString("en-US", {
+        month: "short",
+        year: "numeric",
+      }),
+      adoptionRate: parseInt(item?.adoption_rate) || 0, // Handle null/undefined values safely
+    })).sort((a, b) => new Date(a.month) - new Date(b.month))
     : [];
   const recentEntryDate = new Date(
     filteredData?.[0]?.month
@@ -255,13 +302,13 @@ const CourtTab2 = () => {
         <h1 className="text-2xl font-bold">
           eSummons & Digital Case Records Dashboard
         </h1>
-        
+
 
         <div className="flex space-x-2">
           <button className="ExportButton" onClick={handleExport}>
             Export
           </button>
-          
+
           {localStorage.getItem("role") !== "chief secretary" && (
             <button
               className="bg-blue-500 text-white px-4 py-2 rounded-lg"
@@ -275,105 +322,133 @@ const CourtTab2 = () => {
             </button>
           )}
         </div>
-        
+
       </div>
-      
+
       <div ref={exportRef}>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <div className="rounded-lg w-full max-w-full h-auto mb-3 p-4">
+         
             <div className="flex justify-between items-center mb-4">
               
             <h1 className="text-2xl font-bold">Deviation</h1>
 
-      
-              <div className="flex items-center gap-4">
-                <div>
-                   
-                  <DatePicker
-                  label='From'
-                    views={["year", "month"]}
-                    value={fromDate}
-                    onChange={setFromDate}
-                    slotProps={{
-                      textField: { 
-                        variant: "outlined",
-                        size: "small",
-                        sx: { width: "140px", fontSize: "12px" },
-                      }
-                    }}
-                    sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
-                  />
-                </div>
-      
-                <div>
-                   
-                  <DatePicker
-                  label='To'
-                    views={["year", "month"]}
-                    value={toDate}
-                    onChange={setToDate}
-                    slotProps={{
-                      textField: { 
-                        variant: "outlined",
-                        size: "small",
-                        sx: { width: "140px", fontSize: "12px" },
-                      }
-                    }}
-                    sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
-                  />
-                </div>
-      
-                <button 
-                  onClick={Clearfilter} 
-                  className="bg-blue-500 text-white px-3 py-1 rounded-md "
-                  style={{ backgroundColor: "#2d3748" }}>
-                  Clear Filter
-                </button>
-              </div>
-      
+              
             </div>
-          </LocalizationProvider>
+         
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white p-4 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold mb-4">
-                Monthly Data Security Compliance
-              </h3>
+            <div style={{
+                  backgroundColor: "#f4f4f4",padding:"15px",borderRadius:"8px"
+                }}>
 
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={securityComiplanceData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
-                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="Compliant"
-                    stroke="#8884d8"
-                    strokeWidth={2}
-                    name="Complaints"
-                    activeDot={{ r: 8 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="NonComplaints"
-                    stroke="#82ca9d"
-                    strokeWidth={2}
-                    name="Non-Complaints"
-                    activeDot={{ r: 8 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="bg-white p-4 rounded-xl shadow-md">
+              <div className="bg-white p-4 rounded-xl shadow-md">
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <div className="d-flex gap-2">
               <h3 className="text-xl font-semibold mb-4">
+                  Monthly Data Security Compliance
+                </h3>
+                
+            <div className="flex items-center gap-1">
+              <div>
+                <DatePicker
+                  label="From"
+                  views={["year", "month"]}
+                  value={fromSecurity}
+                  onChange={setFromSecurity}
+                  slotProps={{
+                    textField: {
+                      variant: "outlined",
+                      size: "small",
+                      sx: { width: "140px", fontSize: "12px" },
+                    },
+                  }}
+                />
+              </div>
+              <div>
+                <DatePicker
+                  label="To"
+                  views={["year", "month"]}
+                  value={toSecurity}
+                  onChange={setToSecurity}
+                  slotProps={{
+                    textField: {
+                      variant: "outlined",
+                      size: "small",
+                      sx: { width: "140px", fontSize: "12px" },
+                    },
+                  }}
+                />
+              </div>
+              <button
+                onClick={ClearFilter}
+                className="bg-blue-500 text-white px-3 py-2 rounded-md"
+                style={{ backgroundColor: "#2d3748" }}
+              >
+                Clear
+              </button>
+            </div>
+              </div>
+              
+          </LocalizationProvider>  
+                <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={securityComplianceData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
+                    <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="Compliant"
+                      stroke="#8884d8"
+                      strokeWidth={2}
+                      name="Complaints"
+                      activeDot={{ r: 8 }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="NonComplaints"
+                      stroke="#82ca9d"
+                      strokeWidth={2}
+                      name="Non-Complaints"
+                      activeDot={{ r: 8 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+           
+           <div style={{
+                  backgroundColor: "#f4f4f4",padding:"15px",borderRadius:"8px"
+                }}>
+
+                    <div className="bg-white p-4 rounded-xl shadow-md">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <div className="d-flex gap-2">
+                <h3 className="text-xl font-semibold mb-4">
                 Monthly Accessibility Compliance
               </h3>
+             
+          <div className="flex items-center gap-1">
+            <div>
+              <DatePicker label="From" views={["year", "month"]} value={fromDate} onChange={setFromDate} slotProps={{ textField: { variant: "outlined", size: "small", sx: { width: "140px", fontSize: "12px" } } }} />
+            </div>
+            <div>
+              <DatePicker label="To" views={["year", "month"]} value={toDate} onChange={setToDate} slotProps={{ textField: { variant: "outlined", size: "small", sx: { width: "140px", fontSize: "12px" } } }} />
+            </div>
+            <button
+              onClick={ClearFilter}
+              className="bg-blue-500 text-white px-3 py-2 rounded-md"
+              style={{ backgroundColor: "#2d3748" }}
+            >
+              Clear
+            </button>
+          </div></div>
+        </LocalizationProvider>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={accessibilityComiplanceData}>
+              <LineChart data={accessibilityComplianceData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
-                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
+                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }} />
+                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }} />
                   <Tooltip />
                   <Legend />
                   <Line
@@ -395,15 +470,20 @@ const CourtTab2 = () => {
                 </LineChart>
               </ResponsiveContainer>
             </div>
+           </div>
+            
           </div>
         </div>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <div className=" rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">
             Recent Entry : {recentEntryDate}
           </h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Updated Pie Chart for Compliance */}
-            <div className="bg-white p-4 rounded-xl shadow-md">
+            <div style={{
+                  backgroundColor: "#f4f4f4",padding:"15px",borderRadius:"8px"
+                }}>
+                   <div className="bg-white p-4 rounded-xl shadow-md">
               <h3 className="text-xl font-semibold mb-4">
                 Data Security Compliance
               </h3>
@@ -430,9 +510,14 @@ const CourtTab2 = () => {
                 </PieChart>
               </ResponsiveContainer>
             </div>
+                </div>
+           
 
             {/* Updated Pie Chart for Accessibility */}
-            <div className="bg-white p-4 rounded-xl shadow-md">
+            <div style={{
+                  backgroundColor: "#f4f4f4",padding:"15px",borderRadius:"8px"
+                }}>
+                  <div className="bg-white p-4 rounded-xl shadow-md">
               <h3 className="text-xl font-semibold mb-4">
                 Accessibility Compliance
               </h3>
@@ -459,13 +544,18 @@ const CourtTab2 = () => {
                 </PieChart>
               </ResponsiveContainer>
             </div>
+                </div>
+            
           </div>
         </div>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <div className="rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">Deviation With Recent Entry</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* eSummons Delivered Electronically Bar Chart */}
-            <div className="bg-white p-4 rounded-xl shadow-md">
+            <div style={{
+                  backgroundColor: "#f4f4f4",padding:"15px",borderRadius:"8px"
+                }}>
+                    <div className="bg-white p-4 rounded-xl shadow-md">
               <div className="mb-4 flex flex-row justify-between items-center">
                 <h3 className="text-xl font-semibold">
                   Court Summons Delivered Electronically
@@ -476,8 +566,8 @@ const CourtTab2 = () => {
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={summonsData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
-                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
+                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }} />
+                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }} />
                   {/* <YAxis 
                     domain={[
                       0, 
@@ -496,21 +586,25 @@ const CourtTab2 = () => {
                 </LineChart>
               </ResponsiveContainer>
             </div>
-            {/* Adoption Rate Line Chart */}
+                </div>
+                <div style={{
+                  backgroundColor: "#f4f4f4",padding:"15px",borderRadius:"8px"
+                }}>
+                   {/* Adoption Rate Line Chart */}
             <div className="bg-white p-4 rounded-xl shadow-md">
-            <div className="mb-4 flex flex-row justify-between items-center">
+              <div className="mb-4 flex flex-row justify-between items-center">
                 <h3 className="text-xl font-semibold">
-                Adoption Rate of eSummons & Digital Case Records
+                  Adoption Rate of eSummons & Digital Case Records
 
                 </h3>
                 <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${adoptionData?.[adoptionData.length - 1]?.adoptionRate}`}</h4>
               </div>
-             
+
 
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={adoptionData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
+                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }} />
                   <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}
                     domain={[
                       0,
@@ -534,6 +628,8 @@ const CourtTab2 = () => {
                 </LineChart>
               </ResponsiveContainer>
             </div>
+                </div>
+           
           </div>
         </div>
       </div>

@@ -275,11 +275,70 @@ const filterDataByDate = (data, fromDate, toDate) => {
       </div>
      
       <div ref={exportRef}>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <div className="rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <div className="flex justify-between items-center mb-4">
                         
                       <h1 className="text-2xl font-bold">Deviation</h1>
+          
+{/*                 
+                        <div className="flex items-center gap-4">
+                          <div>
+                             
+                            <DatePicker
+                            label='From'
+                              views={["year", "month"]}
+                              value={fromDate}
+                              onChange={setFromDate}
+                              slotProps={{
+                                textField: { 
+                                  variant: "outlined",
+                                  size: "small",
+                                  sx: { width: "140px", fontSize: "12px" },
+                                }
+                              }}
+                              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                            />
+                          </div>
+                
+                          <div>
+                             
+                            <DatePicker
+                            label='To'
+                              views={["year", "month"]}
+                              value={toDate}
+                              onChange={setToDate}
+                              slotProps={{
+                                textField: { 
+                                  variant: "outlined",
+                                  size: "small",
+                                  sx: { width: "140px", fontSize: "12px" },
+                                }
+                              }}
+                              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                            />
+                          </div>
+                
+                          <button 
+                            onClick={Clearfilter} 
+                            className="bg-blue-500 text-white px-3 py-1 rounded-md "
+                            style={{ backgroundColor: "#2d3748" }}>
+                            Clear Filter
+                          </button>
+                        </div> */}
+                
+                      </div>
+                    </LocalizationProvider>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <h3 className="text-xl font-semibold mb-4">
+                Data-Sharing Effectivness
+              </h3>
+
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <div className="flex justify-between items-center mb-4">
+                        
+                      {/* <h1 className="text-2xl font-bold">Deviation</h1> */}
           
                 
                         <div className="flex items-center gap-4">
@@ -329,11 +388,7 @@ const filterDataByDate = (data, fromDate, toDate) => {
                 
                       </div>
                     </LocalizationProvider>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white p-4 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold mb-4">
-                Data-Sharing Effectivness
-              </h3>
+              
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={dataSharingEffectiveData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -373,6 +428,65 @@ const filterDataByDate = (data, fromDate, toDate) => {
               <h3 className="text-xl font-semibold mb-4">
                 Cases Using Forensic Data
               </h3>
+
+
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <div className="flex justify-between items-center mb-4">
+                        
+                      {/* <h1 className="text-2xl font-bold">Deviation</h1> */}
+          
+                
+                        <div className="flex items-center gap-4">
+                          <div>
+                             
+                            <DatePicker
+                            label='From'
+                              views={["year", "month"]}
+                              value={fromDate}
+                              onChange={setFromDate}
+                              slotProps={{
+                                textField: { 
+                                  variant: "outlined",
+                                  size: "small",
+                                  sx: { width: "140px", fontSize: "12px" },
+                                }
+                              }}
+                              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                            />
+                          </div>
+                
+                          <div>
+                             
+                            <DatePicker
+                            label='To'
+                              views={["year", "month"]}
+                              value={toDate}
+                              onChange={setToDate}
+                              slotProps={{
+                                textField: { 
+                                  variant: "outlined",
+                                  size: "small",
+                                  sx: { width: "140px", fontSize: "12px" },
+                                }
+                              }}
+                              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                            />
+                          </div>
+                
+                          <button 
+                            onClick={Clearfilter} 
+                            className="bg-blue-500 text-white px-3 py-1 rounded-md "
+                            style={{ backgroundColor: "#2d3748" }}>
+                            Clear Filter
+                          </button>
+                        </div>
+                
+                      </div>
+                    </LocalizationProvider>
+              
+
+
+
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={casesForensicData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -401,7 +515,7 @@ const filterDataByDate = (data, fromDate, toDate) => {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <div className="rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">
             Recent Entry : {recentEntryDate}
           </h1>
@@ -463,7 +577,7 @@ const filterDataByDate = (data, fromDate, toDate) => {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <div className="rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">Deviation With Recent Entry</h1>
           {/* Response Time for Evidence Retrieval (Line Chart) */}
           <div className="bg-white p-4 rounded-xl shadow-md">

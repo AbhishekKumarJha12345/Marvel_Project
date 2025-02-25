@@ -250,26 +250,72 @@ const MaharashtraMap = () => {
     <div style={{
       position: "absolute",
       left: 20,
-      top: "50%",
+      top: "40%",
       transform: "translateY(-50%)",
-      padding: "15px",
-      background: "#fff",
-      boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
-      borderRadius: "8px",
-      fontSize: "18px",
-      fontWeight: "bold",
+      // padding: "15px",
+      // background: "#fff",
+      // boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
+      // borderRadius: "8px",
+      // fontSize: "18px",
+      // fontWeight: "bold",
       textAlign: "center",
       zIndex:"999"
     }}>
+      <div style={{
+      transform: "translateY(-50%)",
+      padding: "15px",
+      // background: "#fff",
+      // boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
+      borderRadius: "8px",
+      fontSize: "12px",
+      fontWeight: "bold",
+      textAlign: "center"
+    }}>
       <div>Population</div>
-      <div style={{ fontSize: "22px", color: "#d9534f" }}>12.73 Crore</div>
+      <div style={{ fontSize: "18px", color: "#d9534f" }}>12.73 Crore</div>
+
+      </div>
+      
+      <div style={{
+      transform: "translateY(-50%)",
+      padding: "15px",
+      // background: "#fff",
+      // boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
+      borderRadius: "8px",
+      fontSize: "12px",
+      fontWeight: "bold",
+      textAlign: "center"
+    }}>
+      <div>Districts</div>
+      <div style={{ fontSize: "18px", color: "#0275d8" }}>36</div>
+
+      </div>
+      
+      
+      <div style={{
+      transform: "translateY(-50%)",
+      padding: "15px",
+      // background: "#fff",
+      // boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
+      borderRadius: "8px",
+      fontSize: "12px",
+      fontWeight: "bold",
+      textAlign: "center"
+    }}>
+      <div>Commissionerates</div>
+      <div style={{ fontSize: "18px", color: "#0275d8" }}>12</div>
+
+      </div>
+
+
+
     </div>
 
     {/* Map */}
     <div id="map" style={{ flex: 1, borderRadius: '8px' }}></div>
 
     {/* Right Card - Number of Districts */}
-    <div style={{
+    {/* <div style={{
       position: "absolute",
       right: 20,
       top: "50%",
@@ -286,7 +332,7 @@ const MaharashtraMap = () => {
     }}>
       <div>Districts</div>
       <div style={{ fontSize: "22px", color: "#0275d8" }}>36</div>
-    </div>
+    </div> */}
     </div>
 
 

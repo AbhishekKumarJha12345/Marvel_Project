@@ -83,6 +83,7 @@ function Mainnavbar() {
             src={userLogo}
             alt="Logo"
             className={
+              users === "admin" || //added_25   
               users === "Prosecutor" ||
               users === "chief secretary" ||
               users === "Court" ||

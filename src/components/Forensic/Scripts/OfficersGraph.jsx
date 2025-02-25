@@ -2,7 +2,7 @@ import React, { useState,useEffect } from "react";
 import {
   LineChart,
   Line,
-  XAxis,
+  XAxis,  
   YAxis,
   Tooltip,
   Legend,
@@ -55,12 +55,16 @@ const gradeData = [
   { month: "Jun 2024", grade: "Assistant Chemical Analyzer", available: 80, provided: 225 },
   { month: "Jun 2024", grade: "Scientific Officers", available: 35, provided: 37 },
 ];
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
 
 const OfficersGraph = ({to,from,setGrade}) => {
   const [selectedMetric, setSelectedMetric] = useState("available");
   const [filteredGradeData, setFilteredGradeData] = useState(gradeData);
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
   // Process data by month instead of grade
   const processedData = gradeData.reduce((acc, entry) => {
     const { month, available, provided } = entry;
@@ -82,6 +86,7 @@ const OfficersGraph = ({to,from,setGrade}) => {
   
     // Convert object to an array of objects
     const dataArray = Object.values(data);
+    console.log('grade datya fro compo',dataArray[dataArray.length-1])
     setGrade(dataArray[dataArray.length-1])
     return dataArray.filter((item) => {
       const itemDate = dayjs(item.month, "MMM YYYY");
@@ -92,22 +97,29 @@ const OfficersGraph = ({to,from,setGrade}) => {
       );
     });
   };
+  const Clearfilter=()=>{
+    setFromDate(null);
+    setToDate(null);
+  }
   
+    const [hiddenLines, setHiddenLines] = useState({});
   
   useEffect(() => {
-    if (from || to) {
-      console.log("Filtering data from:", from, "to:", to);
+    if (fromDate || toDate) {
+      console.log("Filtering data from:", fromDate, "to:", toDate);
       console.log("Raw Processed Data:", processedData);
   
       if (processedData && typeof processedData === "object") {
-        const filteredData = filterDataByDate(processedData, from, to);
+        const filteredData = filterDataByDate(processedData, fromDate, toDate);
         console.log("Filtered Data:", filteredData);
   
         setFilteredGradeData(filteredData);
   
         if (filteredData.length > 0) {
-          console.log('----------while filtering---------------',filteredData[filteredData.length - 1])
-          setGrade(filteredData[filteredData.length - 1]);
+          const dataArray = Object.values(filteredData);
+      console.log('----------while filtering---------------',dataArray[dataArray.length-1])
+
+      setGrade(dataArray[dataArray.length-1])
         }
       } else {
         console.error("Processed Data is not an object:", processedData);
@@ -116,23 +128,32 @@ const OfficersGraph = ({to,from,setGrade}) => {
     }
     else{
       setFilteredGradeData(processedData);
-      console.log('----------while filtering---------------',processedData[processedData.length-1])
-      setGrade(processedData[processedData.length-1])
+      const dataArray = Object.values(processedData);
+      console.log('----------while filtering---------------',dataArray[dataArray.length-1])
+
+      setGrade(dataArray[dataArray.length-1])
     }
-  }, [from, to]);
+  }, [fromDate, toDate]);
   
   
   useEffect(() => {
       setFilteredGradeData(processedData);
-      console.log('----------while filtering---------------',processedData)
-
-      setGrade(processedData[processedData.length-1])
+      const dataArray = Object.values(processedData);
+      console.log('----------while filtering---------------',dataArray[dataArray.length-1])
+      setGrade(dataArray[dataArray.length-1])
   }, []);
-  
+
+  const handleLegendClick = (dataKey) => {
+    setHiddenLines((prev) => ({
+      ...prev,
+      [dataKey]: !prev[dataKey],
+    }));
+  };
   return (
     <div className="bg-white p-4 rounded-xl  w-full">
       <div className="flex justify-between mb-4 ">
         <h2 className="text-xl font-semibold mb-4">Training Data by Grade Over Time</h2>
+
         {/* Dropdown for selecting metric */}
         <select
           onChange={(e) => setSelectedMetric(e.target.value)}
@@ -146,6 +167,55 @@ const OfficersGraph = ({to,from,setGrade}) => {
 
       {/* Line Chart */}
       <div className="w-full h-auto min-h-[300px]">
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center gap-4">
+          <div>
+             
+            <DatePicker
+            label='From'
+              views={["year", "month"]}
+              value={fromDate}
+              onChange={setFromDate}
+              slotProps={{
+                textField: { 
+                  variant: "outlined",
+                  size: "small",
+                  sx: { width: "140px", fontSize: "12px" },
+                }
+              }}
+              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+            />
+          </div>
+
+          <div>
+              
+            <DatePicker
+            label='To'
+              views={["year", "month"]}
+              value={toDate}
+              onChange={setToDate}
+              slotProps={{
+                textField: { 
+                  variant: "outlined",
+                  size: "small",
+                  sx: { width: "140px", fontSize: "12px" },
+                }
+              }}
+              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+            />
+          </div>
+
+          <button 
+            onClick={Clearfilter} 
+            className="bg-blue-500 text-white px-3 py-1 rounded-md "
+            style={{ backgroundColor: "#2d3748" }}>
+            Clear
+          </button>
+        </div>
+
+      </div>
+      </LocalizationProvider>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={formattedData}>
             <XAxis
@@ -155,7 +225,7 @@ const OfficersGraph = ({to,from,setGrade}) => {
               label={{
                 value: "Month",
                 position: "insideBottom",
-                offset: -5,
+                offset: -18,
               }}
             />
             <YAxis
@@ -176,7 +246,28 @@ const OfficersGraph = ({to,from,setGrade}) => {
                 border: "1px solid #e5e7eb",
               }}
             />
-            <Legend iconType="circle" wrapperStyle={{ paddingBottom: 10, paddingTop: 10 }} />
+            <Legend 
+            onClick={(e) => handleLegendClick(e.dataKey)} 
+            layout="horizontal"
+                verticalAlign="bottom"
+                align="center"
+                wrapperStyle={{
+                  position: "relative",
+                  marginTop: -5 // Adjust this value to move it further down
+                }}
+            formatter={(value) => (
+              <span 
+                style={{
+                  textDecoration: hiddenLines[value] ? "line-through" : "none",
+                  cursor: "pointer",
+                  color: hiddenLines[value] ? "#ccc" : "#000",
+                }}
+              >
+                {value}
+              </span>
+            )}
+
+            iconType="circle"  />
 
             {/* Dynamic Lines for Each Grade */}
             {["Director", "Dy Director", "Assistant Director", "Assistant Chemical Analyzer", "Scientific Officers"].map((grade, index) => (
@@ -184,9 +275,10 @@ const OfficersGraph = ({to,from,setGrade}) => {
                 key={grade}
                 type="monotone"
                 dataKey={grade}
-                stroke={chartColors[index]}
-                strokeWidth={4}
+                stroke={chartColors[index % chartColors.length]} // Ensuring index doesn't exceed colors array
+                strokeWidth={2}
                 dot={{ r: 5 }}
+                hide={hiddenLines[grade]} // Ensuring the line is hidden when toggled
                 name={grade}
               />
             ))}
