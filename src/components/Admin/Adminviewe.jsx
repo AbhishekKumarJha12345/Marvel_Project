@@ -106,7 +106,15 @@ const AdminUserTable = () => {
       console.error("Error updating user", error);
     }
   };
-
+  //added_25
+  const customStyles = {
+    headCells: {
+      style: {
+        fontWeight: "600", // Equivalent to font-semibold
+        fontSize: "14px",  // Equivalent to text-[14px]
+      },
+    },
+  }; //added_25
 
   const columns = [
     { name: "Username", selector: (row) => row.username, sortable: true, filterKey: "username" },
@@ -231,7 +239,8 @@ const AdminUserTable = () => {
           ))}
         </div>
         <div className='p-3'>
-        <DataTable columns={columns} data={filteredData} pagination highlightOnHover striped responsive/>
+        {/* added_25 */}
+        <DataTable columns={columns} data={filteredData} pagination highlightOnHover striped responsive customStyles={customStyles}/>      
         </div>
       </CardContent>
     </Card>

@@ -108,11 +108,20 @@ export default function ForensicDashboard() {
               console.log("Filtered Infrastructure: ", filteredInfrastructureMonthly);
             }
           }, [fromDate, toDate]);
+
+          const [hiddenLines, setHiddenLines] = useState({});
+          const handleLegendClick = (dataKey) => {
+            setHiddenLines((prev) => ({
+              ...prev,
+              [dataKey]: !prev[dataKey],
+            }));
+          };
+          
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
       <h1 className="text-2xl font-bold mb-6">Forensic Development Dashboard</h1>
 
-    <div style={{ background: "white", margin: "10px 0", padding: "10px", borderRadius: "10px", overflow: "auto", border: "1px solid #ddd" }}>
+    {/* <div style={{ background: "white", margin: "10px 0", padding: "10px", borderRadius: "10px", overflow: "auto", border: "1px solid #ddd" }}> */}
 <LocalizationProvider dateAdapter={AdapterDayjs}>
       <div className="flex justify-between items-center mb-4">
       <h2 style={{ textAlign: "left", fontSize: "1.5rem", fontWeight: "bold" }}>Deviation</h2>
@@ -198,7 +207,28 @@ export default function ForensicDashboard() {
                 border: "1px solid #e5e7eb",
               }}
             />
-            <Legend iconType="circle" wrapperStyle={{ paddingBottom: 10, paddingTop: 10 }} />
+            <Legend iconType="circle" 
+            onClick={(e) => handleLegendClick(e.dataKey)} 
+            layout="horizontal"
+                verticalAlign="bottom"
+                align="center"
+                wrapperStyle={{
+                  position: "relative",
+                  marginTop: -5 // Adjust this value to move it further down
+                }}
+            formatter={(value) => (
+              <span 
+                style={{
+                  textDecoration: hiddenLines[value] ? "line-through" : "none",
+                  cursor: "pointer",
+                  color: hiddenLines[value] ? "#ccc" : "#000",
+                }}
+              >
+                {value}
+              </span>
+            )}
+
+            />
             {["NewLabs", "TechUpgradation", "FacilityExpansion"].map((key, index) => (
               <Line
                 key={key}
@@ -207,6 +237,7 @@ export default function ForensicDashboard() {
                 stroke={chartColors[index]}
                 strokeWidth={3}
                 dot={{ r: 5 }}
+                hide={hiddenLines[key]}
                 name={key}
               />
             ))}
@@ -248,13 +279,35 @@ export default function ForensicDashboard() {
                 border: "1px solid #e5e7eb",
               }}
             />
-            <Legend iconType="circle" wrapperStyle={{ paddingBottom: 10, paddingTop: 10 }} />
+            <Legend 
+            iconType="circle" 
+            onClick={(e) => handleLegendClick(e.dataKey)} 
+            layout="horizontal"
+                verticalAlign="bottom"
+                align="center"
+                wrapperStyle={{
+                  position: "relative",
+                  marginTop: -5 // Adjust this value to move it further down
+                }}
+            formatter={(value) => (
+              <span 
+                style={{
+                  textDecoration: hiddenLines[value] ? "line-through" : "none",
+                  cursor: "pointer",
+                  color: hiddenLines[value] ? "#ccc" : "#000",
+                }}
+              >
+                {value}
+              </span>
+            )}
+             />
             {["Signed", "InProgress", "Pending", "Expired"].map((key, index) => (
               <Line
                 key={key}
                 type="monotone"
                 dataKey={key}
                 stroke={chartColors[index]}
+                hide={hiddenLines[key]} 
                 strokeWidth={3}
                 dot={{ r: 5 }}
                 name={key}
@@ -264,8 +317,8 @@ export default function ForensicDashboard() {
         </ResponsiveContainer>
       </div>
       </div>
-      </div>
-      <div style={{ background: "white", margin: "10px 0", padding: "10px", borderRadius: "10px", overflow: "auto", border: "1px solid #ddd" }}>
+      {/* </div> */}
+      {/* <div style={{ background: "white", margin: "10px 0", padding: "10px", borderRadius: "10px", overflow: "auto", border: "1px solid #ddd" }}> */}
       <h2 style={{ textAlign: "left", fontSize: "1.5rem", fontWeight: "bold" }}>Recent Entry:{filteredInfrastructureMonthly[filteredInfrastructureMonthly.length-1]?.month}</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -362,7 +415,7 @@ export default function ForensicDashboard() {
       </div>
         
       </div>
-      </div>
+      {/* </div> */}
 
     </div>
   );

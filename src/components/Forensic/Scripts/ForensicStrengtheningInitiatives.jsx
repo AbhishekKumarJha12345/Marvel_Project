@@ -94,20 +94,30 @@ const ForensicStrengtheningInitiatives = () => {
         setFilteredCyberForensic(filterDataByDate(cyberForensicMonthlyData, fromDate, toDate));
       }
     }, [fromDate, toDate]);
+    const [hiddenLines, setHiddenLines] = useState({});
+    const handleLegendClick = (dataKey) => {
+      setHiddenLines((prev) => ({
+        ...prev,
+        [dataKey]: !prev[dataKey],
+      }));
+    };
+
+
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-        <BarChartIcon size={28} className="text-blue-600" />
+        {/* <BarChartIcon size={28} className="text-blue-600" /> */}
         Forensic Strengthening Initiatives
       </h2>
-    <div style={{ background: "white", margin: "10px 0", padding: "10px", borderRadius: "10px", overflow: "auto", border: "1px solid #ddd" }}>
+    {/* <div style={{ background: "white", margin: "10px 0", padding: "10px", borderRadius: "10px", overflow: "auto", border: "1px solid #ddd" }}> */}
 
       <LocalizationProvider dateAdapter={AdapterDayjs}>
       <div className="flex justify-between items-center mb-4">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
         {/* <BarChartIcon size={28} className="text-blue-600" /> */}
         Deviation
-      </h2>        <div className="flex items-center gap-4">
+      </h2>       
+       <div className="flex items-center gap-4">
           <div>
             
             <DatePicker
@@ -154,16 +164,40 @@ const ForensicStrengtheningInitiatives = () => {
 
       </div>
     </LocalizationProvider>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6"> */}
         {/* Recruitment Trends */}
-      <div className="bg-white p-4 rounded-lg shadow-md">
+      {/* <div className="bg-white p-4 rounded-lg shadow-md"> */}
+<div className="grid grid-cols-12 gap-4 p-4">
+<div className="col-span-6 bg-white shadow-lg rounded-2xl p-4 border border-gray-200">
+        
         <h2 className="text-lg font-bold mb-4">Recruitment Trends Over Months</h2>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={filteredRecruitment}>
             <XAxis dataKey="month" stroke="#6b7280" tick={{ fontSize: 14 }} />
             <YAxis stroke="#6b7280" tick={{ fontSize: 14 }} />
             <Tooltip />
-            <Legend />
+            <Legend 
+            onClick={(e) => handleLegendClick(e.dataKey)} 
+            layout="horizontal"
+                verticalAlign="bottom"
+                align="center"
+                wrapperStyle={{
+                  position: "relative",
+                  marginTop: -5 // Adjust this value to move it further down
+                }}
+            formatter={(value) => (
+              <span 
+                style={{
+                  textDecoration: hiddenLines[value] ? "line-through" : "none",
+                  cursor: "pointer",
+                  color: hiddenLines[value] ? "#ccc" : "#000",
+                }}
+              >
+                {value}
+              </span>
+            )}
+            />
 
             {/* Dynamic Lines for Each Role */}
             {["ForensicExperts", "Analysts", "Technicians"].map((role, index) => (
@@ -174,22 +208,44 @@ const ForensicStrengtheningInitiatives = () => {
                 stroke={chartColors[index]}
                 strokeWidth={3}
                 dot={{ r: 5 }}
+                hide={hiddenLines[role]}
                 name={role}
               />
             ))}
           </LineChart>
         </ResponsiveContainer>
-      </div>
-
+      {/* </div> */}
+</div>
       {/* Cyber Forensic Advancements */}
-      <div className="bg-white p-4 rounded-lg shadow-md">
+      {/* <div className="bg-white p-4 rounded-lg shadow-md"> */}
+<div className="col-span-6 bg-white shadow-lg rounded-2xl p-4 border border-gray-200">
+      
         <h2 className="text-lg font-bold mb-4">Cyber Forensic Advancements Over Months</h2>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={filteredCyberForensic}>
             <XAxis dataKey="month" stroke="#6b7280" tick={{ fontSize: 14 }} />
             <YAxis stroke="#6b7280" tick={{ fontSize: 14 }} />
             <Tooltip />
-            <Legend />
+            <Legend 
+            onClick={(e) => handleLegendClick(e.dataKey)} 
+            layout="horizontal"
+                verticalAlign="bottom"
+                align="center"
+                wrapperStyle={{
+                  position: "relative",
+                  marginTop: -5 // Adjust this value to move it further down
+                }}
+            formatter={(value) => (
+              <span 
+                style={{
+                  textDecoration: hiddenLines[value] ? "line-through" : "none",
+                  cursor: "pointer",
+                  color: hiddenLines[value] ? "#ccc" : "#000",
+                }}
+              >
+                {value}
+              </span>
+            )}/>
 
             {/* Dynamic Lines for Each Advancement */}
             {["AIinForensics", "CloudEvidenceAnalysis", "BlockchainSecurity", "Automation"].map((tech, index) => (
@@ -197,6 +253,7 @@ const ForensicStrengtheningInitiatives = () => {
                 key={tech}
                 type="monotone"
                 dataKey={tech}
+                hide={hiddenLines[tech]}
                 stroke={chartColors[index + 3]} // Adjusting colors for forensic advancements
                 strokeWidth={3}
                 dot={{ r: 5 }}
@@ -205,10 +262,12 @@ const ForensicStrengtheningInitiatives = () => {
             ))}
           </LineChart>
         </ResponsiveContainer>
+      {/* </div> */}
+      {/* </div> */}
       </div>
-      </div>
-      </div>
-      <div style={{ background: "white", margin: "10px 0", padding: "10px", borderRadius: "10px", overflow: "auto", border: "1px solid #ddd" }}>
+
+      {/* <div style={{ background: "white", margin: "10px 0", padding: "10px", borderRadius: "10px", overflow: "auto", border: "1px solid #ddd" }}> */}
+<div className="col-span-6 bg-white shadow-lg rounded-2xl p-4 border border-gray-200">
       
         <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
         {/* <BarChartIcon size={28} className="text-blue-600" /> */}
@@ -217,18 +276,18 @@ const ForensicStrengtheningInitiatives = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
         {/* Recruitment Efforts with Pie Chart */}
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <div className="flex justify-between items-center mb-2">
+        {/* <div className="bg-white p-4 rounded-xl shadow-md"> */}
+          {/* <div className="flex justify-between items-center mb-2"> */}
             <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
-              <UserPlus size={24} className="text-blue-600" />
+              {/* <UserPlus size={24} className="text-blue-600" /> */}
               Recruitment Efforts
             </h3>
             <span className="text-gray-600 text-sm">Total: 33 Recruits</span>
-          </div>
+          {/* </div> */}
           
-          <p className="text-gray-600 mb-3">
+          {/* <p className="text-gray-600 mb-3">
             Keeps track of recruitment efforts for forensic experts, analysts, and technicians.
-          </p>
+          </p> */}
           
 
           {/* Pie Chart */}
@@ -248,24 +307,28 @@ const ForensicStrengtheningInitiatives = () => {
               </PieChart>
             </ResponsiveContainer>
           </div>
-        </div>
-
+        {/* </div> */}
+</div>
+</div>
         {/* Cyber Forensic Tools with Bar Chart */}
-        <div className="bg-white p-4 rounded-xl shadow-md">
+        {/* <div className="bg-white p-4 rounded-xl shadow-md"> */}
+{/* <div className="col-span-6 bg-white shadow-lg rounded-2xl p-4 border border-gray-200"> */}
+<div className="col-span-6 bg-white shadow-lg rounded-2xl p-4 border border-gray-200">
+          
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
-              <ShieldCheck size={24} className="text-green-600" />
+              {/* <ShieldCheck size={24} className="text-green-600" /> */}
               Cyber Forensic Advancements
             </h3>
             <span className="text-gray-600 text-sm">Overall Adoption: 80%</span>
           </div>
           
-          <p className="text-gray-600 mb-3">
+          {/* <p className="text-gray-600 mb-3">
             Monitors advancements in cyber forensic tools, digital evidence analysis, and automation.
-          </p>
+          </p> */}
 
           {/* Bar Chart for Cyber Forensic Tools */}
-          <div className="flex justify-center w-full">
+          {/* <div className="flex justify-center w-full"> */}
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={cyberForensicData}>
                 <XAxis dataKey="name" />
@@ -279,9 +342,11 @@ const ForensicStrengtheningInitiatives = () => {
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
-          </div>
-        </div>
-
+            </div>
+          {/* </div> */}
+        {/* </div> */}
+        {/* </div> */}
+       
         {/* Operational Efficiency - Gauge Chart */}
         {/* <div className="bg-white p-4 rounded-xl shadow-md">
           <div className="flex justify-between items-center mb-2">
@@ -307,9 +372,10 @@ const ForensicStrengtheningInitiatives = () => {
 
           <p className="text-sm text-gray-500 mt-1">Target: 95% Compliance</p>
         </div> */}
-        </div>
+        {/* </div> */}
       </div>
 
+    {/* </div> */}
     </div>
   );
 };
