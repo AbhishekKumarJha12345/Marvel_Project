@@ -68,6 +68,7 @@ const CourtTab2 = () => {
   const [toadoption, setToadoption] = useState(null)
   const [fromadoption, setFromadoption] = useState(null)
   const [filteredData, setFilteredData] = useState([]);
+  const [filteredData2, setFilteredData2] = useState([]);
   const [filteredSecurityData, setFilteredSecurityData] = useState(
     summonsDigitalData
   );
@@ -87,6 +88,7 @@ const CourtTab2 = () => {
       const responseData = response.data;
       setSummonsDigitalData(responseData.data_dict);
       setFilteredData(responseData.data_dict)
+      setFilteredData2(responseData.data_dict)
       setFilteredSecurityData(responseData.data_dict)
       setFiltereddelivery(responseData.data_dict)
       setFilteredadoption(responseData.data_dict)
@@ -129,14 +131,16 @@ const CourtTab2 = () => {
   const ClearFilter = (type) => {
     console.log('type', type)
     if (type === '1') {
-      setFromDate(null);
-      setToDate(null);
-      setFilteredData(summonsDigitalData);
-    }
-    if (type === '2') {
       setFromSecurity(null);
       setToSecurity(null);
       setFilteredSecurityData(summonsDigitalData);
+    }
+    if (type === '2') {
+     
+      setFromDate(null);
+      setToDate(null);
+      setFilteredData(summonsDigitalData);
+      setFilteredData2(summonsDigitalData);
     }
     if (type === '3') {
       setToDelivered(null);
@@ -155,6 +159,7 @@ const CourtTab2 = () => {
       const filtered = filterDataByDate(summonsDigitalData, fromDate, toDate);
       console.log("Filtered Accessibility Data:", filtered);
       setFilteredData(filtered);
+      setFilteredData2(filtered);
     }
   }, [fromDate, toDate]);
   useEffect(() => {
@@ -260,8 +265,8 @@ const CourtTab2 = () => {
     : [];
 
   // Process accessibility compliance data
-  const accessibilityComplianceData = filteredData?.length
-    ? filteredData
+  const accessibilityComplianceData = filteredData2?.length
+    ? filteredData2
       .map((item) => ({
         month: dayjs(item.month, "YYYY-MM").format("MMM YYYY"),
         Accessible: item.accessibility_complaints || 0,
