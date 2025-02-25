@@ -58,7 +58,11 @@ const CourtTab1 = () => {
   const [icjsData, setIcjsData] = useState(null);
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
+    const [fromDate2, setFromDate2] = useState(null);
+    const [toDate2, setToDate2] = useState(null);
     const[filteredicjs, setFilteredICJSData]=useState(null)
+    const[filtered, setFiltered]=useState(null)
+
 
   const ICJSCaseData = async () => {
     try {
@@ -73,14 +77,21 @@ const CourtTab1 = () => {
       console.log('court_1 dtaa',responseData)
       setIcjsData(responseData.data_dict);
       setFilteredICJSData(responseData.data_dict)
+      setFiltered(responseData.data_dict)
     } catch (error) {
       console.error("Some error occured", error);
     }
   };
-    const Clearfilter=()=>{
-      setFromDate(null);
+    const ClearFilter=(type)=>{
+      console.log('type',type)
+      if(type==='1')
+     { setFromDate(null);
       setToDate(null);
-      setFilteredICJSData(icjsData)
+      setFilteredICJSData(icjsData)}
+      if(type==='2')
+        { setFromDate2(null);
+         setToDate2(null);
+         setFiltered(icjsData)}
     }
     const filterDataByDate = (data, fromDate, toDate) => {
       if (!Array.isArray(data)) {
@@ -108,7 +119,7 @@ const CourtTab1 = () => {
 
     useEffect(() => {
       if (fromDate || toDate) {
-        console.log("Filtering data for dates:", fromDate, toDate);
+        console.log('111111111111111111111111111111111111111111111111');
         
         // ICJSCaseData()
           const filteredData = filterDataByDate(icjsData, fromDate, toDate);
@@ -116,7 +127,16 @@ const CourtTab1 = () => {
           setFilteredICJSData(filteredData);
       }
     }, [fromDate, toDate]);
-    
+    useEffect(() => {
+      if (fromDate2 || toDate2) {
+        console.log('22222222222222222222222222222222222222');
+        
+        // ICJSCaseData()
+          const filteredData = filterDataByDate(icjsData, fromDate2, toDate2);
+          console.log("Filtered Data:", filteredData);
+          setFiltered(filteredData);
+      }
+    }, [fromDate2, toDate2]);
   useEffect(() => {
     ICJSCaseData();
   }, []);
@@ -203,6 +223,16 @@ const CourtTab1 = () => {
     pending: parseInt(item.pending),
     completed: parseInt(item.completed),
     avgResolutionTime: parseInt(item.average_resolution_time),
+  })).sort((a, b) => new Date(a.month) - new Date(b.month));
+  const caseData2 = filtered?.map((item) => ({
+    month: new Date(item.month).toLocaleString("en-US", {
+      month: "short",
+      year: "numeric",
+    }),
+    total: parseInt(item.pending) + parseInt(item.completed),
+    pending: parseInt(item.pending),
+    completed: parseInt(item.completed),
+    avgResolutionTime: parseInt(item.average_resolution_time),
   })).sort((a, b) => new Date(a.month) - new Date(b.month));;
 
   const recentEntryDate = new Date(filteredicjs?.[0]?.month).toLocaleString(
@@ -248,10 +278,18 @@ const CourtTab1 = () => {
       </div>
       <div ref={exportRef}>
         <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <h1 className="text-2xl font-bold">Deviation</h1>
+
+         
+
+          {/* Line Chart */}
+          <div className="bg-white p-4 rounded-xl shadow-md">
+           
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <div className="flex justify-between items-center mb-4">
-                                  
-                                <h1 className="text-2xl font-bold">Deviation</h1>
+                                <h3 className="text-xl font-semibold mb-4">
+              Cases Processed Over Time
+            </h3>
                     
                           
                                   <div className="flex items-center gap-4">
@@ -292,7 +330,7 @@ const CourtTab1 = () => {
                                     </div>
                           
                                     <button 
-                                      onClick={Clearfilter} 
+                                      onClick={()=>ClearFilter('1')} 
                                       className="bg-blue-500 text-white px-3 py-1 rounded-md "
                                       style={{ backgroundColor: "#2d3748" }}>
                                       Clear Filter
@@ -301,12 +339,6 @@ const CourtTab1 = () => {
                           
                                 </div>
                               </LocalizationProvider>
-
-          {/* Line Chart */}
-          <div className="bg-white p-4 rounded-xl shadow-md">
-            <h3 className="text-xl font-semibold mb-4">
-              Cases Processed Over Time
-            </h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={caseData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -379,16 +411,62 @@ const CourtTab1 = () => {
           <h1 className="text-2xl font-bold">Deviation With Recent Entry</h1>
           {/* Line Chart - Average Resolution Time Over Time */}
           <div className="bg-white p-4 rounded-xl shadow-md">
-            <div className="mb-4 flex flex-row justify-between items-center">
-              <h3 className="text-xl font-semibold">
-                Average Resolution Time Over Time
-              </h3>
-              <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${caseData?.[caseData?.length - 1]?.avgResolutionTime}`}</h4>
-            </div>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-xl font-semibold mb-4">
+                                Average Resolution Time Over Time
+            </h3>
+                    
+                          
+            <div className="flex items-center gap-1">
+                            <div>
+                              <DatePicker
+                                label="From"
+                                views={["year", "month"]}
+                                value={fromDate2}
+                                onChange={setFromDate2}
+                                slotProps={{
+                                  textField: {
+                                    variant: "outlined",
+                                    size: "small",
+                                    sx: { width: "140px", fontSize: "12px" },
+                                  },
+                                }}
+                              />
+                            </div>
+                            <div>
+                              <DatePicker
+                                label="To"
+                                views={["year", "month"]}
+                                value={toDate2}
+                                onChange={setToDate2}
+                                slotProps={{
+                                  textField: {
+                                    variant: "outlined",
+                                    size: "small",
+                                    sx: { width: "140px", fontSize: "12px" },
+                                  },
+                                }}
+                              />
+                            </div>
+                            <button
+                              onClick={()=>ClearFilter('2')}
+                              className="bg-blue-500 text-white px-3 py-2 rounded-md"
+                              style={{ backgroundColor: "#2d3748" }}
+                            >
+                              Clear
+                            </button>
+                          </div>
+                          
+                                </div>
+                              </LocalizationProvider>
             
+                          
+
+
 
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={caseData}>
+              <LineChart data={caseData2}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
                 <YAxis label={{ value: 'Average resolution Time', angle: -90, position: 'center', dx: -30 }}/>

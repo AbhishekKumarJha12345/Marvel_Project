@@ -63,10 +63,18 @@ const CourtTab2 = () => {
   const [toDate, setToDate] = useState(null);
   const [toSecurity, setToSecurity] = useState(null)
   const [fromSecurity, setFromSecurity] = useState(null)
-  const [filteredData, setFilteredData] = useState(summonsDigitalData);
+  const [fromDelivered , setFromDelivered ] = useState(null)
+  const [toDelivered, setToDelivered] = useState(null)
+  const[toadoption,setToadoption]=useState(null)
+  const[fromadoption,setFromadoption]=useState(null)
+  const [filteredData, setFilteredData] = useState([]);
   const [filteredSecurityData, setFilteredSecurityData] = useState(
     summonsDigitalData
   );
+  const [filtereddelivery, setFiltereddelivery] = useState([]);
+
+  const [filteredadoption, setFilteredadoption] = useState([]);
+
   const fetchSummonsDigitalData = async () => {
     try {
       const response = await axiosInstance.get("/live_data", {
@@ -80,6 +88,8 @@ const CourtTab2 = () => {
       setSummonsDigitalData(responseData.data_dict);
       setFilteredData(responseData.data_dict)
       setFilteredSecurityData(responseData.data_dict)
+      setFiltereddelivery(responseData.data_dict)
+      setFilteredadoption(responseData.data_dict)
     } catch (error) {
       console.error("Some error occured", error);
     }
@@ -116,13 +126,24 @@ const CourtTab2 = () => {
   useEffect(() => {
     fetchSummonsDigitalData();
   }, []);
-  const ClearFilter = () => {
-    setFromDate(null);
+  const ClearFilter = (type) => {
+    console.log('type',type)
+    if(type==='1')
+    {setFromDate(null);
     setToDate(null);
-    setFromSecurity(null);
+    setFilteredData(summonsDigitalData);}
+    if(type==='2')
+    {setFromSecurity(null);
     setToSecurity(null);
-    setFilteredData(summonsDigitalData);
-    setFilteredSecurityData(summonsDigitalData);
+    setFilteredSecurityData(summonsDigitalData);}
+    if(type==='3')
+    {setToDelivered(null);
+    setFromDelivered(null);
+    setFiltereddelivery(summonsDigitalData)}
+    if(type==='4')
+    {setFromadoption(null);
+    setToadoption(null);
+    setFilteredadoption(summonsDigitalData)}
   };
   useEffect(() => {
     if (fromDate || toDate) {
@@ -144,6 +165,30 @@ const CourtTab2 = () => {
       setFilteredSecurityData(filtered);
     }
   }, [fromSecurity, toSecurity]);
+  useEffect(() => {
+    if (fromDelivered || toDelivered) {
+      console.log("Filtering security compliance data for dates:", fromDelivered, toDelivered);
+      const filtered = filterSecurityDataByDate(
+        summonsDigitalData,
+        fromDelivered,
+        toDelivered
+      );
+      console.log("Filtered Security Data:", filtered);
+      setFiltereddelivery(filtered);
+    }
+  }, [fromDelivered, toDelivered]);
+  useEffect(() => {
+    if (fromadoption || toadoption) {
+      console.log("Filtering security compliance data for dates:", fromadoption, toadoption);
+      const filtered = filterSecurityDataByDate(
+        summonsDigitalData,
+        fromadoption,
+        toadoption
+      );
+      console.log("Filtered Security Data:", filtered);
+      setFilteredadoption(filtered);
+    }
+  }, [fromadoption, toadoption]);
   // useEffect(() => {
   //   if(fromDate||toDate)
   //   {
@@ -216,7 +261,7 @@ const accessibilityComplianceData = filteredData?.length
       .map((item) => ({
         month: dayjs(item.month, "YYYY-MM").format("MMM YYYY"),
         Accessible: item.accessibility_complaints || 0,
-        Inaccessible: item.accessibility_non_complaints || 0,
+        InAccessible: item.accessibility_non_complaints || 0,
       }))
       .sort((a, b) => dayjs(b.month, "MMM YYYY").toDate() - dayjs(a.month, "MMM YYYY").toDate()) // Newest to Oldest
   : [];
@@ -270,7 +315,7 @@ const accessibilityComplianceData = filteredData?.length
         { name: "Inaccessible", value: 0 },
       ];
 
-  const summonsData = filteredData?.map((item) => {
+  const summonsData = filtereddelivery?.map((item) => {
     return {
       month: new Date(item.month).toLocaleString("en-US", {
         month: "short",
@@ -280,8 +325,8 @@ const accessibilityComplianceData = filteredData?.length
     };
   }).sort((a, b) => new Date(a.month) - new Date(b.month));
 
-  const adoptionData = Array.isArray(filteredData)
-    ? filteredData.map((item) => ({
+  const adoptionData = Array.isArray(filteredadoption)
+    ? filteredadoption.map((item) => ({
         month: new Date(item?.month || "").toLocaleString("en-US", {
           month: "short",
           year: "numeric",
@@ -379,7 +424,7 @@ const accessibilityComplianceData = filteredData?.length
                 />
               </div>
               <button
-                onClick={ClearFilter}
+                onClick={()=>ClearFilter('1')}
                 className="bg-blue-500 text-white px-3 py-2 rounded-md"
                 style={{ backgroundColor: "#2d3748" }}
               >
@@ -436,7 +481,8 @@ const accessibilityComplianceData = filteredData?.length
               <DatePicker label="To" views={["year", "month"]} value={toDate} onChange={setToDate} slotProps={{ textField: { variant: "outlined", size: "small", sx: { width: "140px", fontSize: "12px" } } }} />
             </div>
             <button
-              onClick={ClearFilter}
+                              onClick={()=>ClearFilter('2')}
+
               className="bg-blue-500 text-white px-3 py-2 rounded-md"
               style={{ backgroundColor: "#2d3748" }}
             >
@@ -454,7 +500,7 @@ const accessibilityComplianceData = filteredData?.length
                   <Line
                     type="monotone"
                     stroke="#8884d8"
-                    dataKey="accessible"
+                    dataKey="Accessible"
                     name="Accessible"
                     activeDot={{ r: 8 }}
                     strokeWidth={2}
@@ -462,7 +508,7 @@ const accessibilityComplianceData = filteredData?.length
                   <Line
                     type="monotone"
                     stroke="#82ca9d"
-                    dataKey="inAccessible"
+                    dataKey="InAccessible"
                     name="In Accessible"
                     activeDot={{ r: 8 }}
                     strokeWidth={2}
@@ -557,10 +603,57 @@ const accessibilityComplianceData = filteredData?.length
                 }}>
                     <div className="bg-white p-4 rounded-xl shadow-md">
               <div className="mb-4 flex flex-row justify-between items-center">
-                <h3 className="text-xl font-semibold">
+                
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <div className="d-flex gap-2">
+              <h3 className="text-xl font-semibold">
                   Court Summons Delivered Electronically
                 </h3>
-                <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${summonsData?.[summonsData.length - 1]?.deliveredElectronically}`}</h4>
+                
+            <div className="flex items-center gap-1">
+              <div>
+                <DatePicker
+                  label="From"
+                  views={["year", "month"]}
+                  value={fromDelivered}
+                  onChange={setFromDelivered}
+                  slotProps={{
+                    textField: {
+                      variant: "outlined",
+                      size: "small",
+                      sx: { width: "140px", fontSize: "12px" },
+                    },
+                  }}
+                />
+              </div>
+              <div>
+                <DatePicker
+                  label="To"
+                  views={["year", "month"]}
+                  value={toDelivered}
+                  onChange={setToDelivered}
+                  slotProps={{
+                    textField: {
+                      variant: "outlined",
+                      size: "small",
+                      sx: { width: "140px", fontSize: "12px" },
+                    },
+                  }}
+                />
+              </div>
+              <button
+                                onClick={()=>ClearFilter('3')}
+
+                className="bg-blue-500 text-white px-3 py-2 rounded-md"
+                style={{ backgroundColor: "#2d3748" }}
+              >
+                Clear
+              </button>
+            </div>
+              </div>
+              
+          </LocalizationProvider> 
+                {/* <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${summonsData?.[summonsData.length - 1]?.deliveredElectronically}`}</h4> */}
               </div>
 
               <ResponsiveContainer width="100%" height={300}>
@@ -593,11 +686,57 @@ const accessibilityComplianceData = filteredData?.length
                    {/* Adoption Rate Line Chart */}
             <div className="bg-white p-4 rounded-xl shadow-md">
             <div className="mb-4 flex flex-row justify-between items-center">
-                <h3 className="text-xl font-semibold">
+                
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <div className="d-flex gap-2">
+              <h3 className="text-xl font-semibold">
                 Adoption Rate of eSummons & Digital Case Records
 
                 </h3>
-                <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${adoptionData?.[adoptionData.length - 1]?.adoptionRate}`}</h4>
+                
+            <div className="flex items-center gap-1">
+              <div>
+                <DatePicker
+                  label="From"
+                  views={["year", "month"]}
+                  value={fromadoption}
+                  onChange={setFromadoption}
+                  slotProps={{
+                    textField: {
+                      variant: "outlined",
+                      size: "small",
+                      sx: { width: "140px", fontSize: "12px" },
+                    },
+                  }}
+                />
+              </div>
+              <div>
+                <DatePicker
+                  label="To"
+                  views={["year", "month"]}
+                  value={toadoption}
+                  onChange={setToadoption}
+                  slotProps={{
+                    textField: {
+                      variant: "outlined",
+                      size: "small",
+                      sx: { width: "140px", fontSize: "12px" },
+                    },
+                  }}
+                />
+              </div>
+              <button
+                                onClick={()=>ClearFilter('4')}
+
+                className="bg-blue-500 text-white px-3 py-2 rounded-md"
+                style={{ backgroundColor: "#2d3748" }}
+              >
+                Clear
+              </button>
+            </div>
+              </div>
+              
+          </LocalizationProvider> 
               </div>
              
 
