@@ -515,7 +515,7 @@ const filterDataByDate = (data, fromDate, toDate) => {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <div className="rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">
             Recent Entry : {recentEntryDate}
           </h1>
@@ -577,7 +577,7 @@ const filterDataByDate = (data, fromDate, toDate) => {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <div className="rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">Deviation With Recent Entry</h1>
           {/* Response Time for Evidence Retrieval (Line Chart) */}
           <div className="bg-white p-4 rounded-xl shadow-md">

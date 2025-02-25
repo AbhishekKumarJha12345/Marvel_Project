@@ -326,7 +326,7 @@ const accessibilityComplianceData = filteredData?.length
       </div>
 
       <div ref={exportRef}>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-3 p-4">
+        <div className="rounded-lg w-full max-w-full h-auto mb-3 p-4">
          
             <div className="flex justify-between items-center mb-4">
               
