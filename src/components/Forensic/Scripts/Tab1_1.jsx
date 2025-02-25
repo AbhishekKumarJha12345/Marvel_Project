@@ -21,16 +21,29 @@ const gradeData = [
 ];
 
 
-export default function Tab1_1({gradeeData}) {
-  console.log('object',gradeeData)
+export default function Tab1_1({gradeData}) {
+  console.log('object',gradeData)
+  const restructureGradeData = (lastMonthData) => {
+    if(lastMonthData)
+    {return [
+      { grade: "Director", available: lastMonthData?.Director, provided: 13 },
+      { grade: "Dy Director", available: lastMonthData["Dy Director"], provided: 20 },
+      { grade: "Assistant Director", available: lastMonthData["Assistant Director"], provided: 42 },
+      { grade: "Assistant Chemical Analyzer", available: lastMonthData["Assistant Chemical Analyzer"], provided: 125 },
+      { grade: "Scientific Officers", available: lastMonthData["Scientific Officers"], provided: 37 },
+    ];}
+  };
+  
   return (
     <div className="p-0">
       <div className="mt-6">
         {/* Bar Chart for Available vs Training Provided */}
         <div className="bg-white p-4 rounded-xl ">
           <h2 className="text-xl font-semibold mb-4">Training Data by Grade</h2>
+          <p><strong>Recent Entry:</strong>{gradeData && gradeData?.month}</p>
+
           <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={gradeData}>
+            <BarChart data={restructureGradeData(gradeData)}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis 
                 dataKey="grade" 

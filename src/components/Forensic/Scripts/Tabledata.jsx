@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import axiosInstance from "../../../utils/axiosInstance";
-import dayjs from "dayjs";
 
+// import { toDate } from "date-fns";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 export default function Tabledata({setData,to,from}) {
   console.log('porps data',to,from)
   const [forensicDevelopmentData, setForensicDevelopmentData] = useState(null);
   const[filteredData,setFiltereddata]=useState([])
-  
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
   const fetchData = async () => {
     try {
       const response = await axiosInstance.get("/live_data", {
@@ -43,6 +47,11 @@ export default function Tabledata({setData,to,from}) {
   useEffect(() => {
     fetchData();
   }, []);
+  const Clearfilter=()=>{
+    setFromDate(null);
+    setToDate(null);
+    setData(filteredData[filteredData?.length-1])
+  }
   const filterDataByDate = (data, fromDate, toDate) => {
     if (!Array.isArray(data)) {
       console.error("filterDataByDate received non-array data:", data);
@@ -60,16 +69,20 @@ export default function Tabledata({setData,to,from}) {
     });
   };
 useEffect(() => {
-    if (from || to) {
-      console.log("Filtering data for dates:", from, to);
+    if (fromDate || toDate) {
+      console.log("Filtering data for dates:", fromDate, toDate);
       
       // ICJSCaseData()
-        const filteredData = filterDataByDate(forensicDevelopmentData, from, to);
+        const filteredData = filterDataByDate(forensicDevelopmentData, fromDate, toDate);
         console.log("Filtered Data:", filteredData);
         setFiltereddata(filteredData);
+        setData(filteredData[filteredData?.length-1])
     }
-    else{setFiltereddata(forensicDevelopmentData)}
-  }, [to, from]);
+    else{setFiltereddata(forensicDevelopmentData);
+      setData(filteredData[filteredData?.length-1])
+
+    }
+  }, [toDate, fromDate]);
 
 
   const chartColors = [
@@ -86,7 +99,57 @@ useEffect(() => {
   return (
     <div className="mt-6">
       <div className="bg-white p-4 rounded-xl mt-6">
-        <h2 className="text-xl font-semibold mb-4">Monthly Cases & Exhibits Overview</h2>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold mb-4">Monthly Cases & Exhibits Overview</h2>
+               
+                <div className="flex items-center gap-4">
+                  <div>
+                     
+                    <DatePicker
+                    label='From'
+                      views={["year", "month"]}
+                      value={fromDate}
+                      onChange={setFromDate}
+                      slotProps={{
+                        textField: { 
+                          variant: "outlined",
+                          size: "small",
+                          sx: { width: "140px", fontSize: "12px" },
+                        }
+                      }}
+                      sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                    />
+                  </div>
+        
+                  <div>
+                      
+                    <DatePicker
+                    label='To'
+                      views={["year", "month"]}
+                      value={toDate}
+                      onChange={setToDate}
+                      slotProps={{
+                        textField: { 
+                          variant: "outlined",
+                          size: "small",
+                          sx: { width: "140px", fontSize: "12px" },
+                        }
+                      }}
+                      sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                    />
+                  </div>
+        
+                  <button 
+                    onClick={Clearfilter} 
+                    className="bg-blue-500 text-white px-3 py-1 rounded-md "
+                    style={{ backgroundColor: "#2d3748" }}>
+                    Clear
+                  </button>
+                </div>
+        
+              </div>
+            </LocalizationProvider>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={filteredData}>
             <CartesianGrid strokeDasharray="3 3" />
