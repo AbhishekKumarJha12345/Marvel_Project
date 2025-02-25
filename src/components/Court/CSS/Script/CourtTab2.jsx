@@ -67,13 +67,18 @@ const CourtTab2 = () => {
   const [toDelivered, setToDelivered] = useState(null)
   const[toadoption,setToadoption]=useState(null)
   const[fromadoption,setFromadoption]=useState(null)
+  // const[fromadoption,setFromadoption]=useState(null)
+
   const [filteredData, setFilteredData] = useState([]);
+  const [filteredData2, setFilteredData2] = useState([]);
+
   const [filteredSecurityData, setFilteredSecurityData] = useState(
     summonsDigitalData
   );
   const [filtereddelivery, setFiltereddelivery] = useState([]);
 
   const [filteredadoption, setFilteredadoption] = useState([]);
+  
 
   const fetchSummonsDigitalData = async () => {
     try {
@@ -87,6 +92,7 @@ const CourtTab2 = () => {
       const responseData = response.data;
       setSummonsDigitalData(responseData.data_dict);
       setFilteredData(responseData.data_dict)
+      setFilteredData2(responseData.data_dict)
       setFilteredSecurityData(responseData.data_dict)
       setFiltereddelivery(responseData.data_dict)
       setFilteredadoption(responseData.data_dict)
@@ -129,13 +135,16 @@ const CourtTab2 = () => {
   const ClearFilter = (type) => {
     console.log('type',type)
     if(type==='1')
-    {setFromDate(null);
-    setToDate(null);
-    setFilteredData(summonsDigitalData);}
-    if(type==='2')
     {setFromSecurity(null);
-    setToSecurity(null);
+      setToSecurity(null);
     setFilteredSecurityData(summonsDigitalData);}
+    if(type==='2')
+    {
+    setFromDate(null);
+    setToDate(null);
+    setFilteredData(summonsDigitalData);
+    setFilteredData2(summonsDigitalData)}
+
     if(type==='3')
     {setToDelivered(null);
     setFromDelivered(null);
@@ -147,10 +156,12 @@ const CourtTab2 = () => {
   };
   useEffect(() => {
     if (fromDate || toDate) {
-      console.log("Filtering accessibility compliance data for dates:", fromDate, toDate);
+      console.log("11111111111111111111111111111111");
       const filtered = filterDataByDate(summonsDigitalData, fromDate, toDate);
       console.log("Filtered Accessibility Data:", filtered);
       setFilteredData(filtered);
+      setFilteredData2(filtered);
+
     }
   }, [fromDate, toDate]);
   useEffect(() => {
@@ -256,8 +267,8 @@ const CourtTab2 = () => {
   : [];
 
 // Process accessibility compliance data
-const accessibilityComplianceData = filteredData?.length
-  ? filteredData
+const accessibilityComplianceData = filteredData2?.length
+  ? filteredData2
       .map((item) => ({
         month: dayjs(item.month, "YYYY-MM").format("MMM YYYY"),
         Accessible: item.accessibility_complaints || 0,
@@ -436,7 +447,7 @@ const accessibilityComplianceData = filteredData?.length
               
           </LocalizationProvider>  
                 <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={securityComplianceData}>
+                <LineChart data={securityComplianceData.reverse()}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
                     <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
@@ -493,7 +504,7 @@ const accessibilityComplianceData = filteredData?.length
           </div></div>
         </LocalizationProvider>
               <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={accessibilityComplianceData}>
+              <LineChart data={accessibilityComplianceData.reverse()}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
                   <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
