@@ -74,11 +74,13 @@ const CaseStatus = ({ getrecentdatatime, type }) => {
       : [];
 
   return (
-    <div style={{ width: "100%", padding: "5rem", height: type === "recent" ? 500 : 400, margin: "auto", backgroundColor: "white" }}>
+    <div style={{ width: "100%", height: type === "recent" ? 600 : 600, margin: "auto", backgroundColor: "white" }} className='p-3'>
       {type !== "recent" && (
        <LocalizationProvider dateAdapter={AdapterDayjs}>
-       <div className="flex justify-between items-end mb-2">
-         <h2 style={{ fontSize: "24px" }}>Case Status Data</h2>
+       <div className="flex justify-between items-end">
+       <h2 className="text-lg font-semibold text-start flex-grow mb-3">Deviation</h2>
+
+         <h2 className="text-lg font-semibold text-start flex-grow mb-3">Case Status Data</h2>
          <div className="flex gap-4 items-end">
            <DatePicker
              label="From"
@@ -111,36 +113,90 @@ const CaseStatus = ({ getrecentdatatime, type }) => {
      
       )}
 
-      <ResponsiveContainer width="100%" height="100%">
+     <ResponsiveContainer width="100%" height={470}>
         {type === "recent" && pieData.length > 0 ? (
-          <PieChart width={300} height={300}>
+          <>
+            {/* Added heading for PieChart */}
+            <h3  className="text-lg font-semibold text-start flex-grow mb-3"
+              
+            >
+              Chargesheet Status
+            </h3>
+            <PieChart width={600} height={440}>
+              <Tooltip />
+              <Legend verticalAlign="bottom" align="center" />
+              <Pie
+                data={pieData}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={150}
+                label={({ name, percent }) =>
+                  ` ${(percent * 100).toFixed(1)}%`
+                }
+              >
+                {pieData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={chartColors[index % chartColors.length]}
+                  />
+                ))}
+              </Pie>
+            </PieChart>
+          </>
+        ) : (
+          <LineChart
+            data={filteredData}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="month"
+              label={{
+                value: "Month-Year",
+                position: "insideBottom",
+                offset: -5,
+                style: {
+                  fontWeight: "bold",
+                  fontSize: "14px",
+                },
+              }}
+            />
+            <YAxis
+              label={{
+                value: "Count",
+                angle: -90,
+                position: "insideLeft",
+                style: { fontWeight: "bold", fontSize: "14px" },
+              }}
+            />
             <Tooltip />
             <Legend verticalAlign="bottom" align="center" />
-            <Pie
-              data={pieData}
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={150}
-              label={({ name, percent }) => ` ${(percent * 100).toFixed(1)}%`}
-            >
-              {pieData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
-              ))}
-            </Pie>
-          </PieChart>
-        ) : (
-          <LineChart data={filteredData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" label={{ value: "Month-Year", position: "insideBottomRight", offset: -5 }} />
-            <YAxis label={{ value: "Count", angle: -90, position: "insideLeft" }} />
-            <Tooltip />
-            <Legend verticalAlign="top" align="right" />
-            <Line type="monotone" dataKey="acquitted" stroke={chartColors[0]} name="Acquitted" />
-            <Line type="monotone" dataKey="convicted" stroke={chartColors[1]} name="Convicted" />
-            <Line type="monotone" dataKey="pending" stroke={chartColors[2]} name="Pending" />
-            <Line type="monotone" dataKey="total_charge_sheeted" stroke={chartColors[3]} name="Total Charge Sheeted" />
+            <Line
+              type="monotone"
+              dataKey="acquitted"
+              stroke={chartColors[0]}
+              name="Acquitted"
+            />
+            <Line
+              type="monotone"
+              dataKey="convicted"
+              stroke={chartColors[1]}
+              name="Convicted"
+            />
+            <Line
+              type="monotone"
+              dataKey="pending"
+              stroke={chartColors[2]}
+              name="Pending"
+            />
+            <Line
+              type="monotone"
+              dataKey="total_charge_sheeted"
+              stroke={chartColors[3]}
+              name="Total Charge Sheeted"
+            />
           </LineChart>
         )}
       </ResponsiveContainer>

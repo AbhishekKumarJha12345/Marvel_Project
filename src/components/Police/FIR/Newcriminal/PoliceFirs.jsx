@@ -46,12 +46,31 @@ const PoliceFirs = ({ apidata, downloadReport }) => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    layout: {
+      padding: {
+        bottom: 20, // Adjust this value to add more space
+      },
+    },
     plugins: {
       title: {
-        display: false, // Ensures there's no title at the top of the bar graph
+        display: true,
+        text: "FIR Statistics",
       },
       legend: {
-        display: false, // Hides the legend if not needed
+        display: true,
+        position: "bottom",
+        labels: {
+          generateLabels: (chart) => {
+            let dataset = chart.data.datasets[0];
+            return dataset.data.map((data, index) => ({
+              text: chart.data.labels[index],
+              fillStyle: dataset.backgroundColor[index],
+              strokeStyle: dataset.borderColor[index],
+              lineWidth: 2,
+              hidden: isNaN(data),
+            }));
+          },
+        },
       },
     },
     scales: {
@@ -60,26 +79,34 @@ const PoliceFirs = ({ apidata, downloadReport }) => {
         title: {
           display: true,
           text: "FIR Categories",
+          font: {
+            weight: "bold", // Makes the title bold
+            size: 14, // Adjust the font size if needed
+          },
         },
         ticks: {
           autoSkip: false,
           maxRotation: 45,
           minRotation: 0,
+          padding: 10, // Adds space between labels and the chart
         },
       },
-      y: {
+      y: {  
         beginAtZero: true,
         title: {
           display: true,
           text: "Number of FIRs",
+          font: {
+            weight: "bold", // Makes the title bold
+            size: 14, // Adjust the font size if needed
+          },
         },
       },
     },
   };
   
-
   return (
-    <div className="bg-white p-6 mx-auto rounded-lg shadow-lg mt-6">
+    <div className="p-2 mx-auto rounded-lg  mt-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold text-center flex-grow">FIRs New Criminal Laws</h2>
@@ -96,21 +123,25 @@ const PoliceFirs = ({ apidata, downloadReport }) => {
       </div>
 
       {/* Charts Section */}
-      <div style={{ width: "100%", display: "flex", gap: "20px" }}>
-        {/* First Chart (Bar Chart) */}
-        <div style={{ flex: "1 1 45%", backgroundColor: "#f4f4f4", padding: "1rem", maxWidth: "100%", height: "500px", display: "flex", justifyContent: "center" }}>
-          <div style={{ backgroundColor: "white", width: "100%", padding: "1rem", display: "flex", justifyContent: "space-around", borderRadius: "5px" }}>
-            <Bar data={data} options={options} width={600} height={400} />
-          </div>
-        </div>
+     {/* Charts Section */}
+<div style={{ width: "100%", display: "flex", gap: "10px" }}>
+  {/* First Chart (Bar Chart) */}
+  <div style={{ flex: "1", backgroundColor: "#f4f4f4", padding: "1rem", height: "600px", display: "flex", justifyContent: "center" }}>
+    <div style={{ backgroundColor: "white", width: "100%", padding: "1rem", display: "flex", flexDirection: "column", borderRadius: "5px" }}>
+      <h3 className="text-lg font-semibold  mb-4">FIRs under New Criminal Laws</h3>
+      <div className='p-2' style={{ height: "500px", width: "100%" }}> {/* Adjusted height */}
+      <Bar data={data} options={options} />
+    </div>
+    </div>
+  </div>
 
-        {/* Second Chart (FirBarGraph) */}
-        <div style={{ flex: "1 1 45%", backgroundColor: "#f4f4f4", padding: "1rem", maxWidth: "100%", height: "500px", display: "flex", justifyContent: "center" }}>
-          <div style={{ backgroundColor: "white", width: "100%", padding: "1rem", display: "flex", justifyContent: "space-around", borderRadius: "5px" }}>
-            <FirBarGraph />
-          </div>
-        </div>
-      </div>
+  {/* Second Chart (FirBarGraph) */}
+  <div style={{ flex: "1", backgroundColor: "#f4f4f4", padding: "1rem", height: "600px", display: "flex", justifyContent: "center" }}>
+    <div style={{ backgroundColor: "white", width: "100%", padding: "1rem", display: "flex", justifyContent: "center", borderRadius: "5px" }}>
+      <FirBarGraph  />
+    </div>
+  </div>
+</div>
 
       {/* Modal Component */}
       <ModalComponent open={showModal} type="fir_1" onClose={() => setShowModal(false)} />

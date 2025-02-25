@@ -37,19 +37,19 @@ const ChargeSheetGraph2 = () => {
   }, []);
 
   return (
-    <div style={{ width: "100%", padding: "3rem", height: 500, margin: "auto", backgroundColor: "white" }}>
-      <h2 style={{ textAlign: "center" }}>FIR Data by Section</h2>
-      <ResponsiveContainer width="100%" height="100%">
+    <div style={{ width: "100%", height: 600, margin: "auto", backgroundColor: "white" }} className='p-3'>
+      <h2 className="text-lg font-semibold text-start flex-grow mb-3">FIR Data by Section</h2>
+      <ResponsiveContainer width="100%" height={500}>
         <BarChart 
           data={data} 
           margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="section">
-            <Label value="Section" offset={-5} position="insideBottom" />
+          <XAxis dataKey="section ">
+            <Label value="Section Numbers" offset={-3} position="insideBottom" style={{fontWeight: "bold" }}/>
           </XAxis>
           <YAxis>
-            <Label value="Count" angle={-90} position="insideLeft" style={{ textAnchor: 'middle' }} />
+            <Label value="Count" angle={-90} position="insideLeft" style={{ textAnchor: 'middle',fontWeight: "bold" }} offset={-8}/>
           </YAxis>
           <Tooltip />
           <Legend />

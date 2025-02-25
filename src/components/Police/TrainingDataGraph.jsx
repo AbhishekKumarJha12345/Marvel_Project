@@ -78,9 +78,13 @@ const TrainingDataGraph = () => {
   );
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-md" style={{ width: "48%", height: "550px" }}>
+    <div className="bg-white p-4 rounded-xl shadow-md" style={{ width: "48%", height: "600px" }}>
+            <h2 className="text-xl font-semibold">Deviation</h2>
+
       <div className="flex justify-between mb-2">
-        <h2 className="">Training Data Graph</h2>
+
+
+        <h2 className="text-xl font-semibold mb-3">Training Data Graph</h2>
         <select
           onChange={(e) => setSelectedMetric(e.target.value)}
           value={selectedMetric}
@@ -121,13 +125,14 @@ const TrainingDataGraph = () => {
 
 
       <div className="w-full h-auto min-h-[300px]">
-        <ResponsiveContainer width="100%" height={400} padding={1}>
+        <ResponsiveContainer width="100%" height={420} padding={1}>
           <LineChart data={processedData}>
             <XAxis
               dataKey="date"
               stroke="#6b7280"
               tick={{ fontSize: 14 }}
-              label={{ value: "Date of Training", position: "insideBottom", offset: -5 }}
+              label={{ value: "Date of Training", position: "insideBottom", offset: -20,  style: { fontWeight: "bold", fontSize: 14 } 
+            }}
             />
             <YAxis
               stroke="#6b7280"
@@ -136,8 +141,8 @@ const TrainingDataGraph = () => {
                 value: "No of Officers Trained",
                 angle: -90,
                 position: "insideLeft",
-                offset: -0,
-                style: { textAnchor: "middle" },
+                offset: -1,
+                style: { textAnchor: "middle",fontWeight: "bold", fontSize: 14 },
               }}
             />
             <Tooltip
@@ -147,7 +152,7 @@ const TrainingDataGraph = () => {
                 border: "1px solid #e5e7eb",
               }}
             />
-            <Legend iconType="circle" wrapperStyle={{ paddingBottom: 10, paddingTop: 10 }} />
+            <Legend iconType="circle" wrapperStyle={{ paddingBottom: 20, paddingTop: 30 }} />
             <Line
               type="monotone"
               dataKey="psi_sp_dcp"

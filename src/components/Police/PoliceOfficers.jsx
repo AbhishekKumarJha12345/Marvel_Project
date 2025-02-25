@@ -63,7 +63,7 @@ const PoliceOfficers = ({ getDate }) => {
               nameKey="name"
               cx="50%"
               cy="50%"
-              outerRadius={100}
+              outerRadius={130}
               label={({ name, percentage }) => `${name}: ${percentage.toFixed(1)}%`}
             >
               {pieData.map((entry, index) => (
@@ -71,6 +71,7 @@ const PoliceOfficers = ({ getDate }) => {
               ))}
             </Pie>
             <RechartsTooltip formatter={(value) => `${value.toFixed(1)}%`} />
+              
             <Legend verticalAlign="bottom" align="center" layout="horizontal" />
           </PieChart>
         </ResponsiveContainer>

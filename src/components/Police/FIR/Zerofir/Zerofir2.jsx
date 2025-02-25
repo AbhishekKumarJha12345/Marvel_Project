@@ -89,8 +89,9 @@ const ZeroFir2 = ({ getRecentDate, type }) => {
   };
 
   return (
-    <div style={{ width: "100%", height: 400, padding: "1rem 1rem", backgroundColor: "white", margin: "auto" }}>
-      <h2>
+    <div style={{ width: "100%", height: 600, padding: "1rem 1rem", backgroundColor: "white", margin: "auto" }}>
+      <h2 className="text-lg font-semibold text-start flex-grow mb-3">Deviation</h2>
+      <h2 className="text-lg font-semibold text-start flex-grow mb-3">
           {type === "recent" ? "FIR Trends - Recent" : "FIR Trends Over Time"}
         </h2>
       <div className={`flex ${type === "recent" ? "justify-center" : "justify-between"} items-end mb-2`}>
@@ -146,14 +147,14 @@ const ZeroFir2 = ({ getRecentDate, type }) => {
         )}
       </div>
 
-      <ResponsiveContainer width={type === "recent" ? "113%" : "100%"} height={type === "recent" ? "80%" : "100%"}>
+      <ResponsiveContainer width="100%" height={400}>
         {type === "recent" && firstDataItem ? (
           <PieChart>
             <Pie
               data={pieData}
               cx="50%"
               cy="50%"
-              outerRadius={100}
+              outerRadius={135}
               fill="#8884d8"
               dataKey="value"
               label={renderCustomizedLabel}
@@ -166,15 +167,39 @@ const ZeroFir2 = ({ getRecentDate, type }) => {
             <Legend />
           </PieChart>
         ) : (
-          <LineChart data={data} margin={{ top: 20, right: 30, left: 50, bottom: 40 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" label={{ value: "Month", position: "bottom", offset: 3 }} />
-            <YAxis label={{ value: "FIR Count", angle: -90, position: "insideLeft", dy: 40 }} />
-            <Tooltip />
-            <Line type="monotone" dataKey="regular_fir" stroke={chartColors[0]} strokeWidth={2} name="Regular FIR"/>
-            <Line type="monotone" dataKey="yet_to_be_registered_zero_fir" stroke={chartColors[1]} strokeWidth={2} name="Yet to Register Zero FIR"/>
-            <Line type="monotone" dataKey="zero_fir" stroke={chartColors[2]} strokeWidth={2} name="Zero FIR" />
-          </LineChart>
+          
+          <LineChart data={data} margin={{ top: 40, right: 30, left: 50, bottom: 30 }}>
+  <CartesianGrid strokeDasharray="3 3" />
+  <XAxis 
+    dataKey="month" 
+    label={{ 
+      value: "Month", 
+      position: "bottom", 
+      offset: 20,  
+      style: { fontWeight: "bold", fontSize: "14px" } 
+    }} 
+  />
+  <YAxis 
+    label={{ 
+      value: "FIR Count", 
+      angle: -90, 
+      position: "insideLeft", 
+      dy: 40, 
+      style: { fontWeight: "bold", fontSize: "14px" },
+      offset: -40 
+    }} 
+  />
+  <Tooltip />
+  <Legend 
+    verticalAlign="bottom" 
+    align="center" 
+    wrapperStyle={{ marginBottom: -50 }} 
+  />
+  <Line type="monotone" dataKey="regular_fir" stroke={chartColors[0]} strokeWidth={2} name="Regular FIR"/>
+  <Line type="monotone" dataKey="yet_to_be_registered_zero_fir" stroke={chartColors[1]} strokeWidth={2} name="Yet to Register Zero FIR"/>
+  <Line type="monotone" dataKey="zero_fir" stroke={chartColors[2]} strokeWidth={2} name="Zero FIR" />
+</LineChart>
+
         )}
       </ResponsiveContainer>
     </div>

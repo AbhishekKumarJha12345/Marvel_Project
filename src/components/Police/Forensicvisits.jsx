@@ -75,21 +75,21 @@ function Forensicvisits() {
       </div>
 
       {/* Tab Content */}
-      <div className="mt-4">
+      <div className="mt-3">
         {activeTab === 'home' ? (
-         <div className="col-6" style={{width:"100%"}}>
-         <div className="card shadow-sm bg-white text-right p-2" style={{width:"100%"}}>
+        //  <div >
+         <div className=" text-right p-2" >
          {/* <button
                   onClick={generateReport}
                   className="mt-4 px-4 py-2 bg-[#2d3748] text-white rounded"
                 >
                   Download Report
                 </button> */}
-           <div className="card-body" style={{display:"flex",justifyContent:"space-around",backgroundColor:"#f4f4f4"}}>
+           <div className="card-body" style={{display:"flex",justifyContent:"space-around",backgroundColor:"#f4f4f4",width:"100%"}}>
              <PolicePunishment />
              <PolicePunishment2 />
            </div>
-         </div>
+         {/* </div> */}
        </div>
        
         ) : (

@@ -63,10 +63,11 @@ const FirBarGraph = () => {
   );
   
   return (
-    <div style={{ width: "100%", height: "30vh" }}>
-      <h2 style={{ marginBottom:"10px" }}>FIR & Chargesheet Data (Monthly)</h2>
+    <div style={{ width: "100%", height: "40vh" }}>
+        <h3 className="text-lg font-semibold text-start flex-grow mb-3">
+                  FIR & Chargesheet Data (Monthly)</h3>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-  <div className="flex gap-3 mb-2 items-end"> 
+  <div className="flex gap-3 mb-5 items-end"> 
     <div>
       <label>From:</label>
       <DatePicker
@@ -100,19 +101,32 @@ const FirBarGraph = () => {
   </div>
 </LocalizationProvider>
 
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={filteredData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="total_firs" stroke={chartColors[0]} name="Total FIRs" strokeWidth={2} />
-          <Line type="monotone" dataKey="fir_under_bns" stroke={chartColors[1]} name="FIRs under BNS" strokeWidth={2} />
-          <Line type="monotone" dataKey="chargesheets_filed" stroke={chartColors[2]} name="Chargesheets Filed" strokeWidth={2} />
-          <Line type="monotone" dataKey="chargesheets_not_filed" stroke={chartColors[3]} name="Chargesheets Not Filed on Time" strokeWidth={2} />
-        </LineChart>
-      </ResponsiveContainer>
+<ResponsiveContainer width="100%" height={400}>
+  <LineChart data={filteredData} margin={{ top: 20, right: 30, left: 20, bottom: 30 }} >
+    <CartesianGrid strokeDasharray="3 3" />
+    
+    {/* X-Axis with Title */}
+    <XAxis 
+      dataKey="month" 
+      label={{ 
+        value: "Time Period", 
+        position: "insideBottom", 
+        offset: -10,  // Moves the label further down
+        fontWeight: "bold" 
+      }} 
+    />    
+    {/* Y-Axis with Title */}
+    <YAxis label={{ value: "No of FIRs", angle: -90, position: "left", fontWeight: "bold" ,offset: 12}} />
+    
+    <Tooltip />
+    <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: "20px" }} />
+      <Line type="monotone" dataKey="total_firs" stroke={chartColors[0]} name="Total FIRs" strokeWidth={2} />
+    <Line type="monotone" dataKey="fir_under_bns" stroke={chartColors[1]} name="FIRs under BNS" strokeWidth={2} />
+    <Line type="monotone" dataKey="chargesheets_filed" stroke={chartColors[2]} name="Chargesheets Filed" strokeWidth={2} />
+    <Line type="monotone" dataKey="chargesheets_not_filed" stroke={chartColors[3]} name="Chargesheets Not Filed on Time" strokeWidth={2} />
+  </LineChart>
+</ResponsiveContainer>
+
     </div>
   );
 };

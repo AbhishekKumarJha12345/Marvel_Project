@@ -50,29 +50,53 @@ const PolicePunishment = () => {
   };
 
   return (
-    <div className="p-6 rounded-lg flex flex-col" style={{backgroundColor:"white",width:"48%",display:"flex",justifyContent:"center"}}>
-      <div className="h-[360px]" style={{display:"flex",justifyContent:"center"}}>
-        {/* <Pie data={data} options={options} /> */}
-        <ResponsiveContainer width="100%" height={300}>
-  <PieChart>
-    <Pie 
-      data={pieData} 
-      dataKey="value" 
-      nameKey="name" 
-      cx="50%" 
-      cy="50%" 
-      outerRadius={100} 
-      label
-    >
-      {pieData.map((entry, index) => (
-        <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
-      ))}
-    </Pie>
-    <Tooltip />
-    <Legend verticalAlign="bottom" align="center" layout="horizontal" />
-  </PieChart>
-</ResponsiveContainer>
+    <div
+      className="p-6 rounded-lg flex flex-col"
+      style={{
+        backgroundColor: "white",
+        width: "49%",
+        display: "flex",
+        justifyContent: "center",
 
+      }}
+    >
+       <h2 
+        style={{
+          textAlign: "start",
+          fontSize: "22px",
+          fontWeight: "600",
+          marginBottom: "10px",
+        }}
+      >
+        Police with Respective Forensic Visits
+      </h2>
+
+      <div
+        className=""
+        style={{ display: "flex", justifyContent: "center" }}
+      >
+        <ResponsiveContainer width="100%" height={550}>
+          <PieChart>
+            <Pie
+              data={pieData}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              outerRadius={180} // Increased size
+              label
+            >
+              {pieData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={chartColors[index % chartColors.length]}
+                />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend verticalAlign="bottom" align="center" layout="horizontal" />
+          </PieChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

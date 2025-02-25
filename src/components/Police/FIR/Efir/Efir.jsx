@@ -56,22 +56,22 @@ function Efir() {
         {activeTab === "home" ? (
           <div className="row pb-6" >
             <div className="col-6" style={{width:"100%"}}>
-              <div className="card shadow-sm bg-white">
+              <div className="">
                 <div className="card-body">
                 <div style={{width:"100%",display:"flex",flexDirection:"column",gap:"0.5rem"}}>
-                  <div style={{display:"flex",gap:"40rem"}}>
-                <h2 className="text-xl font-semibold">Deviation </h2>
-                <h2 className="text-xl font-semibold">Recent Entry </h2>  
-                </div>
+                  {/* <div style={{display:"flex",gap:"40rem"}}> */}
+                {/* <h2 className="text-xl font-semibold ms-3">Deviation </h2> */}
+                <h2 className="text-xl font-semibold text-center ms-3">Recent Entry </h2>  
+                {/* </div> */}
 <div style={{display:"flex",gap:"0.5rem"}}>
-<div style={{backgroundColor:"#f4f4f4",width:"49%",height:"430px",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
+<div style={{backgroundColor:"#f4f4f4",width:"100%",height:"600px",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
 <EFIRsChart2 generateReport={generateReport} />
 
 
       </div>
       <br/>
       <hr/>
-<div style={{backgroundColor:"#f4f4f4",width:"50%",height:"430px",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
+<div style={{backgroundColor:"#f4f4f4",width:"100%",height:"600px",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
 <Efirgraph generateReport={generateReport} />
 
 
