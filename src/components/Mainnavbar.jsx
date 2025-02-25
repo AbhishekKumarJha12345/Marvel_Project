@@ -55,6 +55,11 @@ function Mainnavbar() {
     localStorage.clear();
     navigate("/");
   };
+
+  if (users === undefined) {
+    handelLogout();
+}
+
   const toCamelCase = (str) => {
     return str
       .toLowerCase()

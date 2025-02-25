@@ -29,7 +29,7 @@ const MaharashtraMap = () => {
       doubleClickZoom: false,
     });
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/7/{x}/{y}.png", {
+    L.tileLayer("/tiles/7/{x}/{y}.png", {
       maxZoom: 18,
     }).addTo(map);
 
