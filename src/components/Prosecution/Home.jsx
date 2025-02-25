@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { UploadCloud } from "lucide-react";
 import { IoMdClose } from "react-icons/io";
-import DatePicker from "react-datepicker";
+// import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
-
-
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker"; 
+import { format } from "date-fns"; 
 
 import {
   PieChart,
@@ -31,6 +32,8 @@ const Home = ({ prosecutiondata , fetchData }) => {
   const [selectedOption, setSelectedOption] = useState("fill");
   const [selectedGraph, setSelectedGraph] = useState("");
   const [file, setFile] = useState(null);
+  const [hiddenLines, setHiddenLines] = useState({});
+
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#A569BD"];
 
   const monthOrder = [
@@ -338,8 +341,17 @@ const Home = ({ prosecutiondata , fetchData }) => {
 
 
   const [selectedCategory, setSelectedCategory] = useState("Prosecutors");
-  const [startMonthYear, setStartMonthYear] = useState("");
-  const [endMonthYear, setEndMonthYear] = useState("");
+ const [startMonthYear, setStartMonthYear] = useState(null);
+const [endMonthYear, setEndMonthYear] = useState(null);
+
+
+
+
+  useEffect(() =>{
+console.log("startMonthYear : ",startMonthYear);
+    
+  },[startMonthYear])
+
 
   // Transform raw data
   const ProsecutorsbyCadres = (Array.isArray(prosecutiondata?.prosecutorsbycadre) 
@@ -366,10 +378,17 @@ const Home = ({ prosecutiondata , fetchData }) => {
 }).sort((a, b) => a.numericDate - b.numericDate);
 
   // Convert start & end range to YYYYMM format
-  const startNumericDate = startMonthYear ? parseInt(startMonthYear.replace("-", "")) : null;
-  const endNumericDate = endMonthYear ? parseInt(endMonthYear.replace("-", "")) : null;
+  // const startNumericDate = startMonthYear ? parseInt(startMonthYear.replace("-", "")) : null;
+  // const endNumericDate = endMonthYear ? parseInt(endMonthYear.replace("-", "")) : null;
 
-  // Filter data based on selected month-year range
+  const startNumericDate = startMonthYear 
+  ? parseInt(format(startMonthYear, "yyyyMM")) 
+  : null;
+
+const endNumericDate = endMonthYear 
+  ? parseInt(format(endMonthYear, "yyyyMM")) 
+  : null;
+
   const filteredData = ProsecutorsbyCadres.filter((item) => {
     if (startNumericDate && item.numericDate < startNumericDate) return false;
     if (endNumericDate && item.numericDate > endNumericDate) return false;
@@ -392,6 +411,29 @@ const Home = ({ prosecutiondata , fetchData }) => {
       ];
 
 
+  const handleLegendClick = (dataKey) => {
+    setHiddenLines((prev) => ({
+      ...prev,
+      [dataKey]: !prev[dataKey],
+    }));
+  };
+
+  
+
+  const [hiddenCategories, setHiddenCategories] = useState({});
+
+  const handleLegendClickforPositions = (entry) => {
+  setHiddenCategories((prev) => ({
+    ...prev,
+    [entry.value]: !prev[entry.value], 
+  }));
+};
+
+  const filteredDataforPositions = ProsecutionSanctionedPositions.filter(
+      (item) => !hiddenCategories[item.name]
+  );
+
+
 
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
@@ -399,18 +441,7 @@ const Home = ({ prosecutiondata , fetchData }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-4 rounded-xl shadow-md">
-          {/* <h2 className="text-xl font-semibold mb-4">
-            Prosecution Sanctioned Positions
-          </h2>
-          <button
-            onClick={() => handleOpenModal("first")}
-            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Add Data
-          </button> */}
-
-
-
+    
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">
               Prosecution Sanctioned Positions
@@ -424,64 +455,104 @@ const Home = ({ prosecutiondata , fetchData }) => {
           </div>
 
           <div className="flex justify-center items-center w-full h-full">
-            <PieChart width={400} height={400}>
-              <Pie
-                data={ProsecutionSanctionedPositions}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={100}
-                label
-              >
-                {ProsecutionSanctionedPositions.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
+
+             <PieChart width={400} height={400}>
+      <Pie
+        data={filteredDataforPositions}
+        dataKey="value"
+        nameKey="name"
+        cx="50%"
+        cy="50%"
+        outerRadius={100}
+        label
+      >
+       
+         {filteredDataforPositions.map((entry) => {
+      const originalIndex = ProsecutionSanctionedPositions.findIndex(
+        (item) => item.name === entry.name
+      ); 
+      return (
+        <Cell key={`cell-${entry.name}`} fill={COLORS[originalIndex % COLORS.length]} />
+      );
+    })}
+      </Pie>
+      <Tooltip />
+      <Legend
+        onClick={handleLegendClickforPositions}
+        payload={ProsecutionSanctionedPositions.map((entry, index) => ({
+      value: entry.name,
+      type: "square", 
+      color: hiddenCategories[entry.name] ? "gray" : COLORS[index % COLORS.length],
+    }))}
+        formatter={(value) => (
+          <span
+            style={{
+              textDecoration: hiddenCategories[value] ? "line-through" : "none",
+              color: hiddenCategories[value] ? "gray" : "black",
+              cursor: "pointer",
+            }}
+          >
+            {value}
+          </span>
+        )}
+      />
+    </PieChart>
           </div>
         </div>
-
-
-
         <div className="p-4 bg-white rounded-lg shadow-md w-full h-full">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">Login Data Statistics for E-Prosecution</h2>
             {localStorage.getItem('role') !== 'chief secretary' && <button
               onClick={() => handleOpenModal("third")}
-              className="bg-gray-700 text-white px-4 py-2 rounded"
+              className="bg-gray-700 text-white px-4 py-2 rounded mb-2"
             >
               Add Data
             </button>}
           </div>
-
-      <div className="flex gap-4 mb-4">
-        <div>
-         
-          <DatePicker
-            selected={fromDate}
-            onChange={setFromDate}
-            dateFormat="yyyy-MM-dd"
-            className="border border-gray-300 rounded-md p-2 w-full cursor-pointer"
-            placeholderText="From"
-            isClearable
-          />
-        </div>
-        <div>
-          <DatePicker
-            selected={toDate}
-            onChange={setToDate}
-            dateFormat="yyyy-MM-dd"
-            className="border border-gray-300 rounded-md p-2 w-full cursor-pointer"
-            placeholderText="To"
-            isClearable
-          />
-        </div>
+      <div className="flex gap-4 mb-4 items-center">
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <DatePicker
+        views={["year", "month", "day"]}
+        selected={fromDate}
+        onChange={(newValue) => setFromDate(newValue)}
+        dateFormat="yyyy-MM-dd"
+        slotProps={{
+            textField: {
+              // label: "From",
+              error: false,
+              value: fromDate || "", 
+               sx: {
+        "& .MuiInputBase-input": {
+          padding: "4px 8px !important", 
+          height: "40px !important", 
+        },
+      }, 
+            },
+          }}
+        className="rounded-md cursor-pointer w-40"
+      />
+      <DatePicker
+        views={["year", "month","day"]}
+        selected={toDate}
+        onChange={(newValue) => setToDate(newValue)}
+        dateFormat="yyyy-MM-dd"
+         slotProps={{
+            textField: {
+              // label: "To",
+              error: false,
+              value: toDate || "", 
+               sx: {
+        "& .MuiInputBase-input": {
+          padding: "4px 8px !important", 
+          height: "40px !important", 
+        },
+      },
+            },
+          }}
+        className="rounded-md cursor-pointer w-40"
+        
+      />
+    </LocalizationProvider>
         <button
           onClick={() => {
             setFromDate(null);
@@ -510,63 +581,106 @@ const Home = ({ prosecutiondata , fetchData }) => {
             Add Data
           </button>}
         </div>
-
-        {/* <div className="flex justify-center">
-        <BarChart width={800} height={300} data={ProsecutorsbyCadre}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip
-            formatter={(value, name) =>
-              name === "percentage" ? `${value}% ` : value
-            }
-          />
-          <Legend className="relative left-0" />
-          <Bar dataKey="prosecutors" fill="#82ca9d" />
-          <Bar dataKey="percentage" fill="#48CAE4" />
-        </BarChart>
-      </div> */}
-
-
         <div className="flex items-center justify-center gap-2">
-          <label className="text-sm font-medium text-gray-700 w-50">Select Month-Year Range:</label>
-          <input
-            type="month"
-            value={startMonthYear}
-            onChange={(e) => setStartMonthYear(e.target.value)}
-            className="border p-1 h-8 w-40 text-sm rounded"
-          />
-          <span className="text-gray-700 font-medium">to</span>
-          <input
-            type="month"
-            value={endMonthYear}
-            onChange={(e) => setEndMonthYear(e.target.value)}
-            className="border p-1 h-8 w-40 text-sm rounded"
-          />
-
-
+          <label className="text-sm font-medium text-gray-700 w-30">Select Month-Year Range:</label>
+         <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <div className="flex items-center space-x-2">
+        <DatePicker
+          views={["year", "month"]}
+          value={startMonthYear}
+          onChange={(newValue) => setStartMonthYear(newValue)}
+           slotProps={{
+    textField: {
+      placeholder: "From",
+      sx: {
+        "& .MuiInputBase-input": {
+          padding: "4px 8px !important", // Reduce padding
+          height: "40px !important", // Adjust height if needed
+        },
+      },
+    },
+  }}
+         
+          className="rounded-md cursor-pointer w-40"
+        />
+        <span className="text-gray-700 font-medium">to</span>
+        <DatePicker
+          views={["year", "month"]}
+          value={endMonthYear}
+          onChange={(newValue) => setEndMonthYear(newValue)}
+           slotProps={{
+            textField: {
+              placeholder: "To", 
+                  sx: {
+            "& .MuiInputBase-input": {
+              padding: "4px 8px !important", // Reduce padding
+              height: "40px !important", // Adjust height if needed
+            },
+          },
+            },
+          }}
+          className="rounded-md cursor-pointer w-40"
+        />
+      </div>
+    </LocalizationProvider>
            {/* Category Selection  */}
-
           <label className="text-sm font-medium text-gray-700 w-30">Select Category:</label>
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="border p-1 h-8 w-48 text-sm rounded"
+            className="border !p-2 !h-[50px] !w-[150px] !text-sm !rounded"
           >
             <option value="Prosecutors">Prosecutors</option>
             <option value="Percentages">Percentages</option>
           </select>
+          
+          <button
+          onClick={() => {
+            setStartMonthYear(null);
+            setEndMonthYear(null);
+            setSelectedCategory("Prosecutors"); 
+          }}
+          className="p-2 bg-[#2d3748] text-white rounded-lg hover:bg-opacity-90 transition"
+        >
+          Clear Filters
+        </button>
 
         </div>
         <div className="flex justify-center">
-
-
           <div className="mt-6 w-full h-[400px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={filteredData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="monthYearLabel" stroke="#6b7280" tick={{ fontSize: 14 }} />
-                <YAxis stroke="#6b7280" tick={{ fontSize: 14 }} />
+                <XAxis dataKey="monthYearLabel" stroke="#6b7280" tick={{ fontSize: 14 }}   label={{ 
+                    value: "Month & Year", 
+                    position: "insideBottom", 
+                    dy: 15, 
+                    fontSize: 14, 
+                  }} />
+                {selectedCategory === "Percentages" ? (
+                  <YAxis
+                    stroke="#6b7280"
+                    tick={{ fontSize: 14 }}
+                    label={{
+                      value: "Percentage",
+                      angle: -90,
+                      position: "insideLeft",
+                      fontSize: 14,
+                    }}
+                  />
+                      ) : (
+                        <YAxis
+                          stroke="#6b7280" 
+                          tick={{ fontSize: 14 }}
+                          label={{
+                            value: "Number of Prosecutors",
+                            angle: -90,
+                            position: "insideLeft",
+                            fontSize: 14,
+                            dy: 80,
+                          }}
+                        />
+                      )}
                 <Tooltip
                   contentStyle={{
                     backgroundColor: "#f9fafb",
@@ -574,7 +688,23 @@ const Home = ({ prosecutiondata , fetchData }) => {
                     border: "1px solid #e5e7eb",
                   }}
                 />
-                <Legend iconType="circle" wrapperStyle={{ paddingBottom: 10 }} />
+                  <Legend
+                   onClick={(e) => handleLegendClick(e.dataKey)} // Ensure correct line is toggled
+                   iconType="circle" wrapperStyle={{ paddingBottom: 10, paddingTop:30 }}
+                   formatter={(value, entry) => {
+                     return (
+                       <span
+                         style={{
+                           textDecoration: hiddenLines[entry.dataKey] ? "line-through" : "none",
+                           color: hiddenLines[entry.dataKey] ? "gray" : "black",
+                           cursor: "pointer",
+                         }}
+                       >
+                         {dataKeys.find((line) => line.key === entry.dataKey)?.name || value}
+                       </span>
+                     );
+                   }}
+                 />
 
                 {dataKeys.map((metric) => (
                   <Line
@@ -585,6 +715,7 @@ const Home = ({ prosecutiondata , fetchData }) => {
                     strokeWidth={4}
                     dot={{ r: 5 }}
                     name={metric.label}
+                    hide={hiddenLines[metric.key]}
                   />
                 ))}
               </LineChart>

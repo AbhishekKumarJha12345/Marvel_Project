@@ -100,7 +100,7 @@ const [filters, setFilters] = useState({ role: "", posts: "", date: "" });
       <div style={styles.cardContainer}>
         <Card style={styles.card} className="bg-white">
           <Card.Body>
-            <Card.Title className=" text-xl font-semibold mb-4">Recent Appointment</Card.Title>
+            <Card.Title className="mb-4"><span className="text-xl font-semibold">Recent Appointment</span></Card.Title>
             <Card.Text style={styles.cardText}>
               491 New Assistant Public Prosecutors appointed.
             </Card.Text>
@@ -108,7 +108,7 @@ const [filters, setFilters] = useState({ role: "", posts: "", date: "" });
         </Card>
         <Card style={styles.card} className="bg-white">
           <Card.Body>
-            <Card.Title className="text-xl font-semibold mb-4">Training Program</Card.Title>
+            <Card.Title className="mb-4"><span className="text-xl font-semibold">Training Program</span></Card.Title>
             <Card.Text style={styles.cardText}>
               6 weeks training in 4 batches at Maharashtra Police Academy, Nashik.
             </Card.Text>
@@ -116,7 +116,7 @@ const [filters, setFilters] = useState({ role: "", posts: "", date: "" });
         </Card>
         <Card style={styles.card} className="bg-white">
           <Card.Body>
-            <Card.Title className="text-xl font-semibold mb-4">Recruitment Proposal</Card.Title>
+            <Card.Title className="mb-4"><span className="text-xl font-semibold">Recruitment Proposal</span></Card.Title>
             <Card.Text style={styles.cardText}>
               Proposal for 244 Addl. PPs through MPSC under process.
             </Card.Text>
