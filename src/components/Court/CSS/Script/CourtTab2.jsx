@@ -387,7 +387,8 @@ const accessibilityComplianceData = filteredData?.length
 
               <div className="bg-white p-4 rounded-xl shadow-md">
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <div className="d-flex gap-2">
+                            <div className="flex justify-between items-center mb-4">
+
               <h3 className="text-xl font-semibold mb-4">
                   Monthly Data Security Compliance
                 </h3>
@@ -468,7 +469,8 @@ const accessibilityComplianceData = filteredData?.length
 
                     <div className="bg-white p-4 rounded-xl shadow-md">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <div className="d-flex gap-2">
+            <div className="flex justify-between items-center mb-4">
+
                 <h3 className="text-xl font-semibold mb-4">
                 Monthly Accessibility Compliance
               </h3>
@@ -605,8 +607,9 @@ const accessibilityComplianceData = filteredData?.length
               <div className="mb-4 flex flex-row justify-between items-center">
                 
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <div className="d-flex gap-2">
-              <h3 className="text-xl font-semibold">
+                <div className="flex justify-between items-center mb-4">
+
+              <h3 className="text-xl font-semibold mb-4">
                   Court Summons Delivered Electronically
                 </h3>
                 
@@ -688,7 +691,8 @@ const accessibilityComplianceData = filteredData?.length
             <div className="mb-4 flex flex-row justify-between items-center">
                 
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <div className="d-flex gap-2">
+                <div className="flex justify-between items-center mb-4">
+
               <h3 className="text-xl font-semibold">
                 Adoption Rate of eSummons & Digital Case Records
 
