@@ -54,21 +54,21 @@ import Courtform from "./Courtform.jsx";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
- 
+
 const CourtTab2 = () => {
   const [showModal, setShowModal] = useState(false);
   const exportRef = useRef(null); // Reference to content to be exported
   const [summonsDigitalData, setSummonsDigitalData] = useState(null);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
-  const[filteredData,setFiltereddata]=useState([])
+  const [filteredData, setFiltereddata] = useState([])
   const fetchSummonsDigitalData = async () => {
     try {
       const response = await axiosInstance.get("/live_data", {
         params: {
           type: "court_2",
-          from_date:fromDate?.toISOString().split("T")[0],
-          to_date:toDate?.toISOString().split("T")[0],
+          from_date: fromDate?.toISOString().split("T")[0],
+          to_date: toDate?.toISOString().split("T")[0],
         },
       });
       const responseData = response.data;
@@ -79,39 +79,39 @@ const CourtTab2 = () => {
     }
   };
   const filterDataByDate = (data, fromDate, toDate) => {
-        if (!Array.isArray(data)) {
-          console.error("filterDataByDate received non-array data:", data);
-          return [];
-        }
-      
-        return data.filter((item) => {
-          const itemDate = dayjs(item.month, "YYYY-MM");
-      
-          return (
-            (!fromDate || itemDate.isAfter(dayjs(fromDate).subtract(1, "month"))) &&
-            (!toDate || itemDate.isBefore(dayjs(toDate).add(1, "month")))
-          );
-        });
-      };
+    if (!Array.isArray(data)) {
+      console.error("filterDataByDate received non-array data:", data);
+      return [];
+    }
+
+    return data.filter((item) => {
+      const itemDate = dayjs(item.month, "YYYY-MM");
+
+      return (
+        (!fromDate || itemDate.isAfter(dayjs(fromDate).subtract(1, "month"))) &&
+        (!toDate || itemDate.isBefore(dayjs(toDate).add(1, "month")))
+      );
+    });
+  };
   useEffect(() => {
     fetchSummonsDigitalData();
   }, []);
-  const Clearfilter=()=>{
+  const Clearfilter = () => {
     setFromDate(null);
     setToDate(null);
     setFiltereddata(summonsDigitalData)
   }
-   useEffect(() => {
-        if (fromDate || toDate) {
-          console.log("Filtering data for dates:", fromDate, toDate);
-          
-          // ICJSCaseData()
-            const filteredData = filterDataByDate(summonsDigitalData, fromDate, toDate);
-            console.log("Filtered Data:", filteredData);
-            setFiltereddata(filteredData);
-        }
-      }, [fromDate, toDate]);
-  
+  useEffect(() => {
+    if (fromDate || toDate) {
+      console.log("Filtering data for dates:", fromDate, toDate);
+
+      // ICJSCaseData()
+      const filteredData = filterDataByDate(summonsDigitalData, fromDate, toDate);
+      console.log("Filtered Data:", filteredData);
+      setFiltereddata(filteredData);
+    }
+  }, [fromDate, toDate]);
+
   // useEffect(() => {
   //   if(fromDate||toDate)
   //   {
@@ -179,21 +179,21 @@ const CourtTab2 = () => {
 
   const complianceData = filteredData
     ? [
-        {
-          name: "Compliant",
-          value: parseInt(filteredData[0]?.data_security_complaints || 0),
-        },
-        {
-          name: "Non-Compliant",
-          value: parseInt(
-            filteredData[0]?.data_security_non_complaints || 0
-          ),
-        },
-      ]
+      {
+        name: "Compliant",
+        value: parseInt(filteredData[0]?.data_security_complaints || 0),
+      },
+      {
+        name: "Non-Compliant",
+        value: parseInt(
+          filteredData[0]?.data_security_non_complaints || 0
+        ),
+      },
+    ]
     : [
-        { name: "Compliant", value: 0 },
-        { name: "Non-Compliant", value: 0 },
-      ];
+      { name: "Compliant", value: 0 },
+      { name: "Non-Compliant", value: 0 },
+    ];
 
   const accessibilityComiplanceData = filteredData?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
@@ -206,22 +206,22 @@ const CourtTab2 = () => {
 
   const accessibilityData = filteredData
     ? [
-        {
-          name: "Accessible",
-          value: parseInt(filteredData[0]?.accessibility_complaints || 0),
-        },
-        {
-          name: "Inaccessible",
-          value: parseInt(
-            filteredData[0]?.accessibility_non_complaints || 0
-          ),
+      {
+        name: "Accessible",
+        value: parseInt(filteredData[0]?.accessibility_complaints || 0),
+      },
+      {
+        name: "Inaccessible",
+        value: parseInt(
+          filteredData[0]?.accessibility_non_complaints || 0
+        ),
 
-        },
-      ]
+      },
+    ]
     : [
-        { name: "Accessible", value: 0 },
-        { name: "Inaccessible", value: 0 },
-      ];
+      { name: "Accessible", value: 0 },
+      { name: "Inaccessible", value: 0 },
+    ];
 
   const summonsData = filteredData?.map((item) => {
     return {
@@ -235,12 +235,12 @@ const CourtTab2 = () => {
 
   const adoptionData = Array.isArray(filteredData)
     ? filteredData.map((item) => ({
-        month: new Date(item?.month || "").toLocaleString("en-US", {
-          month: "short",
-          year: "numeric",
-        }),
-        adoptionRate: parseInt(item?.adoption_rate) || 0, // Handle null/undefined values safely
-      })).sort((a, b) => new Date(a.month) - new Date(b.month))
+      month: new Date(item?.month || "").toLocaleString("en-US", {
+        month: "short",
+        year: "numeric",
+      }),
+      adoptionRate: parseInt(item?.adoption_rate) || 0, // Handle null/undefined values safely
+    })).sort((a, b) => new Date(a.month) - new Date(b.month))
     : [];
   const recentEntryDate = new Date(
     filteredData?.[0]?.month
@@ -255,13 +255,13 @@ const CourtTab2 = () => {
         <h1 className="text-2xl font-bold">
           eSummons & Digital Case Records Dashboard
         </h1>
-        
+
 
         <div className="flex space-x-2">
           <button className="ExportButton" onClick={handleExport}>
             Export
           </button>
-          
+
           {localStorage.getItem("role") !== "chief secretary" && (
             <button
               className="bg-blue-500 text-white px-4 py-2 rounded-lg"
@@ -275,27 +275,27 @@ const CourtTab2 = () => {
             </button>
           )}
         </div>
-        
+
       </div>
-      
+
       <div ref={exportRef}>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <div className="rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <div className="flex justify-between items-center mb-4">
-              
-            <h1 className="text-2xl font-bold">Deviation</h1>
 
-      
+              <h1 className="text-2xl font-bold">Deviation</h1>
+
+
               <div className="flex items-center gap-4">
                 <div>
-                   
+
                   <DatePicker
-                  label='From'
+                    label='From'
                     views={["year", "month"]}
                     value={fromDate}
                     onChange={setFromDate}
                     slotProps={{
-                      textField: { 
+                      textField: {
                         variant: "outlined",
                         size: "small",
                         sx: { width: "140px", fontSize: "12px" },
@@ -304,16 +304,16 @@ const CourtTab2 = () => {
                     sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
                   />
                 </div>
-      
+
                 <div>
-                   
+
                   <DatePicker
-                  label='To'
+                    label='To'
                     views={["year", "month"]}
                     value={toDate}
                     onChange={setToDate}
                     slotProps={{
-                      textField: { 
+                      textField: {
                         variant: "outlined",
                         size: "small",
                         sx: { width: "140px", fontSize: "12px" },
@@ -322,15 +322,15 @@ const CourtTab2 = () => {
                     sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
                   />
                 </div>
-      
-                <button 
-                  onClick={Clearfilter} 
+
+                <button
+                  onClick={Clearfilter}
                   className="bg-blue-500 text-white px-3 py-1 rounded-md "
                   style={{ backgroundColor: "#2d3748" }}>
                   Clear Filter
                 </button>
               </div>
-      
+
             </div>
           </LocalizationProvider>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -342,8 +342,8 @@ const CourtTab2 = () => {
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={securityComiplanceData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
-                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
+                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }} />
+                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }} />
                   <Tooltip />
                   <Legend />
                   <Line
@@ -372,8 +372,8 @@ const CourtTab2 = () => {
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={accessibilityComiplanceData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
-                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
+                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }} />
+                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }} />
                   <Tooltip />
                   <Legend />
                   <Line
@@ -397,7 +397,7 @@ const CourtTab2 = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <div className=" rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">
             Recent Entry : {recentEntryDate}
           </h1>
@@ -461,7 +461,7 @@ const CourtTab2 = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <div className="rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">Deviation With Recent Entry</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* eSummons Delivered Electronically Bar Chart */}
@@ -476,8 +476,8 @@ const CourtTab2 = () => {
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={summonsData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
-                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
+                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }} />
+                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }} />
                   {/* <YAxis 
                     domain={[
                       0, 
@@ -498,19 +498,19 @@ const CourtTab2 = () => {
             </div>
             {/* Adoption Rate Line Chart */}
             <div className="bg-white p-4 rounded-xl shadow-md">
-            <div className="mb-4 flex flex-row justify-between items-center">
+              <div className="mb-4 flex flex-row justify-between items-center">
                 <h3 className="text-xl font-semibold">
-                Adoption Rate of eSummons & Digital Case Records
+                  Adoption Rate of eSummons & Digital Case Records
 
                 </h3>
                 <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${adoptionData?.[adoptionData.length - 1]?.adoptionRate}`}</h4>
               </div>
-             
+
 
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={adoptionData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
+                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }} />
                   <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}
                     domain={[
                       0,

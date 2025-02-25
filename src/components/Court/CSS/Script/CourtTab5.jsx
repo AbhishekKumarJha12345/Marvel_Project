@@ -270,11 +270,74 @@ const CourtTab5 = () => {
         </div>
       </div>
       <div ref={exportRef}>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <div className="rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <div className="flex justify-between items-center mb-4">
                         
                       <h1 className="text-2xl font-bold">Deviation</h1>
+          
+                
+                        {/* <div className="flex items-center gap-4">
+                          <div>
+                             
+                            <DatePicker
+                            label='From'
+                              views={["year", "month"]}
+                              value={fromDate}
+                              onChange={setFromDate}
+                              slotProps={{
+                                textField: { 
+                                  variant: "outlined",
+                                  size: "small",
+                                  sx: { width: "140px", fontSize: "12px" },
+                                }
+                              }}
+                              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                            />
+                          </div>
+                
+                          <div>
+                             
+                            <DatePicker
+                            label='To'
+                              views={["year", "month"]}
+                              value={toDate}
+                              onChange={setToDate}
+                              slotProps={{
+                                textField: { 
+                                  variant: "outlined",
+                                  size: "small",
+                                  sx: { width: "140px", fontSize: "12px" },
+                                }
+                              }}
+                              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                            />
+                          </div>
+                
+                          <button 
+                            onClick={Clearfilter} 
+                            className="bg-blue-500 text-white px-3 py-1 rounded-md "
+                            style={{ backgroundColor: "#2d3748" }}>
+                            Clear Filter
+                          </button>
+                        </div> */}
+                
+                      </div>
+                    </LocalizationProvider>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <h3 className="text-xl font-semibold mb-4">
+                Monthly Progress of Deployment Status & Impact on Judicial
+                Processes
+              </h3>
+
+              <div className="rounded-lg w-full max-w-full h-auto mb-6 p-4">
+
+
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <div className="flex justify-between items-center mb-4">
+                        
+                      {/* <h1 className="text-2xl font-bold">Deviation</h1> */}
           
                 
                         <div className="flex items-center gap-4">
@@ -324,12 +387,12 @@ const CourtTab5 = () => {
                 
                       </div>
                     </LocalizationProvider>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white p-4 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold mb-4">
-                Monthly Progress of Deployment Status & Impact on Judicial
-                Processes
-              </h3>
+                    </div>
+
+
+
+
+
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={monthlyProgressData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -372,6 +435,65 @@ const CourtTab5 = () => {
               <h3 className="text-xl font-semibold mb-4">
                 User Adoption & Feedback
               </h3>
+              <div className="rounded-lg w-full max-w-full h-auto mb-6 p-4">
+
+
+
+
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <div className="flex justify-between items-center mb-4">
+                        
+                      {/* <h1 className="text-2xl font-bold">Deviation</h1> */}
+          
+                
+                        <div className="flex items-center gap-4">
+                          <div>
+                             
+                            <DatePicker
+                            label='From'
+                              views={["year", "month"]}
+                              value={fromDate}
+                              onChange={setFromDate}
+                              slotProps={{
+                                textField: { 
+                                  variant: "outlined",
+                                  size: "small",
+                                  sx: { width: "140px", fontSize: "12px" },
+                                }
+                              }}
+                              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                            />
+                          </div>
+                
+                          <div>
+                             
+                            <DatePicker
+                            label='To'
+                              views={["year", "month"]}
+                              value={toDate}
+                              onChange={setToDate}
+                              slotProps={{
+                                textField: { 
+                                  variant: "outlined",
+                                  size: "small",
+                                  sx: { width: "140px", fontSize: "12px" },
+                                }
+                              }}
+                              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                            />
+                          </div>
+                
+                          <button 
+                            onClick={Clearfilter} 
+                            className="bg-blue-500 text-white px-3 py-1 rounded-md "
+                            style={{ backgroundColor: "#2d3748" }}>
+                            Clear Filter
+                          </button>
+                        </div>
+                
+                      </div>
+                    </LocalizationProvider>
+                    </div>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={monthlyUserFeedbackData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -408,7 +530,7 @@ const CourtTab5 = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <div className=" rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">
             Recent Entry : {recentEntryDate}
           </h1>
@@ -472,7 +594,7 @@ const CourtTab5 = () => {
         <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">Deviation With Recent Entry</h1>
           {/* Integration of Speech-to-Text & AI Transcription (Line Chart) */}
-          <div className="bg-white p-4 rounded-xl shadow-md">
+          <div className="p-4 rounded-xl">
             <h3 className="text-xl font-semibold mb-4"></h3>
             <div className="mb-4 flex flex-row justify-between items-center">
               <h3 className="text-xl font-semibold">
