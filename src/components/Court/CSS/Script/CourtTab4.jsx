@@ -75,7 +75,14 @@ const CourtTab4 = () => {
   const [forensicData, setForensicData] = useState(null);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
-      const[filteredData,setFiltereddata]=useState([])
+  const [fromDate2, setFromDate2] = useState(null);
+  const [toDate2, setToDate2] = useState(null);
+  const [fromDate3, setFromDate3] = useState(null);
+  const [toDate3, setToDate3] = useState(null);
+  const[filteredData,setFiltereddata]=useState([])
+  const[filteredData2,setFiltereddata2]=useState([])
+  const[filteredData3,setFiltereddata3]=useState([])
+
   
   const fetchForensicData = async () => {
     try {
@@ -89,6 +96,8 @@ const CourtTab4 = () => {
       const responseData = response.data;
       setForensicData(responseData.data_dict);
       setFiltereddata(responseData.data_dict)
+      setFiltereddata2(responseData.data_dict)
+      setFiltereddata3(responseData.data_dict)
     } catch (error) {
       console.error("Some error occured", error);
     }
@@ -96,10 +105,20 @@ const CourtTab4 = () => {
   useEffect(() => {
     fetchForensicData();
   }, []);
-    const Clearfilter=()=>{
-      setFromDate(null);
+    const ClearFilter=(type)=>{
+      if(type==='1')
+     { setFromDate(null);
       setToDate(null);
-      setFiltereddata(forensicData)
+      setFiltereddata(forensicData)}
+      if(type==='2')
+        { setFromDate2(null);
+         setToDate2(null);
+         setFiltereddata2(forensicData)}
+         if(type==='3')
+          { setFromDate3(null);
+           setToDate3(null);
+           setFiltereddata3(forensicData)}
+
     }
     
     // useEffect(() => {
@@ -125,7 +144,7 @@ const filterDataByDate = (data, fromDate, toDate) => {
         };
      useEffect(() => {
           if (fromDate || toDate) {
-            console.log("Filtering data for dates:", fromDate, toDate);
+            console.log("111111111111111111111111111111111");
             
             // ICJSCaseData()
               const filteredData = filterDataByDate(forensicData, fromDate, toDate);
@@ -133,7 +152,26 @@ const filterDataByDate = (data, fromDate, toDate) => {
               setFiltereddata(filteredData);
           }
         }, [fromDate, toDate]);
-
+        useEffect(() => {
+          if (fromDate2 || toDate2) {
+            console.log('22222222222222222222222222222222222222222');
+            
+            // ICJSCaseData()
+              const filteredData = filterDataByDate(forensicData, fromDate2, toDate2);
+              console.log("Filtered Data:", filteredData);
+              setFiltereddata2(filteredData);
+          }
+        }, [fromDate2, toDate2]);
+        useEffect(() => {
+          if (fromDate3 || toDate3) {
+            console.log("3333333333333333333333333333333333333333333333333333");
+            
+            // ICJSCaseData()
+              const filteredData = filterDataByDate(forensicData, fromDate3, toDate3);
+              console.log("Filtered Data:", filteredData);
+              setFiltereddata3(filteredData);
+          }
+        }, [fromDate3, toDate3]);
   const [showModal, setShowModal] = useState(false);
 
   const handleExport = async () => {
@@ -189,18 +227,18 @@ const filterDataByDate = (data, fromDate, toDate) => {
     {
       name: "Used Forensic Data",
       value: parseInt(
-        filteredData?.[0]?.percentage_of_cases_using_forensic_data || 0
+        filteredData2?.[0]?.percentage_of_cases_using_forensic_data || 0
       ),
     },
     {
       name: "Did Not Use Forensic Data",
       value: parseInt(
-        100 - filteredData?.[0]?.percentage_of_cases_using_forensic_data || 0
+        100 - filteredData2?.[0]?.percentage_of_cases_using_forensic_data || 0
       ),
     },
   ];
 
-  const casesForensicData = filteredData?.map((item) => ({
+  const casesForensicData = filteredData2?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
       month: "short",
       year: "numeric",
@@ -209,7 +247,7 @@ const filterDataByDate = (data, fromDate, toDate) => {
     notUsed: 100 - item?.percentage_of_cases_using_forensic_data,
   })).sort((a, b) => new Date(a.month) - new Date(b.month));
 
-  const responseTimeData = filteredData?.map((item) => ({
+  const responseTimeData = filteredData3?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
       month: "short",
       year: "numeric",
@@ -241,13 +279,20 @@ const filterDataByDate = (data, fromDate, toDate) => {
       value: parseInt(filteredData?.[0]?.forensic_effectiveness || 0),
     },
   ];
-  const recentEntryDate = new Date(filteredData?.[0]?.month).toLocaleString(
-    "en-US",
-    {
-      month: "short",
-      year: "numeric",
-    }
-  );
+  const recentEntryDate = (data) => {
+    if (!data || data.length === 0) return null; // Handle empty or undefined data
+    
+    // Extract month and year from the first entry
+    const monthYearString = data[0]?.month; // Example: "Jun 2024"
+    
+    if (!monthYearString) return null;
+  
+    // Convert to a Date object (assuming the first day of the month)
+    const date = new Date(`${monthYearString} 1`);
+  
+    // Format to "MMM YYYY" (e.g., "Jun 2024")
+    return date.toLocaleString("en-US", { month: "short", year: "numeric" });
+  };
 
   return (
     <div className="rounded-lg w-full max-w-full h-auto">
@@ -275,120 +320,69 @@ const filterDataByDate = (data, fromDate, toDate) => {
       </div>
      
       <div ref={exportRef}>
-        <div className="rounded-lg w-full max-w-full h-auto mb-6 p-4">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <div className="flex justify-between items-center mb-4">
-                        
-                      <h1 className="text-2xl font-bold">Deviation</h1>
-          
-{/*                 
-                        <div className="flex items-center gap-4">
-                          <div>
-                             
-                            <DatePicker
-                            label='From'
-                              views={["year", "month"]}
-                              value={fromDate}
-                              onChange={setFromDate}
-                              slotProps={{
-                                textField: { 
-                                  variant: "outlined",
-                                  size: "small",
-                                  sx: { width: "140px", fontSize: "12px" },
-                                }
-                              }}
-                              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
-                            />
-                          </div>
-                
-                          <div>
-                             
-                            <DatePicker
-                            label='To'
-                              views={["year", "month"]}
-                              value={toDate}
-                              onChange={setToDate}
-                              slotProps={{
-                                textField: { 
-                                  variant: "outlined",
-                                  size: "small",
-                                  sx: { width: "140px", fontSize: "12px" },
-                                }
-                              }}
-                              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
-                            />
-                          </div>
-                
-                          <button 
-                            onClick={Clearfilter} 
-                            className="bg-blue-500 text-white px-3 py-1 rounded-md "
-                            style={{ backgroundColor: "#2d3748" }}>
-                            Clear Filter
-                          </button>
-                        </div> */}
-                
-                      </div>
-                    </LocalizationProvider>
+        <div className=" rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <h1 className="text-2xl font-bold">Deviation</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white p-4 rounded-xl shadow-md">
+              
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <div className=" justify-between items-center mb-4">
+                
               <h3 className="text-xl font-semibold mb-4">
                 Data-Sharing Effectivness
               </h3>
-
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <div className="flex justify-between items-center mb-4">
-                        
-                      {/* <h1 className="text-2xl font-bold">Deviation</h1> */}
+    
           
-                
-                        <div className="flex items-center gap-4">
-                          <div>
-                             
-                            <DatePicker
-                            label='From'
-                              views={["year", "month"]}
-                              value={fromDate}
-                              onChange={setFromDate}
-                              slotProps={{
-                                textField: { 
-                                  variant: "outlined",
-                                  size: "small",
-                                  sx: { width: "140px", fontSize: "12px" },
-                                }
-                              }}
-                              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
-                            />
-                          </div>
-                
-                          <div>
-                             
-                            <DatePicker
-                            label='To'
-                              views={["year", "month"]}
-                              value={toDate}
-                              onChange={setToDate}
-                              slotProps={{
-                                textField: { 
-                                  variant: "outlined",
-                                  size: "small",
-                                  sx: { width: "140px", fontSize: "12px" },
-                                }
-                              }}
-                              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
-                            />
-                          </div>
-                
-                          <button 
-                            onClick={Clearfilter} 
-                            className="bg-blue-500 text-white px-3 py-1 rounded-md "
-                            style={{ backgroundColor: "#2d3748" }}>
-                            Clear Filter
-                          </button>
-                        </div>
-                
-                      </div>
-                    </LocalizationProvider>
-              
+                  <div className="flex items-center gap-4">
+                    <div>
+                        
+                      <DatePicker
+                      label='From'
+                        views={["year", "month"]}
+                        value={fromDate}
+                        onChange={setFromDate}
+                        slotProps={{
+                          textField: { 
+                            variant: "outlined",
+                            size: "small",
+                            sx: { width: "140px", fontSize: "12px" },
+                          }
+                        }}
+                        sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                      />
+                    </div>
+          
+                    <div>
+                        
+                      <DatePicker
+                      label='To'
+                        views={["year", "month"]}
+                        value={toDate}
+                        onChange={setToDate}
+                        slotProps={{
+                          textField: { 
+                            variant: "outlined",
+                            size: "small",
+                            sx: { width: "140px", fontSize: "12px" },
+                          }
+                        }}
+                        sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                      />
+                    </div>
+          
+                    <button 
+                      onClick={()=>ClearFilter('1')} 
+                      className="bg-blue-500 text-white px-3 py-1 rounded-md "
+                      style={{ backgroundColor: "#2d3748" }}>
+                      Clear
+                    </button>
+                  </div>
+                  </div>
+
+          
+               
+              </LocalizationProvider>
+
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={dataSharingEffectiveData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -425,68 +419,63 @@ const filterDataByDate = (data, fromDate, toDate) => {
             </div>
 
             <div className="bg-white p-4 rounded-xl shadow-md">
+              
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <div className=" justify-between items-center mb-4">
               <h3 className="text-xl font-semibold mb-4">
                 Cases Using Forensic Data
               </h3>
-
-
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <div className="flex justify-between items-center mb-4">
-                        
-                      {/* <h1 className="text-2xl font-bold">Deviation</h1> */}
+    
           
-                
-                        <div className="flex items-center gap-4">
-                          <div>
-                             
-                            <DatePicker
-                            label='From'
-                              views={["year", "month"]}
-                              value={fromDate}
-                              onChange={setFromDate}
-                              slotProps={{
-                                textField: { 
-                                  variant: "outlined",
-                                  size: "small",
-                                  sx: { width: "140px", fontSize: "12px" },
-                                }
-                              }}
-                              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
-                            />
-                          </div>
-                
-                          <div>
-                             
-                            <DatePicker
-                            label='To'
-                              views={["year", "month"]}
-                              value={toDate}
-                              onChange={setToDate}
-                              slotProps={{
-                                textField: { 
-                                  variant: "outlined",
-                                  size: "small",
-                                  sx: { width: "140px", fontSize: "12px" },
-                                }
-                              }}
-                              sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
-                            />
-                          </div>
-                
-                          <button 
-                            onClick={Clearfilter} 
-                            className="bg-blue-500 text-white px-3 py-1 rounded-md "
-                            style={{ backgroundColor: "#2d3748" }}>
-                            Clear Filter
-                          </button>
-                        </div>
-                
-                      </div>
-                    </LocalizationProvider>
-              
+                  <div className="flex items-center gap-4">
+                    <div>
+                        
+                      <DatePicker
+                      label='From'
+                        views={["year", "month"]}
+                        value={fromDate2}
+                        onChange={setFromDate2}
+                        slotProps={{
+                          textField: { 
+                            variant: "outlined",
+                            size: "small",
+                            sx: { width: "140px", fontSize: "12px" },
+                          }
+                        }}
+                        sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                      />
+                    </div>
+          
+                    <div>
+                        
+                      <DatePicker
+                      label='To'
+                        views={["year", "month"]}
+                        value={toDate2}
+                        onChange={setToDate2}
+                        slotProps={{
+                          textField: { 
+                            variant: "outlined",
+                            size: "small",
+                            sx: { width: "140px", fontSize: "12px" },
+                          }
+                        }}
+                        sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                      />
+                    </div>
+          
+                    <button 
+                      onClick={()=>ClearFilter('2')} 
+                      className="bg-blue-500 text-white px-3 py-1 rounded-md "
+                      style={{ backgroundColor: "#2d3748" }}>
+                      Clear
+                    </button>
+                  </div>
+                  </div>
 
-
-
+          
+               
+              </LocalizationProvider>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={casesForensicData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -515,9 +504,9 @@ const filterDataByDate = (data, fromDate, toDate) => {
             </div>
           </div>
         </div>
-        <div className="rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <div className=" rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">
-            Recent Entry : {recentEntryDate}
+            Recent Entry 
           </h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Effectiveness of Data Sharing Mechanisms (Bar Chart) */}
@@ -526,6 +515,9 @@ const filterDataByDate = (data, fromDate, toDate) => {
               <h3 className="text-xl font-semibold mb-4">
                 Effectiveness of Data-Sharing Mechanisms
               </h3>
+              <p>
+                <strong>Recent Entry:</strong>{recentEntryDate(filteredData)}
+              </p>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Tooltip />
@@ -553,6 +545,9 @@ const filterDataByDate = (data, fromDate, toDate) => {
               <h3 className="text-xl font-semibold mb-4">
                 Percentage of Cases Using Forensic Data
               </h3>
+              <p>
+                <strong>Recent Entry:</strong>{recentEntryDate(filteredData2)}
+              </p>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Tooltip />
@@ -577,16 +572,67 @@ const filterDataByDate = (data, fromDate, toDate) => {
             </div>
           </div>
         </div>
-        <div className="rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <div className=" rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">Deviation With Recent Entry</h1>
           {/* Response Time for Evidence Retrieval (Line Chart) */}
           <div className="bg-white p-4 rounded-xl shadow-md">
-            <div className="mb-4 flex flex-row justify-between items-center">
-              <h3 className="text-xl font-semibold">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <div className="flex justify-between items-center mb-4">
+                
+            <h3 className="text-xl font-semibold">
                 Response Time for Evidence Retrieval
               </h3>
-              <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${responseTimeData?.[responseTimeData.length -1]?.responseTime}`}</h4>
-            </div>
+    
+          
+                  <div className="flex items-center gap-4">
+                    <div>
+                        
+                      <DatePicker
+                      label='From'
+                        views={["year", "month"]}
+                        value={fromDate3}
+                        onChange={setFromDate3}
+                        slotProps={{
+                          textField: { 
+                            variant: "outlined",
+                            size: "small",
+                            sx: { width: "140px", fontSize: "12px" },
+                          }
+                        }}
+                        sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                      />
+                    </div>
+          
+                    <div>
+                        
+                      <DatePicker
+                      label='To'
+                        views={["year", "month"]}
+                        value={toDate3}
+                        onChange={setToDate3}
+                        slotProps={{
+                          textField: { 
+                            variant: "outlined",
+                            size: "small",
+                            sx: { width: "140px", fontSize: "12px" },
+                          }
+                        }}
+                        sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                      />
+                    </div>
+          
+                    <button 
+                      onClick={()=>ClearFilter('3')} 
+                      className="bg-blue-500 text-white px-3 py-1 rounded-md "
+                      style={{ backgroundColor: "#2d3748" }}>
+                      Clear
+                    </button>
+                  </div>
+                  </div>
+
+          
+               
+              </LocalizationProvider>
 
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={responseTimeData}>
