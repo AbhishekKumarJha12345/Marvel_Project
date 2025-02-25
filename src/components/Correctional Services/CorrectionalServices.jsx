@@ -94,15 +94,26 @@ const CorrectionalServices = () => {
     },
     scales: {
       x: {
+        title: {
+          display: true,
+          text: 'Personnel Trained Rank', // X-axis title
+          font: { size: 12 },
+        },
         grid: {
           offset: true, // Add offset to prevent overlapping
         },
       },
       y: {
+        title: {
+          display: true,
+          text: 'Count', // X-axis title
+          font: { size: 12 },
+        },
         beginAtZero: true,
       },
     },
   };
+
 
   const handleFormChange = (e) => {
     setFormData({

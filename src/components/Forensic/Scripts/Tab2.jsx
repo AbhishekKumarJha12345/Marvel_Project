@@ -72,6 +72,10 @@ export default function Tab2() {
   const [filteredlineData, setFilteredlineData] = useState([]);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
+  const [fromDate1, setFromDate1] = useState(null);
+  const [toDate1, setToDate1] = useState(null);
+  const [fromDate2, setFromDate2] = useState(null);
+  const [toDate2, setToDate2] = useState(null);
   
   useEffect(() => {
     const fetchData = async () => {
@@ -110,11 +114,11 @@ export default function Tab2() {
   const transformToPieChartData = (data) => {
     console.log('------------------',data)
     return [
-      { name: "Available", value: data.available },
-      { name: "In Use", value: data.in_use },
-      { name: "Out of Service", value: data.out_of_service },
-      { name: "Under Maintenance", value: data.under_maintanence },
-      { name: "Status", value: data.status },
+      { name: "Available", value: data?.available },
+      { name: "In Use", value: data?.in_use },
+      { name: "Out of Service", value: data?.out_of_service },
+      { name: "Under Maintenance", value: data?.under_maintanence },
+      { name: "Status", value: data?.status },
     ];
   };
   useEffect(()=>{
@@ -122,13 +126,26 @@ export default function Tab2() {
     {
 setPieChartData(transformToPieChartData(linechartdata[linechartdata.length-1]))}
   },[linechartdata])
-  const Clearfilter=()=>{
-    setFromDate(null);
-    setToDate(null);
-    setFilteredData(formattedData)
-    setFilteredExpansion(formattedExpansionDemand)
-    setFilteredlineData(linechartdata)
-    
+  const Clearfilter=(type)=>{
+    if(type==='1')
+        {
+        setFromDate(null);
+        setToDate(null);
+        setFilteredData(formattedData)
+      }
+        
+    if(type==='2')
+      {
+      setFromDate1(null);
+      setToDate1(null);
+      setFilteredExpansion(formattedExpansionDemand)
+    }
+    if(type==='3')
+      {
+      setFromDate2(null);
+      setToDate2(null);
+      setFilteredlineData(linechartdata)
+    }
   }
   const filterDataByDate = (data, fromDate, toDate) => {
     if (!Array.isArray(data)) {
@@ -138,10 +155,11 @@ setPieChartData(transformToPieChartData(linechartdata[linechartdata.length-1]))}
   
     console.log("Filtering data from:", fromDate, "to:", toDate);
     console.log("Raw Data:", data);
+    console.log('-------------------------------------------------------------------');
   
     return data.filter((item) => {
       let itemDate = dayjs(item.month, "MMM YYYY"); // Convert to dayjs object
-      let itemDatee = dayjs(item.month, "MMM-YYYY"); // Convert to dayjs object
+      let itemDatee = dayjs(item.month_year, "MMM-YYYY"); // Convert to dayjs object
       console.log('boolean',!itemDate.isValid(),!itemDatee.isValid())
       if (!itemDate.isValid()&&!itemDatee.isValid()) {
         console.error("Invalid date:", item.month);
@@ -158,84 +176,81 @@ setPieChartData(transformToPieChartData(linechartdata[linechartdata.length-1]))}
   
 useEffect(() => {
   if (fromDate || toDate) {
-    console.log("Filtering data for dates:", fromDate, toDate);
+    console.log('11111111111111111111111111111111111111');
     
     // ICJSCaseData()
-      const filteredData1 = filterDataByDate(formattedExpansionDemand, fromDate, toDate);
-      const filteredData2 = filterDataByDate(formattedData, fromDate, toDate);
-      // const filteredData3 = filterDataByDate(linechartdata, fromDate, toDate);
+    const filteredData2 = filterDataByDate(formattedData, fromDate, toDate);
+      console.log(filteredData2)
 
       setFilteredData(filteredData2);
-      setFilteredExpansion(filteredData1)
-      // setFilteredlineData(filteredData3)
-      // console.log('kjkkjnbbfcvtrdvst',filteredData3[filteredData3.length-1])
-      // setPieChartData(transformToPieChartData(filteredData3[filteredData3.length-1]))
-      console.log('Monthly Response Time by Region',filteredData2)
-
+     
   }
-}, [fromDate, toDate]);
+  if(fromDate1 || toDate1){
+    console.log('222222222222222222222222222222222222222222222');
+
+      
+      const filteredData1 = filterDataByDate(formattedExpansionDemand, fromDate1, toDate1);
+      console.log(filteredData1)
+      setFilteredExpansion(filteredData1)
+  }
+  if(fromDate2 || toDate2){
+    console.log('33333333333333333333333333333333333333333333333333333333');
+    const filteredData3 = filterDataByDate(linechartdata, fromDate2, toDate2);
+
+      setFilteredlineData(filteredData3)
+      console.log(filteredData3)
+      console.log('kjkkjnbbfcvtrdvst',filteredData3[filteredData3.length-1])
+      setPieChartData(transformToPieChartData(filteredData3[filteredData3.length-1]))
+  }
+}, [fromDate, toDate,fromDate1, toDate1,fromDate2, toDate2]);
+
+const restructureData = (type) => {
+  if (type === "1") {
+    const lastMonthData = filteredData[filteredData.length - 1];
+
+    return [
+      { region: "North", responseTime: lastMonthData.North },
+      { region: "South", responseTime: lastMonthData.South },
+      { region: "East", responseTime: lastMonthData.East },
+      { region: "West", responseTime: lastMonthData.West },
+    ];
+  }
+
+  if (type === "2") {
+    const lastMonthData = filteredExpansion[filteredExpansion.length - 1];
+
+    return [
+      { region: "North", demand: lastMonthData.North },
+      { region: "South", demand: lastMonthData.South },
+      { region: "East", demand: lastMonthData.East },
+      { region: "West", demand: lastMonthData.West },
+    ];
+  }
+
+  return [];
+};
+const [dataResponseTimes,setDataResponseTimes] = useState(restructureData("1"));
+const [dataExpansionDemand,setDataExpansionDemand] = useState(restructureData("2"));
+  
+  useEffect(() => {
+    if (filteredData) {
+      setDataResponseTimes(restructureData("1"))
+    }
+    if(filteredExpansion)
+    {
+      setDataExpansionDemand(restructureData("2"))
+    }
+  }, [filteredData,filteredExpansion]);
 
   return (
     <div
       className="rounded-lg w-full max-w-full h-auto"
       style={{ fontFamily: "Work Sans", maxWidth: "90.7vw" }}
     >
-      
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <div className="flex justify-between items-center mb-4">
-          
-        <h1 className="text-2xl font-bold mb-6">
+      <h1 className="text-2xl font-bold mb-6">
         Mobile Forensic Vans Dashboard
       </h1>
-
-  
-          <div className="flex items-center gap-4">
-            <div>
-               
-              <DatePicker
-              label='From'
-                views={["year", "month"]}
-                value={fromDate}
-                onChange={setFromDate}
-                slotProps={{
-                  textField: { 
-                    variant: "outlined",
-                    size: "small",
-                    sx: { width: "140px", fontSize: "12px" },
-                  }
-                }}
-                sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
-              />
-            </div>
-  
-            <div>
-               
-              <DatePicker
-              label='To'
-                views={["year", "month"]}
-                value={toDate}
-                onChange={setToDate}
-                slotProps={{
-                  textField: { 
-                    variant: "outlined",
-                    size: "small",
-                    sx: { width: "140px", fontSize: "12px" },
-                  }
-                }}
-                sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
-              />
-            </div>
-  
-            <button 
-              onClick={Clearfilter} 
-              className="bg-blue-500 text-white px-3 py-1 rounded-md "
-              style={{ backgroundColor: "#2d3748" }}>
-              Clear Filter
-            </button>
-          </div>
-  
-        </div>
-      </LocalizationProvider>
+      
 
       {/* Image Carousel Over Van Availability */}
       {/* <div className="relative mb-6">
@@ -252,7 +267,57 @@ useEffect(() => {
         
         
         <div className="bg-white p-4 rounded-lg shadow-md">
-      <h2 className="text-lg font-bold mb-4">Monthly Response Time by Region</h2>
+       <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-bold mb-4">Monthly Response Time by Region</h2>
+      
+                  <div className="flex items-center gap-4">
+                <div>
+                  
+                  <DatePicker
+                  label='From'
+                    views={["year", "month"]}
+                    value={fromDate}
+                    onChange={setFromDate}
+                    slotProps={{
+                      textField: { 
+                        variant: "outlined",
+                        size: "small",
+                        sx: { width: "140px", fontSize: "12px" },
+                      }
+                    }}
+                    sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                  />
+                </div>
+      
+                <div>
+                 
+                  <DatePicker
+                  label='To'
+                    views={["year", "month"]}
+                    value={toDate}
+                    onChange={setToDate}
+                    slotProps={{
+                      textField: { 
+                        variant: "outlined",
+                        size: "small",
+                        sx: { width: "140px", fontSize: "12px" },
+                      }
+                    }}
+                    sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                  />
+                </div>
+      
+                <button 
+                  onClick={() => Clearfilter('1')}
+                  className="bg-blue-500 text-white px-3 py-1 rounded-md "
+                  style={{ backgroundColor: "#2d3748" }}>
+                  Clear
+                </button>
+              </div>
+      
+            </div>
+          </LocalizationProvider>
       <ResponsiveContainer width="100%" height={400}>
         <LineChart data={filteredData}>
           <XAxis
@@ -319,7 +384,56 @@ useEffect(() => {
         </div>
 
         <div className="bg-white p-4 rounded-lg shadow-md">
-      <h2 className="text-lg font-bold mb-4">Monthly Expansion Demand by Region</h2>
+       <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-bold mb-4">Monthly Expansion Demand by Region</h2>
+                  <div className="flex items-center gap-4">
+                <div>
+                  
+                  <DatePicker
+                  label='From'
+                    views={["year", "month"]}
+                    value={fromDate1}
+                    onChange={setFromDate1}
+                    slotProps={{
+                      textField: { 
+                        variant: "outlined",
+                        size: "small",
+                        sx: { width: "140px", fontSize: "12px" },
+                      }
+                    }}
+                    sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                  />
+                </div>
+      
+                <div>
+                 
+                  <DatePicker
+                  label='To'
+                    views={["year", "month"]}
+                    value={toDate1}
+                    onChange={setToDate1}
+                    slotProps={{
+                      textField: { 
+                        variant: "outlined",
+                        size: "small",
+                        sx: { width: "140px", fontSize: "12px" },
+                      }
+                    }}
+                    sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                  />
+                </div>
+      
+                <button 
+                  onClick={() => Clearfilter('2')}
+                  className="bg-blue-500 text-white px-3 py-1 rounded-md "
+                  style={{ backgroundColor: "#2d3748" }}>
+                  Clear
+                </button>
+              </div>
+      
+            </div>
+          </LocalizationProvider>
       <ResponsiveContainer width="100%" height={400}>
         <LineChart data={filteredExpansion}>
           <XAxis
@@ -372,7 +486,7 @@ useEffect(() => {
           <h2 className="text-xl font-semibold mb-4">
             Expansion Demand by Region
           </h2>
-          <p><strong>Recent Entry:</strong>{filteredData[filteredData.length-1]?.month}</p>
+          <p><strong>Recent Entry:</strong>{filteredExpansion[filteredExpansion.length-1]?.month}</p>
 
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={dataExpansionDemand}>
@@ -387,9 +501,59 @@ useEffect(() => {
         </div>
 
         <div className="bg-white p-4 rounded-lg shadow-md">
-      <h2 className="text-lg font-bold mb-4">Monthly Van Availability</h2>
+       <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-bold mb-4">Monthly Van Availability</h2>
+      
+                  <div className="flex items-center gap-4">
+                <div>
+                  
+                  <DatePicker
+                  label='From'
+                    views={["year", "month"]}
+                    value={fromDate2}
+                    onChange={setFromDate2}
+                    slotProps={{
+                      textField: { 
+                        variant: "outlined",
+                        size: "small",
+                        sx: { width: "140px", fontSize: "12px" },
+                      }
+                    }}
+                    sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                  />
+                </div>
+      
+                <div>
+                 
+                  <DatePicker
+                  label='To'
+                    views={["year", "month"]}
+                    value={toDate2}
+                    onChange={setToDate2}
+                    slotProps={{
+                      textField: { 
+                        variant: "outlined",
+                        size: "small",
+                        sx: { width: "140px", fontSize: "12px" },
+                      }
+                    }}
+                    sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                  />
+                </div>
+      
+                <button 
+                  onClick={() => Clearfilter('3')}
+                  className="bg-blue-500 text-white px-3 py-1 rounded-md "
+                  style={{ backgroundColor: "#2d3748" }}>
+                  Clear
+                </button>
+              </div>
+      
+            </div>
+          </LocalizationProvider>
       <ResponsiveContainer width="100%" height={400}>
-        <LineChart data={linechartdata}>
+        <LineChart data={filteredlineData}>
           <XAxis
             dataKey="month_year"
             stroke="#6b7280"
@@ -439,7 +603,7 @@ useEffect(() => {
         {/* Availability Pie Chart */}
         <div className="bg-white p-4 rounded-xl shadow-md">
           <h2 className="text-xl font-semibold mb-4">Van Availability</h2>
-          <p><strong>Recent Entry:</strong>{linechartdata[linechartdata.length-1]?.month_year}</p>
+          <p><strong>Recent Entry:</strong>{filteredlineData[filteredlineData.length-1]?.month_year}</p>
  
           <ResponsiveContainer width="100%" height={300}>
   <PieChart>

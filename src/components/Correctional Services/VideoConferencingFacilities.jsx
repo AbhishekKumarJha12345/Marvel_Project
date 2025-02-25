@@ -641,7 +641,6 @@ const VideoConferencingFacilities = () => {
       formData.vc_sets_count || 0,
       parseFloat(formData.cubicles_count) || 0, // convert string to number if necessary
     ] : [0, 0, 0, 0];
-    console.log('formdataisprinting:',formData)
     // Data for the Pie Chart
     const chartData = [
       
@@ -652,23 +651,7 @@ const VideoConferencingFacilities = () => {
     ];
   
   
-    // const options = {
-    //   responsive: true,
-    //   plugins: {
-    //     legend: {
-    //       position: 'top',
-    //     },
-    //     tooltip: {
-    //       callbacks: {
-    //         label: function (tooltipItem) {
-    //           const label = tooltipItem.label || '';
-    //           const value = tooltipItem.raw || 0;
-    //           return ${label}: ${value};
-    //         },
-    //       },
-    //     },
-    //   },
-    // };
+
   return (
     <div>
       {/* Add Button */}

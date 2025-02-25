@@ -10,6 +10,9 @@ const ComplianceSection = () => {
 
   const host = import.meta.env.VITE_APP_API_URL;
 
+const chartColors = ["#8884d8", "#82ca9d", "#f2c57c", "#6a8caf", "#d4a5a5", "#a28bd3", "#ff9a76", "#74b49b"];
+
+
   const [chartData, setChartData] = useState({
     labels: [
       'Correctional Institutions',
@@ -19,9 +22,9 @@ const ComplianceSection = () => {
     ],
     datasets: [
       {
-        data: [0, 0, 0, 0], 
-        backgroundColor: ['#FF5733', '#33FF57', '#3357FF', '#FFD700'],
-        borderColor: ['#FF5733', '#33FF57', '#3357FF', '#FFD700'],
+        data: [0, 0, 0, 0],
+        backgroundColor: chartColors,
+        borderColor: chartColors,
         borderWidth: 1,
       },
     ],
@@ -90,7 +93,7 @@ const ComplianceSection = () => {
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const handleFileChange = (e) => {
-  setSelectedFile(e.target.files[0]);
+    setSelectedFile(e.target.files[0]);
   };
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -104,7 +107,7 @@ const ComplianceSection = () => {
       Admission: formData.Admission,
       Inmates_percentage: formData.Inmates_percentage,
     };
-  
+
     fetch(`${host}/submit_compliance_data`, {
       method: 'POST',
       headers: {
@@ -129,7 +132,7 @@ const ComplianceSection = () => {
       });
     setIsModalOpen(false); // Close modal after submitting
   };
-  
+
   const handleFileUpload = (e) => {
     // const file = e.target.files[0];
     if (file) {
@@ -163,11 +166,11 @@ const ComplianceSection = () => {
     <div>
       {/* Add Button */}
       <div className="w-full flex justify-end">
-         {localStorage.getItem('role') !== 'chief secretary' && (
-        <button onClick={() => setIsModalOpen(true)} className="bg-gray-700 text-white py-2 px-4 rounded">
-          Add
-        </button>
-         )}
+        {localStorage.getItem('role') !== 'chief secretary' && (
+          <button onClick={() => setIsModalOpen(true)} className="bg-gray-700 text-white py-2 px-4 rounded">
+            Add
+          </button>
+        )}
       </div>
 
       {/* Pie Chart Section */}
@@ -181,112 +184,112 @@ const ComplianceSection = () => {
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
-        <div className="bg-white rounded-lg w-[50%] relative">
-        <button
+          <div className="bg-white rounded-lg w-[50%] relative">
+            <button
               className="absolute top-2 right-5 text-white text-xl mt-4"
               onClick={() => setIsModalOpen(false)}
             >
-              <RxCross1/>
-            </button>          
-          <div className="bg-gray-700 text-white p-4 rounded-t-lg">
-            <h2 className="text-2xl font-bold">Compliance of Section 472 of BNSS</h2>
-          </div>
-          <div className="p-6">
-            <div className="mb-4 flex gap-4">
-              <label className="flex items-center gap-2 font-bold">
-                <input type="radio" name="option" value="fillForm" checked={selectedOption === 'fillForm'} onChange={() => setSelectedOption('fillForm')} /> Fill Form
-              </label>
-
-              <label className="flex items-center gap-2 font-bold">
-                <input
-                  className="cursor-pointer"
-                  type="radio"
-                  name="option"
-                  value="upload"
-                  checked={selectedOption === 'upload'}
-                  onChange={() => setSelectedOption('upload')}
-                />
-                Upload
-              </label>
+              <RxCross1 />
+            </button>
+            <div className="bg-gray-700 text-white p-4 rounded-t-lg">
+              <h2 className="text-2xl font-bold">Compliance of Section 472 of BNSS</h2>
             </div>
+            <div className="p-6">
+              <div className="mb-4 flex gap-4">
+                <label className="flex items-center gap-2 font-bold">
+                  <input type="radio" name="option" value="fillForm" checked={selectedOption === 'fillForm'} onChange={() => setSelectedOption('fillForm')} /> Fill Form
+                </label>
 
-            {/* Conditionally Render Form or Upload Button */}
-            {selectedOption === 'fillForm' ? (
-              <form onSubmit={handleSubmit}>  
-                <div className="mb-4">
-                <input
-    type="text"
-    name="correctionalInstitution"
-    // value={formData.correctionalInstitution}
-    onChange={handleChange}
-    className="w-full p-3 border border-gray-300 rounded mb-3"
-    placeholder="Enter the number of correctional institutions"
-    required
-  />
-
-<input
-  type="text"
-  name="InmatePopulation"
-  // value={formData.InmatePopulation}
-  onChange={handleChange}
-  className="w-full p-3 border border-gray-300 rounded mb-3"
-  placeholder="Enter the number of prisoners awarded death sentence"
-  required
-/>
-
-<input
-  type="text"
-  name="Admission"
-  // value={formData.Admission}
-  onChange={handleChange}
-  className="w-full p-3 border border-gray-300 rounded mb-3"
-  placeholder="Enter the number of prisoners whose appeals were dismissed"
-  required
-/>
-
-<input
-  type="text"
-  name="Inmates_percentage"
-  // value={formData.Inmates_percentage}
-  onChange={handleChange}
-  className="w-full p-3 border border-gray-300 rounded mb-3"
-  placeholder="Enter the number of prisoners who filed a mercy petition"
-  required
-/>
-
-                </div>
-
-
-
-                {/* Buttons */}
-                <div className="flex justify-end">
-                  <button type="submit" className="bg-gray-700 text-white py-2 px-4 rounded">
-Submit                  </button>
-                
-                </div>
-              </form>
-            ) : (
-              <div className="flex flex-col items-end mb-4 mt-4">
-                <input
-                  type="file"
-                  accept=".csv, .xlsx, .xls"
-                  onChange={handleFileChange}
-
-                  
-                  className="mb-4 border border-gray-300 p-3 rounded w-full"
-                />
-                <button
-                  type="button"
-                  className="bg-gray-700 text-white py-2 px-4 rounded mt-3"
-                  onClick={() => handleFileUpload(selectedFile)}
-                >
-                  Upload File
-                </button>
-               
+                <label className="flex items-center gap-2 font-bold">
+                  <input
+                    className="cursor-pointer"
+                    type="radio"
+                    name="option"
+                    value="upload"
+                    checked={selectedOption === 'upload'}
+                    onChange={() => setSelectedOption('upload')}
+                  />
+                  Upload
+                </label>
               </div>
-            )}
+
+              {/* Conditionally Render Form or Upload Button */}
+              {selectedOption === 'fillForm' ? (
+                <form onSubmit={handleSubmit}>
+                  <div className="mb-4">
+                    <input
+                      type="text"
+                      name="correctionalInstitution"
+                      // value={formData.correctionalInstitution}
+                      onChange={handleChange}
+                      className="w-full p-3 border border-gray-300 rounded mb-3"
+                      placeholder="Enter the number of correctional institutions"
+                      required
+                    />
+
+                    <input
+                      type="text"
+                      name="InmatePopulation"
+                      // value={formData.InmatePopulation}
+                      onChange={handleChange}
+                      className="w-full p-3 border border-gray-300 rounded mb-3"
+                      placeholder="Enter the number of prisoners awarded death sentence"
+                      required
+                    />
+
+                    <input
+                      type="text"
+                      name="Admission"
+                      // value={formData.Admission}
+                      onChange={handleChange}
+                      className="w-full p-3 border border-gray-300 rounded mb-3"
+                      placeholder="Enter the number of prisoners whose appeals were dismissed"
+                      required
+                    />
+
+                    <input
+                      type="text"
+                      name="Inmates_percentage"
+                      // value={formData.Inmates_percentage}
+                      onChange={handleChange}
+                      className="w-full p-3 border border-gray-300 rounded mb-3"
+                      placeholder="Enter the number of prisoners who filed a mercy petition"
+                      required
+                    />
+
+                  </div>
+
+
+
+                  {/* Buttons */}
+                  <div className="flex justify-end">
+                    <button type="submit" className="bg-gray-700 text-white py-2 px-4 rounded">
+                      Submit                  </button>
+
+                  </div>
+                </form>
+              ) : (
+                <div className="flex flex-col items-end mb-4 mt-4">
+                  <input
+                    type="file"
+                    accept=".csv, .xlsx, .xls"
+                    onChange={handleFileChange}
+
+
+                    className="mb-4 border border-gray-300 p-3 rounded w-full"
+                  />
+                  <button
+                    type="button"
+                    className="bg-gray-700 text-white py-2 px-4 rounded mt-3"
+                    onClick={() => handleFileUpload(selectedFile)}
+                  >
+                    Upload File
+                  </button>
+
+                </div>
+              )}
+            </div>
           </div>
-        </div>
         </div>
 
       )}
