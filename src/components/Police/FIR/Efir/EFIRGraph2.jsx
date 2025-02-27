@@ -73,7 +73,7 @@ const EFIRsChart2 = ({ generateReport }) => {
   const options = {
     responsive: true,
     plugins: {
-      legend: { position: 'top' },
+      legend: { position: 'bottom' },
       title: { display: true, text: 'eFIRs Data Trend Over the Year' },
       tooltip: {
         callbacks: {
@@ -85,7 +85,10 @@ const EFIRsChart2 = ({ generateReport }) => {
     },
     maintainAspectRatio: false,
     scales: {
-      x: { title: { display: true, text: 'Month',      font: { weight: 'bold', size: 14 } 
+      x: { title: { display: true, text: 'Month', font: { weight: 'bold', size: 14 } ,
+      ticks: {
+        padding: 40,
+      },
     } },
       y: { title: { display: true, text: 'Number of eFIRs',      font: { weight: 'bold', size: 14 } 
     }, beginAtZero: true },
