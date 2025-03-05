@@ -303,7 +303,7 @@ useEffect(() => {
         
               </div>
             </LocalizationProvider>
-        <ResponsiveContainer width="100%" height={400}>
+        <ResponsiveContainer width="100%" height={330}>
           <LineChart data={filteredData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" 

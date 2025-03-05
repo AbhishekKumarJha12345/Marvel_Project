@@ -4,12 +4,13 @@ import DataTable from "react-data-table-component";
 import "tailwindcss/tailwind.css";
 import ModalComponent from '../Police/ModalComponent'
 const data = [
-  { role: "Assistant Public Prosecutor", posts: 491, date: "2025-02-01" },
-  { role: "Additional Public Prosecutor", posts: 244, date: "2025-03-15" },
-  { role: "Senior Prosecutor", posts: 50, date: "2025-04-20" },
-  { role: "Legal Advisor", posts: 30, date: "2025-05-10" },
-  { role: "Chief Prosecutor", posts: 10, date: "2025-06-05" },
+  { role: "Assistant Public Prosecutor", posts: 491, date: "01/02/2025" },
+  { role: "Additional Public Prosecutor", posts: 244, date: "15/03/2025" },
+  { role: "Senior Prosecutor", posts: 50, date: "20/04/2025" },
+  { role: "Legal Advisor", posts: 30, date: "10/05/2025" },
+  { role: "Chief Prosecutor", posts: 10, date: "05/06/2025" },
 ];
+
 
 
 const Prosecution = () => {

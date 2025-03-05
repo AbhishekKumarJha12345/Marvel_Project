@@ -155,7 +155,7 @@ const CourtTab2 = () => {
   };
   useEffect(() => {
     if (fromDate || toDate) {
-      console.log("Filtering accessibility compliance data for dates:", fromDate, toDate);
+      console.log("11111111111111111111111111111111");
       const filtered = filterDataByDate(summonsDigitalData, fromDate, toDate);
       console.log("Filtered Accessibility Data:", filtered);
       setFilteredData(filtered);
@@ -261,7 +261,7 @@ const CourtTab2 = () => {
         Compliant: item.data_security_complaints || 0,
         NonComplaints: item.data_security_non_complaints || 0,
       }))
-      .sort((a, b) => dayjs(b.month, "MMM YYYY").toDate() - dayjs(a.month, "MMM YYYY").toDate()) // Newest to Oldest
+      .sort((a, b) => dayjs(a.month, "MMM YYYY").toDate() - dayjs(b.month, "MMM YYYY").toDate()) // Newest to Oldest
     : [];
 
   // Process accessibility compliance data
@@ -272,7 +272,7 @@ const CourtTab2 = () => {
         Accessible: item.accessibility_complaints || 0,
         InAccessible: item.accessibility_non_complaints || 0,
       }))
-      .sort((a, b) => dayjs(b.month, "MMM YYYY").toDate() - dayjs(a.month, "MMM YYYY").toDate()) // Newest to Oldest
+      .sort((a, b) => dayjs(a.month, "MMM YYYY").toDate() - dayjs(b.month, "MMM YYYY").toDate()) // Newest to Oldest
     : [];
 
 

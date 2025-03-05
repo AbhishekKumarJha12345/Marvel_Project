@@ -29,7 +29,7 @@ const PoliceOfficers = ({ getDate }) => {
       setTrainingData(formattedData);
 
       if (formattedData.length > 0) {
-        getDate(formattedData[0].uploaded_date);
+        getDate(formattedData[0].date);
       }
     } catch (error) {
       console.log(error);

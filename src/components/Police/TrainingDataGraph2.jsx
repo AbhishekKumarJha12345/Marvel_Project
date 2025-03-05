@@ -22,12 +22,15 @@ const TrainingDataGraph2 = () => {
   const [toDate, setToDate] = useState(null);
   const [error, setError] = useState(null);
 
-  function convertMonthFormat(yyyy_mm) {
-    if (!yyyy_mm || !yyyy_mm.includes("-")) return yyyy_mm;
-    const [year, month] = yyyy_mm.split("-");
-    return `${month}-${year}`;
+  function convertMonthFormat(dateStr) {
+    if (!dateStr || !dateStr.includes("-")) return dateStr;
+    const [first, second] = dateStr.split("-");
+    
+    // If first part is a year (length 4), convert to MM-YYYY
+    // Otherwise, assume it's in MM-YYYY format and convert to YYYY-MM
+    return first.length === 4 ? `${second}-${first}` : `${second}-${first}`;
   }
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -46,7 +49,7 @@ const TrainingDataGraph2 = () => {
               new Date(b.month.split("-").reverse().join("-"))
             );
 
-          setData(sortedData.reverse());
+          setData(sortedData);
         }
       } catch (error) {
         setError(error.message);
@@ -57,12 +60,13 @@ const TrainingDataGraph2 = () => {
   }, []);
 
   const filteredData = data.filter((item) => {
-    const itemDate = new Date(item.month.split("-").reverse().join("-"));
+    const itemDate = new Date(item.month.split("-").join("-")); // No need to reverse
     return (
       (!fromDate || itemDate >= new Date(fromDate.format("YYYY-MM"))) &&
       (!toDate || itemDate <= new Date(toDate.format("YYYY-MM")))
     );
   });
+  
 
   return (
     <div className="bg-white p-4 rounded-xl shadow-md" style={{ width: "48%", height: 600 }}>

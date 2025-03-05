@@ -24,6 +24,8 @@ import FluorescentIcon from '@mui/icons-material/Fluorescent';
 import logo from '../assets/logo22.png'
 import ModalComponent from './Police/ModalComponent'
 
+import Demo from '../components/Police/Demo'
+
 import MaharashtraPoliceMap from './CS/Csstartpage'
 
 import Adminviewe from '../../src/components/Admin/Adminviewe'
@@ -285,6 +287,7 @@ export default function Dashboard({ users }) {
     "chargesheet"           : <div className="content"><Firchargesheets  /></div>,
     "zerofir"               : <div className="content"><FirZero /></div>,
     "efir"                  : <div className="content"><Efir /></div>,
+    "FIR"                  : <div className="content"><Demo /></div>,
     "admin": <div className="content"><Adminviewe /> </div>,
   };
   const [openmodal, setOpenmodal] = useState(false);
@@ -583,12 +586,13 @@ doc.text("In summary, the data reveals that there is a general increase in the n
                     </button>
                     <button
                       className="dropdown-item"
-                      onClick={() => toggleSubMenu(1)}
+                      // onClick={() => toggleSubMenu(1)}
+                      onClick={() => handleSectionClick("FIR")}
                     >
                       FIR
                     </button>
 
-                    {activeSubMenu === 1 && (
+                    {/* {activeSubMenu === 1 && (
                       <div className="sub-dropdown">
                         <button
                           className="sub-dropdown-item"
@@ -615,7 +619,7 @@ doc.text("In summary, the data reveals that there is a general increase in the n
                           E FIR
                         </button>
                       </div>
-                    )}
+                    )} */}
                     {/* <button
                       className="dropdown-item"
                       onClick={() => handleSectionClick("awareness/campaign")}

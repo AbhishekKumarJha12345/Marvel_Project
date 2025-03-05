@@ -1,122 +1,69 @@
 import React, { useEffect, useState } from 'react';
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
-import axiosInstance from "../../utils/axiosInstance"; // Using axios instance
-
-ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+import policeStations from "./police_stations.json"; // Import JSON directly
 
 const MiniMap = ({ district }) => {
-    const [barData, setBarData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-
-    // Dont Remove the code, this is for Min-MAP 
-
-    // useEffect(() => {
-    //     if (!district) return;
-
-    //     const miniMap = L.map('mini-map', {
-
-    //         center: district.properties.dtname === "Palghar" ? [19.6967, 72.7699] : [district.geometry.coordinates[0][0][1], district.geometry.coordinates[0][0][0]], 
-    //         zoom: 7,
-    //         minZoom: 7,
-    //         maxZoom: 16,
-    //     });
-
-    //     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    //         maxZoom: 18,
-    //     }).addTo(miniMap);
-
-    //     L.geoJSON(district.geometry, {
-    //         style: { color: 'rgb(165, 165, 165)', weight: 2, fillOpacity: 0.5, fillColor: "rgba(129, 163, 255, 0.24)" },
-    //     }).addTo(miniMap);
-
-    //     return () => {
-    //         miniMap.remove();
-    //     };
-    // }, [district]);
-
-    // Dont Remove the code, this is for Min-MAP 
-
-
     useEffect(() => {
-        const fetchBarData = async () => {
-            if (!district) return;
+        if (!district) return;
 
-            setLoading(true);
-            setError(null);
+        const miniMap = L.map('mini-map', {
+            center: district.properties.dtname === "Palghar" ? [19.6967, 72.7699] : 
+                    [district.geometry.coordinates[0][0][1], district.geometry.coordinates[0][0][0]], 
+            zoom: 8.4,
+            minZoom: 8.4,
+            maxZoom: 16,
+        });
 
-            try {
-                const response = await axiosInstance.get("/district-services");
-                const { data } = response;
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 18,
+        }).addTo(miniMap);
 
-                if (!data || !data.success || !Array.isArray(data.data)) {
-                    throw new Error("Invalid response from server.");
-                }
+        L.geoJSON(district.geometry, {
+            style: { color: 'rgb(165, 165, 165)', weight: 2 },
+        }).addTo(miniMap);
 
-                const districtData = data.data.find(item => item.district.toLowerCase() === district.properties.dtname.toLowerCase());
+        const filteredStations = policeStations.filter(
+            (station) => station.District.toLowerCase() === district.properties.dtname.toLowerCase()
+        );
 
-                if (!districtData) {
-                    throw new Error(`No data found for district: ${district.name}`);
-                }
 
-                setBarData({
-                    labels: ['Services'], // Single category to split into three datasets
-                    datasets: [
-                        {
-                            label: 'Police',
-                            data: [districtData.Police || 0],
-                            backgroundColor: '#4274D1' // Rich Royal Blue
-                        },
-                        {
-                            label: 'Forensic',
-                            data: [districtData.Forensic || 0],
-                            backgroundColor: '#E8743B' // Deep Sunset Orange
-                        },
-                        {
-                            label: 'Correctional',
-                            data: [districtData.Correctional || 0],
-                            backgroundColor: '#8E5EBE' // Vibrant Purple
-                        }
-                    ]
-                });
+        const customIcon = L.icon({
+            iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png', // Default marker icon
+            iconSize: [25, 41], // Size of the icon
+            iconAnchor: [12, 41], // Point of the icon that corresponds to marker's location
+            popupAnchor: [1, -34], // Where popups should open
+            tooltipAnchor: [16, -28], // Adjust tooltip position
+            shadowUrl: '', // No shadow
+            shadowSize: [0, 0], // Ensure no shadow
+            shadowAnchor: [0, 0] // No shadow anchor
+        });
 
-            } catch (err) {
-                console.error("Error fetching data:", err);
-                setError(err.message || "Error fetching data.");
-            } finally {
-                setLoading(false);
-            }
+        // Add Police Station Markers
+        filteredStations.forEach(station => {
+            const marker = L.marker([station.Latitude, station.Longitude], { icon: customIcon }).addTo(miniMap);
+
+            marker.bindTooltip(
+                `<div>
+                    <strong>${station["Police Station"]}</strong><br/>
+                    <b>Sub Division:</b> ${station["Sub Division"]}<br/>
+                    <b>District:</b> ${station.District}<br/>
+                    <b>Range:</b> ${station.Range}<br/>
+                    <b>Constables:</b> ${station.Constables}<br/>
+                    <b>Officers:</b> ${station.Officers}
+                </div>`,
+                { permanent: false, direction: "top" }
+            );
+        });
+
+        return () => {
+            miniMap.remove();
         };
-
-        fetchBarData();
     }, [district]);
 
     return (
-        <div className="minimap-container" style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '10px', backgroundColor: '#f9f9f9' }}>
-
-            {/*  Dont Remove the code, this is for Min-MAP  */}
-
-            {/* <div id="mini-map" style={{ height: '300px', width: '100%', borderRadius: '8px' }}></div> */}
-            
-            {/* Dont Remove the code, this is for Min-MAP  */}
-
-
-            <div style={{ textAlign: 'center', marginTop: '10px', padding: '10px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)' }}>
-                <h3 style={{ margin: 0, fontSize: '1.2em', color: '#333' }}>{district?.properties.dtname || "Select a District"}</h3>
-            </div>
-
-            <div style={{ marginTop: '15px', backgroundColor: '#fff', padding: '10px', borderRadius: '8px', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', height: '250px' }}>
-                {loading ? <p>Loading data...</p> : error ? <p style={{ color: 'red' }}>{error}</p> : barData && (
-                    <Bar
-                        data={barData}
-                        options={{ responsive: true, maintainAspectRatio: false }}
-                    />
-                )}
-            </div>
+        <div className="minimap-container" style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '10px', backgroundColor: '#f9f9f9', width: "100vw" }}>
+            <div id="mini-map" style={{ height: "80vh", width: '100%', borderRadius: '8px' }}></div>
         </div>
     );
 };

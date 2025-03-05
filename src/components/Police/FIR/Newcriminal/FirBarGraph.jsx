@@ -45,32 +45,33 @@ const FirBarGraph = () => {
         const response = await axiosInstance.get("/live_data", {
           params: { type: "line_fir_1" },
         });
-
+  
         if (response.status === 200 && response.data.data_dict) {
           console.log("FIR data:", response.data.data_dict);
-
+  
           const formattedData = response.data.data_dict
             .filter((item) => item.total_no_fir_registered_under_bns_ipc !== null)
             .map((item) => ({
               month: convertMonthFormat(item.month),
-              dateObj: dayjs(`${item.month}-01`),
+              dateObj: dayjs(`${item.month}-01`), // Creating a date object for sorting
               total_firs: parseFloat(item.total_no_fir_registered_under_bns_ipc) || 0,
               fir_under_bns: parseFloat(item.no_of_fir_registered_under_bns) || 0,
               chargesheets_filed: parseFloat(item.no_of_chargesheets_filed_under_bns) || 0,
               chargesheets_not_filed:
                 parseFloat(item.no_of_chargesheets_not_filed_within_the_stipulated_time) || 0,
             }))
-            .sort((a, b) => a.dateObj - b.dateObj);
-
-          setData(formattedData.reverse());
+            .sort((a, b) => a.dateObj - b.dateObj); // Sorting from oldest to latest
+  
+          setData(formattedData); // Removed .reverse()
         }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-
+  
     fetchData();
   }, []);
+  
 
   const filteredData = data.filter(
     (item) =>

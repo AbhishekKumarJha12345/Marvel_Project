@@ -61,11 +61,18 @@ function FirZero() {
       console.error("Error downloading report:", error);
     }
   };
-const [recentDate,setRecentDate]=useState('')
-const getRecentDate =(data)=>{
-  setRecentDate(data)
-
-}
+  const [recentDate, setRecentDate] = useState('');
+  const getRecentDate = (data) => {
+    if (data) {
+      const parts = data.split("-");
+      const isYearFirst = parts[0].length === 4;
+      const year = isYearFirst ? parts[0] : parts[1];
+      let month = isYearFirst ? parts[1] : parts[0];
+      if (month.length === 1) month = "0" + month;
+      setRecentDate(`${month}/${year}`);
+    }
+  };
+  
 
   return (
     <div>
