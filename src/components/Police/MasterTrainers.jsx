@@ -7,20 +7,12 @@ const chartColors = [
   "#8884d8", // Muted Purple
   "#82ca9d", // Soft Green
   "#f2c57c", // Warm Sand
-  "#6a8caf", // Steel Blue
-  "#d4a5a5", // Soft Rose
-  "#a28bd3", // Lavender
-  "#ff9a76", // Muted Coral
-  "#74b49b", // Muted Teal
-  "#c08497", // Mauve
-  "#b0a8b9"  // Dusty Lilac
 ];
 
-// Register the necessary chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const MasterTrainers = () => {
-  const [trainingData, setTrainingData] = useState('');
+  const [trainingData, setTrainingData] = useState(null);
 
   const getTrainingData = async () => {
     try {
@@ -45,34 +37,49 @@ const MasterTrainers = () => {
     ],
     datasets: [
       {
-        label: 'Training Statistics',
-        data: [
-          trainingData ? trainingData.training_workshops || 0 : 0,
-          trainingData ? trainingData.e_academy_online || 0 : 0,
-          trainingData ? trainingData.master_trainers || 0 : 0,
-        ],
-        backgroundColor: [chartColors[2], chartColors[3], chartColors[4]],
-        borderColor: [chartColors[2], chartColors[3], chartColors[4]],
+        label: "Training Workshops Conducted",
+        data: [trainingData?.training_workshops || 0, 0, 0], // Only for first category
+        backgroundColor: chartColors[0],
+        borderColor: chartColors[0],
+        borderWidth: 1,
+      },
+      {
+        label: "Training through E-Academy Online",
+        data: [0, trainingData?.e_academy_online || 0, 0], // Only for second category
+        backgroundColor: chartColors[1],
+        borderColor: chartColors[1],
+        borderWidth: 1,
+      },
+      {
+        label: "Master Trainers (Police Personnel)",
+        data: [0, 0, trainingData?.master_trainers || 0], // Only for third category
+        backgroundColor: chartColors[2],
+        borderColor: chartColors[2],
         borderWidth: 1,
       },
     ],
   };
 
-  // Options for the Bar chart
   const options = {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top',
+        position: "top",
       },
       title: {
         display: true,
-        text: 'Master Trainers Statistics',
+        text: "Master Trainers Statistics",
+        position: "bottom",
+
       },
     },
     scales: {
       y: {
         beginAtZero: true,
+        title: {
+          display: true,
+          text: "Count", 
+          font: { weight: "bold", size: 14 },         },
       },
     },
   };
@@ -84,7 +91,7 @@ const MasterTrainers = () => {
       </div>
       <div className="flex flex-col lg:flex-row w-full justify-center items-center">
         {/* Bar Chart */}
-        <div className="w-full h-[350px] p-3 d-flex justify-center items-center">
+        <div className="w-full h-[380px] p-3 d-flex justify-center items-center">
           <Bar data={barData} options={options} />
         </div>
       </div>

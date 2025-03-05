@@ -14,7 +14,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TextField, Button } from "@mui/material";
-import { Height } from "@mui/icons-material";
+import { Height, Padding } from "@mui/icons-material";
 
 const TrainingDataGraph2 = () => {
   const [data, setData] = useState([]);
@@ -22,12 +22,15 @@ const TrainingDataGraph2 = () => {
   const [toDate, setToDate] = useState(null);
   const [error, setError] = useState(null);
 
-  function convertMonthFormat(yyyy_mm) {
-    if (!yyyy_mm || !yyyy_mm.includes("-")) return yyyy_mm;
-    const [year, month] = yyyy_mm.split("-");
-    return `${month}-${year}`;
+  function convertMonthFormat(dateStr) {
+    if (!dateStr || !dateStr.includes("-")) return dateStr;
+    const [first, second] = dateStr.split("-");
+    
+    // If first part is a year (length 4), convert to MM-YYYY
+    // Otherwise, assume it's in MM-YYYY format and convert to YYYY-MM
+    return first.length === 4 ? `${second}-${first}` : `${second}-${first}`;
   }
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -46,7 +49,7 @@ const TrainingDataGraph2 = () => {
               new Date(b.month.split("-").reverse().join("-"))
             );
 
-          setData(sortedData.reverse());
+          setData(sortedData);
         }
       } catch (error) {
         setError(error.message);
@@ -57,16 +60,19 @@ const TrainingDataGraph2 = () => {
   }, []);
 
   const filteredData = data.filter((item) => {
-    const itemDate = new Date(item.month.split("-").reverse().join("-"));
+    const itemDate = new Date(item.month.split("-").join("-")); // No need to reverse
     return (
       (!fromDate || itemDate >= new Date(fromDate.format("YYYY-MM"))) &&
       (!toDate || itemDate <= new Date(toDate.format("YYYY-MM")))
     );
   });
+  
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-md" style={{ width: "48%", height: 550 }}>
-      <h2 className="mb-2">Monthly Workshops Conducted</h2>
+    <div className="bg-white p-4 rounded-xl shadow-md" style={{ width: "48%", height: 600 }}>
+            <h2 className=" text-xl font-semibold">Deviation</h2>
+
+      <h2 className="mb-3 text-xl font-semibold">Monthly Workshops Conducted</h2>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
   <div className="flex gap-4 mb-2 items-end">
     <DatePicker
@@ -96,12 +102,13 @@ const TrainingDataGraph2 = () => {
 </LocalizationProvider>
 
 
-      <ResponsiveContainer width="100%" height="80%">
+      <ResponsiveContainer width="100%" height={390}>
         <LineChart data={filteredData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="month"
-            label={{ value: "Date of Workshop", position: "insideBottom", offset: -3 }}
+            label={{ value: "Date of Workshop", position: "insideBottom", offset: -4,  style: { fontWeight: "bold", fontSize: 14 } }}
+
           />
           <YAxis
             tick={{ fontSize: 12, dx: -5 }}
@@ -110,10 +117,15 @@ const TrainingDataGraph2 = () => {
               angle: -90,
               position: "insideLeft",
               offset: -1,
-              style: { textAnchor: "middle" },
+              style: { textAnchor: "middle",fontWeight:'bold' },
             }}
           />
-          <Tooltip />
+ <Tooltip
+      contentStyle={{ backgroundColor: "#2d3748", color: "#ffffff", borderRadius: "8px" }}
+      itemStyle={{ color: "#facc15" }}
+      labelStyle={{ fontWeight: "bold", color: "#ffffff" }}
+    />       
+    
           <Line type="monotone" dataKey="count" stroke="#8884d8" strokeWidth={2} />
         </LineChart>
       </ResponsiveContainer>

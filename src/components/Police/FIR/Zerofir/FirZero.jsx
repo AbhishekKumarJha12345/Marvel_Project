@@ -61,11 +61,18 @@ function FirZero() {
       console.error("Error downloading report:", error);
     }
   };
-const [recentDate,setRecentDate]=useState('')
-const getRecentDate =(data)=>{
-  setRecentDate(data)
-
-}
+  const [recentDate, setRecentDate] = useState('');
+  const getRecentDate = (data) => {
+    if (data) {
+      const parts = data.split("-");
+      const isYearFirst = parts[0].length === 4;
+      const year = isYearFirst ? parts[0] : parts[1];
+      let month = isYearFirst ? parts[1] : parts[0];
+      if (month.length === 1) month = "0" + month;
+      setRecentDate(`${month}/${year}`);
+    }
+  };
+  
 
   return (
     <div>
@@ -107,8 +114,8 @@ const getRecentDate =(data)=>{
       <div className="mt-4">
         {activeTab === "home" && (
           <div className="col-6" style={{ width:"100%",height:"100%",paddingBottom:"1rem"}}>
-            <div className="card shadow-sm bg-white" style={{ width:"100%",padding:"24px",height: "80vh",marginBottom:"1rem" }}>
-              <div className="card-body">
+            <div className="" style={{ width:"100%",padding:"24px",height: "80vh",marginBottom:"1rem" }}>
+              <div className="">
                 <div className="flex justify-between items-center mb-1">
                   <h2 className="text-2xl font-semibold text-center flex-grow">Zero FIR</h2>
 
@@ -130,17 +137,17 @@ const getRecentDate =(data)=>{
                 </div>
                 <div style={{width:"100%",display:"flex",flexDirection:"column",gap:"0.5rem"}}>
                   <div style={{display:"flex",gap:"39rem"}}>
-                <h2 className="text-xl font-semibold">Deviation </h2>
+                {/* <h2 className="text-xl font-semibold">Deviation </h2> */}
                 <h2 className="text-xl font-semibold">Recent Entry :{recentDate}</h2>  
                 </div>
 <div style={{display:"flex",gap:"0.5rem"}}>
-<div style={{backgroundColor:"#f4f4f4",width:"49%",height:"400px",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
+<div style={{backgroundColor:"#f4f4f4",width:"49%",height:"400px",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
 <ZeroFir2 />
 
       </div>
       <br/>
       <hr/>
-<div style={{backgroundColor:"#f4f4f4",width:"49%",height:"400px",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
+<div style={{backgroundColor:"#f4f4f4",width:"49%",height:"400px",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
 <ZeroFir2 type='recent' getRecentDate={getRecentDate}/>
 
     </div>

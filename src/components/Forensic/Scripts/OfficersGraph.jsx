@@ -2,7 +2,7 @@ import React, { useState,useEffect } from "react";
 import {
   LineChart,
   Line,
-  XAxis,
+  XAxis,  
   YAxis,
   Tooltip,
   Legend,
@@ -102,6 +102,8 @@ const OfficersGraph = ({to,from,setGrade}) => {
     setToDate(null);
   }
   
+    const [hiddenLines, setHiddenLines] = useState({});
+  
   useEffect(() => {
     if (fromDate || toDate) {
       console.log("Filtering data from:", fromDate, "to:", toDate);
@@ -140,7 +142,13 @@ const OfficersGraph = ({to,from,setGrade}) => {
       console.log('----------while filtering---------------',dataArray[dataArray.length-1])
       setGrade(dataArray[dataArray.length-1])
   }, []);
-  
+
+  const handleLegendClick = (dataKey) => {
+    setHiddenLines((prev) => ({
+      ...prev,
+      [dataKey]: !prev[dataKey],
+    }));
+  };
   return (
     <div className="bg-white p-4 rounded-xl  w-full">
       <div className="flex justify-between mb-4 ">
@@ -217,7 +225,7 @@ const OfficersGraph = ({to,from,setGrade}) => {
               label={{
                 value: "Month",
                 position: "insideBottom",
-                offset: -5,
+                offset: -18,
               }}
             />
             <YAxis
@@ -238,7 +246,28 @@ const OfficersGraph = ({to,from,setGrade}) => {
                 border: "1px solid #e5e7eb",
               }}
             />
-            <Legend iconType="circle" wrapperStyle={{ paddingBottom: 10, paddingTop: 10 }} />
+            <Legend 
+            onClick={(e) => handleLegendClick(e.dataKey)} 
+            layout="horizontal"
+                verticalAlign="bottom"
+                align="center"
+                wrapperStyle={{
+                  position: "relative",
+                  marginTop: -5 // Adjust this value to move it further down
+                }}
+            formatter={(value) => (
+              <span 
+                style={{
+                  textDecoration: hiddenLines[value] ? "line-through" : "none",
+                  cursor: "pointer",
+                  color: hiddenLines[value] ? "#ccc" : "#000",
+                }}
+              >
+                {value}
+              </span>
+            )}
+
+            iconType="circle"  />
 
             {/* Dynamic Lines for Each Grade */}
             {["Director", "Dy Director", "Assistant Director", "Assistant Chemical Analyzer", "Scientific Officers"].map((grade, index) => (
@@ -246,9 +275,10 @@ const OfficersGraph = ({to,from,setGrade}) => {
                 key={grade}
                 type="monotone"
                 dataKey={grade}
-                stroke={chartColors[index]}
-                strokeWidth={4}
+                stroke={chartColors[index % chartColors.length]} // Ensuring index doesn't exceed colors array
+                strokeWidth={2}
                 dot={{ r: 5 }}
+                hide={hiddenLines[grade]} // Ensuring the line is hidden when toggled
                 name={grade}
               />
             ))}

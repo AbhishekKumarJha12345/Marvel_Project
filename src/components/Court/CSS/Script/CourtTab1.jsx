@@ -277,7 +277,7 @@ const CourtTab1 = () => {
         </div>
       </div>
       <div ref={exportRef}>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <div className=" rounded-lg w-full max-w-full h-auto mb-6 p-4">
         <h1 className="text-2xl font-bold">Deviation</h1>
 
          
@@ -372,7 +372,7 @@ const CourtTab1 = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <div className=" rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">
             Recent Entry : {recentEntryDate}
           </h1>
@@ -407,7 +407,8 @@ const CourtTab1 = () => {
             </ResponsiveContainer>
           </div>
         </div>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+       
+        <div className="rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">Deviation With Recent Entry</h1>
           {/* Line Chart - Average Resolution Time Over Time */}
           <div className="bg-white p-4 rounded-xl shadow-md">

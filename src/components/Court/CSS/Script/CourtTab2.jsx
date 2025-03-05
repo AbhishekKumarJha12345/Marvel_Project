@@ -54,7 +54,7 @@ import Courtform from "./Courtform.jsx";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
- 
+
 const CourtTab2 = () => {
   const [showModal, setShowModal] = useState(false);
   const exportRef = useRef(null); // Reference to content to be exported
@@ -63,30 +63,26 @@ const CourtTab2 = () => {
   const [toDate, setToDate] = useState(null);
   const [toSecurity, setToSecurity] = useState(null)
   const [fromSecurity, setFromSecurity] = useState(null)
-  const [fromDelivered , setFromDelivered ] = useState(null)
+  const [fromDelivered, setFromDelivered] = useState(null)
   const [toDelivered, setToDelivered] = useState(null)
-  const[toadoption,setToadoption]=useState(null)
-  const[fromadoption,setFromadoption]=useState(null)
-  // const[fromadoption,setFromadoption]=useState(null)
-
+  const [toadoption, setToadoption] = useState(null)
+  const [fromadoption, setFromadoption] = useState(null)
   const [filteredData, setFilteredData] = useState([]);
   const [filteredData2, setFilteredData2] = useState([]);
-
   const [filteredSecurityData, setFilteredSecurityData] = useState(
     summonsDigitalData
   );
   const [filtereddelivery, setFiltereddelivery] = useState([]);
 
   const [filteredadoption, setFilteredadoption] = useState([]);
-  
 
   const fetchSummonsDigitalData = async () => {
     try {
       const response = await axiosInstance.get("/live_data", {
         params: {
           type: "court_2",
-          from_date:fromDate?.toISOString().split("T")[0],
-          to_date:toDate?.toISOString().split("T")[0],
+          from_date: fromDate?.toISOString().split("T")[0],
+          to_date: toDate?.toISOString().split("T")[0],
         },
       });
       const responseData = response.data;
@@ -133,26 +129,29 @@ const CourtTab2 = () => {
     fetchSummonsDigitalData();
   }, []);
   const ClearFilter = (type) => {
-    console.log('type',type)
-    if(type==='1')
-    {setFromSecurity(null);
+    console.log('type', type)
+    if (type === '1') {
+      setFromSecurity(null);
       setToSecurity(null);
-    setFilteredSecurityData(summonsDigitalData);}
-    if(type==='2')
-    {
-    setFromDate(null);
-    setToDate(null);
-    setFilteredData(summonsDigitalData);
-    setFilteredData2(summonsDigitalData)}
-
-    if(type==='3')
-    {setToDelivered(null);
-    setFromDelivered(null);
-    setFiltereddelivery(summonsDigitalData)}
-    if(type==='4')
-    {setFromadoption(null);
-    setToadoption(null);
-    setFilteredadoption(summonsDigitalData)}
+      setFilteredSecurityData(summonsDigitalData);
+    }
+    if (type === '2') {
+     
+      setFromDate(null);
+      setToDate(null);
+      setFilteredData(summonsDigitalData);
+      setFilteredData2(summonsDigitalData);
+    }
+    if (type === '3') {
+      setToDelivered(null);
+      setFromDelivered(null);
+      setFiltereddelivery(summonsDigitalData)
+    }
+    if (type === '4') {
+      setFromadoption(null);
+      setToadoption(null);
+      setFilteredadoption(summonsDigitalData)
+    }
   };
   useEffect(() => {
     if (fromDate || toDate) {
@@ -161,7 +160,6 @@ const CourtTab2 = () => {
       console.log("Filtered Accessibility Data:", filtered);
       setFilteredData(filtered);
       setFilteredData2(filtered);
-
     }
   }, [fromDate, toDate]);
   useEffect(() => {
@@ -257,46 +255,46 @@ const CourtTab2 = () => {
   };
 
   const securityComplianceData = filteredSecurityData?.length
-  ? filteredSecurityData
+    ? filteredSecurityData
       .map((item) => ({
         month: dayjs(item.month, "YYYY-MM").format("MMM YYYY"), // Format as "Jan 2024"
         Compliant: item.data_security_complaints || 0,
         NonComplaints: item.data_security_non_complaints || 0,
       }))
-      .sort((a, b) => dayjs(b.month, "MMM YYYY").toDate() - dayjs(a.month, "MMM YYYY").toDate()) // Newest to Oldest
-  : [];
+      .sort((a, b) => dayjs(a.month, "MMM YYYY").toDate() - dayjs(b.month, "MMM YYYY").toDate()) // Newest to Oldest
+    : [];
 
-// Process accessibility compliance data
-const accessibilityComplianceData = filteredData2?.length
-  ? filteredData2
+  // Process accessibility compliance data
+  const accessibilityComplianceData = filteredData2?.length
+    ? filteredData2
       .map((item) => ({
         month: dayjs(item.month, "YYYY-MM").format("MMM YYYY"),
         Accessible: item.accessibility_complaints || 0,
         InAccessible: item.accessibility_non_complaints || 0,
       }))
-      .sort((a, b) => dayjs(b.month, "MMM YYYY").toDate() - dayjs(a.month, "MMM YYYY").toDate()) // Newest to Oldest
-  : [];
+      .sort((a, b) => dayjs(a.month, "MMM YYYY").toDate() - dayjs(b.month, "MMM YYYY").toDate()) // Newest to Oldest
+    : [];
 
 
-  
+
 
   const complianceData = filteredData
     ? [
-        {
-          name: "Compliant",
-          value: parseInt(filteredData[0]?.data_security_complaints || 0),
-        },
-        {
-          name: "Non-Compliant",
-          value: parseInt(
-            filteredData[0]?.data_security_non_complaints || 0
-          ),
-        },
-      ]
+      {
+        name: "Compliant",
+        value: parseInt(filteredData[0]?.data_security_complaints || 0),
+      },
+      {
+        name: "Non-Compliant",
+        value: parseInt(
+          filteredData[0]?.data_security_non_complaints || 0
+        ),
+      },
+    ]
     : [
-        { name: "Compliant", value: 0 },
-        { name: "Non-Compliant", value: 0 },
-      ];
+      { name: "Compliant", value: 0 },
+      { name: "Non-Compliant", value: 0 },
+    ];
 
   const accessibilityComiplanceData = filteredData?.map((item) => ({
     month: new Date(item.month).toLocaleString("en-US", {
@@ -309,22 +307,22 @@ const accessibilityComplianceData = filteredData2?.length
 
   const accessibilityData = filteredData
     ? [
-        {
-          name: "Accessible",
-          value: parseInt(filteredData[0]?.accessibility_complaints || 0),
-        },
-        {
-          name: "Inaccessible",
-          value: parseInt(
-            filteredData[0]?.accessibility_non_complaints || 0
-          ),
+      {
+        name: "Accessible",
+        value: parseInt(filteredData[0]?.accessibility_complaints || 0),
+      },
+      {
+        name: "Inaccessible",
+        value: parseInt(
+          filteredData[0]?.accessibility_non_complaints || 0
+        ),
 
-        },
-      ]
+      },
+    ]
     : [
-        { name: "Accessible", value: 0 },
-        { name: "Inaccessible", value: 0 },
-      ];
+      { name: "Accessible", value: 0 },
+      { name: "Inaccessible", value: 0 },
+    ];
 
   const summonsData = filtereddelivery?.map((item) => {
     return {
@@ -338,12 +336,12 @@ const accessibilityComplianceData = filteredData2?.length
 
   const adoptionData = Array.isArray(filteredadoption)
     ? filteredadoption.map((item) => ({
-        month: new Date(item?.month || "").toLocaleString("en-US", {
-          month: "short",
-          year: "numeric",
-        }),
-        adoptionRate: parseInt(item?.adoption_rate) || 0, // Handle null/undefined values safely
-      })).sort((a, b) => new Date(a.month) - new Date(b.month))
+      month: new Date(item?.month || "").toLocaleString("en-US", {
+        month: "short",
+        year: "numeric",
+      }),
+      adoptionRate: parseInt(item?.adoption_rate) || 0, // Handle null/undefined values safely
+    })).sort((a, b) => new Date(a.month) - new Date(b.month))
     : [];
   const recentEntryDate = new Date(
     filteredData?.[0]?.month
@@ -358,13 +356,13 @@ const accessibilityComplianceData = filteredData2?.length
         <h1 className="text-2xl font-bold">
           eSummons & Digital Case Records Dashboard
         </h1>
-        
+
 
         <div className="flex space-x-2">
           <button className="ExportButton" onClick={handleExport}>
             Export
           </button>
-          
+
           {localStorage.getItem("role") !== "chief secretary" && (
             <button
               className="bg-blue-500 text-white px-4 py-2 rounded-lg"
@@ -378,79 +376,74 @@ const accessibilityComplianceData = filteredData2?.length
             </button>
           )}
         </div>
-        
-      </div>
-      
-      <div ref={exportRef}>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-3 p-4">
-         
-            <div className="flex justify-between items-center mb-4">
-              
-            <h1 className="text-2xl font-bold">Deviation</h1>
 
-              
-            </div>
-         
+      </div>
+
+      <div ref={exportRef}>
+        <div className="rounded-lg w-full max-w-full h-auto  p-2">
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div style={{
-                  backgroundColor: "#f4f4f4",padding:"15px",borderRadius:"8px"
-                }}>
+              backgroundColor: "#f4f4f4", padding: "10px", borderRadius: "8px"
+            }}>
 
               <div className="bg-white p-4 rounded-xl shadow-md">
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <div className="flex justify-between items-center mb-4">
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <div className=" justify-between items-center mb-4">
+                    <h1 className="text-2xl font-bold">Deviation</h1>
 
-              <h3 className="text-xl font-semibold mb-4">
-                  Monthly Data Security Compliance
-                </h3>
-                
-            <div className="flex items-center gap-1">
-              <div>
-                <DatePicker
-                  label="From"
-                  views={["year", "month"]}
-                  value={fromSecurity}
-                  onChange={setFromSecurity}
-                  slotProps={{
-                    textField: {
-                      variant: "outlined",
-                      size: "small",
-                      sx: { width: "140px", fontSize: "12px" },
-                    },
-                  }}
-                />
-              </div>
-              <div>
-                <DatePicker
-                  label="To"
-                  views={["year", "month"]}
-                  value={toSecurity}
-                  onChange={setToSecurity}
-                  slotProps={{
-                    textField: {
-                      variant: "outlined",
-                      size: "small",
-                      sx: { width: "140px", fontSize: "12px" },
-                    },
-                  }}
-                />
-              </div>
-              <button
-                onClick={()=>ClearFilter('1')}
-                className="bg-blue-500 text-white px-3 py-2 rounded-md"
-                style={{ backgroundColor: "#2d3748" }}
-              >
-                Clear
-              </button>
-            </div>
-              </div>
-              
-          </LocalizationProvider>  
+
+                    <h3 className="text-xl font-semibold mb-4">
+                      Monthly Data Security Compliance
+                    </h3>
+
+                    <div className="flex items-center gap-1">
+                      <div>
+                        <DatePicker
+                          label="From"
+                          views={["year", "month"]}
+                          value={fromSecurity}
+                          onChange={setFromSecurity}
+                          slotProps={{
+                            textField: {
+                              variant: "outlined",
+                              size: "small",
+                              sx: { width: "140px", fontSize: "12px" },
+                            },
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <DatePicker
+                          label="To"
+                          views={["year", "month"]}
+                          value={toSecurity}
+                          onChange={setToSecurity}
+                          slotProps={{
+                            textField: {
+                              variant: "outlined",
+                              size: "small",
+                              sx: { width: "140px", fontSize: "12px" },
+                            },
+                          }}
+                        />
+                      </div>
+                      <button
+                        onClick={() => ClearFilter('1')}
+                        className="bg-blue-500 text-white px-3 py-2 rounded-md"
+                        style={{ backgroundColor: "#2d3748" }}
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+
+                </LocalizationProvider>
                 <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={securityComplianceData.reverse()}>
+                  <LineChart data={securityComplianceData}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
-                    <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
+                    <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }} />
+                    <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }} />
                     <Tooltip />
                     <Legend />
                     <Line
@@ -473,317 +466,321 @@ const accessibilityComplianceData = filteredData2?.length
                 </ResponsiveContainer>
               </div>
             </div>
-           
-           <div style={{
-                  backgroundColor: "#f4f4f4",padding:"15px",borderRadius:"8px"
-                }}>
 
-                    <div className="bg-white p-4 rounded-xl shadow-md">
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <div className="flex justify-between items-center mb-4">
+            <div style={{
+              backgroundColor: "#f4f4f4", padding: "15px", borderRadius: "8px"
+            }}>
 
-                <h3 className="text-xl font-semibold mb-4">
-                Monthly Accessibility Compliance
-              </h3>
-             
-          <div className="flex items-center gap-1">
-            <div>
-              <DatePicker label="From" views={["year", "month"]} value={fromDate} onChange={setFromDate} slotProps={{ textField: { variant: "outlined", size: "small", sx: { width: "140px", fontSize: "12px" } } }} />
-            </div>
-            <div>
-              <DatePicker label="To" views={["year", "month"]} value={toDate} onChange={setToDate} slotProps={{ textField: { variant: "outlined", size: "small", sx: { width: "140px", fontSize: "12px" } } }} />
-            </div>
-            <button
-                              onClick={()=>ClearFilter('2')}
+              <div className="bg-white p-4 rounded-xl shadow-md">
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <div className=" justify-between items-center mb-4">
+                    <h1 className="text-2xl font-bold">Deviation</h1>
 
-              className="bg-blue-500 text-white px-3 py-2 rounded-md"
-              style={{ backgroundColor: "#2d3748" }}
-            >
-              Clear
-            </button>
-          </div></div>
-        </LocalizationProvider>
-              <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={accessibilityComplianceData.reverse()}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
-                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    stroke="#8884d8"
-                    dataKey="Accessible"
-                    name="Accessible"
-                    activeDot={{ r: 8 }}
-                    strokeWidth={2}
-                  />
-                  <Line
-                    type="monotone"
-                    stroke="#82ca9d"
-                    dataKey="InAccessible"
-                    name="In Accessible"
-                    activeDot={{ r: 8 }}
-                    strokeWidth={2}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+
+                    <h3 className="text-xl font-semibold mb-4">
+                      Monthly Accessibility Compliance
+                    </h3>
+
+                    <div className="flex items-center gap-1">
+                      <div>
+                        <DatePicker label="From" views={["year", "month"]} value={fromDate} onChange={setFromDate} slotProps={{ textField: { variant: "outlined", size: "small", sx: { width: "140px", fontSize: "12px" } } }} />
+                      </div>
+                      <div>
+                        <DatePicker label="To" views={["year", "month"]} value={toDate} onChange={setToDate} slotProps={{ textField: { variant: "outlined", size: "small", sx: { width: "140px", fontSize: "12px" } } }} />
+                      </div>
+                      <button
+                        onClick={() => ClearFilter('2')}
+
+                        className="bg-blue-500 text-white px-3 py-2 rounded-md"
+                        style={{ backgroundColor: "#2d3748" }}
+                      >
+                        Clear
+                      </button>
+                    </div></div>
+                </LocalizationProvider>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={accessibilityComplianceData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }} />
+                    <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }} />
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      stroke="#8884d8"
+                      dataKey="Accessible"
+                      name="Accessible"
+                      activeDot={{ r: 8 }}
+                      strokeWidth={2}
+                    />
+                    <Line
+                      type="monotone"
+                      stroke="#82ca9d"
+                      dataKey="InAccessible"
+                      name="In Accessible"
+                      activeDot={{ r: 8 }}
+                      strokeWidth={2}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </div>
-           </div>
-            
+
           </div>
         </div>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+
+        <div className=" rounded-lg w-full max-w-full h-auto p-2">
           <h1 className="text-2xl font-bold">
             Recent Entry : {recentEntryDate}
           </h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Updated Pie Chart for Compliance */}
             <div style={{
-                  backgroundColor: "#f4f4f4",padding:"15px",borderRadius:"8px"
-                }}>
-                   <div className="bg-white p-4 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold mb-4">
-                Data Security Compliance
-              </h3>
+              backgroundColor: "#f4f4f4", padding: "15px", borderRadius: "8px"
+            }}>
+              <div className="bg-white p-4 rounded-xl shadow-md">
+                <h3 className="text-xl font-semibold mb-4">
+                  Data Security Compliance
+                </h3>
 
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Tooltip />
-                  <Legend />
-                  <Pie
-                    data={complianceData}
-                    dataKey="value"
-                    nameKey="name"
-                    outerRadius={100}
-                    fill="#8884d8"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
-                  >
-                    {complianceData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Tooltip />
+                    <Legend />
+                    <Pie
+                      data={complianceData}
+                      dataKey="value"
+                      nameKey="name"
+                      outerRadius={100}
+                      fill="#8884d8"
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
+                    >
+                      {complianceData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
             </div>
-                </div>
-           
+
 
             {/* Updated Pie Chart for Accessibility */}
             <div style={{
-                  backgroundColor: "#f4f4f4",padding:"15px",borderRadius:"8px"
-                }}>
-                  <div className="bg-white p-4 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold mb-4">
-                Accessibility Compliance
-              </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Tooltip />
-                  <Legend />
+              backgroundColor: "#f4f4f4", padding: "15px", borderRadius: "8px"
+            }}>
+              <div className="bg-white p-4 rounded-xl shadow-md">
+                <h3 className="text-xl font-semibold mb-4">
+                  Accessibility Compliance
+                </h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Tooltip />
+                    <Legend />
 
-                  <Pie
-                    data={accessibilityData}
-                    dataKey="value"
-                    nameKey="name"
-                    outerRadius={100}
-                    fill="#82ca9d"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
-                  >
-                    {accessibilityData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
+                    <Pie
+                      data={accessibilityData}
+                      dataKey="value"
+                      nameKey="name"
+                      outerRadius={100}
+                      fill="#82ca9d"
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
+                    >
+                      {accessibilityData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
             </div>
-                </div>
-            
+
           </div>
         </div>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+
+        <div className="rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">Deviation With Recent Entry</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* eSummons Delivered Electronically Bar Chart */}
             <div style={{
-                  backgroundColor: "#f4f4f4",padding:"15px",borderRadius:"8px"
-                }}>
-                    <div className="bg-white p-4 rounded-xl shadow-md">
-              <div className="mb-4 flex flex-row justify-between items-center">
-                
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <div className="flex justify-between items-center mb-4">
+              backgroundColor: "#f4f4f4", padding: "15px", borderRadius: "8px"
+            }}>
+              <div className="bg-white p-4 rounded-xl shadow-md">
+                <div className="mb-4 flex flex-row justify-between items-center">
 
-              <h3 className="text-xl font-semibold mb-4">
-                  Court Summons Delivered Electronically
-                </h3>
-                
-            <div className="flex items-center gap-1">
-              <div>
-                <DatePicker
-                  label="From"
-                  views={["year", "month"]}
-                  value={fromDelivered}
-                  onChange={setFromDelivered}
-                  slotProps={{
-                    textField: {
-                      variant: "outlined",
-                      size: "small",
-                      sx: { width: "140px", fontSize: "12px" },
-                    },
-                  }}
-                />
-              </div>
-              <div>
-                <DatePicker
-                  label="To"
-                  views={["year", "month"]}
-                  value={toDelivered}
-                  onChange={setToDelivered}
-                  slotProps={{
-                    textField: {
-                      variant: "outlined",
-                      size: "small",
-                      sx: { width: "140px", fontSize: "12px" },
-                    },
-                  }}
-                />
-              </div>
-              <button
-                                onClick={()=>ClearFilter('3')}
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <div className=" justify-between items-center mb-4">
 
-                className="bg-blue-500 text-white px-3 py-2 rounded-md"
-                style={{ backgroundColor: "#2d3748" }}
-              >
-                Clear
-              </button>
-            </div>
-              </div>
-              
-          </LocalizationProvider> 
-                {/* <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${summonsData?.[summonsData.length - 1]?.deliveredElectronically}`}</h4> */}
-              </div>
+                      <h3 className="text-xl font-semibold mb-4">
+                        Court Summons Delivered Electronically
+                      </h3>
 
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={summonsData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
-                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}/>
-                  {/* <YAxis 
+                      <div className="flex items-center gap-1">
+                        <div>
+                          <DatePicker
+                            label="From"
+                            views={["year", "month"]}
+                            value={fromDelivered}
+                            onChange={setFromDelivered}
+                            slotProps={{
+                              textField: {
+                                variant: "outlined",
+                                size: "small",
+                                sx: { width: "140px", fontSize: "12px" },
+                              },
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <DatePicker
+                            label="To"
+                            views={["year", "month"]}
+                            value={toDelivered}
+                            onChange={setToDelivered}
+                            slotProps={{
+                              textField: {
+                                variant: "outlined",
+                                size: "small",
+                                sx: { width: "140px", fontSize: "12px" },
+                              },
+                            }}
+                          />
+                        </div>
+                        <button
+                          onClick={() => ClearFilter('3')}
+
+                          className="bg-blue-500 text-white px-3 py-2 rounded-md"
+                          style={{ backgroundColor: "#2d3748" }}
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    </div>
+
+                  </LocalizationProvider>
+                  {/* <h4 className="text-xl font-semibold">{`${recentEntryDate}: ${summonsData?.[summonsData.length - 1]?.deliveredElectronically}`}</h4> */}
+                </div>
+
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={summonsData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }} />
+                    <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }} />
+                    {/* <YAxis 
                     domain={[
                       0, 
                       Math.max(0, ...(summonsData?.map(item => item.deliveredElectronically) || [0])) + 50
                     ]}
                     tickCount={6}
                   /> */}
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="deliveredElectronically"
-                    stroke={COLORS[0]}
-                    activeDot={{ r: 8 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="deliveredElectronically"
+                      stroke={COLORS[0]}
+                      activeDot={{ r: 8 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </div>
+            <div style={{
+              backgroundColor: "#f4f4f4", padding: "15px", borderRadius: "8px"
+            }}>
+              {/* Adoption Rate Line Chart */}
+              <div className="bg-white p-4 rounded-xl shadow-md">
+                <div className="mb-4 flex flex-row justify-between items-center">
+
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <div className=" justify-between items-center mb-4">
+
+                      <h3 className="text-xl font-semibold">
+                        Adoption Rate of eSummons & Digital Case Records
+
+                      </h3>
+
+                      <div className="flex items-center gap-1">
+                        <div>
+                          <DatePicker
+                            label="From"
+                            views={["year", "month"]}
+                            value={fromadoption}
+                            onChange={setFromadoption}
+                            slotProps={{
+                              textField: {
+                                variant: "outlined",
+                                size: "small",
+                                sx: { width: "140px", fontSize: "12px" },
+                              },
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <DatePicker
+                            label="To"
+                            views={["year", "month"]}
+                            value={toadoption}
+                            onChange={setToadoption}
+                            slotProps={{
+                              textField: {
+                                variant: "outlined",
+                                size: "small",
+                                sx: { width: "140px", fontSize: "12px" },
+                              },
+                            }}
+                          />
+                        </div>
+                        <button
+                          onClick={() => ClearFilter('4')}
+
+                          className="bg-blue-500 text-white px-3 py-2 rounded-md"
+                          style={{ backgroundColor: "#2d3748" }}
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    </div>
+
+                  </LocalizationProvider>
                 </div>
-                <div style={{
-                  backgroundColor: "#f4f4f4",padding:"15px",borderRadius:"8px"
-                }}>
-                   {/* Adoption Rate Line Chart */}
-            <div className="bg-white p-4 rounded-xl shadow-md">
-            <div className="mb-4 flex flex-row justify-between items-center">
-                
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <div className="flex justify-between items-center mb-4">
 
-              <h3 className="text-xl font-semibold">
-                Adoption Rate of eSummons & Digital Case Records
 
-                </h3>
-                
-            <div className="flex items-center gap-1">
-              <div>
-                <DatePicker
-                  label="From"
-                  views={["year", "month"]}
-                  value={fromadoption}
-                  onChange={setFromadoption}
-                  slotProps={{
-                    textField: {
-                      variant: "outlined",
-                      size: "small",
-                      sx: { width: "140px", fontSize: "12px" },
-                    },
-                  }}
-                />
-              </div>
-              <div>
-                <DatePicker
-                  label="To"
-                  views={["year", "month"]}
-                  value={toadoption}
-                  onChange={setToadoption}
-                  slotProps={{
-                    textField: {
-                      variant: "outlined",
-                      size: "small",
-                      sx: { width: "140px", fontSize: "12px" },
-                    },
-                  }}
-                />
-              </div>
-              <button
-                                onClick={()=>ClearFilter('4')}
-
-                className="bg-blue-500 text-white px-3 py-2 rounded-md"
-                style={{ backgroundColor: "#2d3748" }}
-              >
-                Clear
-              </button>
-            </div>
-              </div>
-              
-          </LocalizationProvider> 
-              </div>
-             
-
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={adoptionData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }}/>
-                  <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}
-                    domain={[
-                      0,
-                      Math.max(
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={adoptionData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" label={{ value: 'Time Period', position: 'center', dy: 10 }} />
+                    <YAxis label={{ value: 'Count', angle: -90, position: 'center', dx: -30 }}
+                      domain={[
                         0,
-                        ...(adoptionData?.map((item) => item.adoptionRate) || [
+                        Math.max(
                           0,
-                        ])
-                      ) + 50,
-                    ]}
-                    tickCount={6}
-                  />
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="adoptionRate"
-                    stroke={COLORS[1]} // Updated to use COLORS[0] from the second chart
-                    activeDot={{ r: 8 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+                          ...(adoptionData?.map((item) => item.adoptionRate) || [
+                            0,
+                          ])
+                        ) + 50,
+                      ]}
+                      tickCount={6}
+                    />
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="adoptionRate"
+                      stroke={COLORS[1]} // Updated to use COLORS[0] from the second chart
+                      activeDot={{ r: 8 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </div>
-                </div>
-           
+
           </div>
         </div>
       </div>

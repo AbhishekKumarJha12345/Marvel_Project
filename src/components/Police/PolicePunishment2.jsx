@@ -13,6 +13,7 @@ import {
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import { Padding } from "@mui/icons-material";
 
 // Register required chart components for a line chart
 ChartJS.register(
@@ -105,7 +106,7 @@ const PolicePunishment2 = () => {
     plugins: {
       legend: {
         display: true,
-        position: "top",
+        position: "bottom",
       },
       title: {
         display: true,
@@ -120,14 +121,43 @@ const PolicePunishment2 = () => {
       },
     },
     scales: {
+      x: {
+        title: {
+          display: true,
+          text: "Months", // X-axis label
+          font: {
+            size: 14,
+            weight: "bold",
+          
+          },
+        },
+      },
       y: {
+        title: {
+          display: true,
+          text: "Number of Cases / Visits", // Y-axis label
+          font: {
+            size: 14,
+            weight: "bold",
+          },
+        },
         beginAtZero: true,
       },
     },
   };
-
+  
   return (
-    <div className="p-6 rounded-lg flex flex-col bg-white w-[48%]">
+    <div className="p-6 rounded-lg flex flex-col bg-white w-[49%]">
+       <h2 
+        style={{
+          textAlign: "start",
+          fontSize: "22px",
+          fontWeight: "600",
+          marginBottom: "20px",
+        }}
+      >
+        Police with respective Forensic visits As per month
+      </h2>
       {/* Month Filters */}
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <div className="flex gap-4 items-end mb-4">
@@ -164,7 +194,7 @@ const PolicePunishment2 = () => {
       </LocalizationProvider>
 
       {/* Chart */}
-      <div className="h-[400px]">
+      <div className="h-[470px] mt-4">
         <Line data={chartData} options={options} />
       </div>
     </div>

@@ -126,7 +126,7 @@ const [recentData,setRecentData] =useState('')
         {activeTab === 'home' ? (
           <div className="col-6" style={{width:"100%",height:"100%"
           }}>
-          <div className="card shadow-sm bg-white">
+          <div className="">
             <div className="card-body" style={{height:"100%",padding:"24px",display:"flex",flexDirection:"column",gap:"1rem"}}>
               {/* <PoliceChargeSheet apidata={trainingData}/> */}
               <div className="flex justify-between items-center">
@@ -146,10 +146,10 @@ const [recentData,setRecentData] =useState('')
                 
               </div>
               <div style={{display:"flex",flexDirection:"column",gap:"0.5rem",width:"100%",height:"100%",marginBottom:"3rem"}}>
-      <h2 className="text-xl font-semibold">Deviation</h2>
+      {/* <h2 className="text-xl font-semibold">Deviation</h2> */}
       <div style={{display:"flex",gap:"0.5rem"}}>
 
-        <div style={{backgroundColor:"#f4f4f4",width:"100%",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
+        <div style={{backgroundColor:"#f4f4f4",width:"100%",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
               <CaseStatus />
               </div>
               <br/>
@@ -161,7 +161,7 @@ const [recentData,setRecentData] =useState('')
    {recentData.toLocaleString()}
 </h1>
 <div style={{width:"100%",display:"flex",gap:"2rem"}}>
-        <div style={{backgroundColor:"#f4f4f4",width:"40%",padding:"1rem",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
+        <div style={{backgroundColor:"#f4f4f4",width:"40%",display:"flex",justifyContent:"space-around",borderRadius:"5px"}}>
         <CaseStatus getrecentdatatime={getrecentdatatime} type='recent'/>
         <br/>
         </div>

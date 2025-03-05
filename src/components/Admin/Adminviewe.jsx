@@ -106,7 +106,15 @@ const AdminUserTable = () => {
       console.error("Error updating user", error);
     }
   };
-
+  //added_25
+  const customStyles = {
+    headCells: {
+      style: {
+        fontWeight: "600", // Equivalent to font-semibold
+        fontSize: "14px",  // Equivalent to text-[14px]
+      },
+    },
+  }; //added_25
 
   const columns = [
     { name: "Username", selector: (row) => row.username, sortable: true, filterKey: "username" },
@@ -225,13 +233,14 @@ const AdminUserTable = () => {
         <div className="mb-4 grid grid-cols-5 gap-2 px-3 " >
           {columns.filter((col) => col.filterKey).map((col, index) => (
             <div key={index} className="flex flex-col ">
-              <label className="text-sm font-semibold">{col.name}:</label>
-              <input type={col.name === 'Created On' ? 'date' : 'text'} placeholder={`Search by ${col.name}`} value={filters[col.filterKey] || ""} onChange={(e) => handleFilter(e, col.filterKey)} className="p-2 border border-gray-300 rounded-md w-[300px]" />
+              <label className="text-sm ">{col.name}:</label>
+              <input type={col.name === 'Created On' ? 'date' : 'text'} placeholder={`Search by ${col.name}`} value={filters[col.filterKey] || ""} onChange={(e) => handleFilter(e, col.filterKey)} className="p-2 border border-gray-300 rounded-md w-[270px]" />
             </div>
           ))}
         </div>
         <div className='p-3'>
-        <DataTable columns={columns} data={filteredData} pagination highlightOnHover striped responsive/>
+        {/* added_25 */}
+        <DataTable columns={columns} data={filteredData} pagination highlightOnHover striped responsive customStyles={customStyles}/>      
         </div>
       </CardContent>
     </Card>

@@ -320,13 +320,13 @@ const filterDataByDate = (data, fromDate, toDate) => {
       </div>
      
       <div ref={exportRef}>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <div className=" rounded-lg w-full max-w-full h-auto mb-6 p-4">
         <h1 className="text-2xl font-bold">Deviation</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white p-4 rounded-xl shadow-md">
               
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <div className="flex justify-between items-center mb-4">
+              <div className=" justify-between items-center mb-4">
                 
               <h3 className="text-xl font-semibold mb-4">
                 Data-Sharing Effectivness
@@ -421,7 +421,7 @@ const filterDataByDate = (data, fromDate, toDate) => {
             <div className="bg-white p-4 rounded-xl shadow-md">
               
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <div className="flex justify-between items-center mb-4">
+              <div className=" justify-between items-center mb-4">
               <h3 className="text-xl font-semibold mb-4">
                 Cases Using Forensic Data
               </h3>
@@ -504,7 +504,7 @@ const filterDataByDate = (data, fromDate, toDate) => {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <div className=" rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">
             Recent Entry 
           </h1>
@@ -572,7 +572,7 @@ const filterDataByDate = (data, fromDate, toDate) => {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg w-full max-w-full h-auto mb-6 p-4">
+        <div className=" rounded-lg w-full max-w-full h-auto mb-6 p-4">
           <h1 className="text-2xl font-bold">Deviation With Recent Entry</h1>
           {/* Response Time for Evidence Retrieval (Line Chart) */}
           <div className="bg-white p-4 rounded-xl shadow-md">

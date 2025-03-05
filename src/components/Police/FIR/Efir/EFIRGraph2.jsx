@@ -73,7 +73,7 @@ const EFIRsChart2 = ({ generateReport }) => {
   const options = {
     responsive: true,
     plugins: {
-      legend: { position: 'top' },
+      legend: { position: 'bottom' },
       title: { display: true, text: 'eFIRs Data Trend Over the Year' },
       tooltip: {
         callbacks: {
@@ -85,15 +85,22 @@ const EFIRsChart2 = ({ generateReport }) => {
     },
     maintainAspectRatio: false,
     scales: {
-      x: { title: { display: true, text: 'Month' } },
-      y: { title: { display: true, text: 'Number of eFIRs' }, beginAtZero: true },
+      x: { title: { display: true, text: 'Month', font: { weight: 'bold', size: 14 } ,
+      ticks: {
+        padding: 40,
+      },
+    } },
+      y: { title: { display: true, text: 'Number of eFIRs',      font: { weight: 'bold', size: 14 } 
+    }, beginAtZero: true },
     },
   };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-  <div className="bg-white p-6 mx-auto rounded-lg w-[100%] h-[400px]">
-    <h2 className="text-3xl font-semibold flex-grow">
+  <div className="bg-white p-6 mx-auto rounded-lg w-[100%] h-[500px]">
+  <h2 className='text-lg font-semibold text-start flex-grow'>Deviation
+</h2>
+    <h2 className='text-lg font-semibold text-start flex-grow mb-3'>
       E-FIRs Trend Over Time
     </h2>
     <div className="flex justify-between items-center mb-4">
@@ -105,6 +112,7 @@ const EFIRsChart2 = ({ generateReport }) => {
           onChange={setFromDate}
           slotProps={{
             textField: {
+              
               variant: "outlined",
               size: "small",
               sx: { width: "140px" },

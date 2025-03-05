@@ -1,8 +1,10 @@
 import { useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+// import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/Ui/Card";  
+
+import { Button } from "@/components/Ui/Button";   
+import { Label } from "@/components/Ui/Label";
 
 const AdminRegister = ({ onRegister, onClose }) => {
   const [formData, setFormData] = useState({

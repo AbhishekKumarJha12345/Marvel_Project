@@ -56,8 +56,8 @@ export default function Dashboard1() {
   const tabData = [
     { label: 'Forensic Lab Pendency Monitoring', component: <Tab1 ref={trainingRef} /> },
     { label: 'Mobile Forensic Vans Deployment', component: <Tab2  /> },
-    { label: 'Forensic Strengthening Initiatives', component: <ForensicStrengtheningInitiatives  /> },
-    { label: 'MoU with NFSU & Infrastructure Growth', component: <Tab4 /> },
+    // { label: 'Forensic Strengthening Initiatives', component: <ForensicStrengtheningInitiatives  /> },
+    // { label: 'MoU with NFSU & Infrastructure Growth', component: <Tab4 /> },
   ];
   const handleDownload = () => {
     const link = document.createElement('a');

@@ -726,6 +726,9 @@ const CorrectionalInstitutions = () => {
     return a.record_year - b.record_year || monthOrder[a.record_month] - monthOrder[b.record_month];
   });
 
+const chartColors = ["#8884d8", "#82ca9d", "#f2c57c", "#6a8caf", "#d4a5a5", "#a28bd3", "#ff9a76", "#74b49b"];
+
+
   // Prepare Chart Data
   const processChartData = () => {
     return {
@@ -734,30 +737,96 @@ const CorrectionalInstitutions = () => {
         {
           label: "Correctional Institutions",
           data: sortedData.map((d) => d.correctional_institution),
-          borderColor: "#FF5733",
-          backgroundColor: "#FF5733",
+          borderColor: "#8884d8",
+          backgroundColor: "#8884d8",
         },
         {
           label: "Inmate Population",
           data: sortedData.map((d) => d.InmatePopulation),
-          borderColor: "#2196F3",
-          backgroundColor: "#2196F3",
+          borderColor: "#FFC250",
+          backgroundColor: "#FFC250",
         },
         {
           label: "Admissions",
           data: sortedData.map((d) => d.Admission),
-          borderColor: "#4CAF50",
-          backgroundColor: "#4CAF50",
+          borderColor: "#82ca9d",
+          backgroundColor: "#82ca9d",
         },
         {
           label: "Inmates Percentage",
           data: sortedData.map((d) => d.Inmates_percentage),
-          borderColor: "#4c00b0",
-          backgroundColor: "#4c00b0",
+          borderColor: "#ff9a76",
+          backgroundColor: "#ff9a76",
         },
       ],
     };
   };
+
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'NCL Inmate Details per Month/year', // X-axis title
+          font: { size: 12 },
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'NCL Inmate Details Count ', // Y-axis title
+          font: { size: 12 },
+        },
+        beginAtZero: true,
+      },
+    },
+  };
+
+
+  const handleFileUpload = (file) => {
+        if (!file) {
+          alert('Please select a file before uploading');
+          return;
+          }
+        // const file = e.target.files[0];
+        if (file) {
+          const formData = new FormData();
+          console.log("File selected:", file);  // Log to check the selected file
+          formData.append('file', file);
+          
+          // Log FormData to ensure it's populated correctly
+          console.log("FormData being sent:", formData);
+          
+          fetch(`${host}/upload_correctional_instituion_data`, {        
+            method: 'POST',
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                console.log('File uploaded and data updated');
+                alert('File uploaded and data updated successfully');
+                // window.location.reload(); 
+                setIsModalOpen(false);
+    
+      
+                // Fetch updated data from the backend to refresh the chart
+                fetchPersonnelData();  
+              } else {
+                console.error('Error:', data.error); 
+                alert(`Error: ${data.error}`);
+              }
+            })
+            .catch((error) => {
+              console.error('Error:', error);
+              alert('File upload failed');
+            });
+          }
+      };
+
 
 
   return (
@@ -773,7 +842,7 @@ const CorrectionalInstitutions = () => {
       <div className="bg-white p-6 mx-auto rounded-lg w-[90%] h-[500px]">
         <h1 className="text-4xl font-bold mb-8 text-center">Correctional Institutions</h1>  
         <div className="h-[400px] w-full flex justify-center items-center">
-        <Line data={processChartData()} options={{ responsive: true, maintainAspectRatio: false }} />
+        <Line data={processChartData()} options={options} />
         </div>
       </div>
 

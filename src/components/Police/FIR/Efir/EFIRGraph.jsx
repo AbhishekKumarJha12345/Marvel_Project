@@ -40,9 +40,12 @@ const EFIRsChart = ({ generateReport }) => {
   };
 
   return (
-    <div className="bg-white p-6 mx-auto rounded-lg w-[100%] h-[400px]">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-3xl font-semibold text-center flex-grow">
+    <div className="bg-white p-6 mx-auto rounded-lg w-[100%] h-[500px]">
+      <div className="flex flex-col justify-between items-start mb-4">
+      <h2 className='text-lg font-semibold text-start flex-grow'>Deviation
+</h2>
+
+        <h2 className="text-xl font-semibold text-start flex-grow">
           E-FIRs Overview
         </h2>
         <div className="flex space-x-4">
@@ -73,7 +76,7 @@ const EFIRsChart = ({ generateReport }) => {
               nameKey="name"
               cx="50%"
               cy="50%"
-              outerRadius={80} // Reduced from 100 to 80
+              outerRadius={130} // Reduced from 100 to 80
               label={renderLabel} // Using the custom label function
             >
               {pieData.map((entry, index) => (

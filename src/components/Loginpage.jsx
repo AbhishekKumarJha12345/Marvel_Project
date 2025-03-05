@@ -12,7 +12,8 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const [error, setError] = useState("");
-
+  
+  localStorage.clear()
   const handleLogin = async () => {
     const payload = {
       user_name: usernameRef.current.value,

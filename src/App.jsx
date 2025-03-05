@@ -6,7 +6,6 @@ import { Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
-  const [count, setCount] = useState(0);
   const ProtectedRoute = ({ element }) => {
     const token = localStorage.getItem("token");
     return token ? element : <Navigate to="/" replace />;

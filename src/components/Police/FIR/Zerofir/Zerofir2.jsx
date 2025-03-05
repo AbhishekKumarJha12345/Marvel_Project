@@ -9,12 +9,17 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
-
 const ZeroFir2 = ({ getRecentDate, type }) => {
-  const [originalData, setOriginalData] = useState([]); // Store unfiltered data
+  const [originalData, setOriginalData] = useState([]); 
   const [data, setData] = useState([]);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
+  const [hiddenLines, setHiddenLines] = useState({
+    regular_fir: false,
+    yet_to_be_registered_zero_fir: false,
+    zero_fir: false
+  });
+
   const chartColors = ["#8884d8", "#82ca9d", "#f2c57c"];
 
   function convertMonthFormat(yyyy_mm) {
@@ -36,7 +41,7 @@ const ZeroFir2 = ({ getRecentDate, type }) => {
           const allData = response.data.data_dict
             .map(item => ({
               month: convertMonthFormat(item.month),
-              dateObj: new Date(item.month + "-01"), // Convert 'YYYY-MM' to Date object
+              dateObj: new Date(item.month + "-01"),
               regular_fir: parseInt(item.regular_fir, 10) || 0,
               yet_to_be_registered_zero_fir: parseInt(item.yet_to_be_registered_zero_fir, 10) || 0,
               zero_fir: parseInt(item.zero_fir, 10) || 0,
@@ -61,10 +66,10 @@ const ZeroFir2 = ({ getRecentDate, type }) => {
     }
 
     const filteredData = originalData.filter(item => {
-      const itemDate = item.dateObj;
-      const from = fromDate ? new Date(fromDate.getFullYear(), fromDate.getMonth(), 1) : null;
-      const to = toDate ? new Date(toDate.getFullYear(), toDate.getMonth() + 1, 0) : null;
-
+      const itemDate = new Date(item.dateObj);
+      const from = fromDate ? new Date(new Date(fromDate).getFullYear(), new Date(fromDate).getMonth(), 1) : null;
+      const to = toDate ? new Date(new Date(toDate).getFullYear(), new Date(toDate).getMonth() + 1, 0) : null;
+  
       return (!from || itemDate >= from) && (!to || itemDate <= to);
     });
 
@@ -87,72 +92,72 @@ const ZeroFir2 = ({ getRecentDate, type }) => {
     return `${name} (${percentage}%)`;
   };
 
-  return (
-    <div style={{ width: "100%", height: 400, padding: "1rem 1rem", backgroundColor: "white", margin: "auto" }}>
-      <h2>
-          {type === "recent" ? "FIR Trends - Recent" : "FIR Trends Over Time"}
-        </h2>
-      <div className={`flex ${type === "recent" ? "justify-center" : "justify-between"} items-end mb-2`}>
-        
+  const handleLegendClick = (e) => {
+    setHiddenLines(prev => ({
+      ...prev,
+      [e.dataKey]: !prev[e.dataKey]
+    }));
+  };
 
+  return (
+    <div style={{ width: "100%", height: 600, padding: "1rem 1rem", backgroundColor: "white", margin: "auto" }}>
+      <h2 className="text-lg font-semibold text-start flex-grow ">Deviation</h2>
+      <h2 className="text-lg font-semibold text-start flex-grow mb-3">
+          {type === "recent" ? "FIR Trends - Recent" : "FIR Trends Over Time"}
+      </h2>
+      
+      <div className={`flex ${type === "recent" ? "justify-center" : "justify-between"} items-end mb-2`}>
         {type !== "recent" && (
-         <LocalizationProvider dateAdapter={AdapterDayjs}>
-         <div className="flex gap-4 items-end">
-           <div>
-             
-             <DatePicker
-              label="From"
-               views={["year", "month"]}
-               value={fromDate}
-               onChange={(date) => setFromDate(date)}
-               slotProps={{
-                 textField: {
-                   variant: "outlined",
-                   size: "small",
-                   sx: { width: "140px" },
-                 },
-               }}
-             />
-           </div>
-           <div>
-             
-             <DatePicker
-              label="To"
-               views={["year", "month"]}
-               value={toDate}
-               onChange={(date) => setToDate(date)}
-               slotProps={{
-                 textField: {
-                   variant: "outlined",
-                   size: "small",
-                   sx: { width: "140px" },
-                 },
-               }}
-             />
-           </div>
-           <button
-             onClick={() => {
-               setFromDate(null);
-               setToDate(null);
-             }}
-             className="p-2 bg-[#2d3748] text-white rounded-lg hover:bg-opacity-90 transition"
-           >
-             Clear Filters
-           </button>
-         </div>
-       </LocalizationProvider>
-       
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <div className="flex gap-4 items-end">
+              <DatePicker
+                label="From"
+                views={["year", "month"]}
+                value={fromDate}
+                onChange={(date) => setFromDate(date)}
+                slotProps={{
+                  textField: {
+                    variant: "outlined",
+                    size: "small",
+                    sx: { width: "140px" },
+                  },
+                }}
+              />
+              <DatePicker
+                label="To"
+                views={["year", "month"]}
+                value={toDate}
+                onChange={(date) => setToDate(date)}
+                slotProps={{
+                  textField: {
+                    variant: "outlined",
+                    size: "small",
+                    sx: { width: "140px" },
+                  },
+                }}
+              />
+              <button
+                onClick={() => {
+                  setFromDate(null);
+                  setToDate(null);
+                }}
+                className="p-2 bg-[#2d3748] text-white rounded-lg hover:bg-opacity-90 transition"
+              >
+                Clear Filters
+              </button>
+            </div>
+          </LocalizationProvider>
         )}
       </div>
 
-      <ResponsiveContainer width={type === "recent" ? "113%" : "100%"} height={type === "recent" ? "80%" : "100%"}>
+      <ResponsiveContainer width="100%" height={400}>
         {type === "recent" && firstDataItem ? (
           <PieChart>
             <Pie
               data={pieData}
               cx="50%"
               cy="50%"
-              outerRadius={100}
+              outerRadius={135}
               fill="#8884d8"
               dataKey="value"
               label={renderCustomizedLabel}
@@ -165,16 +170,32 @@ const ZeroFir2 = ({ getRecentDate, type }) => {
             <Legend />
           </PieChart>
         ) : (
-          <LineChart data={data} margin={{ top: 20, right: 30, left: 50, bottom: 40 }}>
+          <LineChart data={data} margin={{ top: 40, right: 30, left: 50, bottom: 30 }}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" label={{ value: "Month", position: "bottom", offset: 3 }} />
-            <YAxis label={{ value: "FIR Count", angle: -90, position: "insideLeft", dy: 40 }} />
+            <XAxis dataKey="month" label={{ value: "Month", position: "bottom", offset: 4, style: { fontWeight: "bold", fontSize: "14px" } }} />
+            <YAxis label={{ value: "FIR Count", angle: -90, position: "insideLeft", dy: 40, style: { fontWeight: "bold", fontSize: "14px" }, offset: -40 }} />
             <Tooltip />
-            <Line type="monotone" dataKey="regular_fir" stroke={chartColors[0]} strokeWidth={2} name="Regular FIR"/>
-            <Line type="monotone" dataKey="yet_to_be_registered_zero_fir" stroke={chartColors[1]} strokeWidth={2} name="Yet to Register Zero FIR"/>
-            <Line type="monotone" dataKey="zero_fir" stroke={chartColors[2]} strokeWidth={2} name="Zero FIR" />
+            <Legend 
+              onClick={handleLegendClick} 
+              wrapperStyle={{
+                position: "relative",
+                marginTop: 4, 
+                cursor: "pointer"              }}              formatter={(value, entry) => (
+                <span 
+                  style={{ 
+                    textDecoration: hiddenLines[entry.dataKey] ? "line-through" : "none",
+                    cursor: "pointer"
+                  }}
+                >
+                  {value}
+                </span>
+              )}
+            />
+            <Line type="monotone" dataKey="regular_fir" stroke={chartColors[0]} strokeWidth={2} name="Regular FIR" hide={hiddenLines["regular_fir"]} />
+            <Line type="monotone" dataKey="yet_to_be_registered_zero_fir" stroke={chartColors[1]} strokeWidth={2} name="Yet to Register Zero FIR"                                                                                                                                                                     hide={hiddenLines["yet_to_be_registered_zero_fir"]} />
+            <Line type="monotone" dataKey="zero_fir" stroke={chartColors[2]} strokeWidth={2} name="Zero FIR" hide={hiddenLines["zero_fir"]} />
           </LineChart>
-        )}
+        )}                                                                                                                                                                      
       </ResponsiveContainer>
     </div>
   );

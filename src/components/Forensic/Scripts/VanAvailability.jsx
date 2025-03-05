@@ -120,49 +120,53 @@ const VanAvailability = ({vanData}) => {
           responsive
         />
       </div>
-
-      {/* Modal for Van Facility */}
       {isModalOpen && selectedVan && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-xl max-w-lg w-full relative">
-            <h3 className="text-xl font-semibold mb-4">Van Facility Details</h3>
-            <p><strong>VAN ID:</strong> {selectedVan.vanId}</p>
-            <p><strong>City:</strong> {selectedVan.city}</p>
-            <p><strong>Date:</strong> {selectedVan.date}</p>
-            <p><strong>Count:</strong> {selectedVan.count}</p>
+  <div
+    className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50"
+    onClick={handleCloseModal}  // Clicking the overlay will close the modal
+  >
+    <div
+      className="bg-white p-6 rounded-xl max-w-lg w-full relative"
+      onClick={(e) => e.stopPropagation()} // Prevents closing when clicking inside the modal
+    >
+      <h3 className="text-xl font-semibold mb-4">Van Facility Details</h3>
+      <p><strong>VAN ID:</strong> {selectedVan.vanId}</p>
+      <p><strong>City:</strong> {selectedVan.city}</p>
+      <p><strong>Date:</strong> {selectedVan.date}</p>
+      <p><strong>Count:</strong> {selectedVan.count}</p>
 
-            {/* List of forensic kits */}
-            <h4 className="mt-6 text-lg font-semibold">Forensic Kits</h4>
-            <ul className="list-disc pl-6">
-              <li>Crime Scene Cordoning / Protection Kit</li>
-              <li>General Investigation Kit</li>
-              <li>Evidence Packing and Collection Kit</li>
-              <li>Foot & Tyre Print Casting Kit</li>
-              <li>High Intensity Forensic Light Source</li>
-              <li>Blood Detection and Semen Detection Kit</li>
-              <li>DNA Collection and Sexual Assault Kit</li>
-              <li>Explosive Detection Kit</li>
-              <li>Narcotic Detection Kit</li>
-              <li>Gun Shot Residue Test Kit</li>
-              <li>Bullet Hole Testing Kit</li>
-              <li>Arson Investigation Kit with Gas Detector</li>
-              <li>Cyber Crime Investigation Kit</li>
-              <li>Camera and Bar Code Scanner</li>
-              <li>Crime Scene Hand Held Search Light and Light in a Bag</li>
-              <li>Set of Uniform and Protective Gears for Forensic Expert</li>
-            </ul>
+      <h4 className="mt-6 text-lg font-semibold">Forensic Kits</h4>
+      <ul className="list-disc pl-6">
+        <li>Crime Scene Cordoning / Protection Kit</li>
+        <li>General Investigation Kit</li>
+        <li>Evidence Packing and Collection Kit</li>
+        <li>Foot & Tyre Print Casting Kit</li>
+        <li>High Intensity Forensic Light Source</li>
+        <li>Blood Detection and Semen Detection Kit</li>
+        <li>DNA Collection and Sexual Assault Kit</li>
+        <li>Explosive Detection Kit</li>
+        <li>Narcotic Detection Kit</li>
+        <li>Gun Shot Residue Test Kit</li>
+        <li>Bullet Hole Testing Kit</li>
+        <li>Arson Investigation Kit with Gas Detector</li>
+        <li>Cyber Crime Investigation Kit</li>
+        <li>Camera and Bar Code Scanner</li>
+        <li>Crime Scene Hand Held Search Light and Light in a Bag</li>
+        <li>Set of Uniform and Protective Gears for Forensic Expert</li>
+      </ul>
 
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={handleCloseModal}
-                className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <div className="mt-4 flex justify-end">
+        <button
+          onClick={handleCloseModal}
+          className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
