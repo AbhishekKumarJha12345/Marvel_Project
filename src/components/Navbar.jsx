@@ -20,6 +20,9 @@ import axiosInstance from "../utils/axiosInstance";
 import GavelIcon from '@mui/icons-material/Gavel';
 import BiotechIcon from '@mui/icons-material/Biotech';
 import BalanceIcon from '@mui/icons-material/Balance';
+
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+
 import FluorescentIcon from '@mui/icons-material/Fluorescent';
 import logo from '../assets/logo22.png'
 import ModalComponent from './Police/ModalComponent'
@@ -556,7 +559,7 @@ doc.text("In summary, the data reveals that there is a general increase in the n
           {users === 'admin' && (
 
             <li className={`nav-link active`} onClick={() => handleSectionClick('admin')}>
-              <GavelIcon /> Dashboard
+              <SupervisorAccountIcon /> All Users
             </li>
 
           )
