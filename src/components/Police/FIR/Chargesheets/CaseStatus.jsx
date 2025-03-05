@@ -69,7 +69,7 @@ const CaseStatus = ({ getrecentdatatime, type }) => {
           { name: "Acquitted", value: filteredData[0].acquitted },
           { name: "Convicted", value: filteredData[0].convicted },
           { name: "Pending", value: filteredData[0].pending },
-          { name: "Total Charge Sheeted", value: filteredData[0].total_charge_sheeted },
+          // { name: "Total Charge Sheeted", value: filteredData[0].total_charge_sheeted },
         ]
       : [];
 

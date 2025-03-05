@@ -175,7 +175,7 @@ const [recentData,setRecentData] =useState('')
           </div>
         ) : (
           <div>
-            <Chargesheet />
+            {/* <Chargesheet /> */}
             <Chargesheetstatus apidata={fir3Data} />
           </div>
         )}

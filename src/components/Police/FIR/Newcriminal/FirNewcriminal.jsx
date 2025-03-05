@@ -108,7 +108,7 @@ function FirNewcriminal() {
         >
           Home
         </button>
-        <button
+        {/* <button
           onClick={() => handleTabChange("newCriminals")}
           className={`py-2 px-4 text-[14px] font-[Work Sans] ${
             activeTab === "newCriminals"
@@ -117,7 +117,7 @@ function FirNewcriminal() {
           }`}
         >
           New Criminals
-        </button>
+        </button> */}
       </div>
 
       {/* Tab Content */}
