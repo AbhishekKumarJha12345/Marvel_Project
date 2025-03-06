@@ -2709,6 +2709,9 @@ const DrilldownTrainingChart = () => {
 
   const monthlyCounts = {};
 
+  const [trainingFromDate, setTrainingFromDate] = useState(null);
+  const [trainingToDate, setTrainingToDate] = useState(null);
+
   // Loop through each training entry
   trainingDataa.forEach((entry) => {
     const dateParts = entry.date.split("/");
@@ -2980,38 +2983,90 @@ const DrilldownTrainingChart = () => {
   // Get unique sorted dates for x-axis labels
   // const uniqueDates = [...new Set(trainingDataa.map(item => item.date))];
   // const [selectedTraining, setSelectedTraining] = useState(""); // Selected training name
-  const filteredTrainingData = trainingDataa.filter(
-    (item) => !selectedTraining || item.name === selectedTraining
-  );
+  // const filteredTrainingData = trainingDataa.filter(
+  //   (item) => !selectedTraining || item.name === selectedTraining
+  // );
 
-  const uniqueDates = [
-    ...new Set(filteredTrainingData.map((item) => item.date)),
-  ];
+  // const uniqueDates = [
+  //   ...new Set(filteredTrainingData.map((item) => item.date)),
+  // ];
+
+  // // Create datasets dynamically
+  // const trainingLineData = {
+  //   labels: uniqueDates, // X-axis (dates)
+  //   datasets: selectedTraining
+  //     ? [
+  //         {
+  //           label: selectedTraining, // Show only selected training
+  //           data: uniqueDates.map((date) => {
+  //             const session = trainingDataa.find(
+  //               (item) => item.name === selectedTraining && item.date === date
+  //             );
+  //             return session ? session.attendees : null;
+  //           }),
+  //           borderColor:
+  //             trainingColors[selectedTraining] || "rgba(75,192,192,1)", // Fallback color
+  //           backgroundColor:
+  //             trainingColors[selectedTraining]?.replace("1)", "0.2)") ||
+  //             "rgba(75,192,192,0.2)",
+  //           borderWidth: 2,
+  //           spanGaps: true,
+  //         },
+  //       ]
+  //     : [], // Show nothing if no training is selected
+  // };
+
+  const filteredTrainingData = trainingDataa.filter(item => {
+    // Convert item.date ("dd/mm/yyyy") into a Date object
+    const [day, month, year] = item.date.split('/').map(Number);
+    const trainingDate = new Date(year, month - 1, day); // JS months are 0-based
+
+    // Convert selected dates to Date objects (if not already)
+    const fromDate = trainingFromDate ? new Date(trainingFromDate) : null;
+    const toDate = trainingToDate ? new Date(trainingToDate) : null;
+
+    // Ensure fromDate and toDate are valid before extracting getFullYear()
+    const startDate = fromDate instanceof Date && !isNaN(fromDate)
+      ? new Date(fromDate.getFullYear(), fromDate.getMonth(), 1) // Start of month
+      : null;
+
+    const endDate = toDate instanceof Date && !isNaN(toDate)
+      ? new Date(toDate.getFullYear(), toDate.getMonth() + 1, 0) // End of month
+      : null;
+
+    return (
+      (!selectedTraining || item.name === selectedTraining) &&
+      (!startDate || !endDate || (trainingDate >= startDate && trainingDate <= endDate))
+    );
+  });
+
+
+  const uniqueDates = [...new Set(filteredTrainingData.map(item => item.date))]
+    .sort((a, b) => {
+      // Sort dates in ascending order
+      const [dayA, monthA, yearA] = a.split('/').map(Number);
+      const [dayB, monthB, yearB] = b.split('/').map(Number);
+      return new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB);
+    });
 
   // Create datasets dynamically
   const trainingLineData = {
-    labels: uniqueDates, // X-axis (dates)
+    labels: uniqueDates, // X-axis (filtered dates)
     datasets: selectedTraining
-      ? [
-          {
-            label: selectedTraining, // Show only selected training
-            data: uniqueDates.map((date) => {
-              const session = trainingDataa.find(
-                (item) => item.name === selectedTraining && item.date === date
-              );
-              return session ? session.attendees : null;
-            }),
-            borderColor:
-              trainingColors[selectedTraining] || "rgba(75,192,192,1)", // Fallback color
-            backgroundColor:
-              trainingColors[selectedTraining]?.replace("1)", "0.2)") ||
-              "rgba(75,192,192,0.2)",
-            borderWidth: 2,
-            spanGaps: true,
-          },
-        ]
+      ? [{
+        label: selectedTraining, // Show only selected training
+        data: uniqueDates.map(date => {
+          const session = filteredTrainingData.find(item => item.name === selectedTraining && item.date === date);
+          return session ? session.attendees : null;
+        }),
+        borderColor: trainingColors[selectedTraining] || "rgba(75,192,192,1)", // Fallback color
+        backgroundColor: trainingColors[selectedTraining]?.replace("1)", "0.2)") || "rgba(75,192,192,0.2)",
+        borderWidth: 2,
+        spanGaps: true,
+      }]
       : [], // Show nothing if no training is selected
   };
+
 
   const trainingData = {
     labels: ["Online", "Offline"], // Correctly labeling each category on the x-axis
@@ -3339,6 +3394,8 @@ const DrilldownTrainingChart = () => {
     setView("subject");
   };
 
+
+
   const handleBarClickAttendance = (event, elements) => {
     if (!elements.length) return;
     const monthIndex = elements[0].index;
@@ -3362,6 +3419,9 @@ const DrilldownTrainingChart = () => {
     } else if (view === "training") {
       setView("sessions");
       setSelectedDate(null);
+
+      setTrainingFromDate(null); // Clear From Date
+      setTrainingToDate(null);
     } else {
       setView("main");
     }
@@ -3376,8 +3436,7 @@ const DrilldownTrainingChart = () => {
   const [filteredicjs, setFilteredICJSData] = useState(null);
   const [filtered, setFiltered] = useState(null);
 
-  const [trainingFromDate, setTrainingFromDate] = useState(null);
-  const [trainingToDate, setTrainingToDate] = useState(null);
+
 
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -3426,11 +3485,10 @@ const DrilldownTrainingChart = () => {
         {["Training"].map((tab) => (
           <button
             key={tab}
-            className={`p-3 px-6 text-lg font-semibold ${
-              selectedTab === tab
+            className={`p-3 px-6 text-lg font-semibold ${selectedTab === tab
                 ? "border-b-2 border-blue-500 text-blue-500"
                 : "text-gray-500"
-            }`}
+              }`}
             onClick={() => {
               setSelectedTab(tab);
               setView("main");
@@ -3449,47 +3507,47 @@ const DrilldownTrainingChart = () => {
               <div
                 style={{ display: "flex", alignItems: "center", gap: "10px" }}
               >
-                {/* <DatePicker
-                  label="From"
-                  views={["year", "month"]}
-                  value={trainingFromDate}
-                  onChange={(newValue) => setTrainingFromDate(newValue)}
-                  slotProps={{
-                    textField: {
-                      variant: "outlined",
-                      size: "small",
-                      sx: { width: "140px", fontSize: "12px" },
-                    },
-                  }}
-                  sx={{
-                    "& .MuiPickersPopper-paper": { transform: "scale(0.9)" },
-                  }}
-                />
+                {view === "training" && (
+                  <>
+                    <DatePicker
+                      label="From"
+                      views={["year", "month"]}
+                      value={trainingFromDate}
+                      onChange={(newValue) => setTrainingFromDate(newValue)}
+                      slotProps={{
+                        textField: {
+                          variant: "outlined",
+                          size: "small",
+                          sx: { width: "140px", fontSize: "12px" },
+                        },
+                      }}
+                      sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                    />
 
-                <DatePicker
-                  label="To"
-                  views={["year", "month"]}
-                  value={trainingToDate}
-                  onChange={(newValue) => setTrainingToDate(newValue)}
-                  slotProps={{
-                    textField: {
-                      variant: "outlined",
-                      size: "small",
-                      sx: { width: "140px", fontSize: "12px" },
-                    },
-                  }}
-                  sx={{
-                    "& .MuiPickersPopper-paper": { transform: "scale(0.9)" },
-                  }}
-                />
+                    <DatePicker
+                      label="To"
+                      views={["year", "month"]}
+                      value={trainingToDate}
+                      onChange={(newValue) => setTrainingToDate(newValue)}
+                      slotProps={{
+                        textField: {
+                          variant: "outlined",
+                          size: "small",
+                          sx: { width: "140px", fontSize: "12px" },
+                        },
+                      }}
+                      sx={{ "& .MuiPickersPopper-paper": { transform: "scale(0.9)" } }}
+                    />
 
-                <button
-                  onClick={() => ClearTrainingFilter("1")}
-                  className="bg-blue-500 text-white px-3 py-1 rounded-md"
-                  style={{ backgroundColor: "#2d3748" }}
-                >
-                  Clear Filter
-                </button> */}
+                    <button
+                      onClick={() => ClearTrainingFilter("1")}
+                      className="bg-blue-500 text-white px-3 py-1 rounded-md"
+                      style={{ backgroundColor: "#2d3748" }}
+                    >
+                      Clear Filter
+                    </button>
+                  </>
+                )}
               </div>
 
               {/* <select
