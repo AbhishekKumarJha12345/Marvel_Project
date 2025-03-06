@@ -2821,7 +2821,7 @@ const DrilldownTrainingChart = () => {
     labels: trainingNames, // Using training names instead of months
     datasets: [
       {
-        label: "Attended",
+        label: "Registered",
         data: onlineRegistrations,
         backgroundColor: "rgba(54, 162, 235, 0.7)", // Blue
         borderColor: "rgba(54, 162, 235, 1)",
@@ -2829,7 +2829,7 @@ const DrilldownTrainingChart = () => {
         stack: "Stack 0",
       },
       {
-        label: "Registered",
+        label: "Attended",
         data: onlineAttendees,
         backgroundColor: "rgba(54, 162, 235, 1)", // Darker Blue
         borderColor: "rgba(54, 162, 235, 1)",
@@ -3017,14 +3017,14 @@ const DrilldownTrainingChart = () => {
     labels: ["Online", "Offline"], // Correctly labeling each category on the x-axis
     datasets: [
       {
-        label: "Online Attendees",
+        label: "Online Tranings",
         data: [60, 0], // Online value at index 0, Offline value at index 1
         backgroundColor: "rgba(54, 162, 235, 1)", // Darker Blue
         borderColor: "rgba(54, 162, 235, 1)",
         borderWidth: 1,
       },
       {
-        label: "Offline Attendees",
+        label: "Offline Tranings",
         data: [0, 50], // Online value at index 0, Offline value at index 1
         backgroundColor: "rgba(255, 99, 132, 1)", // Darker Red
         borderColor: "rgba(255, 99, 132, 1)",
@@ -3449,7 +3449,7 @@ const DrilldownTrainingChart = () => {
               <div
                 style={{ display: "flex", alignItems: "center", gap: "10px" }}
               >
-                <DatePicker
+                {/* <DatePicker
                   label="From"
                   views={["year", "month"]}
                   value={trainingFromDate}
@@ -3489,7 +3489,7 @@ const DrilldownTrainingChart = () => {
                   style={{ backgroundColor: "#2d3748" }}
                 >
                   Clear Filter
-                </button>
+                </button> */}
               </div>
 
               {/* <select
@@ -3542,15 +3542,15 @@ const DrilldownTrainingChart = () => {
             </select>            
             )} */}
 
-              {view === "training" && (
-                <select className="p-2 border rounded" value={selectedTraining}>
-                  {selectedTraining && (
-                    <option key={selectedTraining} value={selectedTraining}>
-                      {selectedTraining}
-                    </option>
-                  )}
-                </select>
-              )}
+              {/* {view === "training" && (
+                // <select className="p-2 border rounded" value={selectedTraining}>
+                //   {selectedTraining && (
+                //     <option key={selectedTraining} value={selectedTraining}>
+                //       {selectedTraining}
+                //     </option>
+                //   )}
+                // </select>
+              )} */}
             </div>
 
             {/* {view === "main" && ( 
@@ -3574,7 +3574,7 @@ const DrilldownTrainingChart = () => {
                   plugins: {
                     title: {
                       display: true,
-                      text: "Training Data by Month (Stacked)",
+                      text: "Training Data ",
                     },
                     legend: { position: "top" },
                   },
@@ -3603,7 +3603,7 @@ const DrilldownTrainingChart = () => {
                     plugins: {
                       title: {
                         display: true,
-                        text: `Training Data for ${selectedMonth}`,
+                        text: `Training Data `,
                       },
                     },
                     onClick: handleDateClick,
@@ -3628,7 +3628,7 @@ const DrilldownTrainingChart = () => {
                     plugins: {
                       title: {
                         display: true,
-                        text: `Training Sessions for ${selectedMonth} ${selectedDate}`,
+                        text: `Training Sessions `,
                       },
                     },
                     scales: {
@@ -3660,19 +3660,19 @@ const DrilldownTrainingChart = () => {
                     plugins: {
                       title: {
                         display: true,
-                        text: `Training Training for ${selectedMonth} ${selectedDate}`,
+                        text: `Training Sessions`,
                       },
                     },
-                    //   scales: {
-                    //     y: {
-                    //       beginAtZero: true,  // Start Y-axis from 0
-                    //       max: 1000,          // Limit Y-axis to 1000
-                    //       ticks: {
-                    //         stepSize: 100,    // Optional: Adjust step intervals (e.g., 0, 100, 200, ... 1000)
-                    //       },
-                    //     },
-                    // },
-                    // onClick: handleAttendedClick,
+                    scales: {
+                      y: {
+                        beginAtZero: true, // Start Y-axis from 0
+                        max: 1000, // Limit Y-axis to 1000
+                        ticks: {
+                          stepSize: 100, // Optional: Adjust step intervals (e.g., 0, 100, 200, ... 1000)
+                        },
+                      },
+                    },
+                    onClick: handleAttendedClick,
                   }}
                 />
               </div>
