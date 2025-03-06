@@ -6,7 +6,7 @@ import { Home, FileText } from "lucide-react";
 import MasterTrainers from "./Police/MasterTrainers";
 import Dashboard1 from "./Forensic/Scripts/Dashboard1";
 import CriminalPages from "./Prosecution/Criminalpages";
-// import PoliceOfficers from "./Police/PoliceOfficers";
+import PoliceOfficers from "./Police/PoliceOfficers";
 import Carousel from "./Police/Carousel";
 import Forensicvisits from "./Police/Forensicvisits";
 import Dashboard2 from "./Court/CSS/Script/Dashboard2";
@@ -20,9 +20,14 @@ import axiosInstance from "../utils/axiosInstance";
 import GavelIcon from '@mui/icons-material/Gavel';
 import BiotechIcon from '@mui/icons-material/Biotech';
 import BalanceIcon from '@mui/icons-material/Balance';
+
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+
 import FluorescentIcon from '@mui/icons-material/Fluorescent';
 import logo from '../assets/logo22.png'
 import ModalComponent from './Police/ModalComponent'
+
+import Demo from '../components/Police/Demo'
 
 import MaharashtraPoliceMap from './CS/Csstartpage'
 
@@ -58,7 +63,6 @@ import forensicvisit from '../assets/police/forinsic_visit.svg'
 import fir from '../assets/police/fir.svg'
 import awareness from '../assets/police/awareness.svg'
 import PoliceTraining from "./Police/PoliceTraining";
-// import PoliceOfficers from "../components/Police/PoliceOfficers";
 
 
 
@@ -124,7 +128,7 @@ Overall Trends & Recommendations:
   },
 ];
 
-export default function Dashboard({ users, getDate }) {
+export default function Dashboard({ users }) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSubMenu, setActiveSubMenu] = useState(null);
   const [activeSection, setActiveSection] = useState(null); // Unified state for all sections
@@ -182,35 +186,35 @@ export default function Dashboard({ users, getDate }) {
   }, []);
 
   const trainingRef = useRef(null); // Reference to PoliceTraining component
-  const [rloading, setRloading] = useState(false)
+  const [rloading,setRloading]=useState(false)
   const handleExportPoliceTraining = async () => {
     setRloading(true)
     const pdf = new jsPDF("p", "mm", "a4"); // Create A4 size PDF
     const margin = 10;
     let yPosition = 20; // Start position for text
-
+  
     // 📌 Capture PoliceTraining component as an image
     if (trainingRef.current) {
       const canvas = await html2canvas(trainingRef.current, { scale: 2 });
       const imgData = canvas.toDataURL("image/png");
-
+  
       const imgWidth = 180; // Fit image width into A4
       const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
-
+  
       pdf.addImage(imgData, "PNG", margin, yPosition, imgWidth, imgHeight);
       yPosition += imgHeight + 10; // Move below image
     }
-
+  
     // 📌 Add a separator
     pdf.setDrawColor(0);
     pdf.line(10, yPosition, 200, yPosition);
     yPosition += 10;
-
+  
     // 📌 Loop through exporttrainingRefDetails and add formatted text
     exporttrainingRefDetails.forEach((item, index) => {
       pdf.setFontSize(14);
       pdf.setFont("helvetica", "bold");
-
+  
       // 🟢 Check if title fits, else move to a new page
       if (yPosition + 10 > 280) {
         pdf.addPage();
@@ -218,15 +222,15 @@ export default function Dashboard({ users, getDate }) {
       }
       pdf.text(item.name, margin, yPosition);
       yPosition += 6;
-
+  
       pdf.setFontSize(11);
       pdf.setFont("helvetica", "normal");
-
+  
       // 📌 Properly format long text for PDF
       const textLines = pdf.splitTextToSize(item.data, 180);
       let pageHeight = 280; // Usable page height
       let lineHeight = 6; // Space between lines
-
+  
       textLines.forEach((line) => {
         // 🟢 Check if line fits on the current page
         if (yPosition + lineHeight > pageHeight) {
@@ -236,64 +240,66 @@ export default function Dashboard({ users, getDate }) {
         pdf.text(line, margin, yPosition);
         yPosition += lineHeight;
       });
-
+  
       // 📌 Add separator for sections
       if (index !== exporttrainingRefDetails.length - 1) {
         pdf.line(10, yPosition, 200, yPosition);
         yPosition += 10;
       }
     });
-
+  
     // 📌 Save the PDF
     pdf.save("PoliceTraining_Report.pdf");
     setRloading(false)
   };
-
-
+  
+ 
 
   const contentMap = {
-    "training":
-      <div className="content">
-        <div className="ContentSpace">
-          <h1 className="heading" style={{ marginLeft: "40rem" }}>Police - Training</h1>
-          <div className="button-container flex space-x-2">
-            <button className="ExportButton" style={{ minWidth: '80px' }} onClick={handleExportPoliceTraining}>
-              {!rloading ? 'Export' : <><span className="spinner-border spinner-border-sm me-2"></span></>}
+    "training"              : 
+    <div className="content">
+      <div className="ContentSpace">
+        <h1 className="heading" style={{marginLeft:"40rem"}}>Police - Training</h1>
+        <div className="button-container flex space-x-2">
+          <button className="ExportButton" style={{minWidth:'80px'}} onClick={handleExportPoliceTraining}>
+          {!rloading ? 'Export' : <><span className="spinner-border spinner-border-sm me-2"></span></>}
 
 
             </button>
-            {localStorage.getItem('role') !== 'chief secretary' && <button
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-              style={{ backgroundColor: '#2d3748' }}
-              onClick={() => {
-                console.log("Open modal");
-                setShowModal(true);
-              }}>
-              Add on
-            </button>}
-          </div>
-
+          {localStorage.getItem('role') !=='chief secretary' &&  <button 
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+            style={{ backgroundColor: '#2d3748' }} 
+            onClick={() => {
+              console.log("Open modal");
+              setShowModal(true);
+            }}>
+            Add on
+          </button>}
         </div>
-        <PoliceTraining ref={trainingRef} />
-      </div>,
+
+      </div>
+      <PoliceTraining ref={trainingRef}/>
+    </div>,
     // "awareness/campaign"    : <div className="content"><h1 className="heading">Awareness Campaigns</h1><Carousel /></div>,
-    "forensic/visits": <div className="content"><h1 className="heading">Forensic Visits</h1><Forensicvisits /></div>,
-    "court": <div className="content"><h1 className="heading">Court Visits</h1><Dashboard2 /></div>,
-    "science": <div className="content"><h1 className="heading">Forensic Science Department</h1><Dashboard1 /></div>,
-    "prosecution": <div className="content"><h1 className="heading">Prosecution Visits</h1><CriminalPages /></div>,
-    "correctionalservices": <div className="content"><h1 className="heading">Correctional services</h1><Correctionalservicetab /></div>,
-    "newcriminal": <div className="content"><FirNewcriminal /></div>,
-    "chargesheet": <div className="content"><Firchargesheets /></div>,
-    "zerofir": <div className="content"><FirZero /></div>,
-    "efir": <div className="content"><Efir /></div>,
+    "forensic/visits"       : <div className="content"><h1 className="heading">Forensic Visits</h1><Forensicvisits /></div>,
+    "court"                 : <div className="content"><h1 className="heading">Court Visits</h1><Dashboard2 /></div>,
+    "science"               : <div className="content"><h1 className="heading">Forensic Science Department</h1><Dashboard1 /></div>,
+    "prosecution"           : <div className="content"><h1 className="heading">Prosecution Visits</h1><CriminalPages /></div>,
+    "correctionalservices"  : <div className="content"><h1 className="heading">Correctional services</h1><Correctionalservicetab /></div>,
+    "newcriminal"           : <div className="content"><FirNewcriminal /></div>,
+    "chargesheet"           : <div className="content"><Firchargesheets  /></div>,
+    "zerofir"               : <div className="content"><FirZero /></div>,
+    "efir"                  : <div className="content"><Efir /></div>,
+    "FIR"                  : <div className="content"><Demo /></div>,
     "admin": <div className="content"><Adminviewe /> </div>,
   };
   const [openmodal, setOpenmodal] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-
+    const [showModal, setShowModal] = useState(false);
+  
   const openreportmodal = () => {
     setOpenmodal(true);
   };
+
 
   // const reportRef = useRef();
   const generatePDF =  () => {
@@ -570,6 +576,8 @@ export default function Dashboard({ users, getDate }) {
 
 
 
+
+
   return (
     <div className="dashboard">
       <div className="navbar">
@@ -578,7 +586,7 @@ export default function Dashboard({ users, getDate }) {
           {users === 'admin' && (
 
             <li className={`nav-link active`} onClick={() => handleSectionClick('admin')}>
-              <GavelIcon /> Dashboard
+              <SupervisorAccountIcon /> All Users
             </li>
 
           )
@@ -608,12 +616,13 @@ export default function Dashboard({ users, getDate }) {
                     </button>
                     <button
                       className="dropdown-item"
-                      onClick={() => toggleSubMenu(1)}
+                      // onClick={() => toggleSubMenu(1)}
+                      onClick={() => handleSectionClick("FIR")}
                     >
                       FIR
                     </button>
 
-                    {activeSubMenu === 1 && (
+                    {/* {activeSubMenu === 1 && (
                       <div className="sub-dropdown">
                         <button
                           className="sub-dropdown-item"
@@ -640,7 +649,7 @@ export default function Dashboard({ users, getDate }) {
                           E FIR
                         </button>
                       </div>
-                    )}
+                    )} */}
                     {/* <button
                       className="dropdown-item"
                       onClick={() => handleSectionClick("awareness/campaign")}
@@ -659,8 +668,9 @@ export default function Dashboard({ users, getDate }) {
             ) : (
               <div className="nav_main" style={{ display: "flex" }}>
                 <button
-                  className={`nav-link ${activeSection?.section === "training" ? "active" : ""
-                    }`}
+                  className={`nav-link ${
+                    activeSection?.section === "training" ? "active" : ""
+                  }`}
                   onClick={() => handleSectionClick("training")}
                 >
                   <img
@@ -672,12 +682,13 @@ export default function Dashboard({ users, getDate }) {
                 </button>
                 <div className="nav-divider"></div>
                 <button
-                  className={`nav-link ${["newcriminal", "chargesheet", "zerofir", "efir"].includes(
-                    activeSection?.section
-                  )
-                    ? "active"
-                    : ""
-                    }`}
+                  className={`nav-link ${
+                    ["newcriminal", "chargesheet", "zerofir", "efir"].includes(
+                      activeSection?.section
+                    )
+                      ? "active"
+                      : ""
+                  }`}
                   onClick={() => toggleSubMenu(1)}
                 >
                   {" "}
@@ -743,8 +754,9 @@ export default function Dashboard({ users, getDate }) {
                 <div className="nav-divider"></div>
 
                 <button
-                  className={`nav-link ${activeSection?.section === "forensic/visits" ? "active" : ""
-                    }`}
+                  className={`nav-link ${
+                    activeSection?.section === "forensic/visits" ? "active" : ""
+                  }`}
                   onClick={() => handleSectionClick("forensic/visits")}
                 >
                   <img
@@ -763,8 +775,9 @@ export default function Dashboard({ users, getDate }) {
 
           {(users === "chief secretary" || users === "Prosecutor") && (
             <li
-              className={`nav-link ${activeSection?.section === "prosecution" ? "active" : ""
-                }`}
+              className={`nav-link ${
+                activeSection?.section === "prosecution" ? "active" : ""
+              }`}
               onClick={() => handleSectionClick("prosecution")}
             >
               {/* <Home /> Prosecution */}
@@ -778,8 +791,9 @@ export default function Dashboard({ users, getDate }) {
 
           {(users === "chief secretary" || users === "Court") && (
             <li
-              className={`nav-link ${activeSection?.section === "court" ? "active" : ""
-                }`}
+              className={`nav-link ${
+                activeSection?.section === "court" ? "active" : ""
+              }`}
               onClick={() => handleSectionClick("court")}
             >
               {/* <TbTable size={25} /> Court */}
@@ -793,17 +807,18 @@ export default function Dashboard({ users, getDate }) {
 
           {(users === "chief secretary" ||
             users === "Correction") && (
-              <li
-                className={`nav-link ${activeSection?.section === "correctionalservices"
+            <li
+              className={`nav-link ${
+                activeSection?.section === "correctionalservices"
                   ? "active"
                   : ""
-                  }`}
-                onClick={() => handleSectionClick("correctionalservices")}
-              >
-                {/* <AiTwotoneThunderbolt /> Correctional Services */}
-                <FluorescentIcon /> Correctional Services
-              </li>
-            )}
+              }`}
+              onClick={() => handleSectionClick("correctionalservices")}
+            >
+              {/* <AiTwotoneThunderbolt /> Correctional Services */}
+              <FluorescentIcon /> Correctional Services
+            </li>
+          )}
 
           {users === "chief secretary" ? (
             <div className="nav-divider"></div>
@@ -812,37 +827,32 @@ export default function Dashboard({ users, getDate }) {
           {(users === "chief secretary" || users === "Forensic") && (
             <>
 
-
+            
               {/* Forensic Science Section */}
               <li
-                className={`nav-link ${activeSection?.section === "science" ? "active" : ""
-                  }`}
+                className={`nav-link ${
+                  activeSection?.section === "science" ? "active" : ""
+                }`}
                 onClick={() => handleSectionClick("science")}
               >
                 <BiotechIcon size={25} /> Forensic Science Department
               </li>
 
-              {(users === "chief secretary") ?
-
-                (<li
-                  className={`nav-link ${activeSection?.section === "report" ? "active" : ""
-                    }`}
-                  onClick={() => {
-                    handleSectionClick("report");
-                    generatePDF();
-                  }}
-                >
-                  <PictureAsPdfIcon size={25} /> Generate Report
-                </li>) : null
-
-              }
-
-              {/* Wrap the report content inside a div with a ref */}
-              {/* <div ref={reportRef} style={{ padding: "20px" }}>
-                <h2>Police Officers Report</h2>
-                <PoliceOfficers getDate={getDate}/> 
-              </div> */}
-
+              {(users === "chief secretary" ) ?
+              
+              (<li
+                className={`nav-link ${
+                  activeSection?.section === "report" ? "active" : ""
+                }`}
+                onClick={() => {
+                  handleSectionClick("report");
+                  generatePDF();
+                }}
+              >
+                <PictureAsPdfIcon size={25} /> Generate Report
+              </li>) : null
+            
+            }
 
             </>
           )}
@@ -862,15 +872,15 @@ export default function Dashboard({ users, getDate }) {
           <div className="flex justify-between bg-white">
 
 
-            <MaharashtraPoliceMap />
+          <MaharashtraPoliceMap/>
 
           </div>
 
 
-        ) : contentMap[activeSection?.section] || (users === "police" ? contentMap["training"]
-          : users === "Court" ? contentMap["court"]
-            : users === "Forensic" ? contentMap["science"]
-              : users === "Prosecutor" ? contentMap["prosecution"]
+          ) : contentMap[activeSection?.section] || (users === "police" ? contentMap["training"]
+            : users === "Court" ? contentMap["court"]
+              : users === "Forensic" ? contentMap["science"]
+                : users === "Prosecutor" ? contentMap["prosecution"]
                 : users === "admin" ? contentMap["admin"]
                   : contentMap["correctionalservices"])
       }
