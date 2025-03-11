@@ -325,6 +325,18 @@ function Login() {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("role", response.data.role);
         localStorage.setItem("role", response.data.state);
+
+        // localStorage.setItem("token", userData.token);
+        // localStorage.setItem("role", userData.role);
+        // localStorage.setItem("email", userData.email);
+        // localStorage.setItem("emp_id", userData.emp_id);
+        // localStorage.setItem("userName", userData.userName);
+        // localStorage.setItem("rank", userData.rank);
+        // localStorage.setItem("state", userData.state);
+        // localStorage.setItem("district", userData.district);
+        // localStorage.setItem("mobile_number", userData.mobile_number);
+        // localStorage.setItem("sub_role", userData.sub_role);
+        // localStorage.setItem("zone", userData.zone);
         console.log("Pavan_Kalyan");
         console.log(response.data);
         navigate("/mainnavbar", { state: { users: response.data.role, userName: response.data.userName } });
@@ -402,11 +414,11 @@ function Login() {
 
         {!showOTPField ? (
           <button className="w-full px-4 py-2 bg-blue-600 text-white mt-4" onClick={handleSendOTP}>
-            Send OTP
+            Log In
           </button>
         ) : (
           <button className="w-full px-4 py-2 bg-green-600 text-white mt-4" onClick={handleLogin}>
-            Log In
+            Enter OTP
           </button>
         )}
       </div>
