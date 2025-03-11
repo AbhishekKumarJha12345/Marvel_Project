@@ -135,7 +135,8 @@ const AdminUserTable = () => {
       sortable: true,
       filterKey: "role"
     },
-    { name: "Location", selector: (row) => row.station, sortable: true, filterKey: "station" },
+    // { name: "Location", selector: (row) => row.station, sortable: true, filterKey: "station" },
+    { name: "Email", selector: (row) => row.email, sortable: true, filterKey: "email" },
     { name: "Created On", selector: (row) => row.created_on, sortable: true, filterKey: "created_on" },
     { name: "Created By", selector: (row) => row.created_by, sortable: true, filterKey: "created_by" },
     {
