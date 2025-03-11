@@ -1,25 +1,40 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet.heat";
 import maharashtraBoundary from "./maharashtraBoundary.json";
-import policeData from "./policeData.json";
-import MiniMap from './MiniMap';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import axiosInstance from "@/utils/axiosInstance";
 
 const MaharashtraMap = () => {
-  const [selectedDistrict, setSelectedDistrict] = useState(null);
-  const [selectedCriteria, setSelectedCriteria] = useState("population");
+  const [selectedZone, setSelectedZone] = useState(null);
+  const [zonePercentages, setZonePercentages] = useState({});
+  const [districtPercentages, setDistrictPercentages] = useState({});
 
-  const colorSchemes = {
-    population: ["#ffeda0", "#f03b20"], // Yellow to Red
-    police_subdivisions: ["#deebf7", "#3182bd"], // Light Blue to Dark Blue
-    total_sanctioned_strength: ["#e5f5e0", "#238b45"], // Light Green to Dark Green
-  };
+
+  const mapRef = useRef(null);
 
   useEffect(() => {
+    async function fetchData(zoneName, districtName) {
+        try {
+            const response = await axiosInstance.get("/maharashtra-police-data", {
+                params: { zone: zoneName, district: districtName }
+            });
+            console.log("response:", response.data);
+            
+            setZonePercentages(response.data.zones);
+            setDistrictPercentages(response.data.districts);
+        } catch (error) {
+            console.error("Error fetching Maharashtra police data:", error);
+        }
+    }
 
-    if(!selectedDistrict){
+    fetchData("", ""); // Fetch all data initially
+}, []);
+
+
+  useEffect(() => {
+    if (mapRef.current) return;
 
     const map = L.map("map", {
       center: [19.7515, 75.7139],
@@ -30,79 +45,115 @@ const MaharashtraMap = () => {
       doubleClickZoom: false,
     });
 
-    L.tileLayer("/tiles/7/{x}/{y}.png", {
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 18,
     }).addTo(map);
 
-    let selectedLayer = null;
+    mapRef.current = map;
 
-    const getColor = (value, max, scheme) => {
-      const ratio = value / max;
-      const [startColor, endColor] = colorSchemes[scheme];
-
-      // Convert HEX to RGB
-      const hexToRgb = (hex) => {
-        const bigint = parseInt(hex.substring(1), 16);
-        return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
-      };
-
-      const startRGB = hexToRgb(startColor);
-      const endRGB = hexToRgb(endColor);
-
-      // Linear interpolation between start and end colors
-      const r = Math.round(startRGB[0] + ratio * (endRGB[0] - startRGB[0]));
-      const g = Math.round(startRGB[1] + ratio * (endRGB[1] - startRGB[1]));
-      const b = Math.round(startRGB[2] + ratio * (endRGB[2] - startRGB[2]));
-
-      return `rgba(${r}, ${g}, ${b}, 0.7)`;
+    return () => {
+      map.remove();
+      mapRef.current = null;
     };
+  }, []);
 
-    const maxValue = Math.max(...policeData.map(d => d[selectedCriteria]));
 
-    const maharashtraLayer = L.geoJSON(maharashtraBoundary, {
+  const zoneMapping = {
+    "Amravati": ["Akola", "Amravati", "Buldana", "Washim", "Yavatmal"],
+    "Aurangabad": ["Aurangabad", "Beed", "Hingoli", "Jalna", "Latur", "Nanded", "Osmanabad", "Parbhani"],
+    "Konkan": ["Mumbai", "Mumbai Suburban", "Palghar", "Raigad", "Ratnagiri", "Sindhudurg", "Thane"],
+    "Nagpur": ["Bhandara", "Chandrapur", "Gadchiroli", "Gondia", "Nagpur", "Wardha"],
+    "Nashik": ["Ahmednagar", "Dhule", "Jalgaon", "Nandurbar", "Nashik"],
+    "Pune": ["Kolhapur", "Pune", "Sangli", "Satara", "Solapur"],
+  };
+
+  const getZoneForDistrict = (district) => {
+    for (const [zone, districts] of Object.entries(zoneMapping)) {
+      if (districts.includes(district)) return zone;
+    }
+    return null;
+  };
+
+  const getZoneColor = (name) => {
+    
+    const percentage = zonePercentages[name] || districtPercentages[name];
+
+    if (percentage > 80) return "#37C503";
+    if (percentage >= 60) return "#9AD911";
+    if (percentage >= 40) return "#FF8585";
+    return "#F45546";
+  };
+
+
+  
+
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    const map = mapRef.current;
+
+    map.eachLayer((layer) => {
+      if (layer instanceof L.GeoJSON) {
+        map.removeLayer(layer);
+      }
+    });
+
+
+    const userZones = ""; // Example single zone
+const userDistricts = ""; // Example single district
+
+
+
+const isDistrictAllowed = (districtName) => {
+  if (!userDistricts && !userZones) return true; // Show all if no restriction
+  if (userDistricts) return districtName === userDistricts; // Only allow the specific district
+  if (userZones) return zoneMapping[userZones]?.includes(districtName); // Allow all districts in the zone
+  return false;
+};
+
+    
+
+    const filteredFeatures = selectedZone
+      ? maharashtraBoundary.features.filter((feature) =>
+          zoneMapping[selectedZone].includes(feature.properties.dtname)
+        )
+      : maharashtraBoundary.features;
+
+    // const filteredFeatures = maharashtraBoundary.features.filter((feature) => {
+    //   const districtName = feature.properties.dtname;
+    //   return isDistrictAllowed(districtName);
+    // });
+    
+    let maharashtraLayer = L.geoJSON(filteredFeatures, {
       style: (feature) => {
-        const districtData = policeData.find(d => d.district === feature.properties.dtname);
-        const value = districtData ? districtData[selectedCriteria] : 0;
+        const districtName = feature.properties.dtname;
+        const zoneName = Object.keys(zoneMapping).find((zone) =>
+          zoneMapping[zone].includes(districtName)
+        );
         return {
-          fillColor: getColor(value, maxValue, selectedCriteria),
+          fillColor: selectedZone ? getZoneColor(districtName) : getZoneColor(zoneName),
           fillOpacity: 0.7,
-          color: "rgba(151, 151, 151, 0.7)",
+          color: "#333",
           weight: 1.5,
         };
       },
-
       onEachFeature: (feature, layer) => {
         if (!feature.properties?.dtname) return;
 
-        const resetStyle = () => layer.setStyle({ color: "rgba(151, 151, 151, 0.7)", fillOpacity: 0.7 });
-        const highlightStyle = () => layer.setStyle({ color: "rgb(166, 166, 166)", weight: 1 });
+        const districtName = feature.properties.dtname;
+        const zoneName = getZoneForDistrict(districtName);
 
         layer.on({
           click: (e) => {
-            if (selectedLayer) resetStyle();
-            if (selectedLayer === layer) {
-              selectedLayer = null;
-              setSelectedDistrict(null);
-              map.closePopup();
-            } else {
-              highlightStyle();
-              selectedLayer = layer;
-              setSelectedDistrict(feature);
-              L.popup().setLatLng(e.latlng).setContent(`<b>${feature.properties.dtname}</b>`).openOn(map);
-            }
+            setSelectedZone(zoneName);
+            L.popup().setLatLng(e.latlng).setContent(`<b>${zoneName}</b>`).openOn(map);
           },
           mouseover: (e) => {
-            const districtData = policeData.find(d => d.district === feature.properties.dtname);
-            const value = districtData ? districtData[selectedCriteria] : "N/A";
-
-            highlightStyle();
-            L.popup()
-              .setLatLng(e.latlng)
-              .setContent(`<b>${feature.properties.dtname}</b><br/>${selectedCriteria.replace(/_/g, " ").toUpperCase()}: ${value}`)
-              .openOn(map);
+            layer.setStyle({ color: "#000", weight: 2 });
+            L.popup().setLatLng(e.latlng).setContent(`<b>${selectedZone ? districtName : zoneName}</b>`).openOn(map);
           },
           mouseout: () => {
-            resetStyle();
+            layer.setStyle({ color: "#333", fillOpacity: 0.7 });
             map.closePopup();
           },
         });
@@ -113,193 +164,82 @@ const MaharashtraMap = () => {
     map.fitBounds(bounds);
     map.setMaxBounds(bounds);
 
-    map.on("drag", () => {
-      map.panInsideBounds(bounds, { animate: true });
-    });
+      const extractCoordinates = (features) => {
+        return features.flatMap((feature) => {
+          if (feature.geometry.type === "Polygon") {
+            return feature.geometry.coordinates;
+          } else if (feature.geometry.type === "MultiPolygon") {
+            return feature.geometry.coordinates.flat();
+          }
+          return [];
+        });
+      };
 
-    map.on("zoomend", () => {
-      if (map.getZoom() < 6) {
-        map.setZoom(6);
-      }
-    });
-
-    const extractCoordinates = (features) => {
-      return features.flatMap((feature) => {
-        if (feature.geometry.type === "Polygon") {
-          return feature.geometry.coordinates;
-        } else if (feature.geometry.type === "MultiPolygon") {
-          return feature.geometry.coordinates.flat();
-        }
-        return [];
-      });
-    };
-
-    const worldMask = {
-      type: "FeatureCollection",
-      features: [
-        {
-          type: "Feature",
-          geometry: {
-            type: "Polygon",
-            coordinates: [
-              [
-                [-180, 90],
-                [180, 90],
-                [180, -90],
-                [-180, -90],
-                [-180, 90],
+      const zoneMask = {
+        type: "FeatureCollection",
+        features: [
+          {
+            type: "Feature",
+            geometry: {
+              type: "Polygon",
+              coordinates: [
+                [
+                  [-180, 90],
+                  [180, 90],
+                  [180, -90],
+                  [-180, -90],
+                  [-180, 90],
+                ],
+                ...extractCoordinates(
+                  selectedZone ?
+                  maharashtraBoundary.features.filter((feature) =>
+                    zoneMapping[selectedZone].includes(feature.properties.dtname)
+                  )
+                  : maharashtraBoundary.features
+                ),
               ],
-              ...extractCoordinates(maharashtraBoundary.features),
-            ],
+            },
           },
-        },
-      ],
-    };
+        ],
+      };
 
-    L.geoJSON(worldMask, {
-      style: {
-        color: "black",
-        weight: 0,
-        fillColor: "white",
-        fillOpacity: 1,
-      },
-    }).addTo(map);
+      L.geoJSON(zoneMask, {
+        style: { color: "black", weight: 0, fillColor: "white", fillOpacity: 1 },
+      }).addTo(map);
 
     return () => {
-      map.remove();
+      if (map.hasLayer(maharashtraLayer)) {
+        map.removeLayer(maharashtraLayer);
+      }
     };
-  }
-  }, [selectedCriteria,selectedDistrict]);
+  }, [selectedZone, zonePercentages]);
 
   return (
     <div style={{ display: "flex", height: "80vh", width: "100%", zIndex: "0" }}>
       <div style={{ display: "flex", height: "80vh", width: "100%", position: "relative" }}>
-        {/* Map */}
-        {selectedDistrict ? (
-          <>
-            <div
-              style={{
-                position: "absolute",
-                left: 60,
-                top: "10%",
-                transform: "translateY(-50%)",
-                padding: "10px",
-                background: "#fff",
-                boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
-                borderRadius: "8px",
-                fontSize: "10px",
-                fontWeight: "bold",
-                textAlign: "center",
-                zIndex: "999",
-                cursor: "pointer",
-              }}
-              onClick={() => {
-                setSelectedDistrict(null);
-              }}
-              
-            >
-              <ArrowBackIcon />
-            </div>
-            <MiniMap district={selectedDistrict} />
-          </>
-        ) : (
-          <>
-            <div
-              style={{
-                position: "absolute",
-                bottom: 10,
-                left: 200,
-                zIndex: 1000,
-                display: "grid",
-                gridTemplateColumns: "repeat(3, auto)",
-                gap: "10px",
-                padding: "10px",
-                background: "rgba(255, 255, 255, 0.8)",
-                borderRadius: "8px",
-              }}
-            >
-              {Object.keys(colorSchemes).map((criteria) => (
-                <div
-                  key={criteria}
-                  onClick={() => setSelectedCriteria(criteria)}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    cursor: "pointer",
-                    fontWeight: selectedCriteria === criteria ? "bold" : "normal",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 20,
-                      height: 10,
-                      background: colorSchemes[criteria][1],
-                      marginRight: 5,
-                    }}
-                  ></div>
-                  <span style={{ fontSize: "14px" }}>{criteria.replace(/_/g, " ").toUpperCase()}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Left Card - Population */}
-            <div
-              style={{
-                position: "absolute",
-                left: 20,
-                top: "40%",
-                transform: "translateY(-50%)",
-                textAlign: "center",
-                zIndex: "999",
-              }}
-            >
-              <div
-                style={{
-                  transform: "translateY(-50%)",
-                  padding: "15px",
-                  borderRadius: "8px",
-                  fontSize: "12px",
-                  fontWeight: "bold",
-                  textAlign: "center",
-                }}
-              >
-                <div>Population</div>
-                <div style={{ fontSize: "18px", color: "#d9534f" }}>12.73 Crore</div>
-              </div>
-
-              <div
-                style={{
-                  transform: "translateY(-50%)",
-                  padding: "15px",
-                  borderRadius: "8px",
-                  fontSize: "12px",
-                  fontWeight: "bold",
-                  textAlign: "center",
-                }}
-              >
-                <div>Districts</div>
-                <div style={{ fontSize: "18px", color: "#0275d8" }}>36</div>
-              </div>
-
-              <div
-                style={{
-                  transform: "translateY(-50%)",
-                  padding: "15px",
-                  borderRadius: "8px",
-                  fontSize: "12px",
-                  fontWeight: "bold",
-                  textAlign: "center",
-                }}
-              >
-                <div>Commissionerates</div>
-                <div style={{ fontSize: "18px", color: "#0275d8" }}>12</div>
-              </div>
-            </div>
-
-            {/* Render the map with the default district if no district is selected */}
-            <div id="map" style={{ flex: 1, borderRadius: '8px' }}></div>
-          </>
+        {selectedZone && (
+          <div
+            style={{
+              position: "absolute",
+              left: 60,
+              top: "10%",
+              transform: "translateY(-50%)",
+              padding: "10px",
+              background: "#fff",
+              boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
+              borderRadius: "8px",
+              fontSize: "10px",
+              fontWeight: "bold",
+              textAlign: "center",
+              zIndex: "999",
+              cursor: "pointer",
+            }}
+            onClick={() => setSelectedZone(null)}
+          >
+            <ArrowBackIcon />
+          </div>
         )}
+        <div id="map" style={{ flex: 1, borderRadius: "8px" }}></div>
       </div>
     </div>
   );
