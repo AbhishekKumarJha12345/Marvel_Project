@@ -1,5 +1,5 @@
-import React from "react";
-import { useState } from "react";
+import React, { Profiler } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import {
   FaBell,
@@ -13,21 +13,24 @@ import { FaRegComment } from "react-icons/fa";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import logo from "../assets/logo.png";
 import Forensic_logo from "../assets/Forensic_logo_1.png";
-import Correctional_service_logo from "../assets/Correctional_service_logo.png";         
+import Correctional_service_logo from "../assets/Correctional_service_logo.png";
 
 import Flag from "react-world-flags";
 import Navbar from "./Navbar";
 import { Routes, Route } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { useNavigate } from "react-router-dom";         
+import { useNavigate } from "react-router-dom";
 import logocs from "../assets/cs_court_prosection_logo.png";
+import { PiPowerDuotone } from "react-icons/pi";
 
 
 function Mainnavbar() {
-  const [isOpen, setIsOpen] = useState({ language: false });
+  const [isOpen, setIsOpen] = useState({ language: false, notifications: false, profile: false });
+  const [user, setUser] = useState(null);
+  const profileRef = useRef(null);
 
   const location = useLocation(); // Access location state
-  const { users,userName } = location.state || {}; 
+  const { users, userName } = location.state || {};
   // const { users = "", userName = "" } = location.state || {}; // Default to empty string   
 
   console.log(users, "users_details");
@@ -44,10 +47,16 @@ function Mainnavbar() {
   };
   const userLogo = logoMapping[users];
 
+  // const toggleDropdown = (dropdown) => {
+  //   setIsOpen((prevState) => ({
+  //     ...prevState,
+  //     [dropdown]: !prevState[dropdown],
+  //   }));
+  // };
   const toggleDropdown = (dropdown) => {
     setIsOpen((prevState) => ({
-      ...prevState,
-      [dropdown]: !prevState[dropdown],
+      notifications: dropdown === "notifications" ? !prevState.notifications : false,
+      profile: dropdown === "profile" ? !prevState.profile : false,
     }));
   };
 
@@ -58,7 +67,7 @@ function Mainnavbar() {
 
   if (users === undefined) {
     handelLogout();
-}
+  }
 
   const toCamelCase = (str) => {
     return str
@@ -67,8 +76,39 @@ function Mainnavbar() {
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
   };
-  
-  
+
+  useEffect(() => {
+    const storedUser = {
+      token: localStorage.getItem("token"),
+      role: localStorage.getItem("role"),
+      email: localStorage.getItem("email"),
+      emp_id: localStorage.getItem("emp_id"),
+      userName: localStorage.getItem("userName"),
+      rank: localStorage.getItem("rank"),
+      state: localStorage.getItem("state"),
+      district: localStorage.getItem("district"),
+      mobile_number: localStorage.getItem("mobile_number"),
+      sub_role: localStorage.getItem("sub_role"),
+      zone: localStorage.getItem("zone"),
+    };
+
+    if (storedUser.token) {
+      setUser(storedUser);
+    } else {
+      handelLogout();
+    }
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsOpen({ notifications: false, profile: false });
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <div
       style={{
@@ -89,38 +129,24 @@ function Mainnavbar() {
             alt="Logo"
             className={
               users === "admin" || //added_25   
-              users === "Prosecutor" ||
-              users === "chief secretary" ||
-              users === "Court" ||
-              users == "Forensic" ||
-              users == "Correction"
+                users === "Prosecutor" ||
+                users === "chief secretary" ||
+                users === "Court" ||
+                users == "Forensic" ||
+                users == "Correction"
                 ? "w-10"
                 : "w-20"
             }
           />
-          {/* <div className="text-4xl font-bold mr-5" style={{ color: "#2d3748" }}>
-            ICJS
-          </div>  */}
 
           <div
-                className="text-4xl font-bold mr-5 cursor-pointer"
-                style={{ color: "#2d3748" }}
-                onClick={() => window.location.reload()}      
-// Navigate to the route
-              >
-                ICJS
-              </div>
-          {/* <div className="relative w-[400px] hidden md:block">
-            <FaSearch
-              className="absolute left-3 top-2.5 text-gray-400"
-              size={20}
-            />
-            <input
-              type="text"
-              placeholder="Search..."
-              className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full"
-            />
-          </div> */}
+            className="text-4xl font-bold mr-5 cursor-pointer"
+            style={{ color: "#2d3748" }}
+            onClick={() => window.location.reload()}
+          // Navigate to the route
+          >
+            ICJS
+          </div>
         </div>
 
         <div className="flex items-center space-x-6 ">
@@ -139,24 +165,58 @@ function Mainnavbar() {
             )}
           </div>
 
+
+
           {/* Profile Dropdown */}
-          <div className="relative">
+          {/* <div className="relative"> */}
+          <div className="relative flex items-center space-x-4" ref={profileRef}>
             <button
               onClick={() => toggleDropdown("profile")}
-              className="flex items-center space-x-2 text-gray-700 hover:[#2d3748]" style={{display:"flex",alignItems:"center"}}
+              className="flex items-center space-x-2 text-gray-700 hover:[#2d3748]" style={{ display: "flex", alignItems: "center" }}
             >
               <FaUser size={22} />
               <span>{toCamelCase(users)}</span>
               {/* <span>{users ? toCamelCase(users) : "Guest"}</span> */}
-            
+
 
               <FaChevronDown size={16} className="text-gray-400" />
             </button>
+
+            {/* Profile Dropdown */}
             {isOpen.profile && (
-              <div className="absolute right-0 mt-2 w-36 bg-white shadow-md rounded-lg" style={{zIndex:"1"}}>
-                {/* <button className="block px-4 py-2 w-full text-left hover:bg-gray-100">
-                  Profile
-                </button> */}
+              <div className="absolute top-9  mt-5 w-85 bg-white border border-gray-200 rounded-lg shdow-lg z-50">
+                <div className="p-4 space-y-2">
+                  <div className="flex justify-between">
+                    <p className="text-sm font-semibold text-gray-600 mr-2">Email:</p>
+                    <p className="text-sm text-gray-800">{user?.email}</p>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <p className="text-sm font-semibold text-gray-600 mr-2">Officer Role:</p>
+                    <p className="text-sm text-gray-800">{user?.role}</p>
+                  </div>
+                  <div className="flex justify-between">
+                    <p className="text-sm font-semibold text-gray-600 mr-2">State:</p>
+                    <p className="text-sm text-gray-800">{user?.state}</p>
+                  </div>
+                  <div className="flex justify-between">
+                    <p className="text-sm font-semibold text-gray-600 mr-2">District:</p>
+                    <p className="text-sm text-gray-800">{user?.district}</p>
+                  </div>
+                  <div className="flex justify-between">
+                    <p className="text-sm font-semibold text-gray-600 mr-2">Zone:</p>
+                    <p className="text-sm text-gray-800">{user?.zone}</p>
+                  </div>
+                  <div className="flex justify-between">
+                    <p className="text-sm font-semibold text-gray-600 mr-2">Mobile:</p>
+                    <p className="text-sm text-gray-800">{user?.mobile_number}</p>
+                  </div>
+                </div>
+              </div>
+
+            )}
+            {/* {isOpen.profile && (
+              <div className="absolute right-0 mt-2 w-36 bg-white shadow-md rounded-lg" style={{ zIndex: "1" }}>
                 <button
                   className="block px-4 py-2 w-full rounded-lg text-left text-white bg-[#ef3535]"
                   onClick={handelLogout}
@@ -164,7 +224,13 @@ function Mainnavbar() {
                   Logout
                 </button>
               </div>
-            )}
+            )} */}
+            <button title="logout" onClick={handelLogout} className="bg-500 text-black p-2 rounded-lg hover:bg-red-700 transition-all relative group">
+              <PiPowerDuotone size={29} />
+              <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-red-600 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                Logout
+              </span>
+            </button>
           </div>
         </div>
       </nav>

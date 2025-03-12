@@ -246,6 +246,9 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 import logo from "../assets/logo22.png";
+import ResetPasswordModal from "./resetpassword";
+
+// import resetpassword from "../components/"
 
 function Login() {
   const emailRef = useRef();
@@ -257,11 +260,14 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
+  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
+
+
   const navigate = useNavigate();
 
   localStorage.clear();
 
-  
+
   const handleOTPChange = (e, index) => {
     const value = e.target.value;
 
@@ -306,34 +312,77 @@ function Login() {
   };
 
   // ✅ Handle Login
-  const handleLogin = async () => {
-    const email = emailRef.current?.value.trim();
-    const password = passwordRef.current?.value.trim();
-    const otpValue = otpRefs.current.map((ref) => ref.current?.value || "").join("");
 
-    if (!email || !password || (showOTPField && otpValue.length !== 6)) {
-      setError("All fields are required.");
-      return;
-    }
+  // const handleLogin = async () => {
+  //   const email = emailRef.current?.value.trim();
+  //   const password = passwordRef.current?.value.trim();
+  //   const otpValue = otpRefs.current.map((ref) => ref.current?.value || "").join("");
+
+  //   if (!email || !password || (showOTPField && otpValue.length !== 6)) {
+  //     setError("All fields are required.");
+  //     return;
+  //   }
+
+  //   try {
+  //     console.log("Logging in with:", { email, password, otp: otpValue });
+
+  //     const response = await axiosInstance.post("/login", { email, password, otp: otpValue });
+
+  //     if (response.status === 200) {
+  //       localStorage.setItem("token", response.data.token);
+  //       localStorage.setItem("role", response.data.role);
+  //       localStorage.setItem("role", response.data.state);
+
+  //       console.log("Pavan_Kalyan");
+  //       console.log(response.data);
+  //       navigate("/mainnavbar", { state: { users: response.data.role, userName: response.data.userName } });
+  //     } else {
+  //       setError("Login failed. Check your credentials.");
+  //     }
+  //   } catch (err) {
+  //     console.error("Login error:", err);
+  //     setError("Error logging in. Check your details and try again.");
+  //   }
+  // };
+  const handleLogin = async () => {
+    const payload = {
+      email: emailRef.current.value,
+      password: passwordRef.current.value,
+    };
 
     try {
-      console.log("Logging in with:", { email, password, otp: otpValue });
+      const response = await axiosInstance.post("/login", payload);
 
-      const response = await axiosInstance.post("/login", { email, password, otp: otpValue });
+      const allowedRoles = [
+        "chief secretary",
+        "police",
+        "Prosecutor",
+        "court",
+        "correctionalservices",
+        "Forensic",
+        "admin"
+      ];
 
-      if (response.status === 200) {
+      console.log("Response received:", response.data);
+
+      if (
+        response.status === 200
+      ) {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("role", response.data.role);
-        localStorage.setItem("role", response.data.state);
-        console.log("Pavan_Kalyan");
-        console.log(response.data);
-        navigate("/mainnavbar", { state: { users: response.data.role, userName: response.data.userName } });
+        
+        const responseData = response.data;
+        Object.entries(responseData).forEach(([key, value]) => {
+          localStorage.setItem(key,value); // Convert value to string if it's not already
+        });
+
+        navigate("/mainnavbar", { state: { users: response.data.role, email: response.data.email } });
       } else {
-        setError("Login failed. Check your credentials.");
+        setError("User doesn't have access to log in.");
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError("Error logging in. Check your details and try again.");
+      setError("An error occurred. Please try again.");
     }
   };
 
@@ -344,6 +393,62 @@ function Login() {
       return () => clearTimeout(timer);
     }
   }, [error]);
+
+
+  const [emailExists, setEmailExists] = useState(null);
+  const [verificationStatus, setVerificationStatus] = useState(null);
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    if (email) {
+      const timeout = setTimeout(checkEmail, 500); // Debounce API call (wait 500ms)
+      return () => clearTimeout(timeout);
+    }
+  }, [email]);
+
+  const checkEmail = async () => {
+    try {
+      const response = await axiosInstance.post("/check_email", { email });
+
+      console.log("Response:", response); // Debugging
+      console.log("Response Data:", response.data); // Check what is returned
+
+      const data = response.data; // Axios automatically parses JSON
+
+      setEmailExists(data.exists);
+      setVerificationStatus(data.verification !== undefined ? data.verification : "Not Available");
+    } catch (error) {
+      console.error("Error checking email:", error.response ? error.response.data : error.message);
+    }
+  };
+
+
+
+  const handleResetPassword = () => {
+    setShowResetPasswordModal(true);
+  };
+
+  // const handleUpdatePassword = (newPassword) => {
+  //   // Handle password update logic
+  //   console.log("New Password:", newPassword);
+  //   setShowResetPasswordModal(false); // Close the modal after updating
+  // };
+  const handleUpdatePassword = async (data) => {
+    try {
+      const response = await axiosInstance.post("/reset_password", data);
+      if (response.status === 200) {
+        alert("Password updated successfully!");
+        window.location.reload(); // Refresh the page after success
+      } else {
+        alert("Error updating password.");
+      }
+      setShowResetPasswordModal(false); // Close the modal after updating
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Failed to reset password.");
+    }
+  };
+
 
   return (
     <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: "#f4f4f4" }}>
@@ -365,7 +470,10 @@ function Login() {
 
         <div>
           <label className="block text-gray-700">Email</label>
-          <input ref={emailRef} type="text" placeholder="Enter Email ID" className="w-full px-3 py-2 border rounded-md" />
+          <input ref={emailRef} type="text" placeholder="Enter Email ID" className="w-full px-3 py-2 border rounded-md"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)} // Update state on change
+          />
         </div>
 
         <div>
@@ -381,7 +489,17 @@ function Login() {
           </div>
         </div>
 
-        {showOTPField && (
+        <div className="flex items-center  justify-between">
+          <button
+            className="w-full px-4 py-2 font-bold text-white rounded-sm"
+            style={{ backgroundColor: "#2d3748" }}
+            onClick={handleLogin}
+          >
+            Log In
+          </button>
+        </div>
+
+        {/* {showOTPField && (
           <div>
             <label className="block text-gray-700 mb-2">Enter OTP</label>
             <div className="flex space-x-2">
@@ -402,15 +520,34 @@ function Login() {
 
         {!showOTPField ? (
           <button className="w-full px-4 py-2 bg-blue-600 text-white mt-4" onClick={handleSendOTP}>
-            Send OTP
+            Log In
           </button>
         ) : (
           <button className="w-full px-4 py-2 bg-green-600 text-white mt-4" onClick={handleLogin}>
-            Log In
+            Enter OTP
           </button>
+        )} */}
+
+
+
+        {emailExists && verificationStatus === false && (
+          <div className="flex justify-center items-center h-full">
+            <button
+              className="w-32 px-4 py-2 bg-green-600 text-white mt-4 rounded"
+              onClick={handleResetPassword}
+            >
+              Reset Password
+            </button>
+          </div>
         )}
+
       </div>
-    </div>
+
+      {showResetPasswordModal && (
+        <ResetPasswordModal onClose={() => setShowResetPasswordModal(false)} onUpdate={handleUpdatePassword} email={email} />
+      )}
+
+    </div >
   );
 }
 
