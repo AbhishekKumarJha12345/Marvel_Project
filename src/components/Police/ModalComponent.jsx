@@ -12,19 +12,59 @@ import {
 import { Close, CloudUpload, Download } from "@mui/icons-material";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import axiosInstance from "../../utils/axiosInstance";
+import Papa from "papaparse";
+
 
 const ModalComponent = ({ open,type, onClose }) => {
   const [selectedOption, setSelectedOption] = useState("");
  
   const [formData, setFormData] = useState({
-    date: "",
-  zone: localStorage.getItem("zone") || "",       // Get from localStorage
-  district: localStorage.getItem("district") || "", // Get from localStorage
-  sections: "",
-  totalCases: "",
-  detectedCases: "",
-  overallPercentage: "",
-  uploadedFile: null,
+    formType: "FIR",
+    month_year: "",
+    zone: localStorage.getItem("zone") || "",       // Get from localStorage
+    district: localStorage.getItem("district") || "", // Get from localStorage
+    sections: "",
+    totalCases: "",
+    detectedCases: "",
+    overallPercentage: "",
+    uploadedFile: null,
+  
+    // Form-B specific fields
+    unit: "",
+    disposedCases: "",
+    pendingCases: "",
+    pendingPercentage: "",
+    punishmentLessThan7: "",
+    punishmentMoreThan7: "",
+    // month_year: "",
+  
+    // Offences against body under BNS specific fields
+    crimeHead: "",
+    formCUnit: "",
+    policeStation: "",
+    regdCases: "",
+    detectedCasesFormC: "",
+    detectionPercentage: "",
+    // month_year: "",
+
+     // Form-D Fields
+    formDUnit: "",
+    policeStationD: "",
+    ageGroup: "",
+    untracedPersons: "",
+    missingPersons: "",
+    totalMissing: "",
+    traced: "",
+    untraced: "",
+    untracedPercentage: "",
+    // month_year: "",
+
+    //form-E or form-F
+    policeStation: "",
+    actAndSection: "",
+    registeredCases: "",
+    detectedCasesPercentage: "",
+
   });
 
   const [selectedTab, setSelectedTab] = useState("form");
@@ -39,15 +79,38 @@ const ModalComponent = ({ open,type, onClose }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file && file.type === "text/csv") {
-      setFormData({ ...formData, uploadedFile: file });
-      setFileInfo({ name: file.name, size: (file.size / 1024).toFixed(2) + " KB" });
-    } else {
-      alert("Only CSV files are allowed");
-    }
-  };
+  // const handleFileUpload = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file && file.type === "text/csv") {
+  //     setFormData({ ...formData, uploadedFile: file });
+  //     setFileInfo({ name: file.name, size: (file.size / 1024).toFixed(2) + " KB" });
+  //   } else {
+  //     alert("Only CSV files are allowed");
+  //   }
+  // };
+
+  // const handleFileUpload = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file && file.type === "text/csv") {
+  //     setFileInfo({ name: file.name, size: (file.size / 1024).toFixed(2) + " KB" });
+  //     setCheckingCsv(true);
+  
+  //     Papa.parse(file, {
+  //       complete: (result) => {
+  //         const headers = result.data[0];
+  //         if (JSON.stringify(headers) === JSON.stringify(expectedHeaders)) {
+  //           setCsvValidationMessage({ text: "CSV Matched", color: "green" });
+  //         } else {
+  //           setCsvValidationMessage({ text: "Headers Not Matching", color: "red" });
+  //         }
+  //         setCsvData(result.data);
+  //         setCheckingCsv(false);
+  //       },
+  //     });
+  //   } else {
+  //     alert("Only CSV files are allowed");
+  //   }
+  // };
  
   const handleSubmit = async () => {
     try {
@@ -59,40 +122,131 @@ const ModalComponent = ({ open,type, onClose }) => {
             formDataToSend.append("file", formData.uploadedFile);
         } else {
             // Ensure required fields are filled before submission
-            if (!formData.date || !formData.zone || !formData.district || !formData.totalCases) {
-                alert("Please fill in all required fields.");
-                return;
+
+            // if (!formData.date || !formData.zone || !formData.district || !formData.totalCases) {
+            //     alert("Please fill in all required fields.");
+            //     return;
+            // }
+
+            if (formData.formType === "FIR") {   // Tested
+                formDataToSend.append("type", "fir");
+                formDataToSend.append("form_type", formData.formType);  
+                formDataToSend.append("month_year", formData.month_year);
+                formDataToSend.append("zone", formData.zone);
+                formDataToSend.append("district", formData.district);
+                formDataToSend.append("sections", formData.sections);
+                formDataToSend.append("total_cases_registered", formData.totalCases);
+                formDataToSend.append("detected_cases", formData.detectedCases);
+                formDataToSend.append("overall_percent", formData.overallPercentage);
             }
-            formDataToSend.append("type", "fir");
-            formDataToSend.append("month_year", formData.date);
-            formDataToSend.append("zone", formData.zone);
-            formDataToSend.append("district", formData.district);
-            formDataToSend.append("sections", formData.sections);
-            formDataToSend.append("total_cases_registered", formData.totalCases);
-            formDataToSend.append("detected_cases", formData.detectedCases);
-            formDataToSend.append("overall_percent", formData.overallPercentage);
+            if (formData.formType === "Pendency of cases under BNS") {   //Not Tested
+                formDataToSend.append("type", "fir");
+                formDataToSend.append("form_type", formData.formType); 
+                formDataToSend.append("unit", formData.unit);
+                formDataToSend.append("total_cases", formData.totalCases);
+                formDataToSend.append("disposed_cases", formData.disposedCases);
+                formDataToSend.append("pending_cases", formData.pendingCases);
+                formDataToSend.append("pending_percentage", formData.pendingPercentage);
+                formDataToSend.append("punishment_less_than_7", formData.punishmentLessThan7);
+                formDataToSend.append("punishment_more_than_7", formData.punishmentMoreThan7);
+                formDataToSend.append("month_year", formData.month_year);
+            }
+            if (formData.formType === "Offences against body under BNS") {  //Tested
+                formDataToSend.append("type", "offences_against_body");
+                formDataToSend.append("district", localStorage.getItem("district") || ""); 
+                formDataToSend.append("unit", formData.unit);
+                formDataToSend.append("police_station", formData.policeStation);
+                formDataToSend.append("act_and_section", formData.actAndSection);
+                formDataToSend.append("registered_cases", formData.registeredCases);
+                formDataToSend.append("detected_cases", formData.detectedCases);
+                formDataToSend.append("percent_detection", formData.detectedCasesPercentage);
+                formDataToSend.append("month_year", formData.month_year);
+            }
+            if (formData.formType === "Untraced Missing") {      //Tested
+                formDataToSend.append("type", "untraced_missing");
+                formDataToSend.append("district", localStorage.getItem("district") || ""); 
+                formDataToSend.append("unit", formData.formDUnit);
+                formDataToSend.append("police_station", formData.policeStationD);
+                formDataToSend.append("age_group", formData.ageGroup);
+                formDataToSend.append("no_of_untraced_persons", formData.untracedPersons);
+                formDataToSend.append("no_of_missing_persons", formData.missingPersons);
+                formDataToSend.append("total_missing_persons", formData.totalMissing);
+                formDataToSend.append("traced", formData.traced);
+                formDataToSend.append("untraced", formData.untraced);
+                formDataToSend.append("percent_untraced", formData.untracedPercentage);
+                formDataToSend.append("month_year", formData.month_year);
+            }
+            if (formData.formType === "Important sections introduced in BNS") {    //Tested
+              formDataToSend.append("type", "sections_in_bns");
+              formDataToSend.append("district", localStorage.getItem("district") || ""); 
+              formDataToSend.append("unit", formData.unit);
+              formDataToSend.append("police_station", formData.policeStation);
+              formDataToSend.append("act_and_section", formData.actAndSection);
+              formDataToSend.append("registered_cases", formData.registeredCases);
+              formDataToSend.append("detected_cases", formData.detectedCases);
+              formDataToSend.append("percent_detection", formData.detectedCasesPercentage);
+              formDataToSend.append("month_year", formData.month_year);
+            }
+            if (formData.formType === "Property offences under BNS") {   //Tested
+              formDataToSend.append("type", "property_offenses");
+              formDataToSend.append("district", localStorage.getItem("district") || ""); 
+              formDataToSend.append("unit", formData.unit);
+              formDataToSend.append("police_station", formData.policeStation);
+              formDataToSend.append("act_and_section", formData.actAndSection);
+              formDataToSend.append("registered_cases", formData.registeredCases);
+              formDataToSend.append("detected_cases", formData.detectedCases);
+              formDataToSend.append("percent_detection", formData.detectedCasesPercentage);
+              formDataToSend.append("month_year", formData.month_year);
+            }
+            
+            if (formData.formType === "Form-G") {
+              formDataToSend.append("type", "fir");
+              formDataToSend.append("form_type", formData.formType);  // ✅ Add Form Type
+
+            }
+            if (formData.formType === "Form-H") {
+              formDataToSend.append("type", "fir");
+              formDataToSend.append("form_type", formData.formType);  // ✅ Add Form Type
+
+            }
+            if (formData.formType === "Form-I") {
+              formDataToSend.append("type", "fir");
+              formDataToSend.append("form_type", formData.formType);  // ✅ Add Form Type
+
+            }
+            if (formData.formType === "Form-J") {
+              formDataToSend.append("type", "fir");
+              formDataToSend.append("form_type", formData.formType);  // ✅ Add Form Type
+
+            }
+            if (formData.formType === "Form-K") {
+              formDataToSend.append("type", "fir");
+              formDataToSend.append("form_type", formData.formType);  // ✅ Add Form Type
+
+            }
+            if (formData.formType === "Form-L") {
+              formDataToSend.append("type", "fir");
+              formDataToSend.append("form_type", formData.formType);  // ✅ Add Form Type
+
+            }
         }
         
-        const response = await axiosInstance.post("/fir_form", formDataToSend, {
+        // const response = await axiosInstance.post("/fir_form", formDataToSend, {
+        //     headers: {
+        //         "Content-Type": "multipart/form-data",
+        //         Authorization: `${token}`, // Include token
+        //     },
+        // });
+        const response = await axios.post("http://192.168.1.33:5555/api/fir_form", formDataToSend, {
             headers: {
                 "Content-Type": "multipart/form-data",
-                Authorization: `${token}`, // Include token
+                Authorization: `${token}`, // Ensure token is valid
             },
         });
 
         if (response.status === 201) {
             alert("Data inserted successfully");
-            setFormData({
-                type: "fir",
-                date: "",
-                zone: "",
-                district: "",
-                sections: "",
-                totalCases: "",
-                detectedCases: "",
-                overallPercentage: "",
-                uploadedFile: null,
-            });
+            // setFormData({ type: "fir", formType: "Form-A", date: "", zone: "", district: "", sections: "", totalCases: "", detectedCases: "", overallPercentage: "", uploadedFile: null, });
             setFileInfo(null);
             window.location.reload();
         } else {
@@ -105,26 +259,158 @@ const ModalComponent = ({ open,type, onClose }) => {
   };
 
 
+// ======================================= UPLOAD_FILE ====================================================
+
+const [csvData, setCsvData] = useState(null);
+const [csvValidationMessage, setCsvValidationMessage] = useState(null);
+const [checkingCsv, setCheckingCsv] = useState(false);
+
+    const expectedHeaders = {
+      "FIR": [
+        "month_year",
+        "zone",
+        "district",
+        "sections",
+        "total_cases_registered",
+        "detected_cases",
+        "overall_percent"
+      ],
+      "Pendency of cases under BNS": [
+        "unit",
+        "total_cases",
+        "disposed_cases",
+        "pending_cases",
+        "pending_percentage",
+        "punishment_less_than_7",
+        "punishment_more_than_7",
+        "month_year"
+      ],
+      "Offences against body under BNS": [
+        "district",
+        "unit",
+        "police_station",
+        "act_and_section",
+        "registered_cases",
+        "detected_cases",
+        "percent_detection",
+        "month_year"
+      ],
+      "Untraced Missing": [
+        "district",
+        "unit",
+        "police_station",
+        "age_group",
+        "no_of_untraced_persons",
+        "no_of_missing_persons",
+        "total_missing_persons",
+        "traced",
+        "untraced",
+        "percent_untraced",
+        "month_year"
+      ],
+      "Important sections introduced in BNS": [
+        "district",
+        "unit",
+        "police_station",
+        "act_and_section",
+        "registered_cases",
+        "detected_cases",
+        "percent_detection",
+        "month_year"
+      ],
+      "Property offences under BNS": [
+        "district",
+        "unit",
+        "police_station",
+        "act_and_section",
+        "registered_cases",
+        "detected_cases",
+        "percent_detection",
+        "month_year"
+      ]
+    };
+
+
+  const [selectedForm, setSelectedForm] = useState("FIR");
+  const handleFormChange = (event) => {
+    setSelectedForm(event.target.value);
+  };
   const generateCSV = () => {
-    const headers = [
-      "month_year,zone,district,sections,total_cases_registered,detected_cases,overall_percent",
-    ];
-    
-    const sampleData = [
-      "Jan-24,Amravati,Akola,Murder (BNS Sec. 103(1)),10,8,80",
-    ];
+    const sampleFiles = {
+      "FIR": [
+          "month_year,zone,district,sections,total_cases_registered,detected_cases,overall_percent",
+          "Jan-24,Amravati,Akola,Murder (BNS Sec. 103(1)),10,8,80",
+      ],
+      "Pendency of cases under BNS": [
+          "unit,total_cases,disposed_cases,pending_cases,pending_percentage,punishment_less_than_7,punishment_more_than_7,month_year",
+          "Unit-1,100,60,40,40,15,25,05-2024",
+      ],
+      "Offences against body under BNS": [
+          "district,unit,police_station,act_and_section,registered_cases,detected_cases,percent_detection,month_year",
+          "Nashik,Unit-2,Station-5,IPC 302,50,30,60,Mar-24",
+      ],
+      "Untraced Missing": [
+          "district,unit,police_station,age_group,no_of_untraced_persons,no_of_missing_persons,total_missing_persons,traced,untraced,percent_untraced,month_year",
+          "Pune,Unit-3,Station-8,18-25,15,50,65,50,15,23.1,Feb-24",
+      ],
+      "Important sections introduced in BNS": [
+          "district,unit,police_station,act_and_section,registered_cases,detected_cases,percent_detection,month_year",
+          "Mumbai,Unit-4,Station-12,IPC 420,30,20,66.7,Jan-24",
+      ],
+      "Property offences under BNS": [
+          "district,unit,police_station,act_and_section,registered_cases,detected_cases,percent_detection,month_year",
+          "Delhi,Unit-5,Station-15,IPC 376,40,35,87.5,Apr-24",
+      ]
+  };
   
-    const csvContent = [headers, sampleData].join("\n"); 
+    const csvContent = sampleFiles[selectedForm]?.join("\n") || "No data available";
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
   
     const a = document.createElement("a");
     a.href = url;
-    a.download = "sample_crime_data.csv";
+    a.download = `${selectedForm.toLowerCase()}_sample.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
   };
+
+
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+  
+    if (file && file.type === "text/csv") {
+      setFileInfo({ name: file.name, size: (file.size / 1024).toFixed(2) + " KB" });
+      setCheckingCsv(true);
+  
+      Papa.parse(file, {
+        complete: (result) => {
+          const headers = result.data[0]; // Extract headers from the uploaded CSV
+          const selectedHeaders = expectedHeaders[selectedForm]; // Get expected headers for the selected form type
+  
+          if (!selectedHeaders) {
+            setCsvValidationMessage({ text: "Invalid form type selected", color: "red" });
+            setCheckingCsv(false);
+            return;
+          }
+  
+          if (JSON.stringify(headers) === JSON.stringify(selectedHeaders)) {
+            setCsvValidationMessage({ text: "CSV Matched", color: "green" });
+          } else {
+            setCsvValidationMessage({ text: "Headers Not Matching", color: "red" });
+          }
+  
+          setCsvData(result.data);
+          setCheckingCsv(false);
+        },
+      });
+    } else {
+      alert("Only CSV files are allowed");
+    }
+  };
+  
+  // ================================================================================================================
   
 
   return (
@@ -158,49 +444,482 @@ const ModalComponent = ({ open,type, onClose }) => {
               </Button>
             </Box>
             {selectedTab === "form" && (
-              <Box display="flex" flexDirection="column" gap={2}>
-                {/* <TextField label="Sections" name="sections" value={formData.sections} onChange={handleChange} fullWidth /> */}
-                {/* Dropdown for Sections */}
+              <Box display="flex" flexDirection="column" gap={2} minHeight="60vh">
+                {/* Form Type Selection Dropdown */}
                 <FormControl fullWidth variant="outlined">
-                  <InputLabel id="sections-label">Sections</InputLabel>
-                  <Select labelId="sections-label" id="sections" name="sections"  value={formData.sections} onChange={handleChange} label="Sections" >
-                    <MenuItem value="Murder (BNS Sec. 103(1))">Murder (BNS Sec. 103(1))</MenuItem>
-                    <MenuItem value="Att. To Murder (BNS Sec. 109)">Att. To Murder (BNS Sec. 109)</MenuItem>
-                    <MenuItem value="Esakshya BNSS 105">Esakshya BNSS 105</MenuItem>
-                    <MenuItem value="Esakshya BNSS 173">Esakshya BNSS 173</MenuItem>
-                    <MenuItem value="Esakshya BNSS 176">Esakshya BNSS 176</MenuItem>
-                    <MenuItem value="Esakshya BNSS 180">Esakshya BNSS 180</MenuItem>
-                    <MenuItem value="Esakshya BNSS 247">Esakshya BNSS 247</MenuItem>
-                    <MenuItem value="esakshya Rape (BNS Sec. 64 to 71)">Esakshya Rape (BNS Sec. 64 to 71)</MenuItem>
-                    <MenuItem value="Hurt (BNS Sec. 117 to 125)">Hurt (BNS Sec. 117 to 125)</MenuItem>
+                  <InputLabel id="form-type-label">Form Type</InputLabel>
+                  <Select
+                    labelId="form-type-label"
+                    id="form-type"
+                    value={formData.formType}
+                    onChange={(e) => setFormData({ ...formData, formType: e.target.value })}
+                    label="Form Type" // Add this line to associate the label correctly
+                  >
+                    {[
+                      "FIR", "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Form-G",
+                      "Form-H", "Form-I", "Form-J", "Form-K", "Form-L", "Form-M", "Form-N"
+                    ].map((form) => (
+                      <MenuItem key={form} value={form}>
+                        {form}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
-                <TextField label="Zone" name="zone" value={formData.zone} onChange={handleChange} fullWidth InputProps={{ readOnly: true }}  />
-                <TextField label="District" name="district" value={formData.district} onChange={handleChange} fullWidth  InputProps={{ readOnly: true }} />
-                <TextField label="Month and Year" name="date" type="month" value={formData.date} onChange={handleChange} fullWidth />
-                <TextField label="Total Cases Registered" name="totalCases" type="number" value={formData.totalCases} onChange={handleChange} fullWidth />
-                <TextField label="Detected Cases" name="detectedCases" type="number" value={formData.detectedCases} onChange={handleChange} fullWidth />
-                <TextField label="Overall Percentage" name="overallPercentage" type="number" value={formData.overallPercentage} onChange={handleChange} fullWidth />
+
+                {/* Show form only if Form Type is selected */}
+                {formData.formType === "FIR" && (
+                    <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
+  
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="col-span-2">
+                          <label className="block text-sm font-medium">Sections</label>
+                          <select
+                            className="w-full p-2 border rounded bg-white"
+                            value={formData.sections || ""}
+                            onChange={handleChange}
+                            name="sections"
+                          >
+                            <option value="">Select Section</option>
+                            <option value="Murder (BNS Sec. 103(1))">Murder (BNS Sec. 103(1))</option>
+                            <option value="Att. To Murder (BNS Sec. 109)">Att. To Murder (BNS Sec. 109)</option>
+                            <option value="Esakshya BNSS 105">Esakshya BNSS 105</option>
+                            <option value="Esakshya BNSS 173">Esakshya BNSS 173</option>
+                            <option value="Esakshya BNSS 176">Esakshya BNSS 176</option>
+                            <option value="Esakshya BNSS 180">Esakshya BNSS 180</option>
+                            <option value="Esakshya BNSS 247">Esakshya BNSS 247</option>
+                            <option value="Esakshya Rape (BNS Sec. 64 to 71)">Esakshya Rape (BNS Sec. 64 to 71)</option>
+                            <option value="Hurt (BNS Sec. 117 to 125)">Hurt (BNS Sec. 117 to 125)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium">Zone</label>
+                          <input
+                            type="text"
+                            className="w-full p-2 border rounded bg-gray-200"
+                            value={formData.zone || ""}
+                            onChange={handleChange}
+                            name="zone"
+                            readOnly
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium">District</label>
+                          <input
+                            type="text"
+                            className="w-full p-2 border rounded bg-gray-200"
+                            value={formData.district || ""}
+                            onChange={handleChange}
+                            name="district"
+                            readOnly
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium">Month and Year</label>
+                          <input
+                            type="month"
+                            className="w-full p-2 border rounded"
+                            value={formData.month_year || ""}
+                            onChange={handleChange}
+                            name="date"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium">Total Cases Registered</label>
+                          <input
+                            type="number"
+                            className="w-full p-2 border rounded"
+                            value={formData.totalCases || ""}
+                            onChange={handleChange}
+                            name="totalCases"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium">Detected Cases</label>
+                          <input
+                            type="number"
+                            className="w-full p-2 border rounded"
+                            value={formData.detectedCases || ""}
+                            onChange={handleChange}
+                            name="detectedCases"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium">Overall Percentage</label>
+                          <input
+                            type="number"
+                            step="0.01"
+                            className="w-full p-2 border rounded"
+                            value={formData.overallPercentage || ""}
+                            onChange={handleChange}
+                            name="overallPercentage"
+                          />
+                        </div>
+                      </div>
+                      </div>
+                )}
+                 {formData.formType === "Pendency of cases under BNS" && (
+                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium">Unit</label>
+                        <input type="text" className="w-full p-2 border rounded" value={formData.unit || ""} onChange={(e) => setFormData({ ...formData, unit: e.target.value })} />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Total Cases</label>
+                        <input 
+                          type="number" 
+                          className="w-full p-2 border rounded" 
+                          value={formData.totalCases || ""} 
+                          onChange={(e) => setFormData({ ...formData, totalCases: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Disposed Cases</label>
+                        <input 
+                          type="number" 
+                          className="w-full p-2 border rounded" 
+                          value={formData.disposedCases || ""} 
+                          onChange={(e) => setFormData({ ...formData, disposedCases: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Pending Cases</label>
+                        <input 
+                          type="number" 
+                          className="w-full p-2 border rounded" 
+                          value={formData.pendingCases || ""} 
+                          onChange={(e) => setFormData({ ...formData, pendingCases: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Pending Percentage</label>
+                        <input 
+                          type="number" 
+                          step="0.01"
+                          className="w-full p-2 border rounded" 
+                          value={formData.pendingPercentage || ""} 
+                          onChange={(e) => setFormData({ ...formData, pendingPercentage: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Punishment Less Than 7 Years</label>
+                        <input 
+                          type="number" 
+                          className="w-full p-2 border rounded" 
+                          value={formData.punishmentLessThan7 || ""} 
+                          onChange={(e) => setFormData({ ...formData, punishmentLessThan7: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-small">Cases Punishment MoreThan 7 Years</label>
+                        <input 
+                          type="number" 
+                          className="w-full p-2 border rounded" 
+                          value={formData.punishmentMoreThan7 || ""} 
+                          onChange={(e) => setFormData({ ...formData, punishmentMoreThan7: e.target.value })}
+                        />
+                      </div>
+                    
+                      <div>
+                        <label className="block text-sm font-medium mb-3">Month-Year</label>
+                        <input
+                          type="month"
+                          className="w-full p-2 border rounded"
+                          value={formData.month_year || ""}
+                          onChange={(e) => setFormData({ ...formData, month_year: e.target.value })}
+                        />
+                      </div>
+
+                    
+                    </div>
+                  </div>
+                )}
+
+              {formData.formType === "Untraced Missing" && (
+                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium">Unit</label>
+                        <input
+                          type="text"
+                          className="w-full p-2 border rounded"
+                          value={formData.formDUnit || ""}
+                          onChange={(e) => setFormData({ ...formData, formDUnit: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Police Station</label>
+                        <input
+                          type="text"
+                          className="w-full p-2 border rounded"
+                          value={formData.policeStationD || ""}
+                          onChange={(e) => setFormData({ ...formData, policeStationD: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Age Group</label>
+                        <select
+                          className="w-full p-2 border rounded bg-white"
+                          value={formData.ageGroup || ""}
+                          onChange={(e) => setFormData({ ...formData, ageGroup: e.target.value })}
+                        >
+                          <option value="">Select Age Group</option>
+                          <option value="below18">Below 18 years</option>
+                          <option value="above18">Above 18 years</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">No of Untraced Persons</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.untracedPersons || ""}
+                          onChange={(e) => setFormData({ ...formData, untracedPersons: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">No of Missing Persons</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.missingPersons || ""}
+                          onChange={(e) => setFormData({ ...formData, missingPersons: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Total Missing Persons (Untraced People)</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.totalMissing || ""}
+                          onChange={(e) => setFormData({ ...formData, totalMissing: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Traced</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.traced || ""}
+                          onChange={(e) => setFormData({ ...formData, traced: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Untraced</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.untraced || ""}
+                          onChange={(e) => setFormData({ ...formData, untraced: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Percentage of Untraced Persons</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          className="w-full p-2 border rounded"
+                          value={formData.untracedPercentage || ""}
+                          onChange={(e) => setFormData({ ...formData, untracedPercentage: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                            <label className="block text-sm font-medium">Month-Year </label>
+                            <input
+                              type="month"
+                              className="w-full p-2 border rounded"
+                              value={formData.month_year || ""}
+                              onChange={(e) => setFormData({ ...formData, month_year: e.target.value })}
+                            />
+                          </div>                 
+                    </div>
+                    </div>
+                  )}
+
+                  {( formData.formType === "Offences against body under BNS" || formData.formType === "Important sections introduced in BNS" || formData.formType === "Property offences under BNS") && (
+                      <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium">Unit</label>
+                            <input type="text" className="w-full p-2 border rounded" value={formData.unit || ""} onChange={(e) => setFormData({ ...formData, unit: e.target.value })} />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium">Police Station</label>
+                            <input type="text" className="w-full p-2 border rounded" value={formData.policeStation || ""} onChange={(e) => setFormData({ ...formData, policeStation: e.target.value })} />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium">Act and Section</label>
+                            <input type="text" className="w-full p-2 border rounded" value={formData.actAndSection || ""} onChange={(e) => setFormData({ ...formData, actAndSection: e.target.value })} />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium">Reg'd Cases</label>
+                            <input type="number" className="w-full p-2 border rounded" value={formData.registeredCases || ""} onChange={(e) => setFormData({ ...formData, registeredCases: e.target.value })} />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium">Detected Cases</label>
+                            <input type="number" className="w-full p-2 border rounded" value={formData.detectedCases || ""} onChange={(e) => setFormData({ ...formData, detectedCases: e.target.value })} />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium">Percentage of Detected Cases</label>
+                            <input type="number" step="0.01" className="w-full p-2 border rounded" value={formData.detectedCasesPercentage || ""} onChange={(e) => setFormData({ ...formData, detectedCasesPercentage: e.target.value })} />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium ">Month-Year</label>
+                            <input type="month" className="w-full p-2 border rounded" value={formData.month_year || ""} onChange={(e) => setFormData({ ...formData, month_year: e.target.value })} />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
               </Box>
             )}
-           {selectedTab === "upload" && (
-      <Box display="flex" flexDirection="column" gap={2} minHeight="60vh">
-        <Box display="flex" flexDirection="row" justifyContent="space-between" gap={2}>
-          <Button variant="contained" component="label" startIcon={<CloudUpload />}>
-            Upload CSV
-            <input type="file" hidden accept=".csv" onChange={handleFileUpload} />
-          </Button>
+            {selectedTab === "upload" && (
+              <Box display="flex" flexDirection="column" gap={2} minHeight="60vh">
+                {/* Form Type Selection Dropdown */}
+                <FormControl fullWidth>
+                  <InputLabel id="form-type-label" shrink>Form Type</InputLabel>
+                  <Select
+                    labelId="form-type-label"
+                    id="form-type"
+                    value={selectedForm}
+                    onChange={handleFormChange}
+                    displayEmpty
+                  >
+                    {[
+                      "FIR", "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Form-G", 
+                      "Form-H", "Form-I", "Form-J", "Form-K", "Form-L", "Form-M", "Form-N"
+                    ].map((form) => (
+                      <MenuItem key={form} value={form}>
+                        {form}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <Box>
+
+                  <Button variant="contained" component="label" startIcon={<CloudUpload />}>
+                    Upload CSV
+                    <input type="file" hidden accept=".csv" onChange={handleFileUpload} />
+                  </Button>
+                  <Button variant="contained" startIcon={<Download />} onClick={generateCSV} sx={{ ml: 2 }}>
+                    Download Sample
+                  </Button>
+
+                  {checkingCsv && <Typography>Checking CSV...</Typography>}
+                  {csvValidationMessage && (
+                    <Typography style={{ color: csvValidationMessage.color }}>{csvValidationMessage.text}</Typography>
+                  )}
+
+                  {csvData && (
+                  <Box
+                    sx={{
+                      marginTop: "1.5rem",
+                      maxHeight: "400px",
+                      width: "100%",
+                      overflowX: "auto",
+                      overflowY: "auto",
+                      border: "2px solid #ddd",
+                      backgroundColor: "#f3f8ff",
+                      padding: "8px",
+                      borderRadius: "4px",
+                      "&::-webkit-scrollbar": { display: "none" }, 
+                    }}
+                  >
+                  
+                  
+                    <Typography variant="subtitle1" sx={{ fontWeight: "bold", color: "#2d3748" }}>
+                      CSV Preview
+                    </Typography>
+                  
+                    <Box component="table" sx={{ 
+                      width: "1000px",
+                      borderCollapse: "collapse",
+                      tableLayout: "fixed" // Ensures columns have a fixed size
+                    }}>
+
+                      <thead>
+                        <tr>
+                          {csvData[0].map((header, index) => (
+                            <th
+                            key={index}
+                            style={{
+                              border: "1px solid #bbb",
+                              padding: "8px",
+                              background: "#c6e0b4",
+                              color: "#2d3748",
+                              textAlign: "center",
+                              fontWeight: "bold",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              maxWidth: "140px", // Prevents excessive column width
+                            }}
+                          >
+                              {header}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {csvData.slice(1).map((row, rowIndex) => (
+                          <tr key={rowIndex} style={{ backgroundColor: rowIndex % 2 === 0 ? "#ffffff" : "#f7f7f7" }}>
+                            {row.map((cell, cellIndex) => (
+                              <td
+                                key={cellIndex}
+                                style={{
+                                  border: "1px solid #ddd",
+                                  padding: "8px",
+                                  textAlign: "center",
+                                  whiteSpace: "nowrap", // Prevents text wrapping
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis", // Shows "..." if text is too long
+                                  maxWidth: "150px", // Limits cell width
+                                }}
+                              >
+                                {cell}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Box>
+
+              </Box>
           
-          <Button variant="contained" startIcon={<Download />} onClick={generateCSV}>
-            Download Sample
-          </Button>
+          )}
         </Box>
-    
-        {fileInfo && (
-          <Typography>File: {fileInfo.name} ({fileInfo.size})</Typography>
-        )}
-      </Box>
-    )}
+                               
+
+                {fileInfo && <Typography>File: {fileInfo.name} ({fileInfo.size})</Typography>}
+              </Box>
+            )}
+
+           
     
           <Box sx={{ padding: 2, borderTop: "1px solid #ddd", backgroundColor: "#f9f9f9" }}>
           <Button fullWidth variant="contained" sx={{ backgroundColor: "#2d3748", color: "white" }} onClick={handleSubmit}>
