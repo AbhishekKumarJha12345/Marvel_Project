@@ -121,21 +121,32 @@ const AdminUserTable = () => {
 
   // Handle district selection
   const handleDistrictChange = (e) => {
-    const { value, checked } = e.target;
-
-    setSelectedDistrict((prev) => {
-      const updatedSelection = checked
-        ? [...prev, value] // Add selected district
-        : prev.filter((district) => district !== value); // Remove if unchecked
-
-      setEditFormData((prevFormData) => ({
-        ...prevFormData,
-        district: updatedSelection, // Store in formData
-      }));
-
-      return updatedSelection; // Update state
-    });
+    const { value } = e.target;
+  
+    setSelectedDistrict(value); // Update selected district state
+  
+    setEditFormData((prevFormData) => ({
+      ...prevFormData,
+      district: value, // Save the selected district in formData
+    }));
   };
+  
+  // const handleDistrictChange = (e) => {
+  //   const { value, checked } = e.target;
+
+  //   setSelectedDistrict((prev) => {
+  //     const updatedSelection = checked
+  //       ? [...prev, value] // Add selected district
+  //       : prev.filter((district) => district !== value); // Remove if unchecked
+
+  //     setEditFormData((prevFormData) => ({
+  //       ...prevFormData,
+  //       district: updatedSelection, // Store in formData
+  //     }));
+
+  //     return updatedSelection; // Update state
+  //   });
+  // };
 
   // Handle zone selection
   const handleZoneChange = (e) => {
@@ -318,33 +329,52 @@ const AdminUserTable = () => {
                 </div>
                 {editFormData.sub_role !== "IG/DIG" && (
                   <div className="mb-4">
-                    <label className="block text-sm font-medium">District</label>
-                    <div ref={dropdownRef} className="relative">
-                      <button
-                        type="button"
-                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                        className="w-full p-2 border rounded-md bg-white text-left"
-                      >
-                        {selectedDistrict.length > 0 ? selectedDistrict.join(", ") : "Select District"}
-                      </button>
-                      {isDropdownOpen && selectedZone && (
-                        <div className="absolute top-full left-0 w-full bg-white border rounded-md shadow-lg p-2 z-50 max-h-40 overflow-auto">
-                          {zones[selectedZone].map((district) => (
-                            <label key={district} className="flex items-center space-x-2 p-1">
-                              <input
-                                type="checkbox"
-                                value={district}
-                                checked={selectedDistrict.includes(district)}
-                                onChange={handleDistrictChange}
-                                className="form-checkbox text-blue-500"
-                              />
-                              <span className="text-gray-800">{district}</span>
-                            </label>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                  <label className="block text-sm font-medium">District</label>
+                  <div className="relative">
+                    <select
+                      value={selectedDistrict}
+                      onChange={handleDistrictChange}
+                      className="w-full p-2 border rounded-md bg-white text-gray-800"
+                    >
+                      <option value="">Select District</option>
+                      {selectedZone &&
+                        zones[selectedZone].map((district) => (
+                          <option key={district} value={district}>
+                            {district}
+                          </option>
+                        ))}
+                    </select>
                   </div>
+                </div>
+                
+                  // <div className="mb-4">
+                  //   <label className="block text-sm font-medium">District</label>
+                  //   <div ref={dropdownRef} className="relative">
+                  //     <button
+                  //       type="button"
+                  //       onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  //       className="w-full p-2 border rounded-md bg-white text-left"
+                  //     >
+                  //       {selectedDistrict.length > 0 ? selectedDistrict.join(", ") : "Select District"}
+                  //     </button>
+                  //     {isDropdownOpen && selectedZone && (
+                  //       <div className="absolute top-full left-0 w-full bg-white border rounded-md shadow-lg p-2 z-50 max-h-40 overflow-auto">
+                  //         {zones[selectedZone].map((district) => (
+                  //           <label key={district} className="flex items-center space-x-2 p-1">
+                  //             <input
+                  //               type="checkbox"
+                  //               value={district}
+                  //               checked={selectedDistrict.includes(district)}
+                  //               onChange={handleDistrictChange}
+                  //               className="form-checkbox text-blue-500"
+                  //             />
+                  //             <span className="text-gray-800">{district}</span>
+                  //           </label>
+                  //         ))}
+                  //       </div>
+                  //     )}
+                  //   </div>
+                  // </div>
                 )}
                 <div className="mb-4">
                   <label className="block text-sm font-medium">Mobile Number</label>
