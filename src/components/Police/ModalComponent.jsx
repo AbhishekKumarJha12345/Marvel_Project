@@ -30,7 +30,7 @@ const ModalComponent = ({ open,type, onClose }) => {
     uploadedFile: null,
   
     // Form-B specific fields
-    unit: "",
+    unit: localStorage.getItem("zone") || "",
     disposedCases: "",
     pendingCases: "",
     pendingPercentage: "",
@@ -64,6 +64,33 @@ const ModalComponent = ({ open,type, onClose }) => {
     actAndSection: "",
     registeredCases: "",
     detectedCasesPercentage: "",
+
+    // Esakshya Wrt Unit
+    totalIOsNagapur: "",
+    totalIOsEsakshya: "",
+    esakshyaWage: "",
+
+   // form-h
+    totalCases: "",
+    totalOffencesUsed: "",
+    totalOffencesNotUsed: "",
+    offencesUsedChargeCheet: "",
+    offencesNotUsedUnderInvestigation: "",
+    percentageOfUsingEsakshya: "",
+   // form-i
+
+    totalZeroFIRsReceived: "",
+    totalFIRsRegistered: "",
+    pendingFIRs: "",
+    totalTransferredZeroFIRs: "",
+    formIMonthYear: "",
+ 
+   // eFIR specific fields
+  
+    totalEComplaintsReceived: "",
+    totalComplaintsConverted: "",
+    disposedEComplaints: "",
+    formJMonthYear: "",
 
   });
 
@@ -130,7 +157,8 @@ const ModalComponent = ({ open,type, onClose }) => {
 
             if (formData.formType === "FIR") {   // Tested
                 formDataToSend.append("type", "fir");
-                formDataToSend.append("form_type", formData.formType);  
+                formDataToSend.append("district", localStorage.getItem("district") || ""); 
+                formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
                 formDataToSend.append("month_year", formData.month_year);
                 formDataToSend.append("zone", formData.zone);
                 formDataToSend.append("district", formData.district);
@@ -139,21 +167,24 @@ const ModalComponent = ({ open,type, onClose }) => {
                 formDataToSend.append("detected_cases", formData.detectedCases);
                 formDataToSend.append("overall_percent", formData.overallPercentage);
             }
-            if (formData.formType === "Pendency of cases under BNS") {   //Not Tested
-                formDataToSend.append("type", "fir");
-                formDataToSend.append("form_type", formData.formType); 
+            if (formData.formType === "Pendency of cases under BNS") {   // Tested
+
+                formDataToSend.append("type", "pendency_in_bns");
+                formDataToSend.append("district", localStorage.getItem("district") || ""); 
+                formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR"); 
                 formDataToSend.append("unit", formData.unit);
-                formDataToSend.append("total_cases", formData.totalCases);
-                formDataToSend.append("disposed_cases", formData.disposedCases);
-                formDataToSend.append("pending_cases", formData.pendingCases);
-                formDataToSend.append("pending_percentage", formData.pendingPercentage);
-                formDataToSend.append("punishment_less_than_7", formData.punishmentLessThan7);
-                formDataToSend.append("punishment_more_than_7", formData.punishmentMoreThan7);
+                formDataToSend.append("total_cases_registered", formData.totalCases);
+                formDataToSend.append("cases_disposed", formData.disposedCases);
+                formDataToSend.append("cases_pending_investigation", formData.pendingCases);
+                formDataToSend.append("percent_pendency", formData.pendingPercentage);
+                formDataToSend.append("cases_punishment_less_than_7_years", formData.punishmentLessThan7);
+                formDataToSend.append("cases_punishment_7_years_or_more", formData.punishmentMoreThan7);
                 formDataToSend.append("month_year", formData.month_year);
             }
             if (formData.formType === "Offences against body under BNS") {  //Tested
                 formDataToSend.append("type", "offences_against_body");
                 formDataToSend.append("district", localStorage.getItem("district") || ""); 
+                formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR"); 
                 formDataToSend.append("unit", formData.unit);
                 formDataToSend.append("police_station", formData.policeStation);
                 formDataToSend.append("act_and_section", formData.actAndSection);
@@ -165,6 +196,7 @@ const ModalComponent = ({ open,type, onClose }) => {
             if (formData.formType === "Untraced Missing") {      //Tested
                 formDataToSend.append("type", "untraced_missing");
                 formDataToSend.append("district", localStorage.getItem("district") || ""); 
+                formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR"); 
                 formDataToSend.append("unit", formData.formDUnit);
                 formDataToSend.append("police_station", formData.policeStationD);
                 formDataToSend.append("age_group", formData.ageGroup);
@@ -179,6 +211,7 @@ const ModalComponent = ({ open,type, onClose }) => {
             if (formData.formType === "Important sections introduced in BNS") {    //Tested
               formDataToSend.append("type", "sections_in_bns");
               formDataToSend.append("district", localStorage.getItem("district") || ""); 
+              formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR"); 
               formDataToSend.append("unit", formData.unit);
               formDataToSend.append("police_station", formData.policeStation);
               formDataToSend.append("act_and_section", formData.actAndSection);
@@ -190,6 +223,7 @@ const ModalComponent = ({ open,type, onClose }) => {
             if (formData.formType === "Property offences under BNS") {   //Tested
               formDataToSend.append("type", "property_offenses");
               formDataToSend.append("district", localStorage.getItem("district") || ""); 
+              formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR"); 
               formDataToSend.append("unit", formData.unit);
               formDataToSend.append("police_station", formData.policeStation);
               formDataToSend.append("act_and_section", formData.actAndSection);
@@ -199,35 +233,54 @@ const ModalComponent = ({ open,type, onClose }) => {
               formDataToSend.append("month_year", formData.month_year);
             }
             
-            if (formData.formType === "Form-G") {
-              formDataToSend.append("type", "fir");
-              formDataToSend.append("form_type", formData.formType);  // ✅ Add Form Type
-
+            if (formData.formType === "Esakshya Wrt Unit") {   //Tested
+              formDataToSend.append("type", "esakshya_units");
+              formDataToSend.append("district", localStorage.getItem("district") || ""); 
+              formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR"); 
+              formDataToSend.append("unit", formData.unit);
+              formDataToSend.append("total_ios_nagpur_rural", formData.totalIOsNagapur);
+              formDataToSend.append("registered_ios_on_esakshya", formData.totalIOsEsakshya);
+              formDataToSend.append("esakshya_usage_percentage", formData.esakshyaWage);
+              formDataToSend.append("month_year", formData.month_year);
             }
-            if (formData.formType === "Form-H") {
-              formDataToSend.append("type", "fir");
-              formDataToSend.append("form_type", formData.formType);  // ✅ Add Form Type
 
+    
+            if (formData.formType === "Esakshya wrt 7yrs or more") {   //Tested
+                formDataToSend.append("type", "esakshya_7_more");
+                formDataToSend.append("district", localStorage.getItem("district") || ""); 
+                formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR"); 
+                formDataToSend.append("unit", formData.unit);
+                formDataToSend.append("total_cases", formData.totalCases);
+                formDataToSend.append("total_offences_with_esakshya", formData.totalOffencesUsed);
+                formDataToSend.append("total_offences_without_esakshya", formData.totalOffencesNotUsed);
+                formDataToSend.append("total_charge_sheeted_with_esakshya", formData.offencesUsedChargeCheet);
+                formDataToSend.append("total_under_investigation_without_esakshya", formData.offencesNotUsedUnderInvestigation);
+                formDataToSend.append("percentage_usage", formData.percentageOfUsingEsakshya);
             }
-            if (formData.formType === "Form-I") {
-              formDataToSend.append("type", "fir");
-              formDataToSend.append("form_type", formData.formType);  // ✅ Add Form Type
-
+ 
+          
+            if (formData.formType === "FIR's and Zero FIR's") {  //Tested
+              formDataToSend.append("type", "fir_and_zero_firs");
+              formDataToSend.append("district", localStorage.getItem("district") || ""); 
+              formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR"); 
+              formDataToSend.append("unit", formData.unit);
+              formDataToSend.append("section", formData.sections);
+              formDataToSend.append("total_zero_firs_received", formData.totalZeroFIRsReceived);
+              formDataToSend.append("total_firs_registered", formData.totalFIRsRegistered);
+              formDataToSend.append("pending", formData.pending);
+              formDataToSend.append("total_transferred_zero_firs", formData.totalTransferredZeroFIRs);
+              formDataToSend.append("month_year", formData.month_year);
             }
-            if (formData.formType === "Form-J") {
-              formDataToSend.append("type", "fir");
-              formDataToSend.append("form_type", formData.formType);  // ✅ Add Form Type
-
-            }
-            if (formData.formType === "Form-K") {
-              formDataToSend.append("type", "fir");
-              formDataToSend.append("form_type", formData.formType);  // ✅ Add Form Type
-
-            }
-            if (formData.formType === "Form-L") {
-              formDataToSend.append("type", "fir");
-              formDataToSend.append("form_type", formData.formType);  // ✅ Add Form Type
-
+  
+            if (formData.formType === "eFIR") {   //Tested
+              formDataToSend.append("type", "e_fir");
+              formDataToSend.append("district", localStorage.getItem("district") || ""); 
+              formDataToSend.append("unit", formData.unit);
+              formDataToSend.append("police_station", formData.policeStation);
+              formDataToSend.append("total_ecomplaints_received", formData.totalEComplaintsReceived);
+              formDataToSend.append("total_ecomplaints_converted_to_firs", formData.totalComplaintsConverted);
+              formDataToSend.append("disposed_of_ecomplaints", formData.disposedEComplaints);
+              formDataToSend.append("month_year", formData.month_year);
             }
         }
         
@@ -277,12 +330,12 @@ const [checkingCsv, setCheckingCsv] = useState(false);
       ],
       "Pendency of cases under BNS": [
         "unit",
-        "total_cases",
-        "disposed_cases",
-        "pending_cases",
-        "pending_percentage",
-        "punishment_less_than_7",
-        "punishment_more_than_7",
+        "total_cases_registered",
+        "cases_disposed",
+        "cases_pending_investigation",
+        "percent_pendency",
+        "cases_punishment_less_than_7_years",
+        "cases_punishment_7_years_or_more",
         "month_year"
       ],
       "Offences against body under BNS": [
@@ -327,7 +380,44 @@ const [checkingCsv, setCheckingCsv] = useState(false);
         "detected_cases",
         "percent_detection",
         "month_year"
-      ]
+      ],
+      "Esakshya Wrt Unit": [
+        "unit",
+        "total_ios_nagpur_rural",
+        "registered_ios_on_esakshya",
+        "esakshya_usage_percentage",
+        "month_year"
+        ],
+
+      "Esakshya wrt 7yrs or more": [
+        "unit",
+        "total_cases",
+        "total_offences_with_esakshya",
+        "total_offences_without_esakshya",
+        "total_charge_sheeted_with_esakshya",
+        "total_under_investigation_without_esakshya",
+        "percentage_usage"
+        ],
+
+        "FIR's and Zero FIR's": [
+          "unit",
+          "section",
+          "total_zero_firs_received",
+          "total_firs_registered",
+          "pending",
+          "total_transferred_zero_firs",
+          "month_year"
+        ],
+
+        "eFIR": [
+          "unit",
+          "police_station",
+          "total_ecomplaints_received",
+          "total_ecomplaints_converted_to_firs",
+          "disposed_of_ecomplaints",
+          "month_year"
+        ]
+          
     };
 
 
@@ -341,8 +431,9 @@ const [checkingCsv, setCheckingCsv] = useState(false);
           "month_year,zone,district,sections,total_cases_registered,detected_cases,overall_percent",
           "Jan-24,Amravati,Akola,Murder (BNS Sec. 103(1)),10,8,80",
       ],
+
       "Pendency of cases under BNS": [
-          "unit,total_cases,disposed_cases,pending_cases,pending_percentage,punishment_less_than_7,punishment_more_than_7,month_year",
+          "unit,total_cases_registered,cases_disposed,cases_pending_investigation,percent_pendency,cases_punishment_less_than_7_years,cases_punishment_7_years_or_more,month_year",
           "Unit-1,100,60,40,40,15,25,05-2024",
       ],
       "Offences against body under BNS": [
@@ -360,7 +451,26 @@ const [checkingCsv, setCheckingCsv] = useState(false);
       "Property offences under BNS": [
           "district,unit,police_station,act_and_section,registered_cases,detected_cases,percent_detection,month_year",
           "Delhi,Unit-5,Station-15,IPC 376,40,35,87.5,Apr-24",
-      ]
+      ],
+      "Esakshya Wrt Unit": [
+        "unit,total_ios_nagpur_rural,registered_ios_on_esakshya,esakshya_usage_percentage,month_year",
+        "Unit-G1,15,10,5000,Mar-24"
+        ],
+         
+      "Esakshya wrt 7yrs or more": [
+        "unit,total_cases,total_offences_with_esakshya,total_offences_without_esakshya,total_charge_sheeted_with_esakshya,total_under_investigation_without_esakshya,percentage_usage",
+        "Unit-H1,100,60,40,55,35,75.5"
+      ],
+
+      "FIR's and Zero FIR's": [
+        "unit,section,total_zero_firs_received,total_firs_registered,pending,total_transferred_zero_firs,month_year",
+        "Unit-I1,Below 18,0,5,Mar-24"
+      ],
+
+      "eFIR": [
+        "unit,police_station,total_ecomplaints_received,total_ecomplaints_converted_to_firs,disposed_of_ecomplaints,month_year",
+        "Unit-J1,Station-J1,10,8,Mar-24"
+      ],
   };
   
     const csvContent = sampleFiles[selectedForm]?.join("\n") || "No data available";
@@ -456,8 +566,8 @@ const [checkingCsv, setCheckingCsv] = useState(false);
                     label="Form Type" // Add this line to associate the label correctly
                   >
                     {[
-                      "FIR", "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Form-G",
-                      "Form-H", "Form-I", "Form-J", "Form-K", "Form-L", "Form-M", "Form-N"
+                      "FIR", "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Esakshya Wrt Unit",
+                      "Esakshya wrt 7yrs or more", "FIR's and Zero FIR's", "eFIR"
                     ].map((form) => (
                       <MenuItem key={form} value={form}>
                         {form}
@@ -516,16 +626,15 @@ const [checkingCsv, setCheckingCsv] = useState(false);
                           />
                         </div>
 
-                        <div>
-                          <label className="block text-sm font-medium">Month and Year</label>
-                          <input
-                            type="month"
-                            className="w-full p-2 border rounded"
-                            value={formData.month_year || ""}
-                            onChange={handleChange}
-                            name="date"
-                          />
-                        </div>
+                       <div>
+                        <label className="block text-sm font-medium mb-3">Month-Year</label>
+                        <input
+                          type="month"
+                          className="w-full p-2 border rounded"
+                          value={formData.month_year || ""}
+                          onChange={(e) => setFormData({ ...formData, month_year: e.target.value })}
+                        />
+                      </div>
 
                         <div>
                           <label className="block text-sm font-medium">Total Cases Registered</label>
@@ -568,7 +677,7 @@ const [checkingCsv, setCheckingCsv] = useState(false);
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium">Unit</label>
-                        <input type="text" className="w-full p-2 border rounded" value={formData.unit || ""} onChange={(e) => setFormData({ ...formData, unit: e.target.value })} />
+                        <input type="text" className="w-full p-2 border rounded" value={formData.unit || ""} onChange={(e) => setFormData({ ...formData, unit: e.target.value })} readOnly />
                       </div>
 
                       <div>
@@ -657,6 +766,7 @@ const [checkingCsv, setCheckingCsv] = useState(false);
                           className="w-full p-2 border rounded"
                           value={formData.formDUnit || ""}
                           onChange={(e) => setFormData({ ...formData, formDUnit: e.target.value })}
+                          readOnly
                         />
                       </div>
 
@@ -761,7 +871,7 @@ const [checkingCsv, setCheckingCsv] = useState(false);
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <label className="block text-sm font-medium">Unit</label>
-                            <input type="text" className="w-full p-2 border rounded" value={formData.unit || ""} onChange={(e) => setFormData({ ...formData, unit: e.target.value })} />
+                            <input type="text" className="w-full p-2 border rounded" value={formData.unit || ""} onChange={(e) => setFormData({ ...formData, unit: e.target.value })} readOnly />
                           </div>
 
                           <div>
@@ -797,6 +907,324 @@ const [checkingCsv, setCheckingCsv] = useState(false);
                       </div>
                     )}
 
+                    {formData.formType === "Esakshya Wrt Unit" && (
+                      <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[350px] overflow-y-auto">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium">Unit</label>
+                            <input
+                              type="text"
+                              className="w-full p-2 border rounded"
+                              value={formData.unit}
+                              onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+                              readOnly
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium">Total No of IO's Registered in Nagapur</label>
+                            <input
+                              type="number"
+                              className="w-full p-2 border rounded"
+                              value={formData.totalIOsNagapur}
+                              onChange={(e) => setFormData({ ...formData, totalIOsNagapur: e.target.value })}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium">No of IO's Registered in Esakshya</label>
+                            <input
+                              type="number"
+                              className="w-full p-2 border rounded"
+                              value={formData.totalIOsEsakshya}
+                              onChange={(e) => setFormData({ ...formData, totalIOsEsakshya: e.target.value })}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium">Esakshya Wage</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              className="w-full p-2 border rounded"
+                              value={formData.esakshyaWage}
+                              onChange={(e) => setFormData({ ...formData, esakshyaWage: e.target.value })}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium">Month-Year</label>
+                            <input
+                              type="month"
+                              className="w-full p-2 border rounded"
+                              value={formData.month_year}
+                              onChange={(e) => setFormData({ ...formData, month_year: e.target.value })}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {formData.formType === "Esakshya wrt 7yrs or more" && (
+                      <div className="mt-4 border p-4 rounded-lg bg-gray-100">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium">Unit</label>
+                            <input
+                              type="text"
+                              className="w-full p-2 border rounded"
+                              value={formData.unit}
+                              onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium">Total No of Cases</label>
+                            <input
+                              type="number"
+                              className="w-full p-2 border rounded"
+                              value={formData.totalCases}
+                              onChange={(e) => setFormData({ ...formData, totalCases: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium">Total Offences Used</label>
+                            <input
+                              type="number"
+                              className="w-full p-2 border rounded"
+                              value={formData.totalOffencesUsed}
+                              onChange={(e) => setFormData({ ...formData, totalOffencesUsed: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium">Total Offences Not Used</label>
+                            <input
+                              type="number"
+                              className="w-full p-2 border rounded"
+                              value={formData.totalOffencesNotUsed}
+                              onChange={(e) => setFormData({ ...formData, totalOffencesNotUsed: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium">Offences Used Charge Cheet</label>
+                            <input
+                              type="number"
+                              className="w-full p-2 border rounded"
+                              value={formData.offencesUsedChargeCheet}
+                              onChange={(e) => setFormData({ ...formData, offencesUsedChargeCheet: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium">Offences Not Used Under Investigation</label>
+                            <input
+                              type="number"
+                              className="w-full p-2 border rounded"
+                              value={formData.offencesNotUsedUnderInvestigation}
+                              onChange={(e) => setFormData({ ...formData, offencesNotUsedUnderInvestigation: e.target.value })}
+                            />
+                          </div>
+                          <div className="col-span-2">
+                            <label className="block text-sm font-medium">Percentage of Using Esakshya</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              className="w-full p-2 border rounded"
+                              value={formData.percentageOfUsingEsakshya}
+                              onChange={(e) => setFormData({ ...formData, percentageOfUsingEsakshya: e.target.value })}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {formData.formType === "FIR's and Zero FIR's" && (
+                        <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium">Unit</label>
+                              <input
+                                type="text"
+                                className="w-full p-2 border rounded"
+                                value={formData.unit || ""}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, unit: e.target.value })
+                                }
+                                readOnly
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium">Section</label>
+                              <select
+                                className="w-full p-2 border rounded bg-white"
+                                value={formData.sections || ""}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, sections: e.target.value })
+                                }
+                                name="formISection"
+                              >
+                                <option value="">Select Section</option>
+                                <option value="Murder (BNS Sec. 103(1))">Murder (BNS Sec. 103(1))</option>
+                                <option value="Att. To Murder (BNS Sec. 109)">Att. To Murder (BNS Sec. 109)</option>
+                                <option value="Esakshya BNSS 105">Esakshya BNSS 105</option>
+                                <option value="Esakshya BNSS 173">Esakshya BNSS 173</option>
+                                <option value="Esakshya BNSS 176">Esakshya BNSS 176</option>
+                                <option value="Esakshya BNSS 180">Esakshya BNSS 180</option>
+                                <option value="Esakshya BNSS 247">Esakshya BNSS 247</option>
+                                <option value="Esakshya Rape (BNS Sec. 64 to 71)">Esakshya Rape (BNS Sec. 64 to 71)</option>
+                                <option value="Hurt (BNS Sec. 117 to 125)">Hurt (BNS Sec. 117 to 125)</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium">
+                                Total Zero FIRs Received
+                              </label>
+                              <input
+                                type="number"
+                                className="w-full p-2 border rounded"
+                                value={formData.totalZeroFIRsReceived || ""}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, totalZeroFIRsReceived: e.target.value })
+                                }
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium">
+                                Total FIRs Registered
+                              </label>
+                              <input
+                                type="number"
+                                className="w-full p-2 border rounded"
+                                value={formData.totalFIRsRegistered || ""}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, totalFIRsRegistered: e.target.value })
+                                }
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium">
+                                Pending
+                              </label>
+                              <input
+                                type="number"
+                                className="w-full p-2 border rounded"
+                                value={formData.pending || ""}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, pending: e.target.value })
+                                }
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium">
+                                Total Transfered Zero FIR's
+                              </label>
+                              <input
+                                type="number"
+                                className="w-full p-2 border rounded"
+                                value={formData.totalTransferredZeroFIRs || ""}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, totalTransferredZeroFIRs: e.target.value })
+                                }
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium">Month and Year</label>
+                              <input
+                                type="month"
+                                className="w-full p-2 border rounded"
+                                value={formData.month_year || ""}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, month_year: e.target.value })
+                                }
+                                name="month_year"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {formData.formType === "eFIR" && (
+                        <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium">Unit</label>
+                              <input
+                                type="text"
+                                className="w-full p-2 border rounded"
+                                value={formData.unit || ""}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, unit: e.target.value })
+                                }
+                                readOnly
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium">Police Station</label>
+                              <input
+                                type="text"
+                                className="w-full p-2 border rounded"
+                                value={formData.policeStation || ""}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, policeStation: e.target.value })
+                                }
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium">
+                                Total EComplaints Received
+                              </label>
+                              <input
+                                type="number"
+                                className="w-full p-2 border rounded"
+                                value={formData.totalEComplaintsReceived || ""}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, totalEComplaintsReceived: e.target.value })
+                                }
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium">
+                                Total Complaints Converted
+                              </label>
+                              <input
+                                type="number"
+                                className="w-full p-2 border rounded"
+                                value={formData.totalComplaintsConverted || ""}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, totalComplaintsConverted: e.target.value })
+                                }
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium">
+                                Disposed of EComplaints
+                              </label>
+                              <input
+                                type="number"
+                                className="w-full p-2 border rounded"
+                                value={formData.disposedEComplaints || ""}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, disposedEComplaints: e.target.value })
+                                }
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium">Month and Year</label>
+                              <input
+                                type="month"
+                                className="w-full p-2 border rounded"
+                                value={formData.month_year || ""}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, month_year: e.target.value })
+                                }
+                                name="month_year"
+                              />
+                            </div>
+                          </div>
+                          </div>
+                      )}
+
               </Box>
             )}
             {selectedTab === "upload" && (
@@ -812,8 +1240,8 @@ const [checkingCsv, setCheckingCsv] = useState(false);
                     displayEmpty
                   >
                     {[
-                      "FIR", "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Form-G", 
-                      "Form-H", "Form-I", "Form-J", "Form-K", "Form-L", "Form-M", "Form-N"
+                      "FIR", "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Esakshya Wrt Unit", 
+                      "Esakshya wrt 7yrs or more", "FIR's and Zero FIR's", "eFIR"
                     ].map((form) => (
                       <MenuItem key={form} value={form}>
                         {form}
@@ -830,6 +1258,11 @@ const [checkingCsv, setCheckingCsv] = useState(false);
                   <Button variant="contained" startIcon={<Download />} onClick={generateCSV} sx={{ ml: 2 }}>
                     Download Sample
                   </Button>
+                  <h2 class="text-red-600 text-center font-bold text-2xl mt-5">
+                      NOT AVAILABLE RIGHT NOW THESE FEATURE...!!!
+                  </h2>
+
+
 
                   {checkingCsv && <Typography>Checking CSV...</Typography>}
                   {csvValidationMessage && (
@@ -919,7 +1352,6 @@ const [checkingCsv, setCheckingCsv] = useState(false);
               </Box>
             )}
 
-           
     
           <Box sx={{ padding: 2, borderTop: "1px solid #ddd", backgroundColor: "#f9f9f9" }}>
           <Button fullWidth variant="contained" sx={{ backgroundColor: "#2d3748", color: "white" }} onClick={handleSubmit}>
