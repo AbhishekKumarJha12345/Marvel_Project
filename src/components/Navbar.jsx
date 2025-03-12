@@ -654,6 +654,17 @@ export default function Dashboard({ users }) {
                 )}
               </div>
             ) : (
+              <>
+              <button
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+              style={{ backgroundColor: "#2d3748",position:"absolute",right:"0",top:"70px" }}
+              onClick={() => {
+                console.log("Open modal");
+                setShowModal(true);
+              }}
+              >
+              Add Data
+              </button>
               <div className="nav_main" style={{ display: "flex" }}>
                 <button
                   className={`nav-link ${activeSection?.section === "training" ? "active" : ""
@@ -696,6 +707,7 @@ export default function Dashboard({ users }) {
                   Forensic Visits
                 </button>
               </div>
+              </>
             ))}
 
           {users === "chief secretary" ? (

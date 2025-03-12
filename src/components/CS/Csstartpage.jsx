@@ -168,10 +168,6 @@ const MaharashtraMap = (tableName) => {
     //   : maharashtraZonals.features;
 
 
-
-
-
-    
    
 
     let maharashtraLayer = L.geoJSON(filteredFeatures, {

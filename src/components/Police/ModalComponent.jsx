@@ -284,18 +284,18 @@ const ModalComponent = ({ open,type, onClose }) => {
             }
         }
         
-        // const response = await axiosInstance.post("/fir_form", formDataToSend, {
-        //     headers: {
-        //         "Content-Type": "multipart/form-data",
-        //         Authorization: `${token}`, // Include token
-        //     },
-        // });
-        const response = await axios.post("http://192.168.1.33:5555/api/fir_form", formDataToSend, {
+        const response = await axiosInstance.post("/fir_form", formDataToSend, {
             headers: {
                 "Content-Type": "multipart/form-data",
-                Authorization: `${token}`, // Ensure token is valid
+                Authorization: `${token}`, // Include token
             },
         });
+        // const response = await axios.post("http://192.168.1.33:5555/api/fir_form", formDataToSend, {
+        //     headers: {
+        //         "Content-Type": "multipart/form-data",
+        //         Authorization: `${token}`, // Ensure token is valid
+        //     },
+        // });
 
         if (response.status === 201) {
             alert("Data inserted successfully");
@@ -626,7 +626,7 @@ const [checkingCsv, setCheckingCsv] = useState(false);
                           />
                         </div>
 
-                       <div>
+                        <div>
                         <label className="block text-sm font-medium mb-3">Month-Year</label>
                         <input
                           type="month"
