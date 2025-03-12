@@ -192,11 +192,12 @@ const Admincontroll = ({ onRegister, onClose }) => {
           <option value="">Select SubRole</option>
           <option value="IG/DIG">IG/DIG</option>
           <option value="SP">SP</option>
-          <option value="ADDL_SP/DSP">ADDL-SP/DSP</option>
+          <option value="CP">CP</option>
+          {/* <option value="ADDL_SP/DSP">ADDL-SP/DSP</option>
           <option value="INSPR">INSPR</option>
           <option value="SI">SI</option>
           <option value="ASI">ASI</option>
-          <option value="HC">HC</option>
+          <option value="HC">HC</option> */}
         </select>
       </div>
     ) : (
