@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import { Close, CloudUpload, Download } from "@mui/icons-material";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
-import axios from "axios";
 import axiosInstance from "../../utils/axiosInstance";
 
 const ModalComponent = ({ open,type, onClose }) => {

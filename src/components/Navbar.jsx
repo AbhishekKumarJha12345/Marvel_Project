@@ -6,7 +6,7 @@ import { Home, FileText } from "lucide-react";
 import MasterTrainers from "./Police/MasterTrainers";
 import Dashboard1 from "./Forensic/Scripts/Dashboard1";
 import CriminalPages from "./Prosecution/Criminalpages";
-// import PoliceOfficers from "./Police/PoliceOfficers";
+import PoliceOfficers from "./Police/PoliceOfficers";
 import Carousel from "./Police/Carousel";
 import Forensicvisits from "./Police/Forensicvisits";
 import Dashboard2 from "./Court/CSS/Script/Dashboard2";
@@ -20,9 +20,14 @@ import axiosInstance from "../utils/axiosInstance";
 import GavelIcon from '@mui/icons-material/Gavel';
 import BiotechIcon from '@mui/icons-material/Biotech';
 import BalanceIcon from '@mui/icons-material/Balance';
+
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+
 import FluorescentIcon from '@mui/icons-material/Fluorescent';
 import logo from '../assets/logo22.png'
 import ModalComponent from './Police/ModalComponent'
+
+import Demo from '../components/Police/Demo'
 
 import MaharashtraPoliceMap from './CS/Csstartpage'
 
@@ -58,7 +63,6 @@ import forensicvisit from '../assets/police/forinsic_visit.svg'
 import fir from '../assets/police/fir.svg'
 import awareness from '../assets/police/awareness.svg'
 import PoliceTraining from "./Police/PoliceTraining";
-// import PoliceOfficers from "../components/Police/PoliceOfficers";
 
 
 
@@ -124,7 +128,7 @@ Overall Trends & Recommendations:
   },
 ];
 
-export default function Dashboard({ users, getDate }) {
+export default function Dashboard({ users }) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSubMenu, setActiveSubMenu] = useState(null);
   const [activeSection, setActiveSection] = useState(null); // Unified state for all sections
@@ -254,27 +258,12 @@ export default function Dashboard({ users, getDate }) {
   const contentMap = {
     "training":
       <div className="content">
-        <div className="ContentSpace">
-          <h1 className="heading" style={{ marginLeft: "40rem" }}>Police - Training</h1>
-          <div className="button-container flex space-x-2">
-            <button className="ExportButton" style={{ minWidth: '80px' }} onClick={handleExportPoliceTraining}>
-              {!rloading ? 'Export' : <><span className="spinner-border spinner-border-sm me-2"></span></>}
+          <h1 className="heading" style={{ marginLeft: "40rem" }}>Police - Training</h1>         
+
+          <MaharashtraPoliceMap tableName="police_training" />
 
 
-            </button>
-            {localStorage.getItem('role') !== 'chief secretary' && <button
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-              style={{ backgroundColor: '#2d3748' }}
-              onClick={() => {
-                console.log("Open modal");
-                setShowModal(true);
-              }}>
-              Add on
-            </button>}
-          </div>
-
-        </div>
-        <PoliceTraining ref={trainingRef} />
+        {/* <PoliceTraining ref={trainingRef} /> */}
       </div>,
     // "awareness/campaign"    : <div className="content"><h1 className="heading">Awareness Campaigns</h1><Carousel /></div>,
     "forensic/visits": <div className="content"><h1 className="heading">Forensic Visits</h1><Forensicvisits /></div>,
@@ -286,6 +275,10 @@ export default function Dashboard({ users, getDate }) {
     "chargesheet": <div className="content"><Firchargesheets /></div>,
     "zerofir": <div className="content"><FirZero /></div>,
     "efir": <div className="content"><Efir /></div>,
+    "FIR": <div className="content">
+          <h1 className="heading" style={{ marginLeft: "40rem" }}>Police - FIR</h1>
+          
+      <MaharashtraPoliceMap tableName="fir_data" /></div>,
     "admin": <div className="content"><Adminviewe /> </div>,
   };
   const [openmodal, setOpenmodal] = useState(false);
@@ -295,8 +288,9 @@ export default function Dashboard({ users, getDate }) {
     setOpenmodal(true);
   };
 
+
   // const reportRef = useRef();
-  const generatePDF =  () => {
+  const generatePDF = () => {
     // const input = reportRef.current;
 
     // if (!input) return;
@@ -570,6 +564,8 @@ export default function Dashboard({ users, getDate }) {
 
 
 
+
+
   return (
     <div className="dashboard">
       <div className="navbar">
@@ -578,7 +574,7 @@ export default function Dashboard({ users, getDate }) {
           {users === 'admin' && (
 
             <li className={`nav-link active`} onClick={() => handleSectionClick('admin')}>
-              <GavelIcon /> Dashboard
+              <SupervisorAccountIcon /> All Users
             </li>
 
           )
@@ -599,7 +595,7 @@ export default function Dashboard({ users, getDate }) {
                 </button>
 
                 {isOpen && (
-                  <div className="dropdown">
+                  <div className="dropdown" style={{zIndex:"999"}}>
                     <button
                       className="dropdown-item"
                       onClick={() => handleSectionClick("training")}
@@ -608,12 +604,13 @@ export default function Dashboard({ users, getDate }) {
                     </button>
                     <button
                       className="dropdown-item"
-                      onClick={() => toggleSubMenu(1)}
+                      // onClick={() => toggleSubMenu(1)}
+                      onClick={() => handleSectionClick("FIR")}
                     >
                       FIR
                     </button>
 
-                    {activeSubMenu === 1 && (
+                    {/* {activeSubMenu === 1 && (
                       <div className="sub-dropdown">
                         <button
                           className="sub-dropdown-item"
@@ -640,7 +637,7 @@ export default function Dashboard({ users, getDate }) {
                           E FIR
                         </button>
                       </div>
-                    )}
+                    )} */}
                     {/* <button
                       className="dropdown-item"
                       onClick={() => handleSectionClick("awareness/campaign")}
@@ -672,73 +669,17 @@ export default function Dashboard({ users, getDate }) {
                 </button>
                 <div className="nav-divider"></div>
                 <button
-                  className={`nav-link ${["newcriminal", "chargesheet", "zerofir", "efir"].includes(
-                    activeSection?.section
-                  )
-                    ? "active"
-                    : ""
+                  className={`nav-link ${activeSection?.section === "FIR" ? "active" : ""
                     }`}
-                  onClick={() => toggleSubMenu(1)}
+                  onClick={() => handleSectionClick("FIR")}
                 >
-                  {" "}
                   <img
                     src={fir}
                     alt="Training Icon"
                     className="nav-icon"
                   />{" "}
-                  FIR's ▾{" "}
+                  FIR
                 </button>
-                <div className="nav-divider"></div>
-
-                {activeSubMenu === 1 && (
-                  <div
-                    className="dropdown"
-                    style={{ top: "4rem", left: "8rem" }}
-                  >
-                    <div className="sub-dropdown">
-                      <button
-                        className="sub-dropdown-item"
-                        onClick={() => handleSectionClick("newcriminal")}
-                      >
-                        New Criminal Stats
-                      </button>
-                      <button
-                        className="sub-dropdown-item"
-                        onClick={() => handleSectionClick("chargesheet")}
-                      >
-                        Charge Sheet
-                      </button>
-                      <button
-                        className="sub-dropdown-item"
-                        onClick={() => handleSectionClick("zerofir")}
-                      >
-                        Zero FIR
-                      </button>
-                      <button
-                        className="sub-dropdown-item"
-                        onClick={() => handleSectionClick("efir")}
-                      >
-                        E FIR
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* <button
-                  className={`nav-link ${
-                    activeSection?.section === "awareness/campaign"
-                      ? "active"
-                      : ""
-                  }`}
-                  onClick={() => handleSectionClick("awareness/campaign")}
-                >
-                  <img
-                    src={awareness}
-                    alt="Training Icon"
-                    className="nav-icon"
-                  />
-                  Awareness/Campaign
-                </button> */}
 
                 <div className="nav-divider"></div>
 
@@ -795,8 +736,8 @@ export default function Dashboard({ users, getDate }) {
             users === "Correction") && (
               <li
                 className={`nav-link ${activeSection?.section === "correctionalservices"
-                  ? "active"
-                  : ""
+                    ? "active"
+                    : ""
                   }`}
                 onClick={() => handleSectionClick("correctionalservices")}
               >
@@ -837,13 +778,6 @@ export default function Dashboard({ users, getDate }) {
 
               }
 
-              {/* Wrap the report content inside a div with a ref */}
-              {/* <div ref={reportRef} style={{ padding: "20px" }}>
-                <h2>Police Officers Report</h2>
-                <PoliceOfficers getDate={getDate}/> 
-              </div> */}
-
-
             </>
           )}
         </ul>
@@ -859,13 +793,16 @@ export default function Dashboard({ users, getDate }) {
           //   <img src={logo} alt="Logo" style={{ width: "20rem" }} />
 
           // </div>
-          <div className="flex justify-between bg-white">
+          // <div className="flex justify-between bg-white">
 
 
-            <MaharashtraPoliceMap />
+          // <MaharashtraPoliceMap tableName={"police_training"} />
 
-          </div>
 
+          // </div>
+
+
+          contentMap["training"]
 
         ) : contentMap[activeSection?.section] || (users === "police" ? contentMap["training"]
           : users === "Court" ? contentMap["court"]
@@ -875,7 +812,6 @@ export default function Dashboard({ users, getDate }) {
                   : contentMap["correctionalservices"])
       }
 
-      {openmodal && <ReportGencomp />}
       <ModalComponent
         open={showModal}
         type="police"
