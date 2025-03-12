@@ -256,41 +256,29 @@ export default function Dashboard({ users }) {
  
 
   const contentMap = {
-    "training"              : 
-    <div className="content">
-      <div className="ContentSpace">
-        <h1 className="heading" style={{marginLeft:"40rem"}}>Police - Training</h1>
-        <div className="button-container flex space-x-2">
-          <button className="ExportButton" style={{minWidth:'80px'}} onClick={handleExportPoliceTraining}>
-          {!rloading ? 'Export' : <><span className="spinner-border spinner-border-sm me-2"></span></>}
+    "training":
+      <div className="content">
+          <h1 className="heading" style={{ marginLeft: "40rem" }}>Police - Training</h1>         
+
+          <MaharashtraPoliceMap tableName="police_training" />
 
 
-            </button>
-          {localStorage.getItem('role') !=='chief secretary' &&  <button 
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-            style={{ backgroundColor: '#2d3748' }} 
-            onClick={() => {
-              console.log("Open modal");
-              setShowModal(true);
-            }}>
-            Add on
-          </button>}
-        </div>
-
-      </div>
-      <PoliceTraining ref={trainingRef}/>
-    </div>,
+        {/* <PoliceTraining ref={trainingRef} /> */}
+      </div>,
     // "awareness/campaign"    : <div className="content"><h1 className="heading">Awareness Campaigns</h1><Carousel /></div>,
-    "forensic/visits"       : <div className="content"><h1 className="heading">Forensic Visits</h1><Forensicvisits /></div>,
-    "court"                 : <div className="content"><h1 className="heading">Court Visits</h1><Dashboard2 /></div>,
-    "science"               : <div className="content"><h1 className="heading">Forensic Science Department</h1><Dashboard1 /></div>,
-    "prosecution"           : <div className="content"><h1 className="heading">Prosecution Visits</h1><CriminalPages /></div>,
-    "correctionalservices"  : <div className="content"><h1 className="heading">Correctional services</h1><Correctionalservicetab /></div>,
-    "newcriminal"           : <div className="content"><FirNewcriminal /></div>,
-    "chargesheet"           : <div className="content"><Firchargesheets  /></div>,
-    "zerofir"               : <div className="content"><FirZero /></div>,
-    "efir"                  : <div className="content"><Efir /></div>,
-    "FIR"                  : <div className="content"><Demo /></div>,
+    "forensic/visits": <div className="content"><h1 className="heading">Forensic Visits</h1><Forensicvisits /></div>,
+    "court": <div className="content"><h1 className="heading">Court Visits</h1><Dashboard2 /></div>,
+    "science": <div className="content"><h1 className="heading">Forensic Science Department</h1><Dashboard1 /></div>,
+    "prosecution": <div className="content"><h1 className="heading">Prosecution Visits</h1><CriminalPages /></div>,
+    "correctionalservices": <div className="content"><h1 className="heading">Correctional services</h1><Correctionalservicetab /></div>,
+    "newcriminal": <div className="content"><FirNewcriminal /></div>,
+    "chargesheet": <div className="content"><Firchargesheets /></div>,
+    "zerofir": <div className="content"><FirZero /></div>,
+    "efir": <div className="content"><Efir /></div>,
+    "FIR": <div className="content">
+          <h1 className="heading" style={{ marginLeft: "40rem" }}>Police - FIR</h1>
+          
+      <MaharashtraPoliceMap tableName="fir_data" /></div>,
     "admin": <div className="content"><Adminviewe /> </div>,
   };
   const [openmodal, setOpenmodal] = useState(false);
@@ -302,7 +290,7 @@ export default function Dashboard({ users }) {
 
 
   // const reportRef = useRef();
-  const generatePDF =  () => {
+  const generatePDF = () => {
     // const input = reportRef.current;
 
     // if (!input) return;
@@ -607,7 +595,7 @@ export default function Dashboard({ users }) {
                 </button>
 
                 {isOpen && (
-                  <div className="dropdown">
+                  <div className="dropdown" style={{zIndex:"999"}}>
                     <button
                       className="dropdown-item"
                       onClick={() => handleSectionClick("training")}
@@ -682,74 +670,17 @@ export default function Dashboard({ users }) {
                 </button>
                 <div className="nav-divider"></div>
                 <button
-                  className={`nav-link ${
-                    ["newcriminal", "chargesheet", "zerofir", "efir"].includes(
-                      activeSection?.section
-                    )
-                      ? "active"
-                      : ""
-                  }`}
-                  onClick={() => toggleSubMenu(1)}
+                  className={`nav-link ${activeSection?.section === "FIR" ? "active" : ""
+                    }`}
+                  onClick={() => handleSectionClick("FIR")}
                 >
-                  {" "}
                   <img
                     src={fir}
                     alt="Training Icon"
                     className="nav-icon"
                   />{" "}
-                  FIR's ▾{" "}
+                  FIR
                 </button>
-                <div className="nav-divider"></div>
-
-                {activeSubMenu === 1 && (
-                  <div
-                    className="dropdown"
-                    style={{ top: "4rem", left: "8rem" }}
-                  >
-                    <div className="sub-dropdown">
-                      <button
-                        className="sub-dropdown-item"
-                        onClick={() => handleSectionClick("newcriminal")}
-                      >
-                        New Criminal Stats
-                      </button>
-                      <button
-                        className="sub-dropdown-item"
-                        onClick={() => handleSectionClick("chargesheet")}
-                      >
-                        Charge Sheet
-                      </button>
-                      <button
-                        className="sub-dropdown-item"
-                        onClick={() => handleSectionClick("zerofir")}
-                      >
-                        Zero FIR
-                      </button>
-                      <button
-                        className="sub-dropdown-item"
-                        onClick={() => handleSectionClick("efir")}
-                      >
-                        E FIR
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* <button
-                  className={`nav-link ${
-                    activeSection?.section === "awareness/campaign"
-                      ? "active"
-                      : ""
-                  }`}
-                  onClick={() => handleSectionClick("awareness/campaign")}
-                >
-                  <img
-                    src={awareness}
-                    alt="Training Icon"
-                    className="nav-icon"
-                  />
-                  Awareness/Campaign
-                </button> */}
 
                 <div className="nav-divider"></div>
 
@@ -807,18 +738,17 @@ export default function Dashboard({ users }) {
 
           {(users === "chief secretary" ||
             users === "Correction") && (
-            <li
-              className={`nav-link ${
-                activeSection?.section === "correctionalservices"
-                  ? "active"
-                  : ""
-              }`}
-              onClick={() => handleSectionClick("correctionalservices")}
-            >
-              {/* <AiTwotoneThunderbolt /> Correctional Services */}
-              <FluorescentIcon /> Correctional Services
-            </li>
-          )}
+              <li
+                className={`nav-link ${activeSection?.section === "correctionalservices"
+                    ? "active"
+                    : ""
+                  }`}
+                onClick={() => handleSectionClick("correctionalservices")}
+              >
+                {/* <AiTwotoneThunderbolt /> Correctional Services */}
+                <FluorescentIcon /> Correctional Services
+              </li>
+            )}
 
           {users === "chief secretary" ? (
             <div className="nav-divider"></div>
@@ -838,21 +768,20 @@ export default function Dashboard({ users }) {
                 <BiotechIcon size={25} /> Forensic Science Department
               </li>
 
-              {(users === "chief secretary" ) ?
-              
-              (<li
-                className={`nav-link ${
-                  activeSection?.section === "report" ? "active" : ""
-                }`}
-                onClick={() => {
-                  handleSectionClick("report");
-                  generatePDF();
-                }}
-              >
-                <PictureAsPdfIcon size={25} /> Generate Report
-              </li>) : null
-            
-            }
+              {(users === "chief secretary") ?
+
+                (<li
+                  className={`nav-link ${activeSection?.section === "report" ? "active" : ""
+                    }`}
+                  onClick={() => {
+                    handleSectionClick("report");
+                    generatePDF();
+                  }}
+                >
+                  <PictureAsPdfIcon size={25} /> Generate Report
+                </li>) : null
+
+              }
 
             </>
           )}
@@ -869,13 +798,16 @@ export default function Dashboard({ users }) {
           //   <img src={logo} alt="Logo" style={{ width: "20rem" }} />
 
           // </div>
-          <div className="flex justify-between bg-white">
+          // <div className="flex justify-between bg-white">
 
 
-          <MaharashtraPoliceMap/>
+          // <MaharashtraPoliceMap tableName={"police_training"} />
 
-          </div>
 
+          // </div>
+
+
+          contentMap["training"]
 
           ) : contentMap[activeSection?.section] || (users === "police" ? contentMap["training"]
             : users === "Court" ? contentMap["court"]
@@ -885,7 +817,6 @@ export default function Dashboard({ users }) {
                   : contentMap["correctionalservices"])
       }
 
-      {openmodal && <ReportGencomp />}
       <ModalComponent
         open={showModal}
         type="police"

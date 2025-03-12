@@ -14,7 +14,7 @@ const Admincontroll = ({ onRegister, onClose }) => {
     rank: "",
     state: "",
     zone: "",
-    district: [],
+    district: "",
     mobile_number: "",
     alter_mobile_number: "",
     tele_phone_number: "",
@@ -58,23 +58,33 @@ const Admincontroll = ({ onRegister, onClose }) => {
     setSelectedDistrict([]); // Reset selected district
   };
 
+  // const handleDistrictChange = (e) => {
+  //   const { value, checked } = e.target;
+
+  //   setSelectedDistrict((prev) => {
+  //     const updatedSelection = checked
+  //       ? [...prev, value] // Add selected district
+  //       : prev.filter((district) => district !== value); // Remove if unchecked
+
+  //     setFormData((prevFormData) => ({
+  //       ...prevFormData,
+  //       district: updatedSelection, // Store in formData
+  //     }));
+
+  //     return updatedSelection; // Update state
+  //   });
+  // };
   const handleDistrictChange = (e) => {
-    const { value, checked } = e.target;
-
-    setSelectedDistrict((prev) => {
-      const updatedSelection = checked
-        ? [...prev, value] // Add selected district
-        : prev.filter((district) => district !== value); // Remove if unchecked
-
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        district: updatedSelection, // Store in formData
-      }));
-
-      return updatedSelection; // Update state
-    });
+    const { value } = e.target;
+  
+    setSelectedDistrict(value); // Update state for UI
+  
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      district: value, // Store the selected district in formData
+    }));
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -265,19 +275,20 @@ const Admincontroll = ({ onRegister, onClose }) => {
   <div ref={dropdownRef} className="relative">
     <Label htmlFor="district">District</Label>
     <select
-      id="district"
-      value={selectedDistrict}
-      onChange={(e) => setSelectedDistrict(e.target.value)}
-      className="w-full p-2 border rounded-md bg-white"
-    >
-      <option value="">Select District</option>
-      {selectedZone &&
-        zones[selectedZone].map((district) => (
-          <option key={district} value={district}>
-            {district}
-          </option>
-        ))}
-    </select>
+  id="district"
+  value={selectedDistrict}
+  onChange={handleDistrictChange} // Use the updated function
+  className="w-full p-2 border rounded-md bg-white"
+>
+  <option value="">Select District</option>
+  {selectedZone &&
+    zones[selectedZone].map((district) => (
+      <option key={district} value={district}>
+        {district}
+      </option>
+    ))}
+</select>
+
   </div>
 )}
 
