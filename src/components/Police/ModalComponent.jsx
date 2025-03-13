@@ -883,7 +883,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-small">Cases Punishment MoreThan 7 Years</label>
+                        <label className="block text-sm font-small">Cases Punishment More Than 7 Years</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1050,8 +1050,54 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
 
                       <div>
                         <label className="block text-sm font-medium">Act and Section</label>
-                        <input type="text" className="w-full p-2 border rounded" value={formData.actAndSection || ""} onChange={(e) => setFormData({ ...formData, actAndSection: e.target.value })} />
+                        <select
+                          className="w-full p-2 border rounded"
+                          value={formData.actAndSection || ""}
+                          onChange={(e) => setFormData({ ...formData, actAndSection: e.target.value })}
+                        >
+                          <option value="" disabled>Select an Act and Section</option>
+
+                          {/* If formType is "Important sections introduced in BNS", show this set */}
+                          {formData.formType === "Important sections introduced in BNS" && (
+                            <>
+                              <option value="Mob Lynching (Section 103 (2) BNS)">Mob Lynching (Section 103 (2) BNS)</option>
+                              <option value="Snatching (Section 304 BNS)">Snatching (Section 304 BNS)</option>
+                              <option value="Organized crime (Section 111 BNS)">Organized crime (Section 111 BNS)</option>
+                              <option value="Petty Organized crime (Section 112 BNS)">Petty Organized crime (Section 112 BNS)</option>
+                              <option value="Terrorist act (Section 113 BNS)">Terrorist act (Section 113 BNS)</option>
+                            </>
+                          )}
+
+                          {/* If formType is "Offences against body under BNS", show this set */}
+                          {formData.formType === "Offences against body under BNS" && (
+                            <>
+                              <option value="Murder (BNS Sec. 103(1))">Murder (BNS Sec. 103(1))</option>
+                              <option value="Att. To Murder (BNS Sec. 109)">Att. To Murder (BNS Sec. 109)</option>
+                              <option value="Rape (BNS Sec. 64 to 71)">Rape (BNS Sec. 64 to 71)</option>
+                              <option value="Hurt (BNS Sec. 117 to 125)">Hurt (BNS Sec. 117 to 125)</option>
+                              <option value="Riots (BNS Sec. 191 to 193)">Riots (BNS Sec. 191 to 193)</option>
+                              <option value="Molestation (BNS Sec. 74 to 79)">Molestation (BNS Sec. 74 to 79)</option>
+                            </>
+                          )}
+
+                          {/* If formType is "Property offences under BNS", show this set */}
+                          {formData.formType === "Property offences under BNS" && (
+                            <>
+                              <option value="Dacoity (BNS Sec. 310)">Dacoity (BNS Sec. 310)</option>
+                              <option value="Robbery (BNS Sec. 309)">Robbery (BNS Sec. 309)</option>
+                              <option value="HBT (BNS Sec. 331 to 334)">HBT (BNS Sec. 331 to 334)</option>
+                              <option value="Theft (BNS Sec. 303 & 305)">Theft (BNS Sec. 303 & 305)</option>
+                            </>
+                          )}
+
+                        </select>
                       </div>
+
+
+                      {/* <div>
+                        <label className="block text-sm font-medium">Act and Section</label>
+                        <input type="text" className="w-full p-2 border rounded" value={formData.actAndSection || ""} onChange={(e) => setFormData({ ...formData, actAndSection: e.target.value })} />
+                      </div> */}
 
                       <div>
                         <label className="block text-sm font-medium">Reg'd Cases</label>
