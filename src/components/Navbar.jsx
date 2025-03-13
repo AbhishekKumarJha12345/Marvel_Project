@@ -721,13 +721,12 @@ export default function Dashboard({ users }) {
             <div className="nav-divider"></div>
           ) : null}
 
-          {(users === "chief secretary" || users === "Prosecutor") && (
+          {/* {(users === "chief secretary" || users === "Prosecutor") && (
             <li
               className={`nav-link ${activeSection?.section === "prosecution" ? "active" : ""
                 }`}
               onClick={() => handleSectionClick("prosecution")}
             >
-              {/* <Home /> Prosecution */}
               <GavelIcon /> Prosecution
             </li>
           )}
@@ -742,7 +741,6 @@ export default function Dashboard({ users }) {
                 }`}
               onClick={() => handleSectionClick("court")}
             >
-              {/* <TbTable size={25} /> Court */}
               <BalanceIcon size={25} /> Court
             </li>
           )}
@@ -760,7 +758,6 @@ export default function Dashboard({ users }) {
                   }`}
                 onClick={() => handleSectionClick("correctionalservices")}
               >
-                {/* <AiTwotoneThunderbolt /> Correctional Services */}
                 <FluorescentIcon /> Correctional Services
               </li>
             )}
@@ -772,8 +769,12 @@ export default function Dashboard({ users }) {
           {(users === "chief secretary" || users === "Forensic") && (
             <>
 
+<<<<<<< Updated upstream
 
               {/* Forensic Science Section */}
+=======
+            
+>>>>>>> Stashed changes
               <li
                 className={`nav-link ${activeSection?.section === "science" ? "active" : ""
                   }`}
@@ -798,7 +799,7 @@ export default function Dashboard({ users }) {
               }
 
             </>
-          )}
+          )} */}
         </ul>
       </div>
 
