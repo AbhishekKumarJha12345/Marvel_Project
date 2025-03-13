@@ -1,0 +1,16 @@
+/* power.css */
+.power {
+     /* Equivalent to Tailwind blue-500 */
+    color: black;
+    padding: 0.5rem;           /* Equivalent to p-2 */
+    border-radius: 0.5rem;      /* Equivalent to rounded-lg */
+    transition: all 0.3s;       /* Equivalent to transition-all */
+    position: relative;
+  }
+  
+  /* Hover styles */
+  .power:hover {
+    background-color: #c53030; /* Equivalent to Tailwind red-700 */
+    color: white;              /* Change text color to white on hover */
+  }
+  

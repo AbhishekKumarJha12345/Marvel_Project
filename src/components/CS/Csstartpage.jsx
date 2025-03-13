@@ -433,12 +433,12 @@ const MaharashtraMap = (catogoryBar) => {
             background: "#fff",
             boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
             borderRadius: "8px",
-            fontSize: "10px",
+            fontSize: "20px",
             fontWeight: "bold",
             textAlign: "center",
             zIndex: "999",
             cursor: "pointer",
-            width: "10vw",
+            width: "15vw",
             height: "30vh",
             display: "flex",
             flexDirection: "column",
@@ -446,7 +446,7 @@ const MaharashtraMap = (catogoryBar) => {
           }}
         >
  
-          <div style={{ textAlign: "center", marginBottom: "5px", fontWeight: "bold" }}>Legend</div>
+          <div style={{ textAlign: "center", marginBottom: "5px", fontWeight: "bold", padding:"10px", width:"300px"}}>Legend</div>
           {(sub_role == 'IG/DIG' || role == 'chief secretary') ? (
             <>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
