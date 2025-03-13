@@ -36,7 +36,7 @@ const Admincontroll = ({ onRegister, onClose }) => {
     Amravati: ["Akola", "Amravati", "Buldana", "Washim", "Yavatmal"],
     Aurangabad: ["Aurangabad", "Beed", "Hingoli", "Jalna", "Latur", "Nanded", "Osmanabad", "Parbhani"],
     Konkan: ["Mumbai", "Mumbai Suburban", "Palghar", "Raigad", "Ratnagiri", "Sindhudurg", "Thane"],
-    Nagpur: ["Bhandara", "Chandrapur", "Gadchiroli", "Gondia", "Nagpur", "Wardha"],
+    Nagpur_Rural: ["Bhandara", "Chandrapur", "Gadchiroli", "Gondia", "Nagpur Rural", "Wardha"],
     Nashik: ["Ahmednagar", "Dhule", "Jalgaon", "Nandurbar", "Nashik"],
     Pune: ["Kolhapur", "Pune", "Sangli", "Satara", "Solapur"],
   };
