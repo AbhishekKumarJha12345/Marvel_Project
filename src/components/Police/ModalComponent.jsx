@@ -740,6 +740,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("type", "pendency_in_bns");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
+          formDataToSend.append("city", localStorage.getItem("city") || "N/A");
           formDataToSend.append("unit", formData.unit);
           formDataToSend.append("total_cases_registered", formData.totalCases);
           formDataToSend.append("cases_disposed", formData.disposedCases);
@@ -754,6 +755,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("type", "offences_against_body");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
+          formDataToSend.append("city", localStorage.getItem("city") || "N/A");
           formDataToSend.append("unit", formData.unit);
           formDataToSend.append("police_station", formData.policeStation);
           formDataToSend.append("act_and_section", formData.actAndSection);
@@ -767,6 +769,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("type", "untraced_missing");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
+          formDataToSend.append("city", localStorage.getItem("city") || "N/A");
           formDataToSend.append("unit", formData.unit);
           formDataToSend.append("police_station", formData.policeStationD);
           formDataToSend.append("age_group", formData.ageGroup);
@@ -783,6 +786,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("type", "sections_in_bns");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
+          formDataToSend.append("city", localStorage.getItem("city") || "N/A");
           formDataToSend.append("unit", formData.unit);
           formDataToSend.append("police_station", formData.policeStation);
           formDataToSend.append("act_and_section", formData.actAndSection);
@@ -796,6 +800,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("type", "property_offenses");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
+          formDataToSend.append("city", localStorage.getItem("city") || "N/A");
           formDataToSend.append("unit", formData.unit);
           formDataToSend.append("police_station", formData.policeStation);
           formDataToSend.append("act_and_section", formData.actAndSection);
@@ -809,6 +814,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("type", "esakshya_units");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
+          formDataToSend.append("city", localStorage.getItem("city") || "N/A");
           formDataToSend.append("unit", formData.unit);
           formDataToSend.append("total_ios_nagpur_rural", formData.totalIOsNagapur);
           formDataToSend.append("registered_ios_on_esakshya", formData.totalIOsEsakshya);
@@ -834,6 +840,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("type", "fir_and_zero_firs");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
+          formDataToSend.append("city", localStorage.getItem("city") || "N/A");
           formDataToSend.append("unit", formData.unit);
           formDataToSend.append("section", formData.sections);
           formDataToSend.append("total_zero_firs_received", formData.totalZeroFIRsReceived);
@@ -847,6 +854,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("type", "e_fir");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
+          formDataToSend.append("city", localStorage.getItem("city") || "N/A");
           formDataToSend.append("unit", formData.unit);
           formDataToSend.append("police_station", formData.policeStation);
           formDataToSend.append("total_ecomplaints_received", formData.totalEComplaintsReceived);
@@ -859,6 +867,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("type", "itsso_compliance");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
+          formDataToSend.append("city", localStorage.getItem("city") || "N/A");
           formDataToSend.append("total_pocso", formData.total_pocso || "");
           formDataToSend.append("bns_cases", formData.bns_cases || "");
           formDataToSend.append("charge_sheeted_within_60_days", formData.charge_sheeted_within_60_days || "");
@@ -872,6 +881,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("type", "stolen_recovered_property");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
+          formDataToSend.append("city", localStorage.getItem("city") || "N/A");
           formDataToSend.append("total_cases", formData.total_cases || "");
           formDataToSend.append("value_stolen_property", formData.value_stolen_property || "");
           formDataToSend.append("value_recovered_property", formData.value_recovered_property || "");
@@ -883,6 +893,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("type", "forensic_team_deployment");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
+          formDataToSend.append("city", localStorage.getItem("city") || "N/A");
           formDataToSend.append("total_cases_gt_7_years", formData.total_cases_gt_7_years || "");
           formDataToSend.append("forensic_team_deployment_percentage", formData.forensic_team_deployment_percentage || "");
           formDataToSend.append("cases_forensic_team_visited", formData.cases_forensic_team_visited || "");
@@ -893,6 +904,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("type", "police_training");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
+          formDataToSend.append("city", localStorage.getItem("city") || "N/A");
           formDataToSend.append("unit", localStorage.getItem("zone") || "Nagpur Rural");
           formDataToSend.append("total_personnel", formData.total_personal || "");
           formDataToSend.append("sessions_personnel", formData.no_of_personal || "");
@@ -909,6 +921,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("type", "conviction_rate_in_bns");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
+          formDataToSend.append("city", localStorage.getItem("city") || "N/A");
           formDataToSend.append("unit", localStorage.getItem("zone") || "Nagpur Rural");
           formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
