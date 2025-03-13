@@ -95,7 +95,13 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       reasons_for_pending: "",
       percentage: "",
       fromDate: "",
-      toDate: ""
+      toDate: "",
+      type_of_court: "",
+      bns_sections: "",
+      cases_decided: "",
+      convicted_cases: "",
+      conviction_rate: "",
+
     };
   }
 
@@ -132,7 +138,6 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   const expectedHeaders = {
 
     "Pendency of cases under BNS": [
-      "unit",
       "total_cases_registered",
       "cases_disposed",
       "cases_pending_investigation",
@@ -187,7 +192,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       "month_year_from",
       "month_year_to"
     ],
-    "Unit Wise - eSakshya Details": [
+    "eSakshya Details": [
       "unit",
       "total_ios_nagpur_rural",
       "registered_ios_on_esakshya",
@@ -253,29 +258,52 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       "month_year_from",
       "month_year_to"
     ],
-    "Training Data": [
-      "total_personnel",
-      "sessions_personnel",
-      "personnel_trained",
-      "percent_personnel_trained",
-      "total_officers",
-      "sessions_officers",
-      "officers_trained",
-      "percent_officers_trained",
-      "month_year_from",
-      "month_year_to"
-    ]
 
+    "Training Data": ["month_year_from", "month_year_to", "total_personnel", "personnel_trained", "total_officers", "officers_trained"],
+
+    "Conviction under BNS": [
+      "type_of_court",
+      "bns_sections",
+      "cases_decided",
+      "cases_convicted",
+      "conviction_rate"
+    ]
   };
 
 
+
+  const headerMappings = {
+    "Pendency of cases under BNS": {
+      "cases_disposed": "Disposed Cases",
+      "cases_pending_investigation": "Pending Cases",
+      "cases_punishment_less_than_7_years": "No. of Cases with Punishment < 7 Yrs. out of Reg. Cases",
+      "cases_punishment_7_years_or_more": "No. of Cases with Punishment ≥ 7 Yrs. out of Reg. Cases",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "Training Data": {
+      "month_year_from": "From Date",
+      "month_year_to": "To Date",
+      "total_personnel": "Total Constabulary",
+      "personnel_trained": "Constabulary Trained",
+      "total_officers": "Total Officers",
+      "officers_trained": "Officers Trained"
+    },
+    "Conviction under BNS": {
+      "type_of_court": "Type of Court",
+      "bns_sections": "BNS Section",
+      "cases_decided": "Cases Decided",
+      "cases_convicted": "Cases Convictied",
+      "conviction_rate": "Conviction Rate (%)"
+    }
+  };
 
   const generateCSV = () => {
     const sampleFiles = {
 
       "Pendency of cases under BNS": [
-        "unit,total_cases_registered,cases_disposed,cases_pending_investigation,percent_pendency,cases_punishment_less_than_7_years,cases_punishment_7_years_or_more,month_year_from,month_year_to",
-        "Unit-1,100,60,40,40,15,25,05-2024,Mar-2030",
+        "cases_disposed,cases_pending_investigation,cases_punishment_less_than_7_years,cases_punishment_7_years_or_more,month_year_from,month_year_to",
+        "20,10,15,14,02-03-2025,13-03-2025",
       ],
       "Offences against body under BNS": [
         "unit,police_station,act_and_section,registered_cases,detected_cases,percent_detection,month_year_from,month_year_to",
@@ -293,7 +321,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         "unit,police_station,act_and_section,registered_cases,detected_cases,percent_detection,month_year_from,month_year_to",
         "Unit-5,Station-15,IPC 376,40,35,87.5,Apr-2024,MAR-2025",
       ],
-      "Unit Wise - eSakshya Details": [
+      "eSakshya Details": [
         "unit,total_ios_nagpur_rural,registered_ios_on_esakshya,esakshya_usage_percentage,month_year_from,month_year_to",
         "Unit-G1,15,10,5000,Mar-2024,Mar-2030"
       ],
@@ -324,23 +352,59 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         "50,70,35,Mar-2024,Mar-2030"
       ],
       "Training Data": [
-        "total_personnel,sessions_personnel,personnel_trained,percent_personnel_trained,total_officers,sessions_officers,officers_trained,percent_officers_trained,month_year_from,month_year_to",
-        "100,50,40,80,20,10,8,80,Mar-2024,Mar-2030"
-      ]
+        "month_year_from,month_year_to,total_personnel,personnel_trained,total_officers,officers_trained",
+        "02-03-2025,13-03-2025,20,10,20,10"
+      ],
+      "Conviction under BNS": [
+        "type_of_court,bns_sections,cases_decided,cases_convicted,conviction_rate",
+        "session,285,88,72,20"
+      ],
     };
 
-    const csvContent = sampleFiles[selectedForm]?.join("\n") || "No data available";
-    const blob = new Blob([csvContent], { type: "text/csv" });
+
+
+    if (!sampleFiles[selectedForm]) {
+      alert("No data available");
+      return;
+    }
+
+    const selectedData = sampleFiles[selectedForm].map(row => row.split(",")); // Convert strings to arrays
+
+    // Get the corresponding header mapping
+    const formHeaders = headerMappings[selectedForm] || {};
+
+    // Convert lowercase headers to uppercase using the mapping
+    const updatedHeaders = selectedData[0].map(col => formHeaders[col] || col);
+
+    // Construct the CSV content
+    const csvData = [updatedHeaders, ...selectedData.slice(1)]
+      .map(row => row.join(","))
+      .join("\n");
+
+    // Create a CSV file and trigger download
+    const blob = new Blob([csvData], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${selectedForm.toLowerCase()}_sample.csv`;
+    a.download = `${selectedForm.toLowerCase().replace(/\s+/g, "_")}_sample.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
   };
 
+  //   const csvContent = sampleFiles[selectedForm]?.join("\n") || "No data available";
+  //   const blob = new Blob([csvContent], { type: "text/csv" });
+  //   const url = URL.createObjectURL(blob);
+
+  //   const a = document.createElement("a");
+  //   a.href = url;
+  //   a.download = `${selectedForm.toLowerCase()}_sample.csv`;
+  //   document.body.appendChild(a);
+  //   a.click();
+  //   document.body.removeChild(a);
+  // };
+  // ---------------------------------------old_exists_original---------------------------------------
 
   // --------------------------------old---------------------------------
   // const handleFileUpload = (e) => {
@@ -414,39 +478,104 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
     }
   };
 
-  const processFileData = (data) => {
-    const headers = data[0].map(header => header.trim()); // Extract and trim headers
-    const selectedHeaders = expectedHeaders[selectedForm]?.map(header => header.trim()); // Expected headers for selected form
+  // const handleFileUpload = (e) => {
+  //   const files = e.target.files;
 
-    if (!selectedHeaders) {
+  //   if (!files.length) return;
+
+  //   const validFileTypes = ["csv", "xls", "xlsx"];
+  //   const uploadedFiles = [];
+
+  //   Array.from(files).forEach((file) => {
+  //     const fileType = file.name.split(".").pop().toLowerCase();
+
+  //     if (validFileTypes.includes(fileType)) {
+  //       uploadedFiles.push({ name: file.name, size: (file.size / 1024).toFixed(2) + " KB" });
+
+  //       const reader = new FileReader();
+  //       if (fileType === "csv") {
+  //         reader.onload = (event) => {
+  //           const csvText = event.target.result;
+  //           processFileData(csvText.split("\n").map(row => row.split(",")));
+  //         };
+  //         reader.readAsText(file);
+  //       } else {
+  //         reader.onload = (event) => {
+  //           const data = new Uint8Array(event.target.result);
+  //           const workbook = XLSX.read(data, { type: "array" });
+  //           const sheetName = workbook.SheetNames[0];
+  //           const worksheet = workbook.Sheets[sheetName];
+  //           const excelData = XLSX.utils.sheet_to_csv(worksheet);
+  //           processFileData(excelData.split("\n").map(row => row.split(",")));
+  //         };
+  //         reader.readAsArrayBuffer(file);
+  //       }
+  //     } else {
+  //       alert(`${file.name} is not a valid file type. Only CSV, XLS, or XLSX files are allowed.`);
+  //     }
+  //   });
+
+  //   setFileInfo(uploadedFiles);
+  //   setCheckingCsv(true);
+  //   setFormData((prev) => ({ ...prev, uploadedFiles: uploadedFiles.map(file => file.name) }));
+  // };
+
+  const processFileData = (data) => {
+    if (!data || data.length === 0) {
+      setCsvValidationMessage({ text: "Empty or invalid file", color: "red" });
+      setCheckingCsv(false);
+      return;
+    }
+
+    const selectedHeadersMapping = headerMappings[selectedForm];
+
+    if (!selectedHeadersMapping) {
       setCsvValidationMessage({ text: "Invalid form type selected", color: "red" });
       setCheckingCsv(false);
       return;
     }
 
-    // Find missing and extra headers
-    const missingHeaders = selectedHeaders.filter(header => !headers.includes(header));
-    const extraHeaders = headers.filter(header => !selectedHeaders.includes(header));
+    // Reverse mapping: Convert displayed headers back to internal keys
+    const reversedMapping = Object.fromEntries(
+      Object.entries(selectedHeadersMapping).map(([key, value]) => [value.toLowerCase(), key])
+    );
+
+    // Convert uploaded headers to lowercase
+    const headers = data[0].map(header => header.trim().toLowerCase());
+
+    // Convert expected mapped values to internal keys
+    const expectedHeaders = Object.values(selectedHeadersMapping).map(h => h.toLowerCase());
+
+    // Convert uploaded headers to internal keys using reversed mapping
+    const convertedHeaders = headers.map(header => reversedMapping[header] || header);
+
+    // Find missing and extra headers after mapping
+    const missingHeaders = Object.keys(selectedHeadersMapping).filter(header => !convertedHeaders.includes(header));
+    const extraHeaders = convertedHeaders.filter(header => !Object.keys(selectedHeadersMapping).includes(header));
 
     if (missingHeaders.length === 0 && extraHeaders.length === 0) {
       setCsvValidationMessage({ text: "Headers Matched", color: "green" });
     } else {
       let errorMessage = "Headers Not Matching:\n";
+
       if (missingHeaders.length > 0) {
-        errorMessage += `Missing: ${missingHeaders.join(", ")}\n`;
+        errorMessage += `Missing: ${missingHeaders.map(h => selectedHeadersMapping[h]).join(", ")}\n`;
       }
       if (extraHeaders.length > 0) {
         errorMessage += `Extra: ${extraHeaders.join(", ")}\n`;
       }
+
       setCsvValidationMessage({ text: errorMessage, color: "red" });
     }
 
     setCsvData(data);
     setCheckingCsv(false);
   };
+
+
   // const processFileData = (data) => {
-  //   const headers = data[0]; // Extract headers from the uploaded file
-  //   const selectedHeaders = expectedHeaders[selectedForm]; // Expected headers for selected form
+  //   const headers = data[0].map(header => header.trim()); // Extract and trim headers
+  //   const selectedHeaders = expectedHeaders[selectedForm]?.map(header => header.trim()); // Expected headers for selected form
 
   //   if (!selectedHeaders) {
   //     setCsvValidationMessage({ text: "Invalid form type selected", color: "red" });
@@ -454,15 +583,27 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   //     return;
   //   }
 
-  //   if (JSON.stringify(headers) === JSON.stringify(selectedHeaders)) {
+  //   // Find missing and extra headers
+  //   const missingHeaders = selectedHeaders.filter(header => !headers.includes(header));
+  //   const extraHeaders = headers.filter(header => !selectedHeaders.includes(header));
+
+  //   if (missingHeaders.length === 0 && extraHeaders.length === 0) {
   //     setCsvValidationMessage({ text: "Headers Matched", color: "green" });
   //   } else {
-  //     setCsvValidationMessage({ text: "Headers Not Matching", color: "red" });
+  //     let errorMessage = "Headers Not Matching:\n";
+  //     if (missingHeaders.length > 0) {
+  //       errorMessage += `Missing: ${missingHeaders.join(", ")}\n`;
+  //     }
+  //     if (extraHeaders.length > 0) {
+  //       errorMessage += `Extra: ${extraHeaders.join(", ")}\n`;
+  //     }
+  //     setCsvValidationMessage({ text: errorMessage, color: "red" });
   //   }
 
   //   setCsvData(data);
   //   setCheckingCsv(false);
   // };
+
 
 
   // =====================================================handlesubmit============================================
@@ -473,14 +614,15 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
     "Untraced Missing": "untraced_missing",
     "Important sections introduced in BNS": "sections_in_bns",
     "Property offences under BNS": "property_offenses",
-    "Unit Wise - eSakshya Details": "esakshya_units",
+    "eSakshya Details": "esakshya_units",
     "Use of eSakshya App in cases with punishment of 7 yrs. or more": "esakshya_7_more",
     "FIR's and Zero FIR's": "fir_and_zero_firs",
     "eFIR": "e_fir",
     "ITSSO Compliance Form": "itsso_compliance",
     "Stolen & Recovered Property": "stolen_recovered_property",
     "Visit of Forensic Teams": "forensic_team_deployment",
-    "Training Data": "training_data"
+    "Training Data": "police_training",
+    "Conviction under BNS": "conviction_rate_in_bns",
   };
   const selectedType = formTypeMapping[selectedForm];
 
@@ -499,10 +641,12 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         formDataToSend.append("unit", localStorage.getItem("zone") || "");
         formDataToSend.append("district", localStorage.getItem("district") || "");
         formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
+        // formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
+        // formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
       }
       else {
 
-        if (formData.formType === "Pendency of cases under BNS") {  
+        if (formData.formType === "Pendency of cases under BNS") {
           formDataToSend.append("type", "pendency_in_bns");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -513,10 +657,10 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("percent_pendency", formData.pendingPercentage);
           formDataToSend.append("cases_punishment_less_than_7_years", formData.punishmentLessThan7);
           formDataToSend.append("cases_punishment_7_years_or_more", formData.punishmentMoreThan7);
-          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "Offences against body under BNS") {  
+        if (formData.formType === "Offences against body under BNS") {
           formDataToSend.append("type", "offences_against_body");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -526,10 +670,10 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("registered_cases", formData.registeredCases);
           formDataToSend.append("detected_cases", formData.detectedCases);
           formDataToSend.append("percent_detection", formData.detectedCasesPercentage);
-          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "Untraced Missing") {      
+        if (formData.formType === "Untraced Missing") {  //Tested
           formDataToSend.append("type", "untraced_missing");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -542,10 +686,10 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("traced", formData.traced);
           formDataToSend.append("untraced", formData.untraced);
           formDataToSend.append("percent_untraced", formData.untracedPercentage);
-          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "Important sections introduced in BNS") {    
+        if (formData.formType === "Important sections introduced in BNS") { //Tested
           formDataToSend.append("type", "sections_in_bns");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -555,10 +699,10 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("registered_cases", formData.registeredCases);
           formDataToSend.append("detected_cases", formData.detectedCases);
           formDataToSend.append("percent_detection", formData.detectedCasesPercentage);
-          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "Property offences under BNS") {   
+        if (formData.formType === "Property offences under BNS") { //Tested
           formDataToSend.append("type", "property_offenses");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -568,10 +712,10 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("registered_cases", formData.registeredCases);
           formDataToSend.append("detected_cases", formData.detectedCases);
           formDataToSend.append("percent_detection", formData.detectedCasesPercentage);
-          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "Unit Wise - eSakshya Details") {   
+        if (formData.formType === "eSakshya Details") { //Tested
           formDataToSend.append("type", "esakshya_units");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -579,24 +723,24 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("total_ios_nagpur_rural", formData.totalIOsNagapur);
           formDataToSend.append("registered_ios_on_esakshya", formData.totalIOsEsakshya);
           formDataToSend.append("esakshya_usage_percentage", formData.esakshyaWage);
-          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "Use of eSakshya App in cases with punishment of 7 yrs. or more") {   
-          formDataToSend.append("type", "esakshya_7_more");
-          formDataToSend.append("district", localStorage.getItem("district") || "");
-          formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-          formDataToSend.append("unit", formData.unit);
-          formDataToSend.append("total_cases", formData.totalCases);
-          formDataToSend.append("total_offences_with_esakshya", formData.totalOffencesUsed);
-          formDataToSend.append("total_offences_without_esakshya", formData.totalOffencesNotUsed);
-          formDataToSend.append("total_charge_sheeted_with_esakshya", formData.offencesUsedChargeCheet);
-          formDataToSend.append("total_under_investigation_without_esakshya", formData.offencesNotUsedUnderInvestigation);
-          formDataToSend.append("percentage_usage", formData.percentageOfUsingEsakshya);
-          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
-          formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
-        }
-        if (formData.formType === "FIR's and Zero FIR's") {  
+        // if (formData.formType === "Use of eSakshya App in cases with punishment of 7 yrs. or more") {
+        //   formDataToSend.append("type", "esakshya_7_more");
+        //   formDataToSend.append("district", localStorage.getItem("district") || "");
+        //   formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
+        //   formDataToSend.append("unit", formData.unit);
+        //   formDataToSend.append("total_cases", formData.totalCases);
+        //   formDataToSend.append("total_offences_with_esakshya", formData.totalOffencesUsed);
+        //   formDataToSend.append("total_offences_without_esakshya", formData.totalOffencesNotUsed);
+        //   formDataToSend.append("total_charge_sheeted_with_esakshya", formData.offencesUsedChargeCheet);
+        //   formDataToSend.append("total_under_investigation_without_esakshya", formData.offencesNotUsedUnderInvestigation);
+        //   formDataToSend.append("percentage_usage", formData.percentageOfUsingEsakshya);
+        //   formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
+        //   formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
+        // }
+        if (formData.formType === "FIR's and Zero FIR's") {
           formDataToSend.append("type", "fir_and_zero_firs");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -606,10 +750,10 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("total_firs_registered", formData.totalFIRsRegistered);
           formDataToSend.append("pending", formData.pending);
           formDataToSend.append("total_transferred_zero_firs", formData.totalTransferredZeroFIRs);
-          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "eFIR") {   
+        if (formData.formType === "eFIR") {
           formDataToSend.append("type", "e_fir");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -618,10 +762,10 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("total_ecomplaints_received", formData.totalEComplaintsReceived);
           formDataToSend.append("total_ecomplaints_converted_to_firs", formData.totalComplaintsConverted);
           formDataToSend.append("disposed_of_ecomplaints", formData.disposedEComplaints);
-          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "ITSSO Compliance Form") {   
+        if (formData.formType === "ITSSO Compliance Form") {
           formDataToSend.append("type", "itsso_compliance");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -631,10 +775,10 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("pending_cases", formData.pending_cases || "");
           formDataToSend.append("reasons_for_pending", formData.reasons_for_pending || "");
           formDataToSend.append("percentage", formData.percentage || "");
-          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "Stolen & Recovered Property") {   
+        if (formData.formType === "Stolen & Recovered Property") {
           formDataToSend.append("type", "stolen_recovered_property");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -642,20 +786,20 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("value_stolen_property", formData.value_stolen_property || "");
           formDataToSend.append("value_recovered_property", formData.value_recovered_property || "");
           formDataToSend.append("recovery_percentage", formData.recovery_percentage || "");
-          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "Visit of Forensic Teams") {  
+        if (formData.formType === "Visit of Forensic Teams") {  //Tested
           formDataToSend.append("type", "forensic_team_deployment");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
           formDataToSend.append("total_cases_gt_7_years", formData.total_cases_gt_7_years || "");
           formDataToSend.append("forensic_team_deployment_percentage", formData.forensic_team_deployment_percentage || "");
           formDataToSend.append("cases_forensic_team_visited", formData.cases_forensic_team_visited || "");
-          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "Training Data") {
+        if (formData.formType === "Training Data") {   //Tested
           formDataToSend.append("type", "police_training");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -668,23 +812,40 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("sessions_officers", formData.no_of_session_officers || "");
           formDataToSend.append("officers_trained", formData.officers_trained || "");
           formDataToSend.append("percent_officers_trained", formData.percentage_officers_trained || "");
-          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
+        }
+        if (formData.formType === "Conviction under BNS") { //Tested
+          formDataToSend.append("type", "conviction_rate_in_bns");
+          formDataToSend.append("district", localStorage.getItem("district") || "");
+          formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
+          formDataToSend.append("unit", localStorage.getItem("zone") || "Nagpur Rural");
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
+          formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
+          formDataToSend.append("type_of_court", formData.type_of_court || "");
+          formDataToSend.append("bns_sections", formData.bns_sections || "");
+          // If "Other" is selected in BNS Sections, send the custom value
+          if (formData.bns_sections === "Other") {
+            formDataToSend.append("other_bns_section", formData.other_bns_section || "");
+          }
+          formDataToSend.append("cases_decided", formData.cases_decided || "");
+          formDataToSend.append("cases_convicted", formData.convicted_cases || "");
+          formDataToSend.append("conviction_rate", formData.conviction_rate || "");
         }
       }
 
-      // const response = await axiosInstance.post("/fir_form", formDataToSend, {
-      //   headers: {
-      //     "Content-Type": "multipart/form-data",
-      //     Authorization: `${token}`, // Include token
-      //   },
-      // });
-      const response = await axios.post("http://192.168.1.33:5555/api/fir_form", formDataToSend, {
+      const response = await axiosInstance.post("/fir_form", formDataToSend, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `${token}`, // Ensure token is valid
+          Authorization: `${token}`, // Include token
         },
       });
+      // const response = await axios.post("http://192.168.1.33:5555/api/fir_form", formDataToSend, {
+      //   headers: {
+      //     "Content-Type": "multipart/form-data",
+      //     Authorization: `${token}`, // Ensure token is valid
+      //   },
+      // });
 
       if (response.status === 201) {
         alert("Data inserted successfully");
@@ -715,7 +876,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
 
   // ================================================================================================================
+  // ========================kiran_kumar====================================
 
+  // ---------------------------------------------------------------------
 
   return (
     <>
@@ -792,8 +955,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         formOptions = ["Training Data"];
                       } else if (training_active?.section === "forensic/visits") {
                         formOptions = [
-                          "ITSSO Compliance Form",
-                          "Stolen & Recovered Property",
+
                           "Visit of Forensic Teams",
                         ];
                       } else if (training_active?.section === "FIR") {
@@ -803,10 +965,13 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           "Untraced Missing",
                           "Important sections introduced in BNS",
                           "Property offences under BNS",
-                          "Unit Wise - eSakshya Details",
-                          "Use of eSakshya App in cases with punishment of 7 yrs. or more",
+                          "eSakshya Details",
+                          // "Use of eSakshya App in cases with punishment of 7 yrs. or more",
                           "FIR's and Zero FIR's",
                           "eFIR",
+                          "ITSSO Compliance Form",
+                          "Stolen & Recovered Property",
+                          "Conviction under BNS",
                         ];
                       }
 
@@ -825,49 +990,6 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                 {formData.formType === "Pendency of cases under BNS" && (
                   <div className="mt-4 border p-4 rounded-lg bg-gray-100 ">
                     <div className="grid grid-cols-2 gap-4">
-                      {/* <div>
-                        <label className="block text-sm font-medium">Unit</label>
-                        <input type="text" className="w-full p-2 border rounded" value={formData.unit || ""} onChange={(e) => setFormData({ ...formData, unit: e.target.value })} readOnly />
-                      </div> */}
-                      <div>
-                        <label className="block text-sm font-medium">Pending Cases</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.pendingCases || ""}
-                          onChange={(e) => setFormData({ ...formData, pendingCases: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Disposed Cases</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.disposedCases || ""}
-                          onChange={(e) => setFormData({ ...formData, disposedCases: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">No. of Cases with Punishment &lt; 7 Yrs. out of Reg. Cases</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.punishmentLessThan7 || ""}
-                          onChange={(e) => setFormData({ ...formData, punishmentLessThan7: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-small">No. of Cases with Punishment &ge; 7 Yrs. out of Reg. Cases</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.punishmentMoreThan7 || ""}
-                          onChange={(e) => setFormData({ ...formData, punishmentMoreThan7: e.target.value })}
-                        />
-                      </div>
 
                       <div>
                         <label className="block text-sm font-medium">Total Cases</label>
@@ -878,20 +1000,52 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           onChange={(e) => setFormData({ ...formData, totalCases: e.target.value })}
                         />
                       </div>
-
-
-
+                      <div>
+                        <label className="block text-sm font-medium">Disposed Cases</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.disposedCases || ""}
+                          onChange={(e) => setFormData({ ...formData, disposedCases: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium">Pending Cases</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.pendingCases = ((Number(formData.totalCases) - Number(formData.disposedCases)))}
+                          onChange={(e) => setFormData({ ...formData, pendingCases: e.target.value })}
+                        />
+                      </div>
                       <div>
                         <label className="block text-sm font-medium">Percentage of Pendency</label>
                         <input
                           type="number"
                           step="0.01"
                           className="w-full p-2 border rounded"
-                          value={formData.pendingPercentage || ""}
+                          value={formData.pendingPercentage = ((Number(formData.pendingCases) / Number(formData.totalCases) * 100).toFixed(2))}
                           onChange={(e) => setFormData({ ...formData, pendingPercentage: e.target.value })}
                         />
                       </div>
-
+                      <div>
+                        <label className="block text-sm font-medium">No. of Cases with Punishment &lt; 7 Yrs. out of Reg. Cases</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.punishmentLessThan7 || ""}
+                          onChange={(e) => setFormData({ ...formData, punishmentLessThan7: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-small">No. of Cases with Punishment &ge; 7 Yrs. out of Reg. Cases</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.punishmentMoreThan7 || ""}
+                          onChange={(e) => setFormData({ ...formData, punishmentMoreThan7: e.target.value })}
+                        />
+                      </div>
                     </div>
                   </div>
                 )}
@@ -900,20 +1054,6 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   // h-[450px] overflow-y-auto
                   <div className="mt-4 border p-4 rounded-lg bg-gray-100 ">
                     <div className="grid grid-cols-2 gap-4">
-
-                      <div>
-                        <label className="block text-sm font-medium">Age Group</label>
-                        <select
-                          className="w-full p-2 border rounded bg-white"
-                          value={formData.ageGroup || ""}
-                          onChange={(e) => setFormData({ ...formData, ageGroup: e.target.value })}
-                        >
-                          <option value="">Select Age Group</option>
-                          <option value="below18">Below 18 years</option>
-                          <option value="above18">Above 18 years</option>
-                        </select>
-                      </div>
-
                       <div>
                         <label className="block text-sm font-medium">No of Untraced Persons</label>
                         <input
@@ -939,8 +1079,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.totalMissing || ""}
+                          value={formData.totalMissing = ((Number(formData.missingPersons) + Number(formData.untracedPersons)))}
                           onChange={(e) => setFormData({ ...formData, totalMissing: e.target.value })}
+                          readOnly
                         />
                       </div>
 
@@ -959,8 +1100,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.untraced || ""}
+                          value={formData.untraced = ((Number(formData.totalMissing) - Number(formData.traced)))}
                           onChange={(e) => setFormData({ ...formData, untraced: e.target.value })}
+                          readOnly
                         />
                       </div>
 
@@ -970,9 +1112,22 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           type="number"
                           step="0.01"
                           className="w-full p-2 border rounded"
-                          value={formData.untracedPercentage || ""}
+                          value={formData.untracedPercentage = ((Number(formData.untraced) / Number(formData.totalMissing) * 100).toFixed(2))}
                           onChange={(e) => setFormData({ ...formData, untracedPercentage: e.target.value })}
                         />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Age Group</label>
+                        <select
+                          className="w-full p-2 border rounded bg-white"
+                          value={formData.ageGroup || ""}
+                          onChange={(e) => setFormData({ ...formData, ageGroup: e.target.value })}
+                        >
+                          <option value="">Select Age Group</option>
+                          <option value="below18">Below 18 years</option>
+                          <option value="above18">Above 18 years</option>
+                        </select>
                       </div>
 
                     </div>
@@ -1028,12 +1183,6 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         </select>
                       </div>
 
-
-                      {/* <div>
-                        <label className="block text-sm font-medium">Act and Section</label>
-                        <input type="text" className="w-full p-2 border rounded" value={formData.actAndSection || ""} onChange={(e) => setFormData({ ...formData, actAndSection: e.target.value })} />
-                      </div> */}
-
                       <div>
                         <label className="block text-sm font-medium">Reg'd Cases</label>
                         <input type="number" className="w-full p-2 border rounded" value={formData.registeredCases || ""} onChange={(e) => setFormData({ ...formData, registeredCases: e.target.value })} />
@@ -1046,14 +1195,14 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                       <div>
                         <label className="block text-sm font-medium">% of Detection</label>
-                        <input type="number" step="0.01" className="w-full p-2 border rounded" value={formData.detectedCasesPercentage || ""} onChange={(e) => setFormData({ ...formData, detectedCasesPercentage: e.target.value })} />
+                        <input type="number" step="0.01" className="w-full p-2 border rounded" value={formData.detectedCasesPercentage = ((Number(formData.detectedCases) / Number(formData.registeredCases) * 100).toFixed(2))} onChange={(e) => setFormData({ ...formData, detectedCasesPercentage: e.target.value })} />
                       </div>
 
                     </div>
                   </div>
                 )}
 
-                {formData.formType === "Unit Wise - eSakshya Details" && (
+                {formData.formType === "eSakshya Details" && (
                   <div className="mt-4 border p-4 rounded-lg bg-gray-100">
                     <div className="grid grid-cols-2 gap-4">
 
@@ -1083,7 +1232,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           type="number"
                           step="0.01"
                           className="w-full p-2 border rounded"
-                          value={formData.esakshyaWage}
+                          value={formData.esakshyaWage = ((Number(formData.totalIOsEsakshya) / Number(formData.totalIOsNagapur) * 100).toFixed(2))}
                           onChange={(e) => setFormData({ ...formData, esakshyaWage: e.target.value })}
                         />
                       </div>
@@ -1092,7 +1241,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   </div>
                 )}
 
-                {formData.formType === "Use of eSakshya App in cases with punishment of 7 yrs. or more" && (
+                {/* {formData.formType === "Use of eSakshya App in cases with punishment of 7 yrs. or more" && (
                   <div className="mt-4 border p-4 rounded-lg bg-gray-100">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
@@ -1152,13 +1301,13 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                     </div>
                   </div>
-                )}
+                )} */}
 
                 {formData.formType === "FIR's and Zero FIR's" && (
                   <div className="mt-4 border p-4 rounded-lg bg-gray-100 ">
                     <div className="grid grid-cols-2 gap-4">
 
-                      <div>
+                      {/* <div>
                         <label className="block text-sm font-medium">Section</label>
                         <select
                           className="w-full p-2 border rounded bg-white"
@@ -1179,7 +1328,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           <option value="Esakshya Rape (BNS Sec. 64 to 71)">Esakshya Rape (BNS Sec. 64 to 71)</option>
                           <option value="Hurt (BNS Sec. 117 to 125)">Hurt (BNS Sec. 117 to 125)</option>
                         </select>
-                      </div>
+                      </div> */}
 
                       <div>
                         <label className="block text-sm font-medium">
@@ -1215,10 +1364,11 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.pending || ""}
+                          value={formData.pending = ((Number(formData.totalFIRsRegistered) - Number(formData.totalZeroFIRsReceived)))}
                           onChange={(e) =>
                             setFormData({ ...formData, pending: e.target.value })
                           }
+                          readOnly
                         />
                       </div>
 
@@ -1292,34 +1442,11 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                 {formData.formType === "ITSSO Compliance Form" && (
                   <div className="mt-4 border p-4 rounded-lg bg-gray-100 ">
                     <div className="grid grid-cols-2 gap-4">
-
-                      {/* <div>
-                        <label className="block text-sm font-medium">Total POCSO Cases</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.total_pocso || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, total_pocso: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">BNS Cases</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.bns_cases || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, bns_cases: e.target.value })
-                          }
-                        />
-                      </div> */}
                       <div>
                         <label className="block text-sm font-medium">Total No. of registered POCSO + BNS cases</label>
                         <input
                           type="number"
-                          className="w-full p-2 border rounded"
+                          className="w-full p-2 border rounded mt-3"
                           value={formData.pending_cases || ""}
                           onChange={(e) =>
                             setFormData({ ...formData, pending_cases: e.target.value })
@@ -1343,23 +1470,12 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         />
                       </div>
 
-                      {/* <div>
-                        <label className="block text-sm font-medium">Reasons for Pending</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.reasons_for_pending || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, reasons_for_pending: e.target.value })
-                          }
-                        />
-                      </div> */}
                       <div>
                         <label className="block text-sm font-medium">Compliance Rate</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.percentage || ""}
+                          value={formData.percentage = ((Number(formData.charge_sheeted_within_60_days) / Number(formData.pending_cases) * 100).toFixed(2))}
                           onChange={(e) =>
                             setFormData({ ...formData, percentage: e.target.value })
                           }
@@ -1418,7 +1534,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.recovery_percentage || ""}
+                          value={formData.recovery_percentage = ((Number(formData.value_recovered_property) / Number(formData.value_stolen_property) * 100).toFixed(2))}
                           onChange={(e) =>
                             setFormData({ ...formData, recovery_percentage: e.target.value })
                           }
@@ -1449,11 +1565,12 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         <input
                           type="number"
                           className="w-full p-2 border rounded mt-3"
-                          value={formData.forensic_team_deployment_percentage || ""}
+                          // cases_forensic_team_visited
+                          value={formData.cases_forensic_team_visited || ""}
                           onChange={(e) =>
                             setFormData({
                               ...formData,
-                              forensic_team_deployment_percentage: e.target.value,
+                              cases_forensic_team_visited: e.target.value,
                             })
                           }
                         />
@@ -1463,11 +1580,12 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.cases_forensic_team_visited || ""}
+                          // forensic_team_deployment_percentage
+                          value={formData.forensic_team_deployment_percentage = ((Number(formData.cases_forensic_team_visited) / Number(formData.total_cases_gt_7_years) * 100).toFixed(2))}
                           onChange={(e) =>
                             setFormData({
                               ...formData,
-                              cases_forensic_team_visited: e.target.value,
+                              forensic_team_deployment_percentage: e.target.value,
                             })
                           }
                         />
@@ -1482,7 +1600,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <div className="grid grid-cols-2 gap-4">
 
                       <div>
-                        <label className="block text-sm font-medium">Total No. of Personnel</label>
+                        <label className="block text-sm font-medium">Total No. of Constabulary</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1506,7 +1624,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium">No. of Personnel Trained</label>
+                        <label className="block text-sm font-medium">No. of Constabulary Trained</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1529,48 +1647,23 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium">% of Personnel Trained</label>
+                        <label className="block text-sm font-medium">% of Constabulary Trained</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.percentage_personal_trained || ""}
+                          value={formData.percentage_personal_trained = ((Number(formData.personal_trained) / Number(formData.total_personal)) * 100).toFixed(2)}
                           onChange={(e) =>
                             setFormData({ ...formData, percentage_personal_trained: e.target.value })
                           }
                         />
                       </div>
 
-                      
-                      {/* <div>
-                            <label className="block text-sm font-medium">No. of Sessions Personnel</label>
-                            <input
-                              type="number"
-                              className="w-full p-2 border rounded"
-                              value={formData.no_of_personal || ""}
-                              onChange={(e) =>
-                                setFormData({ ...formData, no_of_personal: e.target.value })
-                              }
-                            />
-                          </div> */}
-
-                      {/* <div>
-                        <label className="block text-sm font-medium">No. of Sessions Officers</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.no_of_session_officers || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, no_of_session_officers: e.target.value })
-                          }
-                        />
-                      </div> */}
-                      
                       <div>
                         <label className="block text-sm font-medium">% of Officers Trained</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.percentage_officers_trained || ""}
+                          value={formData.percentage_officers_trained = ((Number(formData.officers_trained) / Number(formData.total_officers)) * 100).toFixed(2)}
                           onChange={(e) =>
                             setFormData({ ...formData, percentage_officers_trained: e.target.value })
                           }
@@ -1581,10 +1674,149 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   </div>
                 )}
 
+                {formData.formType === "Conviction under BNS" && (
+                  <div className="mt-4 border p-4 rounded-lg bg-gray-100">
+                    <div className="grid grid-cols-2 gap-4">
+
+                      {/* Type of Court Dropdown */}
+                      <div>
+                        <label className="block text-sm font-medium">Type of Court</label>
+                        <select
+                          className="w-full p-2 border rounded"
+                          value={formData.type_of_court || ""}
+                          onChange={(e) => setFormData({ ...formData, type_of_court: e.target.value })}
+                        >
+                          <option value="">Select</option>
+                          <option value="Session">Session</option>
+                          <option value="JMFC">JMFC</option>
+                        </select>
+                      </div>
+
+                      {/* BNS Sections Dropdown */}
+                      <div>
+                        <label className="block text-sm font-medium">BNS Sections</label>
+                        <select
+                          className="w-full p-2 border rounded"
+                          value={formData.bns_sections || ""}
+                          onChange={(e) => setFormData({ ...formData, bns_sections: e.target.value, other_bns_section: "" })}
+                        >
+                          <option value="">Select</option>
+                          <option value="285">285</option>
+                          <option value="281">281</option>
+                          <option value="287">287</option>
+                          <option value="287">303(2)</option>
+                          <option value="287">125</option>
+                          <option value="287">305</option>
+                          <option value="287">223</option>
+                          <option value="287">293</option>
+                          <option value="287">289</option>
+                          <option value="Other">Other BNS Sections</option>
+                        </select>
+                      </div>
+                      {/* Other BNS Section (Only show if 'Other' is selected) */}
+                      {formData.bns_sections === "Other" && (
+                        <div>
+                          <label className="block text-sm font-medium">Other BNS Section</label>
+                          <input
+                            type="text"
+                            className="w-full p-2 border rounded"
+                            value={formData.other_bns_section || ""}
+                            onChange={(e) => setFormData({ ...formData, other_bns_section: e.target.value })}
+                          />
+                        </div>
+                      )}
+
+                      {/* Cases Decided */}
+                      <div>
+                        <label className="block text-sm font-medium">Cases Decided</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.cases_decided || ""}
+                          onChange={(e) =>
+                            setFormData({ ...formData, cases_decided: e.target.value })
+                          }
+                        />
+                      </div>
+
+                      {/* Convicted Cases */}
+                      <div>
+                        <label className="block text-sm font-medium">Convicted Cases</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.convicted_cases || ""}
+                          onChange={(e) =>
+                            setFormData({ ...formData, convicted_cases: e.target.value })
+                          }
+                        />
+                      </div>
+
+                      {/* Conviction Rate (Auto-calculated) */}
+                      <div>
+                        <label className="block text-sm font-medium">Conviction Rate %</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.conviction_rate = ((Number(formData.convicted_cases) / Number(formData.cases_decided)) * 100).toFixed(2)}
+                          onChange={(e) =>
+                            setFormData({ ...formData, conviction_rate: e.target.value })
+                          }
+                        />
+                      </div>
+
+                      {/* <div>
+                        <label className="block text-sm font-medium"></label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={conviction_rate =
+                            formData.cases_decided > 0
+                              ? ((Number(formData.convicted_cases) / Number(formData.cases_decided)) * 100).toFixed(2)
+                              : 0
+                          }
+                          onChange={(e) =>
+                            setFormData({ ...formData, conviction_rate: e.target.value })
+                          }
+                          readOnly // Prevent manual editing
+                        />
+                      </div> */}
+
+
+                    </div>
+                  </div>
+                )}
+
+
               </Box>
             )}
             {selectedTab === "upload" && (
               <Box display="flex" flexDirection="column" gap={2} minHeight="60vh">
+
+                {/* <Box display="flex" gap={2} width="100%">
+                  <FormControl fullWidth>
+                    <label className="block text-sm font-medium">From Date</label>
+                    <input
+                      type="date"
+                      className="w-full p-2 border rounded"
+                      value={formData.fromDate || dateRange.fromDate} // Set default from date
+                      onChange={(e) => setFormData({ ...formData, fromDate: e.target.value })}
+                      readOnly
+                    />
+                  </FormControl>
+
+                  <FormControl fullWidth>
+                    <label className="block text-sm font-medium">As on Date</label>
+                    <input
+                      type="date"
+                      className="w-full p-2 border rounded"
+                      value={formData.toDate || dateRange.toDate} // Set default to date
+                      onChange={(e) => setFormData({ ...formData, toDate: e.target.value })}
+                      readOnly
+                    />
+                  </FormControl>
+                </Box> */}
+
                 {/* Form Type Selection Dropdown */}
                 <FormControl fullWidth>
                   <InputLabel id="form-type-label" shrink>Form Type</InputLabel>
@@ -1603,8 +1835,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         formOptions = ["Training Data"];
                       } else if (training_active?.section === "forensic/visits") {
                         formOptions = [
-                          "ITSSO Compliance Form",
-                          "Stolen & Recovered Property",
+
                           "Visit of Forensic Teams",
                         ];
                       } else if (training_active?.section === "FIR") {
@@ -1614,10 +1845,13 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           "Untraced Missing",
                           "Important sections introduced in BNS",
                           "Property offences under BNS",
-                          "Unit Wise - eSakshya Details",
-                          "Use of eSakshya App in cases with punishment of 7 yrs. or more",
+                          "eSakshya Details",
+                          // "Use of eSakshya App in cases with punishment of 7 yrs. or more",
                           "FIR's and Zero FIR's",
                           "eFIR",
+                          "ITSSO Compliance Form",
+                          "Stolen & Recovered Property",
+                          "Conviction under BNS",
                         ];
                       }
 
@@ -1628,7 +1862,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                       ));
                     })()}
                     {/* {[
-                      "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Unit Wise - eSakshya Details",
+                      "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "eSakshya Details",
                       "Use of eSakshya App in cases with punishment of 7 yrs. or more", "FIR's and Zero FIR's", "eFIR", "ITSSO Compliance Form", "Stolen & Recovered Property", "Visit of Forensic Teams", "Training Data"
                     ].map((form) => (
                       <MenuItem key={form} value={form}>
