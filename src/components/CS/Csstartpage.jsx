@@ -449,26 +449,26 @@ const MaharashtraMap = (catogoryBar) => {
           style={{
             position: "absolute",
             right: 60,
-            bottom: "-10%",
+            bottom: "-30%",
             transform: "translateY(-50%)",
             padding: "10px",
             background: "#fff",
             boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
             borderRadius: "8px",
-            fontSize: "10px",
+            fontSize: "20px",
             fontWeight: "bold",
             textAlign: "center",
             zIndex: "999",
             cursor: "pointer",
             width: "15vw",
-            height: (sub_role == 'IG/DIG' || role == 'chief secretary') ? "30vh" : '25vh',
+            height: (sub_role == 'IG/DIG' || role == 'chief secretary') ? "51vh" : '32vh',
             display: "flex",
             flexDirection: "column",
             gap: "10px"
           }}
         >
  
-          <div style={{ textAlign: "center", marginBottom: "5px", fontWeight: "bold" }}>Legend</div>
+          <div style={{ textAlign: "center", marginBottom: "5px", fontWeight: "bold", padding:"10px", width:"300px"}}>Legend</div>
           {(sub_role == 'IG/DIG' || role == 'chief secretary') ? (
             <>
           <div style={{ display: "flex", justifyContent: "space-between" }}>

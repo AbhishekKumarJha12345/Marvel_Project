@@ -191,35 +191,35 @@ export default function Dashboard({ users }) {
   }, []);
 
   const trainingRef = useRef(null); // Reference to PoliceTraining component
-  const [rloading, setRloading] = useState(false)
+  const [rloading,setRloading]=useState(false)
   const handleExportPoliceTraining = async () => {
     setRloading(true)
     const pdf = new jsPDF("p", "mm", "a4"); // Create A4 size PDF
     const margin = 10;
     let yPosition = 20; // Start position for text
-
+  
     // 📌 Capture PoliceTraining component as an image
     if (trainingRef.current) {
       const canvas = await html2canvas(trainingRef.current, { scale: 2 });
       const imgData = canvas.toDataURL("image/png");
-
+  
       const imgWidth = 180; // Fit image width into A4
       const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
-
+  
       pdf.addImage(imgData, "PNG", margin, yPosition, imgWidth, imgHeight);
       yPosition += imgHeight + 10; // Move below image
     }
-
+  
     // 📌 Add a separator
     pdf.setDrawColor(0);
     pdf.line(10, yPosition, 200, yPosition);
     yPosition += 10;
-
+  
     // 📌 Loop through exporttrainingRefDetails and add formatted text
     exporttrainingRefDetails.forEach((item, index) => {
       pdf.setFontSize(14);
       pdf.setFont("helvetica", "bold");
-
+  
       // 🟢 Check if title fits, else move to a new page
       if (yPosition + 10 > 280) {
         pdf.addPage();
@@ -227,15 +227,15 @@ export default function Dashboard({ users }) {
       }
       pdf.text(item.name, margin, yPosition);
       yPosition += 6;
-
+  
       pdf.setFontSize(11);
       pdf.setFont("helvetica", "normal");
-
+  
       // 📌 Properly format long text for PDF
       const textLines = pdf.splitTextToSize(item.data, 180);
       let pageHeight = 280; // Usable page height
       let lineHeight = 6; // Space between lines
-
+  
       textLines.forEach((line) => {
         // 🟢 Check if line fits on the current page
         if (yPosition + lineHeight > pageHeight) {
@@ -245,20 +245,20 @@ export default function Dashboard({ users }) {
         pdf.text(line, margin, yPosition);
         yPosition += lineHeight;
       });
-
+  
       // 📌 Add separator for sections
       if (index !== exporttrainingRefDetails.length - 1) {
         pdf.line(10, yPosition, 200, yPosition);
         yPosition += 10;
       }
     });
-
+  
     // 📌 Save the PDF
     pdf.save("PoliceTraining_Report.pdf");
     setRloading(false)
   };
-
-
+  
+ 
 
   const contentMap = {
     "training":
@@ -287,8 +287,8 @@ export default function Dashboard({ users }) {
     "admin": <div className="content"><Adminviewe /> </div>,
   };
   const [openmodal, setOpenmodal] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-
+    const [showModal, setShowModal] = useState(false);
+  
   const openreportmodal = () => {
     setOpenmodal(true);
   };
@@ -674,8 +674,9 @@ export default function Dashboard({ users }) {
               ) : null}
               <div className="nav_main" style={{ display: "flex" }}>
                 <button
-                  className={`nav-link ${activeSection?.section === "training" ? "active" : ""
-                    }`}
+                  className={`nav-link ${
+                    activeSection?.section === "training" ? "active" : ""
+                  }`}
                   onClick={() => handleSectionClick("training")}
                 >
                   <img
@@ -702,8 +703,9 @@ export default function Dashboard({ users }) {
                 <div className="nav-divider"></div>
 
                 <button
-                  className={`nav-link ${activeSection?.section === "forensic/visits" ? "active" : ""
-                    }`}
+                  className={`nav-link ${
+                    activeSection?.section === "forensic/visits" ? "active" : ""
+                  }`}
                   onClick={() => handleSectionClick("forensic/visits")}
                 >
                   <img
@@ -723,8 +725,9 @@ export default function Dashboard({ users }) {
 
           {/* {(users === "chief secretary" || users === "Prosecutor") && (
             <li
-              className={`nav-link ${activeSection?.section === "prosecution" ? "active" : ""
-                }`}
+              className={`nav-link ${
+                activeSection?.section === "prosecution" ? "active" : ""
+              }`}
               onClick={() => handleSectionClick("prosecution")}
             >
               <GavelIcon /> Prosecution
@@ -737,8 +740,9 @@ export default function Dashboard({ users }) {
 
           {(users === "chief secretary" || users === "Court") && (
             <li
-              className={`nav-link ${activeSection?.section === "court" ? "active" : ""
-                }`}
+              className={`nav-link ${
+                activeSection?.section === "court" ? "active" : ""
+              }`}
               onClick={() => handleSectionClick("court")}
             >
               <BalanceIcon size={25} /> Court
@@ -769,15 +773,12 @@ export default function Dashboard({ users }) {
           {(users === "chief secretary" || users === "Forensic") && (
             <>
 
-<<<<<<< Updated upstream
 
-              {/* Forensic Science Section */}
-=======
-            
->>>>>>> Stashed changes
+
               <li
-                className={`nav-link ${activeSection?.section === "science" ? "active" : ""
-                  }`}
+                className={`nav-link ${
+                  activeSection?.section === "science" ? "active" : ""
+                }`}
                 onClick={() => handleSectionClick("science")}
               >
                 <BiotechIcon size={25} /> Forensic Science Department
@@ -824,10 +825,10 @@ export default function Dashboard({ users }) {
 
           contentMap["training"]
 
-        ) : contentMap[activeSection?.section] || (users === "police" ? contentMap["training"]
-          : users === "Court" ? contentMap["court"]
-            : users === "Forensic" ? contentMap["science"]
-              : users === "Prosecutor" ? contentMap["prosecution"]
+          ) : contentMap[activeSection?.section] || (users === "police" ? contentMap["training"]
+            : users === "Court" ? contentMap["court"]
+              : users === "Forensic" ? contentMap["science"]
+                : users === "Prosecutor" ? contentMap["prosecution"]
                 : users === "admin" ? contentMap["admin"]
                   : contentMap["correctionalservices"])
       }
