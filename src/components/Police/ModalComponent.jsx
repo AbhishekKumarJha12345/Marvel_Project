@@ -19,7 +19,7 @@ import Papa from "papaparse";
 
 const ModalComponent = ({ open, type, onClose }) => {
   const [selectedOption, setSelectedOption] = useState("");
-  const [selectedForm, setSelectedForm] = useState("FIR");
+  const [selectedForm, setSelectedForm] = useState("Pendency of cases under BNS");
 
   const handleFormChange = (event) => {
     setSelectedForm(event.target.value);
@@ -27,7 +27,7 @@ const ModalComponent = ({ open, type, onClose }) => {
 
 
   const [formData, setFormData] = useState({
-    formType: "FIR",
+    formType: "Pendency of cases under BNS",
     month_year: "",
     zone: localStorage.getItem("zone") || "",       // Get from localStorage
     district: localStorage.getItem("district") || "", // Get from localStorage
@@ -48,7 +48,7 @@ const ModalComponent = ({ open, type, onClose }) => {
 
     // Offences against body under BNS specific fields
     crimeHead: "",
-    formCUnit: "",
+    // formCUnit: "",
     policeStation: "",
     regdCases: "",
     detectedCasesFormC: "",
@@ -56,7 +56,7 @@ const ModalComponent = ({ open, type, onClose }) => {
     // month_year: "",
 
     // Form-D Fields
-    formDUnit: "",
+    // formDUnit: "",
     policeStationD: "",
     ageGroup: "",
     untracedPersons: "",
@@ -138,9 +138,9 @@ const ModalComponent = ({ open, type, onClose }) => {
 
 
   // if (!formData.date || !formData.zone || !formData.district || !formData.totalCases) {
-        //     alert("Please fill in all required fields.");
-        //     return;
-        // }
+  //     alert("Please fill in all required fields.");
+  //     return;
+  // }
 
 
   // ======================================= UPLOAD_FILE ====================================================
@@ -150,15 +150,7 @@ const ModalComponent = ({ open, type, onClose }) => {
   const [checkingCsv, setCheckingCsv] = useState(false);
 
   const expectedHeaders = {
-    "FIR": [
-      "month_year",
-      "zone",
-      "district",
-      "sections",
-      "total_cases_registered",
-      "detected_cases",
-      "overall_percent"
-    ],
+    
     "Pendency of cases under BNS": [
       "unit",
       "total_cases_registered",
@@ -284,10 +276,7 @@ const ModalComponent = ({ open, type, onClose }) => {
 
   const generateCSV = () => {
     const sampleFiles = {
-      "FIR": [
-        "month_year,zone,district,sections,total_cases_registered,detected_cases,overall_percent",
-        "Jan-24,Amravati,Akola,Murder (BNS Sec. 103(1)),10,8,80",
-      ],
+      
       "Pendency of cases under BNS": [
         "unit,total_cases_registered,cases_disposed,cases_pending_investigation,percent_pendency,cases_punishment_less_than_7_years,cases_punishment_7_years_or_more,month_year",
         "Unit-1,100,60,40,40,15,25,05-2024",
@@ -357,7 +346,7 @@ const ModalComponent = ({ open, type, onClose }) => {
   };
 
 
-
+  // --------------------------------old---------------------------------
   // const handleFileUpload = (e) => {
   //   const file = e.target.files[0];
 
@@ -390,8 +379,8 @@ const ModalComponent = ({ open, type, onClose }) => {
   //     alert("Only CSV files are allowed");
   //   }
   // };
-  const [uploadedFile, setUploadedFile] = useState(null);
 
+  // ---------------------------------new------------------------------------------
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
   
@@ -402,23 +391,25 @@ const ModalComponent = ({ open, type, onClose }) => {
     if (["csv", "xls", "xlsx"].includes(fileType)) {
       setFileInfo({ name: file.name, size: (file.size / 1024).toFixed(2) + " KB" });
       setCheckingCsv(true);
-      setUploadedFile(file); // Store the file in state
+      setFormData((prev) => ({ ...prev, uploadedFile: file.name })); // Store only filename
   
       if (fileType === "csv") {
-        Papa.parse(file, {
-          complete: (result) => {
-            processFileData(result.data);
-          },
-        });
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const csvText = event.target.result;
+          processFileData(csvText.split("\n").map(row => row.split(","))); // Convert CSV to array
+        };
+        reader.readAsText(file);
       } else {
+        // Handle Excel Parsing
         const reader = new FileReader();
         reader.onload = (event) => {
           const data = new Uint8Array(event.target.result);
           const workbook = XLSX.read(data, { type: "array" });
           const sheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[sheetName];
-          const excelData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-          processFileData(excelData);
+          const excelData = XLSX.utils.sheet_to_csv(worksheet); // Convert Excel to CSV
+          processFileData(excelData.split("\n").map(row => row.split(","))); // Convert CSV to array
         };
         reader.readAsArrayBuffer(file);
       }
@@ -449,18 +440,17 @@ const ModalComponent = ({ open, type, onClose }) => {
 
 
   // =====================================================handlesubmit============================================
-    // ------mapping -- for upload file ----------------
-    const formTypeMapping = {
-      "FIR": "fir",
-      "Pendency of cases under BNS": "pendency_in_bns",
-      "Offences against body under BNS": "offences_against_body",
-      "Untraced Missing": "untraced_missing",
-      "Important sections introduced in BNS": "sections_in_bns",
-      "Property offences under BNS": "property_offenses",
-      "Esakshya Wrt Unit": "esakshya_units",
-      "Esakshya wrt 7yrs or more": "esakshya_7_more",
-      "FIR's and Zero FIR's": "fir_and_zero_firs",
-      "eFIR": "e_fir"
+  // ------mapping -- for upload file ----------------
+  const formTypeMapping = {
+    "Pendency of cases under BNS": "pendency_in_bns",
+    "Offences against body under BNS": "offences_against_body",
+    "Untraced Missing": "untraced_missing",
+    "Important sections introduced in BNS": "sections_in_bns",
+    "Property offences under BNS": "property_offenses",
+    "Esakshya Wrt Unit": "esakshya_units",
+    "Esakshya wrt 7yrs or more": "esakshya_7_more",
+    "FIR's and Zero FIR's": "fir_and_zero_firs",
+    "eFIR": "e_fir"
   };
   const selectedType = formTypeMapping[selectedForm] || "fir";
 
@@ -470,27 +460,18 @@ const ModalComponent = ({ open, type, onClose }) => {
       const token = localStorage.getItem("token"); // Get token from localStorage
 
       console.log("Selected Form Before Sending:", selectedForm); // Debugging
-      console.log("Selected Form Before Sending:", uploadedFile); // Debugging
-
-      if (selectedForm) {
+      console.log("Selected Form Before Sending:", formData.uploadedFile); // Debugging
+      console.log("formtype",formData);
+      if (formData.uploadedFile) {
         console.log("Inside this upload file");
         formDataToSend.append("type", selectedType);
-        formDataToSend.append("file", uploadedFile);
-      } 
+        formDataToSend.append("file", formData.uploadedFile);
+        formDataToSend.append("unit", localStorage.getItem("zone") || "");
+        formDataToSend.append("district", localStorage.getItem("district") || "");
+        formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
+      }
       else {
-        
-        if (formData.formType === "FIR") {   // Tested
-          formDataToSend.append("type", "fir");
-          formDataToSend.append("district", localStorage.getItem("district") || "");
-          formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-          formDataToSend.append("month_year", formData.month_year);
-          formDataToSend.append("zone", formData.zone);
-          formDataToSend.append("district", formData.district);
-          formDataToSend.append("sections", formData.sections);
-          formDataToSend.append("total_cases_registered", formData.totalCases);
-          formDataToSend.append("detected_cases", formData.detectedCases);
-          formDataToSend.append("overall_percent", formData.overallPercentage);
-        }
+
         if (formData.formType === "Pendency of cases under BNS") {   // Tested
           formDataToSend.append("type", "pendency_in_bns");
           formDataToSend.append("district", localStorage.getItem("district") || "");
@@ -520,7 +501,7 @@ const ModalComponent = ({ open, type, onClose }) => {
           formDataToSend.append("type", "untraced_missing");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-          formDataToSend.append("unit", formData.formDUnit);
+          formDataToSend.append("unit", formData.unit);
           formDataToSend.append("police_station", formData.policeStationD);
           formDataToSend.append("age_group", formData.ageGroup);
           formDataToSend.append("no_of_untraced_persons", formData.untracedPersons);
@@ -646,18 +627,18 @@ const ModalComponent = ({ open, type, onClose }) => {
         }
       }
 
-      // const response = await axiosInstance.post("/fir_form", formDataToSend, {
-      //     headers: {
-      //         "Content-Type": "multipart/form-data",
-      //         Authorization: `${token}`, // Include token
-      //     },
-      // });
-      const response = await axios.post("http://192.168.1.33:5555/api/fir_form", formDataToSend, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `${token}`, // Ensure token is valid
-        },
+      const response = await axiosInstance.post("/fir_form", formDataToSend, {
+          headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `${token}`, // Include token
+          },
       });
+      // const response = await axios.post("http://192.168.1.33:5555/api/fir_form", formDataToSend, {
+      //   headers: {
+      //     "Content-Type": "multipart/form-data",
+      //     Authorization: `${token}`, // Ensure token is valid
+      //   },
+      // });
 
       if (response.status === 201) {
         alert("Data inserted successfully");
@@ -719,7 +700,7 @@ const ModalComponent = ({ open, type, onClose }) => {
                     label="Form Type" // Add this line to associate the label correctly
                   >
                     {[
-                      "FIR", "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Esakshya Wrt Unit",
+                      "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Esakshya Wrt Unit",
                       "Esakshya wrt 7yrs or more", "FIR's and Zero FIR's", "eFIR", "Special Cases & High-Profile Investigations Form", "ITSSO Compliance Form", "Stolen & Recovered Property Form", "Forensic Team Deployment Form"
                     ].map((form) => (
                       <MenuItem key={form} value={form}>
@@ -730,101 +711,7 @@ const ModalComponent = ({ open, type, onClose }) => {
                 </FormControl>
 
                 {/* Show form only if Form Type is selected */}
-                {formData.formType === "FIR" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="col-span-2">
-                        <label className="block text-sm font-medium">Sections</label>
-                        <select
-                          className="w-full p-2 border rounded bg-white"
-                          value={formData.sections || ""}
-                          onChange={handleChange}
-                          name="sections"
-                        >
-                          <option value="">Select Section</option>
-                          <option value="Murder (BNS Sec. 103(1))">Murder (BNS Sec. 103(1))</option>
-                          <option value="Att. To Murder (BNS Sec. 109)">Att. To Murder (BNS Sec. 109)</option>
-                          <option value="Esakshya BNSS 105">Esakshya BNSS 105</option>
-                          <option value="Esakshya BNSS 173">Esakshya BNSS 173</option>
-                          <option value="Esakshya BNSS 176">Esakshya BNSS 176</option>
-                          <option value="Esakshya BNSS 180">Esakshya BNSS 180</option>
-                          <option value="Esakshya BNSS 247">Esakshya BNSS 247</option>
-                          <option value="Esakshya Rape (BNS Sec. 64 to 71)">Esakshya Rape (BNS Sec. 64 to 71)</option>
-                          <option value="Hurt (BNS Sec. 117 to 125)">Hurt (BNS Sec. 117 to 125)</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Zone</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded bg-gray-200"
-                          value={formData.zone || ""}
-                          onChange={handleChange}
-                          name="zone"
-                          readOnly
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">District</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded bg-gray-200"
-                          value={formData.district || ""}
-                          onChange={handleChange}
-                          name="district"
-                          readOnly
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium mb-3">Month-Year</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.month_year || ""}
-                          onChange={(e) => setFormData({ ...formData, month_year: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Total Cases Registered</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.totalCases || ""}
-                          onChange={handleChange}
-                          name="totalCases"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Detected Cases</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.detectedCases || ""}
-                          onChange={handleChange}
-                          name="detectedCases"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Overall Percentage</label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          className="w-full p-2 border rounded"
-                          value={formData.overallPercentage || ""}
-                          onChange={handleChange}
-                          name="overallPercentage"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
+             
                 {formData.formType === "Pendency of cases under BNS" && (
                   <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
                     <div className="grid grid-cols-2 gap-4">
@@ -917,8 +804,8 @@ const ModalComponent = ({ open, type, onClose }) => {
                         <input
                           type="text"
                           className="w-full p-2 border rounded"
-                          value={formData.formDUnit || ""}
-                          onChange={(e) => setFormData({ ...formData, formDUnit: e.target.value })}
+                          value={formData.unit || ""}
+                          onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
                           readOnly
                         />
                       </div>
@@ -1535,7 +1422,7 @@ const ModalComponent = ({ open, type, onClose }) => {
                   <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium">Total Cases (7 Years)</label>
+                        <label className="block text-sm font-medium">Total Cases Greater than 7 Years</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1607,7 +1494,7 @@ const ModalComponent = ({ open, type, onClose }) => {
                     displayEmpty
                   >
                     {[
-                      "FIR", "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Esakshya Wrt Unit",
+                      "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Esakshya Wrt Unit",
                       "Esakshya wrt 7yrs or more", "FIR's and Zero FIR's", "eFIR", "Special Cases & High-Profile Investigations Form", "ITSSO Compliance Form", "Stolen & Recovered Property Form", "Forensic Team Deployment Form"
                     ].map((form) => (
                       <MenuItem key={form} value={form}>
@@ -1619,9 +1506,10 @@ const ModalComponent = ({ open, type, onClose }) => {
                 <Box>
 
                   <Button variant="contained" component="label" startIcon={<CloudUpload />}>
-                    Upload CSV
-                    <input type="file" hidden accept=".csv" onChange={handleFileUpload} />
+                    Upload File
+                    <input type="file" hidden accept=".csv,.xls,.xlsx" onChange={handleFileUpload} />
                   </Button>
+
                   <Button variant="contained" startIcon={<Download />} onClick={generateCSV} sx={{ ml: 2 }}>
                     Download Sample
                   </Button>

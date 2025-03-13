@@ -431,7 +431,7 @@ const MaharashtraMap = (catogoryBar) => {
           style={{
             position: "absolute",
             right: 60,
-            bottom: "-10%",
+            bottom: "-30%",
             transform: "translateY(-50%)",
             padding: "10px",
             background: "#fff",
@@ -443,7 +443,7 @@ const MaharashtraMap = (catogoryBar) => {
             zIndex: "999",
             cursor: "pointer",
             width: "15vw",
-            height: (sub_role == 'IG/DIG' || role == 'chief secretary') ? "30vh" : '25vh',
+            height: (sub_role == 'IG/DIG' || role == 'chief secretary') ? "51vh" : '32vh',
             display: "flex",
             flexDirection: "column",
             gap: "10px"
