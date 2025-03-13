@@ -27,6 +27,10 @@ const MaharashtraMap = (catogoryBar) => {
     "Esakshya wrt 7yrs or more",
     "FIR's and Zero FIR's",
     "eFIR",
+    "special_cases_high_profile_investigations",
+ "ITSSO Compliance",
+"Stolen Recovered Property",
+"Forensic Team Deployment"
   ];
 
   const [selectedForm, setSelectedForm] = useState(options[0]);
@@ -439,7 +443,7 @@ const MaharashtraMap = (catogoryBar) => {
             zIndex: "999",
             cursor: "pointer",
             width: "15vw",
-            height: "30vh",
+            height: (sub_role == 'IG/DIG' || role == 'chief secretary') ? "30vh" : '25vh',
             display: "flex",
             flexDirection: "column",
             gap: "10px"

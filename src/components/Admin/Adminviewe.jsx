@@ -17,6 +17,8 @@ const AdminUserTable = () => {
   const [selectedDistrict, setSelectedDistrict] = useState([]);
   const dropdownRef = useRef(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedCity, setSelectedCity] = useState("");
+
 
   // Zones data
   const zones = {
@@ -43,6 +45,7 @@ const AdminUserTable = () => {
     rank: sanitizeValue(users.rank) || "",
     sub_role: sanitizeValue(users.sub_role) || "",
     zone: sanitizeValue(users.zone) || "",
+    city: sanitizeValue(users.city) || "",
   });
 
 
@@ -95,6 +98,7 @@ const AdminUserTable = () => {
       rank: user.rank || "",
       sub_role: user.sub_role || "",
       zone: user.zone || "",
+      city: user.city || "",
     });
     setEditOpen(true);
   };
@@ -129,6 +133,15 @@ const AdminUserTable = () => {
       ...prevFormData,
       district: value, // Save the selected district in formData
     }));
+  };
+
+
+  const handleCityChange = (e) => {
+    const value = e.target.value;
+    setSelectedCity(value);
+    setEditFormData((prevFormData) => ({ ...prevFormData,
+      city: value })); // Reset district when zone changes
+    
   };
   
   // const handleDistrictChange = (e) => {
@@ -267,6 +280,10 @@ const AdminUserTable = () => {
                   <input type="text" name="emp_id" value={editFormData.emp_id} onChange={handleEditChange} className="p-2 border border-gray-300 rounded-md w-full" />
                 </div>
                 <div className="mb-4">
+                  <label className="block text-sm font-medium">Email Id</label>
+                  <input type="text" name="email" value={editFormData.email} onChange={handleEditChange} className="p-2 border border-gray-300 rounded-md w-full" />
+                </div>
+                <div className="mb-4">
                   <label className="block text-sm font-medium">Username</label>
                   <input type="text" name="user_name" value={editFormData.username} onChange={handleEditChange} className="p-2 border border-gray-300 rounded-md w-full" />
                 </div>
@@ -283,14 +300,10 @@ const AdminUserTable = () => {
                       onChange={handleEditChange}
                       className="w-full p-2 border rounded-md bg-white"
                     >
-                      <option value="">Select SubRole</option>
+                     <option value="">Select SubRole</option>
                       <option value="IG/DIG">IG/DIG</option>
                       <option value="SP">SP</option>
-                      <option value="ADDL_SP/DSP">ADDL-SP/DSP</option>
-                      <option value="INSPR">INSPR</option>
-                      <option value="SI">SI</option>
-                      <option value="ASI">ASI</option>
-                      <option value="HC">HC</option>
+                      <option value="CP">CP</option>
                     </select>
                   </div>
                 ) : (
@@ -311,6 +324,7 @@ const AdminUserTable = () => {
                   <label className="block text-sm font-medium">Rank</label>
                   <input type="text" name="rank" value={editFormData.rank} onChange={handleEditChange} className="p-2 border border-gray-300 rounded-md w-full" />
                 </div>
+                {(editFormData.sub_role !== "CP") &&(
                 <div className="mb-4">
                   <label className="block text-sm font-medium">Zone</label>
                   <select
@@ -326,56 +340,55 @@ const AdminUserTable = () => {
                       </option>
                     ))}
                   </select>
-                </div>
-                {editFormData.sub_role !== "IG/DIG" && (
-                  <div className="mb-4">
-                  <label className="block text-sm font-medium">District</label>
-                  <div className="relative">
-                    <select
-                      value={selectedDistrict}
-                      onChange={handleDistrictChange}
-                      className="w-full p-2 border rounded-md bg-white text-gray-800"
-                    >
-                      <option value="">Select District</option>
-                      {selectedZone &&
-                        zones[selectedZone].map((district) => (
-                          <option key={district} value={district}>
-                            {district}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-                </div>
-                
-                  // <div className="mb-4">
-                  //   <label className="block text-sm font-medium">District</label>
-                  //   <div ref={dropdownRef} className="relative">
-                  //     <button
-                  //       type="button"
-                  //       onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  //       className="w-full p-2 border rounded-md bg-white text-left"
-                  //     >
-                  //       {selectedDistrict.length > 0 ? selectedDistrict.join(", ") : "Select District"}
-                  //     </button>
-                  //     {isDropdownOpen && selectedZone && (
-                  //       <div className="absolute top-full left-0 w-full bg-white border rounded-md shadow-lg p-2 z-50 max-h-40 overflow-auto">
-                  //         {zones[selectedZone].map((district) => (
-                  //           <label key={district} className="flex items-center space-x-2 p-1">
-                  //             <input
-                  //               type="checkbox"
-                  //               value={district}
-                  //               checked={selectedDistrict.includes(district)}
-                  //               onChange={handleDistrictChange}
-                  //               className="form-checkbox text-blue-500"
-                  //             />
-                  //             <span className="text-gray-800">{district}</span>
-                  //           </label>
-                  //         ))}
-                  //       </div>
-                  //     )}
-                  //   </div>
-                  // </div>
-                )}
+                </div>)}
+
+                {(editFormData.sub_role !== "IG/DIG" || editFormData.sub_role !== "CP") && (
+
+editFormData.sub_role == "CP" ? (<div ref={dropdownRef} className="relative mb-4">
+  <label className="block text-sm font-medium">City</label>
+  <select
+id="city"
+value={selectedCity}
+onChange={handleCityChange} // Use the updated function
+className="w-full p-2 border rounded-md bg-white"
+>
+<option value="">Select City</option>
+<option value="Mumbai City">Mumbai City</option>
+<option value="Thane City">Thane City</option>
+<option value="Mira Bhainder">Mira Bhainder</option>
+<option value="Navi Mumbai">Navi Mumbai</option>
+<option value="Pune City">Pune City</option>
+<option value="Pimpri Chinchwad">Pimpri Chinchwad</option>
+<option value="Amravati City">Amravati City</option>
+<option value="Nagpur City">Nagpur City</option>
+<option value="Nashik City">Nashik City</option>
+<option value="Aurangabad City">Aurangabad City</option>
+<option value="Solapur City">Solapur City</option>
+
+</select>
+
+</div>) :
+
+(<div ref={dropdownRef} className="relative">
+<Label htmlFor="district">District</Label>
+<select
+id="district"
+value={selectedDistrict}
+onChange={handleDistrictChange} // Use the updated function
+className="w-full p-2 border rounded-md bg-white"
+>
+<option value="">Select District</option>
+{selectedZone &&
+zones[selectedZone].map((district) => (
+<option key={district} value={district}>
+{district}
+</option>
+))}
+</select>
+
+</div>)
+)}
+
                 <div className="mb-4">
                   <label className="block text-sm font-medium">Mobile Number</label>
                   <input

@@ -154,7 +154,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 import logo from "../assets/logo22.png";
 import ResetPasswordModal from "./resetpassword";
-import image2 from "../assets/image 2.png";
+import image2 from "../assets/logo22.png";
 
 // import resetpassword from "../components/"
 
@@ -446,7 +446,7 @@ function Login() {
 </div>
 
       <div className="col-span-6 flex  items-center m-auto">
-    <img src={image2} alt="Logo" className="w-[650px] h-[650px]" />
+    <img src={image2} alt="Logo" className="w-[400px] h-[400px]" />
   </div>
 
 
