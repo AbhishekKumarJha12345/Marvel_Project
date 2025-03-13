@@ -449,8 +449,8 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
   };
 
   const processFileData = (data) => {
-    const headers = data[0]; // Extract headers from the uploaded file
-    const selectedHeaders = expectedHeaders[selectedForm]; // Expected headers for selected form
+    const headers = data[0].map(header => header.trim()); // Extract and trim headers
+    const selectedHeaders = expectedHeaders[selectedForm]?.map(header => header.trim()); // Expected headers for selected form
 
     if (!selectedHeaders) {
       setCsvValidationMessage({ text: "Invalid form type selected", color: "red" });
@@ -458,15 +458,45 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
       return;
     }
 
-    if (JSON.stringify(headers) === JSON.stringify(selectedHeaders)) {
+    // Find missing and extra headers
+    const missingHeaders = selectedHeaders.filter(header => !headers.includes(header));
+    const extraHeaders = headers.filter(header => !selectedHeaders.includes(header));
+
+    if (missingHeaders.length === 0 && extraHeaders.length === 0) {
       setCsvValidationMessage({ text: "Headers Matched", color: "green" });
     } else {
-      setCsvValidationMessage({ text: "Headers Not Matching", color: "red" });
+      let errorMessage = "Headers Not Matching:\n";
+      if (missingHeaders.length > 0) {
+        errorMessage += `Missing: ${missingHeaders.join(", ")}\n`;
+      }
+      if (extraHeaders.length > 0) {
+        errorMessage += `Extra: ${extraHeaders.join(", ")}\n`;
+      }
+      setCsvValidationMessage({ text: errorMessage, color: "red" });
     }
 
     setCsvData(data);
     setCheckingCsv(false);
   };
+  // const processFileData = (data) => {
+  //   const headers = data[0]; // Extract headers from the uploaded file
+  //   const selectedHeaders = expectedHeaders[selectedForm]; // Expected headers for selected form
+
+  //   if (!selectedHeaders) {
+  //     setCsvValidationMessage({ text: "Invalid form type selected", color: "red" });
+  //     setCheckingCsv(false);
+  //     return;
+  //   }
+
+  //   if (JSON.stringify(headers) === JSON.stringify(selectedHeaders)) {
+  //     setCsvValidationMessage({ text: "Headers Matched", color: "green" });
+  //   } else {
+  //     setCsvValidationMessage({ text: "Headers Not Matching", color: "red" });
+  //   }
+
+  //   setCsvData(data);
+  //   setCheckingCsv(false);
+  // };
 
 
   // =====================================================handlesubmit============================================
@@ -1867,9 +1897,15 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
 
 
 
-                  {checkingCsv && <Typography>Checking CSV...</Typography>}
+                  {/* {checkingCsv && <Typography>Checking CSV...</Typography>}
                   {csvValidationMessage && (
                     <Typography style={{ color: csvValidationMessage.color }}>{csvValidationMessage.text}</Typography>
+                  )} */}
+                  {checkingCsv && <Typography>Checking CSV...</Typography>}
+                  {csvValidationMessage && (
+                    <Typography style={{ color: csvValidationMessage.color, whiteSpace: "pre-line" }}>
+                      {csvValidationMessage.text}
+                    </Typography>
                   )}
 
                   {csvData && (
