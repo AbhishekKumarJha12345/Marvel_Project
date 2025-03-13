@@ -103,7 +103,16 @@ const MaharashtraMap = (catogoryBar) => {
         const response = await axiosInstance.get("/maharashtra-police-data", {
           params: { zone: zoneName, district: districtName, table: catogory, typeFilter: selectedForm }
         });
-        console.log("response:", response.data);
+        
+        console.log("district : ",district);
+        console.log("response.data.districts : ",response.data);
+
+        district ? setpercent(response.data.districts[district] || 0) : setpercent( 0)
+
+        role == 'chief secretary' && !selectedZone ? setpercent(response.data.zones) : setpercent(response.data.districts)
+
+        // selectedZone ? districtName : zoneName || district
+        
 
         setZonePercentages(response.data.zones);
         setDistrictPercentages(response.data.districts);
@@ -114,6 +123,11 @@ const MaharashtraMap = (catogoryBar) => {
     }
 
     fetchData("", ""); // Fetch all data initially
+
+    console.log("districtPercentages : ",districtPercentages);
+    
+
+
   }, [catogory,selectedForm]);
 
 
@@ -147,7 +161,7 @@ const MaharashtraMap = (catogoryBar) => {
     "Amravati": ["Akola", "Amravati", "Buldana", "Washim", "Yavatmal"],
     "Aurangabad": ["Aurangabad", "Beed", "Hingoli", "Jalna", "Latur", "Nanded", "Osmanabad", "Parbhani"],
     "Konkan": ["Mumbai", "Mumbai Suburban", "Palghar", "Raigad", "Ratnagiri", "Sindhudurg", "Thane"],
-    "Nagpur ": ["Bhandara", "Chandrapur", "Gadchiroli", "Gondia", "Nagpur Rural", "Wardha"],
+    "Nagpur Rural": ["Bhandara", "Chandrapur", "Gadchiroli", "Gondia", "Nagpur Rural", "Wardha"],
     "Nashik": ["Ahmednagar", "Dhule", "Jalgaon", "Nandurbar", "Nashik"],
     "Pune": ["Kolhapur", "Pune", "Sangli", "Satara", "Solapur"],
   };
@@ -173,11 +187,7 @@ const MaharashtraMap = (catogoryBar) => {
       // Treat it as a string and fetch the percentage normally
       percentage = zonePercentages[name] || districtPercentages[name] || 0;
     }
-
-    console.log("percentage:", percentage);
-
-    setpercent(percentage)
-
+    
     // Determine the color based on percentage
     if (percentage > 80) return "#37C503";
     if (percentage >= 60) return "#9AD911";
@@ -246,10 +256,9 @@ const MaharashtraMap = (catogoryBar) => {
 
 
 
-        if(((selectedZone && districtName == "Nagpur Rural") || (district == "Nagpur Rural")) && catogory == 'FIR'  ){
+        if((selectedZone && districtName == "Nagpur Rural" ) || (district == "Nagpur Rural")  ){
 
           
-
 
           const nagpurDistricts = ["Nagpur Rural","Nagpur"];
           const nagpurStations = policeLatLong.filter(station => 
@@ -285,8 +294,11 @@ const MaharashtraMap = (catogoryBar) => {
           },
           mouseover: (e) => {
             layer.setStyle({ color: "#ffff", weight: 2 });
-            L.popup().setLatLng(e.latlng).setContent(`<b>${selectedZone ? districtName : zoneName}</b><br>Percentage: ${ percent}%`).openOn(map);
-          },
+            L.popup()
+            .setLatLng(e.latlng)
+            .setContent(`<b>${selectedZone ? districtName : zoneName || district}</b><br>Percentage: ${ selectedZone ? percent[districtName] || 0 : percent[zoneName]||0 || percent[district] ||0}%`)
+            .openOn(map);
+                    },
           mouseout: () => {
             layer.setStyle({ color: "#ffff", fillOpacity: 0.7 });
             map.closePopup();
@@ -404,7 +416,7 @@ const MaharashtraMap = (catogoryBar) => {
 
         {
 
-          (sub_role == 'IG/DIG' || role == 'chief secretary') && catogory == 'FIR' ?
+           catogory == 'FIR' ?
 
             (<div
               style={{
@@ -451,13 +463,13 @@ const MaharashtraMap = (catogoryBar) => {
           style={{
             position: "absolute",
             right: 60,
-            bottom: "-7%",
+            bottom: '-10%',
             transform: "translateY(-50%)",
             padding: "10px",
             background: "#fff",
             boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
             borderRadius: "8px",
-            fontSize: "20px",
+            fontSize: "15px",
             fontWeight: "bold",
             textAlign: "center",
             zIndex: "999",

@@ -137,6 +137,7 @@ export default function Dashboard({ users }) {
   const sub_role = localStorage.getItem("sub_role")
 
   console.log("sub_role : ", sub_role);
+  console.log("users : ", users);
 
 
   const resetContent = () => {
@@ -272,7 +273,7 @@ export default function Dashboard({ users }) {
         {/* <PoliceTraining ref={trainingRef} /> */}
       </div>,
     // "awareness/campaign"    : <div className="content"><h1 className="heading">Awareness Campaigns</h1><Carousel /></div>,
-    "forensic/visits": <div className="content"><h1 className="heading">Forensic Visits</h1><Forensicvisits /></div>,
+    "forensic/visits": <div className="content"><h1 className="heading">Forensic Visits</h1><MaharashtraPoliceMap catogoryBar="FORENSIC" /></div>,
     "court": <div className="content"><h1 className="heading">Court Visits</h1><Dashboard2 /></div>,
     "science": <div className="content"><h1 className="heading">Forensic Science Department</h1><Dashboard1 /></div>,
     "prosecution": <div className="content"><h1 className="heading">Prosecution Visits</h1><CriminalPages /></div>,
@@ -765,18 +766,22 @@ export default function Dashboard({ users }) {
       </div>
 
 
-      {
-        users === 'chief secretary' ? contentMap[activeSection?.section] || (
-
-          contentMap["training"]
-
-        ) : contentMap[activeSection?.section] || (users === "police" ? contentMap["training"]
-          : users === "Court" ? contentMap["court"]
-            : users === "Forensic" ? contentMap["science"]
-              : users === "Prosecutor" ? contentMap["prosecution"]
-                : users === "admin" ? contentMap["admin"]
-                  : contentMap["correctionalservices"])
-      }
+    {
+  contentMap[activeSection?.section] ||
+  (users === "chief secretary"
+    ? contentMap["training"]
+    : users === "police"
+    ? contentMap["training"]
+    : users === "Court"
+    ? contentMap["court"]
+    : users === "Forensic"
+    ? contentMap["science"]
+    : users === "Prosecutor"
+    ? contentMap["prosecution"]
+    : users === "admin"
+    ? contentMap["admin"] // ✅ Now "admin" gets the correct content
+    : contentMap["correctionalservices"])
+}
 
       <ModalComponent
         open={showModal}
