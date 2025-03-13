@@ -30,6 +30,8 @@ const MaharashtraMap = (catogoryBar) => {
   const [selectedZone, setSelectedZone] = useState(null);
   const [zonePercentages, setZonePercentages] = useState({});
   const [districtPercentages, setDistrictPercentages] = useState({});
+  const [percent, setpercent] = useState(0);
+
   const [loading, setLoading] = useState(false); // Loader state
 
 
@@ -115,6 +117,7 @@ const MaharashtraMap = (catogoryBar) => {
   }, [catogory,selectedForm]);
 
 
+
   useEffect(() => {
     if (mapRef.current) return;
 
@@ -173,6 +176,8 @@ const MaharashtraMap = (catogoryBar) => {
     }
 
     console.log("percentage:", percentage);
+
+    setpercent(percentage)
 
     // Determine the color based on percentage
     if (percentage > 80) return "#37C503";
@@ -240,16 +245,14 @@ const MaharashtraMap = (catogoryBar) => {
           : zonePercentages[zoneName] || districtPercentages[zoneName] || 0;
 
 
-          
 
 
-
-        if(selectedZone && districtName == "Nagpur Rural" && catogory == 'FIR' && staionsFilters.includes(selectedForm) ){
+        if(((selectedZone && districtName == "Nagpur Rural") || (district == "Nagpur Rural")) && catogory == 'FIR'  ){
 
           
 
 
-          const nagpurDistricts = ["Nagpur Rural"];
+          const nagpurDistricts = ["Nagpur Rural","Nagpur"];
           const nagpurStations = policeLatLong.filter(station => 
             nagpurDistricts.includes(station.District) // Adjust this based on your JSON structure
           );
@@ -283,7 +286,7 @@ const MaharashtraMap = (catogoryBar) => {
           },
           mouseover: (e) => {
             layer.setStyle({ color: "#ffff", weight: 2 });
-            L.popup().setLatLng(e.latlng).setContent(`<b>${selectedZone ? districtName : zoneName}</b><br>Percentage: ${ percentageDisplay}%`).openOn(map);
+            L.popup().setLatLng(e.latlng).setContent(`<b>${selectedZone ? districtName : zoneName}</b><br>Percentage: ${ percent}%`).openOn(map);
           },
           mouseout: () => {
             layer.setStyle({ color: "#ffff", fillOpacity: 0.7 });
@@ -461,7 +464,8 @@ const MaharashtraMap = (catogoryBar) => {
             zIndex: "999",
             cursor: "pointer",
             width: "15vw",
-            height: (sub_role == 'IG/DIG' || role == 'chief secretary') ? "51vh" : '32vh',
+            // height: (sub_role == 'IG/DIG' || role == 'chief secretary') ? "51vh" : '32vh',
+            minHeight: "auto",
             display: "flex",
             flexDirection: "column",
             gap: "10px"

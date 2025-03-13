@@ -145,7 +145,7 @@ function Mainnavbar() {
             onClick={() => window.location.reload()}
           // Navigate to the route
           >
-            ICJS
+            MARVEL
           </div>
         </div>
 
