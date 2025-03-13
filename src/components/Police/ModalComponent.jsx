@@ -19,7 +19,7 @@ const ModalComponent = ({ open,type, onClose }) => {
   const [selectedOption, setSelectedOption] = useState("");
  
   const [formData, setFormData] = useState({
-    formType: "FIR",
+    formType: "Pendency of cases under BNS",
     month_year: "",
     zone: localStorage.getItem("zone") || "",       // Get from localStorage
     district: localStorage.getItem("district") || "", // Get from localStorage
@@ -566,7 +566,7 @@ const [checkingCsv, setCheckingCsv] = useState(false);
                     label="Form Type" // Add this line to associate the label correctly
                   >
                     {[
-                      "FIR", "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Esakshya Wrt Unit",
+                       "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Esakshya Wrt Unit",
                       "Esakshya wrt 7yrs or more", "FIR's and Zero FIR's", "eFIR"
                     ].map((form) => (
                       <MenuItem key={form} value={form}>

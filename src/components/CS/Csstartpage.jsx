@@ -7,14 +7,37 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axiosInstance from "@/utils/axiosInstance";
 
 import maharashtraZonals from "./maharashtraZonals.json";
+import { FormControl, InputLabel, Select, MenuItem, CircularProgress  } from "@mui/material";
 
-const MaharashtraMap = (tableName) => {
+
+const MaharashtraMap = (catogoryBar) => {
   const [selectedZone, setSelectedZone] = useState(null);
   const [zonePercentages, setZonePercentages] = useState({});
   const [districtPercentages, setDistrictPercentages] = useState({});
+  const [loading, setLoading] = useState(false); // Loader state
 
 
-  const table = tableName.tableName
+  const options = [
+    "Pendency of cases under BNS",
+    "Offences against body under BNS",
+    "Untraced Missing",
+    "Important sections introduced in BNS",
+    "Property offences under BNS",
+    "Esakshya Wrt Unit",
+    "Esakshya wrt 7yrs or more",
+    "FIR's and Zero FIR's",
+    "eFIR",
+  ];
+
+  const [selectedForm, setSelectedForm] = useState(options[0]);
+
+
+  const handleChange = (event) => {
+    setSelectedForm(event.target.value);
+  };
+
+
+  const catogory = catogoryBar.catogoryBar
 
 
   const zone = localStorage.getItem("zone")
@@ -22,28 +45,31 @@ const MaharashtraMap = (tableName) => {
   const district = localStorage.getItem("district")
 
   const sub_role = localStorage.getItem("sub_role")
+  const role = localStorage.getItem("role")
 
-  console.log("Zone : ",zone," ","district : ",district," ","role : ",sub_role);
-  
-
-  
-  const userZones = sub_role == 'IG/DIG' || sub_role == 'CP' || sub_role == 'SP' ? zone : "" ; // Example single zone
-  const userDistricts = sub_role == 'CP' || sub_role == 'SP' ? district : "" ; // Example single district
+  console.log("Zone : ", zone, " ", "district : ", district, " ", "role : ", sub_role);
 
 
-  console.log("userZones : ",userZones);
-  console.log("userDistricts : ",userDistricts);
-  
-  
+
+  const userZones = sub_role == 'IG/DIG' || sub_role == 'CP' || sub_role == 'SP' ? zone : ""; // Example single zone
+  const userDistricts = sub_role == 'CP' || sub_role == 'SP' ? district : ""; // Example single district
+
+
+  console.log("userZones : ", userZones);
+  console.log("userDistricts : ", userDistricts);
+
+
 
 
   const mapRef = useRef(null);
 
   useEffect(() => {
     async function fetchData(zoneName, districtName) {
+      setLoading(true); // Start loading
+
       try {
         const response = await axiosInstance.get("/maharashtra-police-data", {
-          params: { zone: zoneName, district: districtName,table: table  }
+          params: { zone: zoneName, district: districtName, table: catogory, typeFilter :selectedForm }
         });
         console.log("response:", response.data);
 
@@ -52,10 +78,11 @@ const MaharashtraMap = (tableName) => {
       } catch (error) {
         console.error("Error fetching Maharashtra police data:", error);
       }
+      setTimeout(() => setLoading(false), 1000); // Add 2-sec delay before hiding loader
     }
 
     fetchData("", ""); // Fetch all data initially
-  }, [table]);
+  }, [catogory,selectedForm]);
 
 
   useEffect(() => {
@@ -107,11 +134,11 @@ const MaharashtraMap = (tableName) => {
     // Handle cases where name is an array
     let percentage;
     if (Array.isArray(name)) {
-        // Get the highest percentage among all zones in the array
-        percentage = Math.max(...name.map(zone => zonePercentages[zone] || districtPercentages[zone] || 0));
+      // Get the highest percentage among all zones in the array
+      percentage = Math.max(...name.map(zone => zonePercentages[zone] || districtPercentages[zone] || 0));
     } else {
-        // Treat it as a string and fetch the percentage normally
-        percentage = zonePercentages[name] || districtPercentages[name] || 0;
+      // Treat it as a string and fetch the percentage normally
+      percentage = zonePercentages[name] || districtPercentages[name] || 0;
     }
 
     console.log("percentage:", percentage);
@@ -121,7 +148,7 @@ const MaharashtraMap = (tableName) => {
     if (percentage >= 60) return "#9AD911";
     if (percentage >= 40) return "#FF8585";
     return "#F45546";
-};
+  };
 
 
 
@@ -129,8 +156,9 @@ const MaharashtraMap = (tableName) => {
 
   useEffect(() => {
 
+    setLoading(true); // Start loading
 
-    
+
     if (!mapRef.current) return;
 
     const map = mapRef.current;
@@ -144,8 +172,8 @@ const MaharashtraMap = (tableName) => {
 
 
     const isDistrictAllowed = (districtName) => {
-      console.log("userZones : ",zoneMapping[userZones]?.includes(districtName));
-      
+      console.log("userZones : ", zoneMapping[userZones]?.includes(districtName));
+
       if (!userDistricts && !userZones) return true; // Show all if no restriction
       if (userDistricts) return districtName === userDistricts; // Only allow the specific district
       if (userZones) return zoneMapping[userZones]?.includes(districtName); // Allow all districts in the zone
@@ -154,8 +182,8 @@ const MaharashtraMap = (tableName) => {
 
     const filteredFeatures = selectedZone
       ? maharashtraBoundary.features.filter((feature) =>
-          // zoneMapping[selectedZone].includes(feature.properties.dtname) &&
-          isDistrictAllowed(feature.properties.dtname))
+        // zoneMapping[selectedZone].includes(feature.properties.dtname) &&
+        isDistrictAllowed(feature.properties.dtname))
       : userDistricts ? maharashtraBoundary.features.filter((feature) =>
         // zoneMapping[selectedZone].includes(feature.properties.dtname) &&
         isDistrictAllowed(feature.properties.dtname)) : maharashtraZonals.features.filter((feature) =>
@@ -168,17 +196,17 @@ const MaharashtraMap = (tableName) => {
     //   : maharashtraZonals.features;
 
 
-   
+
 
     let maharashtraLayer = L.geoJSON(filteredFeatures, {
       style: (feature) => {
-        const districtName = feature.properties.dtname;        
-        let zoneName = districtName 
-        ? Object.keys(zoneMapping).find(zone => zoneMapping[zone].includes(districtName)) 
-        : Object.keys(zoneMapping);
-        console.log("districtName : ",districtName);
-        console.log("zoneName : ",zoneName);
-        
+        const districtName = selectedZone? feature.properties.dtname : feature.properties.division;
+        let zoneName = districtName
+          ? Object.keys(zoneMapping).find(zone => zoneMapping[zone].includes(districtName))
+          : Object.keys(zoneMapping);
+        console.log("districtName : ", districtName);
+        console.log("zoneName : ", zoneName);
+
         return {
           fillColor: selectedZone ? getZoneColor(districtName) : getZoneColor(zoneName),
           fillOpacity: 0.7,
@@ -218,7 +246,7 @@ const MaharashtraMap = (tableName) => {
         //     console.log("marker : ",marker);
         //     marker = null
         //     setSelectedZone(zoneName);
-            
+
         //   },
         //   mouseover: () => {
         //     layer.setStyle({ color: "#ffff", weight: 2 });
@@ -294,17 +322,39 @@ const MaharashtraMap = (tableName) => {
     L.geoJSON(zoneMask, {
       style: { color: "black", weight: 0, fillColor: "white", fillOpacity: 1 },
     }).addTo(map);
-
+    
+    setTimeout(() => setLoading(false), 1000); // Add 2-sec delay before hiding loader
     return () => {
       if (map.hasLayer(maharashtraLayer)) {
         map.removeLayer(maharashtraLayer);
       }
     };
+
   }, [selectedZone, zonePercentages]);
 
   return (
     <div style={{ display: "flex", height: "80vh", width: "100%", zIndex: "0" }}>
       <div style={{ display: "flex", height: "80vh", width: "100%", position: "relative" }}>
+      {loading && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            background: "rgba(255, 255, 255, 0.6)", // Semi-transparent white
+            backdropFilter: "blur(5px)", // Blur effect
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+          }}
+        >
+          <CircularProgress />
+        </div>
+      )}
+
         {selectedZone && (
           <div
             style={{
@@ -327,6 +377,51 @@ const MaharashtraMap = (tableName) => {
             <ArrowBackIcon />
           </div>
         )}
+
+        {
+
+(sub_role == 'IG/DIG' || role == 'chief secretary') && catogory == 'FIR'  ?
+
+      (  <div
+          style={{
+            position: "absolute",
+            right: 0,
+            top: "10%",
+            transform: "translateY(-50%)",
+            padding: "0",
+            background: "#fff",
+            boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
+            borderRadius: "8px",
+            fontSize: "10px",
+            fontWeight: "bold",
+            textAlign: "center",
+            zIndex: "999",
+            cursor: "pointer",
+            width: "20vw",
+            display: "flex",
+            flexDirection: "column",
+            gap: "5px"
+          }}
+        >
+          <h6>Type of Data</h6>
+          <Select
+          className="h-[40px]"
+        labelId="form-type-label"
+        id="form-type"
+        value={selectedForm}
+        onChange={handleChange}
+      >
+        {options.map((form) => (
+          <MenuItem key={form} value={form}>
+            {form}
+          </MenuItem>
+        ))}
+      </Select>
+        </div>)
+        :
+        null
+
+}
         <div id="map" style={{ flex: 1, borderRadius: "8px" }}></div>
         <div
           style={{
@@ -350,7 +445,10 @@ const MaharashtraMap = (tableName) => {
             gap: "10px"
           }}
         >
+ 
           <div style={{ textAlign: "center", marginBottom: "5px", fontWeight: "bold" }}>Legend</div>
+          {(sub_role == 'IG/DIG' || role == 'chief secretary') ? (
+            <>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <span>Population</span> <span>12.73 Crore</span>
           </div>
@@ -360,6 +458,8 @@ const MaharashtraMap = (tableName) => {
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <span>Commissionerates</span> <span>12</span>
           </div>
+          </>
+          ):null}
 
           <hr style={{ margin: "5px 0", borderColor: "#ccc" }} />
 

@@ -184,7 +184,7 @@ function Mainnavbar() {
 
             {/* Profile Dropdown */}
             {isOpen.profile && (
-              <div className="absolute top-5 right-0  mt-5 w-85 bg-white border border-gray-200 rounded-lg shdow-lg z-50">
+              <div className="absolute top-5 right-0  mt-5 w-85 bg-white border border-gray-200 rounded-lg shdow-lg z-[1000]">
                 <div className="p-4 space-y-2">
                   <div className="flex justify-between">
                     <p className="text-sm font-semibold text-gray-600 mr-2">Email:</p>
@@ -201,7 +201,7 @@ function Mainnavbar() {
                   </div>
                   <div className="flex justify-between">
                     <p className="text-sm font-semibold text-gray-600 mr-2">District:</p>
-                    <p className="text-sm text-gray-800">{user?.district}</p>
+                    <p className="text-sm text-gray-800">{user.district != '{}' ? user?.district : '--'}</p>
                   </div>
                   <div className="flex justify-between">
                     <p className="text-sm font-semibold text-gray-600 mr-2">Zone:</p>
