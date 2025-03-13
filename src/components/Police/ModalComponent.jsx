@@ -862,7 +862,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium">Pending Percentage</label>
+                        <label className="block text-sm font-medium">Percentage of Pendency</label>
                         <input
                           type="number"
                           step="0.01"
