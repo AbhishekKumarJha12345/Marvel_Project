@@ -16,9 +16,10 @@ import axiosInstance from "../../utils/axiosInstance";
 import * as XLSX from "xlsx";
 import Papa from "papaparse";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { toDate } from "date-fns";
 
 
-const ModalComponent = ({ open, type, onClose, training_active }) => {
+const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => {
   const [selectedOption, setSelectedOption] = useState("");
   const [selectedForm, setSelectedForm] = useState("");
 
@@ -26,116 +27,81 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
     setSelectedForm(event.target.value);
   };
 
-  // console.log(training_active, "...................if it is active..................")
-  const [formData, setFormData] = useState({
-    formType: "",
-    fromDate: "",
-    toDate: "",
-    zone: localStorage.getItem("zone") || "",       // Get from localStorage
-    district: localStorage.getItem("district") || "", // Get from localStorage
-    sections: "",
-    totalCases: "",
-    detectedCases: "",
-    overallPercentage: "",
-    uploadedFile: null,
 
-    // Form-B specific fields
-    unit: localStorage.getItem("zone") || "",
-    disposedCases: "",
-    pendingCases: "",
-    pendingPercentage: "",
-    punishmentLessThan7: "",
-    punishmentMoreThan7: "",
-    // month_year: "",
+  // Get the current date in YYYY-MM format
+  const currentDate = new Date().toISOString().slice(0, 7);
 
-    // Offences against body under BNS specific fields
-    crimeHead: "",
-    // formCUnit: "",
-    policeStation: "",
-    regdCases: "",
-    detectedCasesFormC: "",
-    detectionPercentage: "",
-    // month_year: "",
+  function getInitialFormData() {
+    return {
+      formType: "",
+      month_year: "",
+      zone: localStorage.getItem("zone") || "",
+      district: localStorage.getItem("district") || "",
+      sections: "",
+      totalCases: "",
+      detectedCases: "",
+      overallPercentage: "",
+      uploadedFile: null,
+      unit: localStorage.getItem("zone") || "",
+      disposedCases: "",
+      pendingCases: "",
+      pendingPercentage: "",
+      punishmentLessThan7: "",
+      punishmentMoreThan7: "",
+      crimeHead: "",
+      regdCases: "",
+      detectedCasesFormC: "",
+      detectionPercentage: "",
+      policeStationD: "",
+      ageGroup: "",
+      untracedPersons: "",
+      missingPersons: "",
+      totalMissing: "",
+      traced: "",
+      untraced: "",
+      untracedPercentage: "",
+      policeStation: "",
+      actAndSection: "",
+      registeredCases: "",
+      detectedCasesPercentage: "",
+      totalIOsNagapur: "",
+      totalIOsEsakshya: "",
+      esakshyaWage: "",
+      totalOffencesUsed: "",
+      totalOffencesNotUsed: "",
+      offencesUsedChargeCheet: "",
+      offencesNotUsedUnderInvestigation: "",
+      percentageOfUsingEsakshya: "",
+      totalZeroFIRsReceived: "",
+      totalFIRsRegistered: "",
+      pendingFIRs: "",
+      totalTransferredZeroFIRs: "",
+      formIMonthYear: "",
+      totalEComplaintsReceived: "",
+      totalComplaintsConverted: "",
+      disposedEComplaints: "",
+      formJMonthYear: "",
+      total_cases: "",
+      value_stolen_property: "",
+      value_recovered_property: "",
+      recovery_percentage: "",
+      total_cases_gt_7_years: "",
+      forensic_team_deployment_percentage: "",
+      cases_forensic_team_visited: "",
+      total_pocso: "",
+      bns_cases: "",
+      charge_sheeted_within_60_days: "",
+      pending_cases: "",
+      reasons_for_pending: "",
+      percentage: "",
+      fromDate: "",
+      toDate: ""
+    };
+  }
 
-    // Form-D Fields
-    // formDUnit: "",
-    policeStationD: "",
-    ageGroup: "",
-    untracedPersons: "",
-    missingPersons: "",
-    totalMissing: "",
-    traced: "",
-    untraced: "",
-    untracedPercentage: "",
-    // month_year: "",
+  const [formData, setFormData] = useState(getInitialFormData());
+  // const [formData, setFormData] = useState(getInitialFormData(), { toDate: currentDate });
 
-    //form-E or form-F
-    policeStation: "",
-    actAndSection: "",
-    registeredCases: "",
-    detectedCasesPercentage: "",
-
-    // Esakshya Wrt Unit
-    totalIOsNagapur: "",
-    totalIOsEsakshya: "",
-    esakshyaWage: "",
-
-    // form-h
-    totalCases: "",
-    totalOffencesUsed: "",
-    totalOffencesNotUsed: "",
-    offencesUsedChargeCheet: "",
-    offencesNotUsedUnderInvestigation: "",
-    percentageOfUsingEsakshya: "",
-    // form-i
-
-    totalZeroFIRsReceived: "",
-    totalFIRsRegistered: "",
-    pendingFIRs: "",
-    totalTransferredZeroFIRs: "",
-    formIMonthYear: "",
-
-    // eFIR specific fields
-    totalEComplaintsReceived: "",
-    totalComplaintsConverted: "",
-    disposedEComplaints: "",
-    formJMonthYear: "",
-
-    // Stolen & Recovered Property specific fields
-    total_cases: "",
-    value_stolen_property: "",
-    value_recovered_property: "",
-    recovery_percentage: "",
-    month_year: "",
-
-    // Forensic Team Deployment Form specific fields
-    total_cases_gt_7_years: "",
-    forensic_team_deployment_percentage: "",
-    cases_forensic_team_visited: "",
-    month_year: "",
-
-    // ITSSO Compliance Form specific fields
-    total_pocso: "",
-    bns_cases: "",
-    charge_sheeted_within_60_days: "",
-    pending_cases: "",
-    reasons_for_pending: "",
-    percentage: "",
-    month_year: "",
-
-    // Training Data
-    // district: "",
-    range: localStorage.getItem("zone"),
-    total_personal: "",
-    no_of_personal: "",
-    personal_trained: "",
-    percentage_personal_trained: "",
-    total_officers: "",
-    no_of_session_officers: "",
-    officers_trained: "",
-    percentage_officers_trained: ""
-
-  });
 
   const [selectedTab, setSelectedTab] = useState("form");
   const [fileInfo, setFileInfo] = useState(null);
@@ -221,7 +187,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
       "month_year_from",
       "month_year_to"
     ],
-    "Esakshya Wrt Unit": [
+    "Unit Wise - eSakshya Details": [
       "unit",
       "total_ios_nagpur_rural",
       "registered_ios_on_esakshya",
@@ -230,7 +196,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
       "month_year_to"
     ],
 
-    "Esakshya wrt 7yrs or more": [
+    "Use of eSakshya App in cases with punishment of 7 yrs. or more": [
       "unit",
       "total_cases",
       "total_offences_with_esakshya",
@@ -280,7 +246,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
       "month_year_from",
       "month_year_to"
     ],
-    "Forensic Team Deployment Form": [
+    "Visit of Forensic Teams": [
       "total_cases_gt_7_years",
       "forensic_team_deployment_percentage",
       "cases_forensic_team_visited",
@@ -327,12 +293,12 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
         "unit,police_station,act_and_section,registered_cases,detected_cases,percent_detection,month_year_from,month_year_to",
         "Unit-5,Station-15,IPC 376,40,35,87.5,Apr-2024,MAR-2025",
       ],
-      "Esakshya Wrt Unit": [
+      "Unit Wise - eSakshya Details": [
         "unit,total_ios_nagpur_rural,registered_ios_on_esakshya,esakshya_usage_percentage,month_year_from,month_year_to",
         "Unit-G1,15,10,5000,Mar-2024,Mar-2030"
       ],
 
-      "Esakshya wrt 7yrs or more": [
+      "Use of eSakshya App in cases with punishment of 7 yrs. or more": [
         "unit,total_cases,total_offences_with_esakshya,total_offences_without_esakshya,total_charge_sheeted_with_esakshya,total_under_investigation_without_esakshya,percentage_usage,month_year_from,month_year_to",
         "Unit-H1,100,60,40,55,35,75.5,Mar-2024,Mar-2030"
       ],
@@ -353,7 +319,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
         "total_cases,value_stolen_property,value_recovered_property,recovery_percentage,month_year_from,month_year_to",
         "100,500000,300000,60,Mar-2024,,Mar-2030"
       ],
-      "Forensic Team Deployment Form": [
+      "Visit of Forensic Teams": [
         "total_cases_gt_7_years,forensic_team_deployment_percentage,cases_forensic_team_visited,month_year_from,month_year_to",
         "50,70,35,Mar-2024,Mar-2030"
       ],
@@ -507,16 +473,16 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
     "Untraced Missing": "untraced_missing",
     "Important sections introduced in BNS": "sections_in_bns",
     "Property offences under BNS": "property_offenses",
-    "Esakshya Wrt Unit": "esakshya_units",
-    "Esakshya wrt 7yrs or more": "esakshya_7_more",
+    "Unit Wise - eSakshya Details": "esakshya_units",
+    "Use of eSakshya App in cases with punishment of 7 yrs. or more": "esakshya_7_more",
     "FIR's and Zero FIR's": "fir_and_zero_firs",
     "eFIR": "e_fir",
     "ITSSO Compliance Form": "itsso_compliance",
     "Stolen & Recovered Property": "stolen_recovered_property",
-    "Forensic Team Deployment Form": "forensic_team_deployment",
+    "Visit of Forensic Teams": "forensic_team_deployment",
     "Training Data": "training_data"
   };
-  const selectedType = formTypeMapping[selectedForm] || "fir";
+  const selectedType = formTypeMapping[selectedForm];
 
   const handleSubmit = async () => {
     try {
@@ -536,7 +502,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
       }
       else {
 
-        if (formData.formType === "Pendency of cases under BNS") {   // Tested
+        if (formData.formType === "Pendency of cases under BNS") {  
           formDataToSend.append("type", "pendency_in_bns");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -547,10 +513,10 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
           formDataToSend.append("percent_pendency", formData.pendingPercentage);
           formDataToSend.append("cases_punishment_less_than_7_years", formData.punishmentLessThan7);
           formDataToSend.append("cases_punishment_7_years_or_more", formData.punishmentMoreThan7);
-          formDataToSend.append("month_year_from", formData.fromDate || "");
-          formDataToSend.append("month_year_to", formData.toDate || "");
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "Offences against body under BNS") {  //Tested
+        if (formData.formType === "Offences against body under BNS") {  
           formDataToSend.append("type", "offences_against_body");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -560,10 +526,10 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
           formDataToSend.append("registered_cases", formData.registeredCases);
           formDataToSend.append("detected_cases", formData.detectedCases);
           formDataToSend.append("percent_detection", formData.detectedCasesPercentage);
-          formDataToSend.append("month_year_from", formData.fromDate || "");
-          formDataToSend.append("month_year_to", formData.toDate || "");
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "Untraced Missing") {      //Tested
+        if (formData.formType === "Untraced Missing") {      
           formDataToSend.append("type", "untraced_missing");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -576,10 +542,10 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
           formDataToSend.append("traced", formData.traced);
           formDataToSend.append("untraced", formData.untraced);
           formDataToSend.append("percent_untraced", formData.untracedPercentage);
-          formDataToSend.append("month_year_from", formData.fromDate || "");
-          formDataToSend.append("month_year_to", formData.toDate || "");
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "Important sections introduced in BNS") {    //Tested
+        if (formData.formType === "Important sections introduced in BNS") {    
           formDataToSend.append("type", "sections_in_bns");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -589,10 +555,10 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
           formDataToSend.append("registered_cases", formData.registeredCases);
           formDataToSend.append("detected_cases", formData.detectedCases);
           formDataToSend.append("percent_detection", formData.detectedCasesPercentage);
-          formDataToSend.append("month_year_from", formData.fromDate || "");
-          formDataToSend.append("month_year_to", formData.toDate || "");
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "Property offences under BNS") {   //Tested
+        if (formData.formType === "Property offences under BNS") {   
           formDataToSend.append("type", "property_offenses");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -602,10 +568,10 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
           formDataToSend.append("registered_cases", formData.registeredCases);
           formDataToSend.append("detected_cases", formData.detectedCases);
           formDataToSend.append("percent_detection", formData.detectedCasesPercentage);
-          formDataToSend.append("month_year_from", formData.fromDate || "");
-          formDataToSend.append("month_year_to", formData.toDate || "");
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "Esakshya Wrt Unit") {   //Tested
+        if (formData.formType === "Unit Wise - eSakshya Details") {   
           formDataToSend.append("type", "esakshya_units");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -613,10 +579,10 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
           formDataToSend.append("total_ios_nagpur_rural", formData.totalIOsNagapur);
           formDataToSend.append("registered_ios_on_esakshya", formData.totalIOsEsakshya);
           formDataToSend.append("esakshya_usage_percentage", formData.esakshyaWage);
-          formDataToSend.append("month_year_from", formData.fromDate || "");
-          formDataToSend.append("month_year_to", formData.toDate || "");
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "Esakshya wrt 7yrs or more") {   //Tested
+        if (formData.formType === "Use of eSakshya App in cases with punishment of 7 yrs. or more") {   
           formDataToSend.append("type", "esakshya_7_more");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -627,10 +593,10 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
           formDataToSend.append("total_charge_sheeted_with_esakshya", formData.offencesUsedChargeCheet);
           formDataToSend.append("total_under_investigation_without_esakshya", formData.offencesNotUsedUnderInvestigation);
           formDataToSend.append("percentage_usage", formData.percentageOfUsingEsakshya);
-          formDataToSend.append("month_year_from", formData.fromDate || "");
-          formDataToSend.append("month_year_to", formData.toDate || "");
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "FIR's and Zero FIR's") {  //Tested
+        if (formData.formType === "FIR's and Zero FIR's") {  
           formDataToSend.append("type", "fir_and_zero_firs");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -640,10 +606,10 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
           formDataToSend.append("total_firs_registered", formData.totalFIRsRegistered);
           formDataToSend.append("pending", formData.pending);
           formDataToSend.append("total_transferred_zero_firs", formData.totalTransferredZeroFIRs);
-          formDataToSend.append("month_year_from", formData.fromDate || "");
-          formDataToSend.append("month_year_to", formData.toDate || "");
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "eFIR") {   //Tested
+        if (formData.formType === "eFIR") {   
           formDataToSend.append("type", "e_fir");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -652,10 +618,10 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
           formDataToSend.append("total_ecomplaints_received", formData.totalEComplaintsReceived);
           formDataToSend.append("total_ecomplaints_converted_to_firs", formData.totalComplaintsConverted);
           formDataToSend.append("disposed_of_ecomplaints", formData.disposedEComplaints);
-          formDataToSend.append("month_year_from", formData.fromDate || "");
-          formDataToSend.append("month_year_to", formData.toDate || "");
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "ITSSO Compliance Form") {   //Tested
+        if (formData.formType === "ITSSO Compliance Form") {   
           formDataToSend.append("type", "itsso_compliance");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -665,10 +631,10 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
           formDataToSend.append("pending_cases", formData.pending_cases || "");
           formDataToSend.append("reasons_for_pending", formData.reasons_for_pending || "");
           formDataToSend.append("percentage", formData.percentage || "");
-          formDataToSend.append("month_year_from", formData.fromDate || "");
-          formDataToSend.append("month_year_to", formData.toDate || "");
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "Stolen & Recovered Property") {   //Tested
+        if (formData.formType === "Stolen & Recovered Property") {   
           formDataToSend.append("type", "stolen_recovered_property");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -676,18 +642,18 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
           formDataToSend.append("value_stolen_property", formData.value_stolen_property || "");
           formDataToSend.append("value_recovered_property", formData.value_recovered_property || "");
           formDataToSend.append("recovery_percentage", formData.recovery_percentage || "");
-          formDataToSend.append("month_year_from", formData.fromDate || "");
-          formDataToSend.append("month_year_to", formData.toDate || "");
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
-        if (formData.formType === "Forensic Team Deployment Form") {  //Tested
+        if (formData.formType === "Visit of Forensic Teams") {  
           formDataToSend.append("type", "forensic_team_deployment");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
           formDataToSend.append("total_cases_gt_7_years", formData.total_cases_gt_7_years || "");
           formDataToSend.append("forensic_team_deployment_percentage", formData.forensic_team_deployment_percentage || "");
           formDataToSend.append("cases_forensic_team_visited", formData.cases_forensic_team_visited || "");
-          formDataToSend.append("month_year_from", formData.fromDate || "");
-          formDataToSend.append("month_year_to", formData.toDate || "");
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
         if (formData.formType === "Training Data") {
           formDataToSend.append("type", "police_training");
@@ -702,8 +668,8 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
           formDataToSend.append("sessions_officers", formData.no_of_session_officers || "");
           formDataToSend.append("officers_trained", formData.officers_trained || "");
           formDataToSend.append("percent_officers_trained", formData.percentage_officers_trained || "");
-          formDataToSend.append("month_year_from", formData.fromDate || "");
-          formDataToSend.append("month_year_to", formData.toDate || "");
+          formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");  
+          formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
       }
 
@@ -722,9 +688,9 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
 
       if (response.status === 201) {
         alert("Data inserted successfully");
-        setFormData({ type: "fir", formType: "Form-A", date: "", zone: "", district: "", sections: "", totalCases: "", detectedCases: "", overallPercentage: "", uploadedFile: null, });
+        setFormData(getInitialFormData());
         setFileInfo(null);
-        window.location.reload();
+        // window.location.reload();
       } else {
         throw new Error(`Unexpected response: ${response.status}`);
       }
@@ -734,13 +700,27 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
     }
   };
 
+
+
+  useEffect(() => {
+    setFormData(prevState => ({
+      ...getInitialFormData(),
+      formType: prevState.formType, // Keep the selected form type
+    }));
+  }, [formData.formType]);
+
+  useEffect(() => {
+    setFormData(getInitialFormData());
+  }, [training_active]);
+
+
   // ================================================================================================================
 
 
   return (
     <>
 
-      <Dialog open={open} onClose={onClose} fullWidth maxWidth="md" sx={{ maxWidth: "800px", margin: "auto" }}>
+      <Dialog open={open} onClose={onClose} fullWidth maxWidth="md" sx={{ maxWidth: "830px", margin: "auto" }}>
         <DialogTitle sx={{ backgroundColor: "#2d3748", color: "white" }}>
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6"><strong>Form Details</strong></Typography>
@@ -769,6 +749,32 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
             </Box>
             {selectedTab === "form" && (
               <Box display="flex" flexDirection="column" gap={2} minHeight="60vh">
+                <Box display="flex" gap={2} width="100%">
+                  {/* From Date Field */}
+                  <FormControl fullWidth>
+                    <label className="block text-sm font-medium">From Date</label>
+                    <input
+                      type="date"
+                      className="w-full p-2 border rounded"
+                      value={formData.fromDate || dateRange.fromDate} // Set default from date
+                      onChange={(e) => setFormData({ ...formData, fromDate: e.target.value })}
+                      readOnly
+                    />
+                  </FormControl>
+
+                  <FormControl fullWidth>
+                    <label className="block text-sm font-medium">As on Date</label>
+                    <input
+                      type="date"
+                      className="w-full p-2 border rounded"
+                      value={formData.toDate || dateRange.toDate} // Set default to date
+                      onChange={(e) => setFormData({ ...formData, toDate: e.target.value })}
+                      readOnly
+                    />
+                  </FormControl>
+
+                </Box>
+
                 {/* Form Type Selection Dropdown */}
                 <FormControl fullWidth variant="outlined">
                   <InputLabel id="form-type-label">Form Type</InputLabel>
@@ -777,7 +783,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                     id="form-type"
                     value={formData.formType}
                     onChange={(e) => setFormData({ ...formData, formType: e.target.value })}
-                    label="Form Type" // Add this line to associate the label correctly
+                    label="Form Type"
                   >
                     {(() => {
                       let formOptions = [];
@@ -788,7 +794,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                         formOptions = [
                           "ITSSO Compliance Form",
                           "Stolen & Recovered Property",
-                          "Forensic Team Deployment Form",
+                          "Visit of Forensic Teams",
                         ];
                       } else if (training_active?.section === "FIR") {
                         formOptions = [
@@ -797,8 +803,8 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                           "Untraced Missing",
                           "Important sections introduced in BNS",
                           "Property offences under BNS",
-                          "Esakshya Wrt Unit",
-                          "Esakshya wrt 7yrs or more",
+                          "Unit Wise - eSakshya Details",
+                          "Use of eSakshya App in cases with punishment of 7 yrs. or more",
                           "FIR's and Zero FIR's",
                           "eFIR",
                         ];
@@ -810,34 +816,26 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                         </MenuItem>
                       ));
                     })()}
-                    {/* {[
-                      "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Esakshya Wrt Unit",
-                      "Esakshya wrt 7yrs or more", "FIR's and Zero FIR's", "eFIR", "ITSSO Compliance Form", "Stolen & Recovered Property", "Forensic Team Deployment Form", "Training Data"
-                    ].map((form) => (
-                      <MenuItem key={form} value={form}>
-                        {form}
-                      </MenuItem>
-                    ))} */}
                   </Select>
                 </FormControl>
 
-                {/* Show form only if Form Type is selected */}
+
+
 
                 {formData.formType === "Pendency of cases under BNS" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
+                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 ">
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
+                      {/* <div>
                         <label className="block text-sm font-medium">Unit</label>
                         <input type="text" className="w-full p-2 border rounded" value={formData.unit || ""} onChange={(e) => setFormData({ ...formData, unit: e.target.value })} readOnly />
-                      </div>
-
+                      </div> */}
                       <div>
-                        <label className="block text-sm font-medium">Total Cases</label>
+                        <label className="block text-sm font-medium">Pending Cases</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.totalCases || ""}
-                          onChange={(e) => setFormData({ ...formData, totalCases: e.target.value })}
+                          value={formData.pendingCases || ""}
+                          onChange={(e) => setFormData({ ...formData, pendingCases: e.target.value })}
                         />
                       </div>
 
@@ -852,14 +850,36 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium">Pending Cases</label>
+                        <label className="block text-sm font-medium">No. of Cases with Punishment &lt; 7 Yrs. out of Reg. Cases</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.pendingCases || ""}
-                          onChange={(e) => setFormData({ ...formData, pendingCases: e.target.value })}
+                          value={formData.punishmentLessThan7 || ""}
+                          onChange={(e) => setFormData({ ...formData, punishmentLessThan7: e.target.value })}
                         />
                       </div>
+
+                      <div>
+                        <label className="block text-sm font-small">No. of Cases with Punishment &ge; 7 Yrs. out of Reg. Cases</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.punishmentMoreThan7 || ""}
+                          onChange={(e) => setFormData({ ...formData, punishmentMoreThan7: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Total Cases</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.totalCases || ""}
+                          onChange={(e) => setFormData({ ...formData, totalCases: e.target.value })}
+                        />
+                      </div>
+
+
 
                       <div>
                         <label className="block text-sm font-medium">Percentage of Pendency</label>
@@ -872,72 +892,14 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                         />
                       </div>
 
-                      <div>
-                        <label className="block text-sm font-medium">Cases Punishment Less Than 7 Years</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.punishmentLessThan7 || ""}
-                          onChange={(e) => setFormData({ ...formData, punishmentLessThan7: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-small">Cases Punishment More Than 7 Years</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.punishmentMoreThan7 || ""}
-                          onChange={(e) => setFormData({ ...formData, punishmentMoreThan7: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">From Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.fromDate || ""}
-                          onChange={(e) => setFormData({ ...formData, fromDate: e.target.value })}
-                        />
-                      </div>
-
-                      <div className="mt-2">
-                        <label className="block text-sm font-medium">To Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.toDate || ""}
-                          onChange={(e) => setFormData({ ...formData, toDate: e.target.value })}
-                        />
-                      </div>
                     </div>
                   </div>
                 )}
 
                 {formData.formType === "Untraced Missing" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
+                  // h-[450px] overflow-y-auto
+                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 ">
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium">Unit</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded"
-                          value={formData.unit || ""}
-                          onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                          readOnly
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Police Station</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded"
-                          value={formData.policeStationD || ""}
-                          onChange={(e) => setFormData({ ...formData, policeStationD: e.target.value })}
-                        />
-                      </div>
 
                       <div>
                         <label className="block text-sm font-medium">Age Group</label>
@@ -973,7 +935,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium">Total Missing Persons (Untraced People)</label>
+                        <label className="block text-sm font-medium">Total Missing Persons</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1003,7 +965,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium">Percentage of Untraced Persons</label>
+                        <label className="block text-sm font-medium">% of Untraced Persons</label>
                         <input
                           type="number"
                           step="0.01"
@@ -1012,41 +974,14 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                           onChange={(e) => setFormData({ ...formData, untracedPercentage: e.target.value })}
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium">From Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.fromDate || ""}
-                          onChange={(e) => setFormData({ ...formData, fromDate: e.target.value })}
-                        />
-                      </div>
 
-                      <div className="mt-2">
-                        <label className="block text-sm font-medium">To Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.toDate || ""}
-                          onChange={(e) => setFormData({ ...formData, toDate: e.target.value })}
-                        />
-                      </div>
                     </div>
                   </div>
                 )}
 
                 {(formData.formType === "Offences against body under BNS" || formData.formType === "Important sections introduced in BNS" || formData.formType === "Property offences under BNS") && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
+                  <div className="mt-4 border p-4 rounded-lg bg-gray-100">
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium">Unit</label>
-                        <input type="text" className="w-full p-2 border rounded" value={formData.unit || ""} onChange={(e) => setFormData({ ...formData, unit: e.target.value })} readOnly />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Police Station</label>
-                        <input type="text" className="w-full p-2 border rounded" value={formData.policeStation || ""} onChange={(e) => setFormData({ ...formData, policeStation: e.target.value })} />
-                      </div>
 
                       <div>
                         <label className="block text-sm font-medium">Act and Section</label>
@@ -1110,49 +1045,20 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium">Percentage of Detected Cases</label>
+                        <label className="block text-sm font-medium">% of Detection</label>
                         <input type="number" step="0.01" className="w-full p-2 border rounded" value={formData.detectedCasesPercentage || ""} onChange={(e) => setFormData({ ...formData, detectedCasesPercentage: e.target.value })} />
                       </div>
 
-                      <div>
-                        <label className="block text-sm font-medium">From Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.fromDate || ""}
-                          onChange={(e) => setFormData({ ...formData, fromDate: e.target.value })}
-                        />
-                      </div>
-
-                      <div className="mt-2">
-                        <label className="block text-sm font-medium">To Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.toDate || ""}
-                          onChange={(e) => setFormData({ ...formData, toDate: e.target.value })}
-                        />
-                      </div>
                     </div>
                   </div>
                 )}
 
-                {formData.formType === "Esakshya Wrt Unit" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
+                {formData.formType === "Unit Wise - eSakshya Details" && (
+                  <div className="mt-4 border p-4 rounded-lg bg-gray-100">
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium">Unit</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded"
-                          value={formData.unit}
-                          onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                          readOnly
-                        />
-                      </div>
 
                       <div>
-                        <label className="block text-sm font-medium">Total No of IO's Registered in Nagpur</label>
+                        <label className="block text-sm font-medium">Total No of IO's Registered</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1162,7 +1068,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium">No of IO's Registered in Esakshya</label>
+                        <label className="block text-sm font-medium">No of IO's Registered on eSakshya</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1172,7 +1078,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium">Esakshya Usage %</label>
+                        <label className="block text-sm font-medium">eSakshya Usage %</label>
                         <input
                           type="number"
                           step="0.01"
@@ -1182,41 +1088,13 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                         />
                       </div>
 
-                      <div>
-                        <label className="block text-sm font-medium">From Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.fromDate || ""}
-                          onChange={(e) => setFormData({ ...formData, fromDate: e.target.value })}
-                        />
-                      </div>
-
-                      <div className="mt-2">
-                        <label className="block text-sm font-medium">To Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.toDate || ""}
-                          onChange={(e) => setFormData({ ...formData, toDate: e.target.value })}
-                        />
-                      </div>
                     </div>
                   </div>
                 )}
 
-                {formData.formType === "Esakshya wrt 7yrs or more" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
+                {formData.formType === "Use of eSakshya App in cases with punishment of 7 yrs. or more" && (
+                  <div className="mt-4 border p-4 rounded-lg bg-gray-100">
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium">Unit</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded"
-                          value={formData.unit}
-                          onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                        />
-                      </div>
                       <div>
                         <label className="block text-sm font-medium">Total No of Cases</label>
                         <input
@@ -1227,7 +1105,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium">Total Offences Used</label>
+                        <label className="block text-sm font-medium">Total Offences in which eSakshya has been Used</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1236,7 +1114,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium">Total Offences Not Used</label>
+                        <label className="block text-sm font-medium">Total Offences in which eSakshya has not been Used</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1245,7 +1123,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium">Offences Used Charge Sheet</label>
+                        <label className="block text-sm font-medium">Total Offences in Which eSakshya has been Used and Charge Sheeted</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1254,7 +1132,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium">Offences Not Used Under Investigation</label>
+                        <label className="block text-sm font-medium">Total Offences in which eSakshya has not been used and are Under Investigation</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1262,54 +1140,24 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                           onChange={(e) => setFormData({ ...formData, offencesNotUsedUnderInvestigation: e.target.value })}
                         />
                       </div>
-                      <div className="col-span-2">
-                        <label className="block text-sm font-medium">Percentage of Using Esakshya</label>
+                      <div>
+                        <label className="block text-sm font-medium">% of Using eSakshya</label>
                         <input
                           type="number"
-                          step="0.01"
                           className="w-full p-2 border rounded"
                           value={formData.percentageOfUsingEsakshya}
                           onChange={(e) => setFormData({ ...formData, percentageOfUsingEsakshya: e.target.value })}
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium">From Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.fromDate || ""}
-                          onChange={(e) => setFormData({ ...formData, fromDate: e.target.value })}
-                        />
-                      </div>
 
-                      <div className="mt-2">
-                        <label className="block text-sm font-medium">To Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.toDate || ""}
-                          onChange={(e) => setFormData({ ...formData, toDate: e.target.value })}
-                        />
-                      </div>
                     </div>
                   </div>
                 )}
 
                 {formData.formType === "FIR's and Zero FIR's" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
+                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 ">
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium">Unit</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded"
-                          value={formData.unit || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, unit: e.target.value })
-                          }
-                          readOnly
-                        />
-                      </div>
+
                       <div>
                         <label className="block text-sm font-medium">Section</label>
                         <select
@@ -1332,19 +1180,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                           <option value="Hurt (BNS Sec. 117 to 125)">Hurt (BNS Sec. 117 to 125)</option>
                         </select>
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium">
-                          Total Zero FIRs Received
-                        </label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.totalZeroFIRsReceived || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, totalZeroFIRsReceived: e.target.value })
-                          }
-                        />
-                      </div>
+
                       <div>
                         <label className="block text-sm font-medium">
                           Total FIRs Registered
@@ -1355,6 +1191,19 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                           value={formData.totalFIRsRegistered || ""}
                           onChange={(e) =>
                             setFormData({ ...formData, totalFIRsRegistered: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium">
+                          Total Zero FIRs Received
+                        </label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.totalZeroFIRsReceived || ""}
+                          onChange={(e) =>
+                            setFormData({ ...formData, totalZeroFIRsReceived: e.target.value })
                           }
                         />
                       </div>
@@ -1387,58 +1236,18 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                         />
                       </div>
 
-                      <div>
-                        <label className="block text-sm font-medium">From Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.fromDate || ""}
-                          onChange={(e) => setFormData({ ...formData, fromDate: e.target.value })}
-                        />
-                      </div>
 
-                      <div className="mt-2">
-                        <label className="block text-sm font-medium">To Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.toDate || ""}
-                          onChange={(e) => setFormData({ ...formData, toDate: e.target.value })}
-                        />
-                      </div>
                     </div>
                   </div>
                 )}
 
                 {formData.formType === "eFIR" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
+                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 ">
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium">Unit</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded"
-                          value={formData.unit || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, unit: e.target.value })
-                          }
-                          readOnly
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Police Station</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded"
-                          value={formData.policeStation || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, policeStation: e.target.value })
-                          }
-                        />
-                      </div>
+
                       <div>
                         <label className="block text-sm font-medium">
-                          Total EComplaints Received
+                          Total eComplaints Received on Citizen Portal
                         </label>
                         <input
                           type="number"
@@ -1451,7 +1260,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                       </div>
                       <div>
                         <label className="block text-sm font-medium">
-                          Total Complaints Converted
+                          Total eComplaints Converted to Regular FIRs
                         </label>
                         <input
                           type="number"
@@ -1464,7 +1273,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                       </div>
                       <div>
                         <label className="block text-sm font-medium">
-                          Disposed of EComplaints
+                          Disposed of eComplaints
                         </label>
                         <input
                           type="number"
@@ -1475,33 +1284,16 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                           }
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium">From Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.fromDate || ""}
-                          onChange={(e) => setFormData({ ...formData, fromDate: e.target.value })}
-                        />
-                      </div>
 
-                      <div className="mt-2">
-                        <label className="block text-sm font-medium">To Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.toDate || ""}
-                          onChange={(e) => setFormData({ ...formData, toDate: e.target.value })}
-                        />
-                      </div>
                     </div>
                   </div>
                 )}
 
                 {formData.formType === "ITSSO Compliance Form" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
+                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 ">
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
+
+                      {/* <div>
                         <label className="block text-sm font-medium">Total POCSO Cases</label>
                         <input
                           type="number"
@@ -1522,10 +1314,21 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                             setFormData({ ...formData, bns_cases: e.target.value })
                           }
                         />
+                      </div> */}
+                      <div>
+                        <label className="block text-sm font-medium">Total No. of registered POCSO + BNS cases</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.pending_cases || ""}
+                          onChange={(e) =>
+                            setFormData({ ...formData, pending_cases: e.target.value })
+                          }
+                        />
                       </div>
                       <div>
                         <label className="block text-sm font-medium">
-                          Charge Sheeted Within 60 Days
+                          No. of cases (POCSO + BNS) chargesheet within 60 days
                         </label>
                         <input
                           type="number"
@@ -1539,18 +1342,8 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                           }
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium">Pending Cases</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.pending_cases || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, pending_cases: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
+
+                      {/* <div>
                         <label className="block text-sm font-medium">Reasons for Pending</label>
                         <input
                           type="number"
@@ -1560,9 +1353,9 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                             setFormData({ ...formData, reasons_for_pending: e.target.value })
                           }
                         />
-                      </div>
+                      </div> */}
                       <div>
-                        <label className="block text-sm font-medium">Percentage</label>
+                        <label className="block text-sm font-medium">Compliance Rate</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1572,43 +1365,32 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                           }
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium">From Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.fromDate || ""}
-                          onChange={(e) => setFormData({ ...formData, fromDate: e.target.value })}
-                        />
-                      </div>
 
-                      <div className="mt-2">
-                        <label className="block text-sm font-medium">To Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.toDate || ""}
-                          onChange={(e) => setFormData({ ...formData, toDate: e.target.value })}
-                        />
-                      </div>
                     </div>
                   </div>
                 )}
 
                 {formData.formType === "Stolen & Recovered Property" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
+                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 ">
                     <div className="grid grid-cols-2 gap-4">
+
                       <div>
                         <label className="block text-sm font-medium">Total Cases</label>
-                        <input
-                          type="number"
+                        <select
                           className="w-full p-2 border rounded"
                           value={formData.total_cases || ""}
                           onChange={(e) =>
                             setFormData({ ...formData, total_cases: e.target.value })
                           }
-                        />
+                        >
+                          <option value="" disabled>Select Total Cases</option>
+                          <option value="Dacoity">Dacoity</option>
+                          <option value="Robbery">Robbery</option>
+                          <option value="Robbery">HBT</option>
+                          <option value="Theft">Theft</option>
+                        </select>
                       </div>
+
                       <div>
                         <label className="block text-sm font-medium">Value of Stolen Property</label>
                         <input
@@ -1632,7 +1414,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium">Recovery Percentage</label>
+                        <label className="block text-sm font-medium">Recovery % </label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1642,34 +1424,17 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                           }
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium">From Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.fromDate || ""}
-                          onChange={(e) => setFormData({ ...formData, fromDate: e.target.value })}
-                        />
-                      </div>
 
-                      <div className="mt-2">
-                        <label className="block text-sm font-medium">To Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.toDate || ""}
-                          onChange={(e) => setFormData({ ...formData, toDate: e.target.value })}
-                        />
-                      </div>
                     </div>
                   </div>
                 )}
 
-                {formData.formType === "Forensic Team Deployment Form" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
+                {formData.formType === "Visit of Forensic Teams" && (
+                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 ">
                     <div className="grid grid-cols-2 gap-4">
+
                       <div>
-                        <label className="block text-sm font-medium">Total Cases Greater than 7 Years</label>
+                        <label className="block text-sm font-medium">No. of cases registered in which punishment is 7 years or more</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1680,10 +1445,10 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium">Forensic Team Deployment Percentage</label>
+                        <label className="block text-sm font-medium">Cases in which Forensic Teams Visited</label>
                         <input
                           type="number"
-                          className="w-full p-2 border rounded"
+                          className="w-full p-2 border rounded mt-3"
                           value={formData.forensic_team_deployment_percentage || ""}
                           onChange={(e) =>
                             setFormData({
@@ -1694,7 +1459,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium">Cases Forensic Team Visited</label>
+                        <label className="block text-sm font-medium">Percentage</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1707,58 +1472,17 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                           }
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium">From Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.fromDate || ""}
-                          onChange={(e) => setFormData({ ...formData, fromDate: e.target.value })}
-                        />
-                      </div>
 
-                      <div className="mt-2">
-                        <label className="block text-sm font-medium">To Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.toDate || ""}
-                          onChange={(e) => setFormData({ ...formData, toDate: e.target.value })}
-                        />
-                      </div>
                     </div>
                   </div>
                 )}
 
                 {formData.formType === "Training Data" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
+                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 ">
                     <div className="grid grid-cols-2 gap-4">
+
                       <div>
-                        <label className="block text-sm font-medium">District</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded"
-                          value={formData.district || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, district: e.target.value })
-                          }
-                          readOnly
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Range</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded"
-                          value={formData.range || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, range: e.target.value })
-                          }
-                          readOnly
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Total Personal</label>
+                        <label className="block text-sm font-medium">Total No. of Personnel</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1768,19 +1492,21 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                           }
                         />
                       </div>
+
                       <div>
-                        <label className="block text-sm font-medium">No. of Personal</label>
+                        <label className="block text-sm font-medium">Total No. of Officers</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.no_of_personal || ""}
+                          value={formData.total_officers || ""}
                           onChange={(e) =>
-                            setFormData({ ...formData, no_of_personal: e.target.value })
+                            setFormData({ ...formData, total_officers: e.target.value })
                           }
                         />
                       </div>
+
                       <div>
-                        <label className="block text-sm font-medium">Personal Trained</label>
+                        <label className="block text-sm font-medium">No. of Personnel Trained</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1791,40 +1517,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium">Percentage of Personal Trained</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.percentage_personal_trained || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, percentage_personal_trained: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Total Officers</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.total_officers || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, total_officers: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">No. of Session Officers</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.no_of_session_officers || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, no_of_session_officers: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Officers Trained</label>
+                        <label className="block text-sm font-medium">No. of Officers Trained</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1834,8 +1527,46 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                           }
                         />
                       </div>
+
                       <div>
-                        <label className="block text-sm font-medium">Percentage of Officers Trained</label>
+                        <label className="block text-sm font-medium">% of Personnel Trained</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.percentage_personal_trained || ""}
+                          onChange={(e) =>
+                            setFormData({ ...formData, percentage_personal_trained: e.target.value })
+                          }
+                        />
+                      </div>
+
+                      
+                      {/* <div>
+                            <label className="block text-sm font-medium">No. of Sessions Personnel</label>
+                            <input
+                              type="number"
+                              className="w-full p-2 border rounded"
+                              value={formData.no_of_personal || ""}
+                              onChange={(e) =>
+                                setFormData({ ...formData, no_of_personal: e.target.value })
+                              }
+                            />
+                          </div> */}
+
+                      {/* <div>
+                        <label className="block text-sm font-medium">No. of Sessions Officers</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.no_of_session_officers || ""}
+                          onChange={(e) =>
+                            setFormData({ ...formData, no_of_session_officers: e.target.value })
+                          }
+                        />
+                      </div> */}
+                      
+                      <div>
+                        <label className="block text-sm font-medium">% of Officers Trained</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1845,30 +1576,10 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                           }
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium">From Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.fromDate || ""}
-                          onChange={(e) => setFormData({ ...formData, fromDate: e.target.value })}
-                        />
-                      </div>
 
-                      <div className="mt-2">
-                        <label className="block text-sm font-medium">To Date</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.toDate || ""}
-                          onChange={(e) => setFormData({ ...formData, toDate: e.target.value })}
-                        />
-                      </div>
                     </div>
                   </div>
                 )}
-
-
 
               </Box>
             )}
@@ -1894,7 +1605,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                         formOptions = [
                           "ITSSO Compliance Form",
                           "Stolen & Recovered Property",
-                          "Forensic Team Deployment Form",
+                          "Visit of Forensic Teams",
                         ];
                       } else if (training_active?.section === "FIR") {
                         formOptions = [
@@ -1903,8 +1614,8 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                           "Untraced Missing",
                           "Important sections introduced in BNS",
                           "Property offences under BNS",
-                          "Esakshya Wrt Unit",
-                          "Esakshya wrt 7yrs or more",
+                          "Unit Wise - eSakshya Details",
+                          "Use of eSakshya App in cases with punishment of 7 yrs. or more",
                           "FIR's and Zero FIR's",
                           "eFIR",
                         ];
@@ -1917,8 +1628,8 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                       ));
                     })()}
                     {/* {[
-                      "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Esakshya Wrt Unit",
-                      "Esakshya wrt 7yrs or more", "FIR's and Zero FIR's", "eFIR", "ITSSO Compliance Form", "Stolen & Recovered Property", "Forensic Team Deployment Form", "Training Data"
+                      "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Unit Wise - eSakshya Details",
+                      "Use of eSakshya App in cases with punishment of 7 yrs. or more", "FIR's and Zero FIR's", "eFIR", "ITSSO Compliance Form", "Stolen & Recovered Property", "Visit of Forensic Teams", "Training Data"
                     ].map((form) => (
                       <MenuItem key={form} value={form}>
                         {form}
