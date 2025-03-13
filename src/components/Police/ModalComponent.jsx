@@ -20,15 +20,15 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const ModalComponent = ({ open, type, onClose, training_active }) => {
   const [selectedOption, setSelectedOption] = useState("");
-  const [selectedForm, setSelectedForm] = useState("Training Data");
+  const [selectedForm, setSelectedForm] = useState("");
 
   const handleFormChange = (event) => {
     setSelectedForm(event.target.value);
   };
 
-  console.log(training_active, "...................if it is active..................")
+  // console.log(training_active, "...................if it is active..................")
   const [formData, setFormData] = useState({
-    formType: "Training Data",
+    formType: "",
     fromDate: "",
     toDate: "",
     zone: localStorage.getItem("zone") || "",       // Get from localStorage
@@ -101,7 +101,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
     disposedEComplaints: "",
     formJMonthYear: "",
 
-    // Stolen & Recovered Property Form specific fields
+    // Stolen & Recovered Property specific fields
     total_cases: "",
     value_stolen_property: "",
     value_recovered_property: "",
@@ -272,7 +272,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
       "month_year_from",
       "month_year_to"
     ],
-    "Stolen & Recovered Property Form": [
+    "Stolen & Recovered Property": [
       "total_cases",
       "value_stolen_property",
       "value_recovered_property",
@@ -349,7 +349,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
         "total_pocso,bns_cases,charge_sheeted_within_60_days,pending_cases,reasons_for_pending,percentage,month_year_from,month_year_to",
         "20,15,10,5,Investigation Delay,80,Mar-2024,Mar-2030"
       ],
-      "Stolen & Recovered Property Form": [
+      "Stolen & Recovered Property": [
         "total_cases,value_stolen_property,value_recovered_property,recovery_percentage,month_year_from,month_year_to",
         "100,500000,300000,60,Mar-2024,,Mar-2030"
       ],
@@ -512,7 +512,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
     "FIR's and Zero FIR's": "fir_and_zero_firs",
     "eFIR": "e_fir",
     "ITSSO Compliance Form": "itsso_compliance",
-    "Stolen & Recovered Property Form": "stolen_recovered_property",
+    "Stolen & Recovered Property": "stolen_recovered_property",
     "Forensic Team Deployment Form": "forensic_team_deployment",
     "Training Data": "training_data"
   };
@@ -668,7 +668,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
           formDataToSend.append("month_year_from", formData.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || "");
         }
-        if (formData.formType === "Stolen & Recovered Property Form") {   //Tested
+        if (formData.formType === "Stolen & Recovered Property") {   //Tested
           formDataToSend.append("type", "stolen_recovered_property");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
@@ -787,7 +787,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                       } else if (training_active?.section === "forensic/visits") {
                         formOptions = [
                           "ITSSO Compliance Form",
-                          "Stolen & Recovered Property Form",
+                          "Stolen & Recovered Property",
                           "Forensic Team Deployment Form",
                         ];
                       } else if (training_active?.section === "FIR") {
@@ -812,7 +812,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                     })()}
                     {/* {[
                       "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Esakshya Wrt Unit",
-                      "Esakshya wrt 7yrs or more", "FIR's and Zero FIR's", "eFIR", "ITSSO Compliance Form", "Stolen & Recovered Property Form", "Forensic Team Deployment Form", "Training Data"
+                      "Esakshya wrt 7yrs or more", "FIR's and Zero FIR's", "eFIR", "ITSSO Compliance Form", "Stolen & Recovered Property", "Forensic Team Deployment Form", "Training Data"
                     ].map((form) => (
                       <MenuItem key={form} value={form}>
                         {form}
@@ -873,7 +873,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium">Punishment Less Than 7 Years</label>
+                        <label className="block text-sm font-medium">Cases Punishment Less Than 7 Years</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1106,7 +1106,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium">Total No of IO's Registered in Nagapur</label>
+                        <label className="block text-sm font-medium">Total No of IO's Registered in Nagpur</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1126,7 +1126,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium">Esakshya Wage</label>
+                        <label className="block text-sm font-medium">Esakshya Usage %</label>
                         <input
                           type="number"
                           step="0.01"
@@ -1199,7 +1199,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium">Offences Used Charge Cheet</label>
+                        <label className="block text-sm font-medium">Offences Used Charge Sheet</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
@@ -1549,7 +1549,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                   </div>
                 )}
 
-                {formData.formType === "Stolen & Recovered Property Form" && (
+                {formData.formType === "Stolen & Recovered Property" && (
                   <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
@@ -1847,7 +1847,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                       } else if (training_active?.section === "forensic/visits") {
                         formOptions = [
                           "ITSSO Compliance Form",
-                          "Stolen & Recovered Property Form",
+                          "Stolen & Recovered Property",
                           "Forensic Team Deployment Form",
                         ];
                       } else if (training_active?.section === "FIR") {
@@ -1872,7 +1872,7 @@ const ModalComponent = ({ open, type, onClose, training_active }) => {
                     })()}
                     {/* {[
                       "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Esakshya Wrt Unit",
-                      "Esakshya wrt 7yrs or more", "FIR's and Zero FIR's", "eFIR", "ITSSO Compliance Form", "Stolen & Recovered Property Form", "Forensic Team Deployment Form", "Training Data"
+                      "Esakshya wrt 7yrs or more", "FIR's and Zero FIR's", "eFIR", "ITSSO Compliance Form", "Stolen & Recovered Property", "Forensic Team Deployment Form", "Training Data"
                     ].map((form) => (
                       <MenuItem key={form} value={form}>
                         {form}

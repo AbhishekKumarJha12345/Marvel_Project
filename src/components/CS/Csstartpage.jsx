@@ -7,7 +7,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axiosInstance from "@/utils/axiosInstance";
 
 import maharashtraZonals from "./maharashtraZonals.json";
-import { FormControl, InputLabel, Select, MenuItem, CircularProgress  } from "@mui/material";
+import { FormControl, InputLabel, Select, MenuItem, CircularProgress } from "@mui/material";
 
 
 const MaharashtraMap = (catogoryBar) => {
@@ -28,9 +28,9 @@ const MaharashtraMap = (catogoryBar) => {
     "FIR's and Zero FIR's",
     "eFIR",
     "special_cases_high_profile_investigations",
- "ITSSO Compliance",
-"Stolen Recovered Property",
-"Forensic Team Deployment"
+    "ITSSO Compliance",
+    "Stolen Recovered Property",
+    "Forensic Team Deployment"
   ];
 
   const [selectedForm, setSelectedForm] = useState(options[0]);
@@ -73,7 +73,7 @@ const MaharashtraMap = (catogoryBar) => {
 
       try {
         const response = await axiosInstance.get("/maharashtra-police-data", {
-          params: { zone: zoneName, district: districtName, table: catogory, typeFilter :selectedForm }
+          params: { zone: zoneName, district: districtName, table: catogory, typeFilter: selectedForm }
         });
         console.log("response:", response.data);
 
@@ -86,7 +86,7 @@ const MaharashtraMap = (catogoryBar) => {
     }
 
     fetchData("", ""); // Fetch all data initially
-  }, [catogory,selectedForm]);
+  }, [catogory, selectedForm]);
 
 
   useEffect(() => {
@@ -204,7 +204,7 @@ const MaharashtraMap = (catogoryBar) => {
 
     let maharashtraLayer = L.geoJSON(filteredFeatures, {
       style: (feature) => {
-        const districtName = selectedZone? feature.properties.dtname : feature.properties.division;
+        const districtName = selectedZone ? feature.properties.dtname : feature.properties.division;
         let zoneName = districtName
           ? Object.keys(zoneMapping).find(zone => zoneMapping[zone].includes(districtName))
           : Object.keys(zoneMapping);
@@ -326,7 +326,7 @@ const MaharashtraMap = (catogoryBar) => {
     L.geoJSON(zoneMask, {
       style: { color: "black", weight: 0, fillColor: "white", fillOpacity: 1 },
     }).addTo(map);
-    
+
     setTimeout(() => setLoading(false), 1000); // Add 2-sec delay before hiding loader
     return () => {
       if (map.hasLayer(maharashtraLayer)) {
@@ -339,25 +339,25 @@ const MaharashtraMap = (catogoryBar) => {
   return (
     <div style={{ display: "flex", height: "80vh", width: "100%", zIndex: "0" }}>
       <div style={{ display: "flex", height: "80vh", width: "100%", position: "relative" }}>
-      {loading && (
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            background: "rgba(255, 255, 255, 0.6)", // Semi-transparent white
-            backdropFilter: "blur(5px)", // Blur effect
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-          }}
-        >
-          <CircularProgress />
-        </div>
-      )}
+        {loading && (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              background: "rgba(255, 255, 255, 0.6)", // Semi-transparent white
+              backdropFilter: "blur(5px)", // Blur effect
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 1000,
+            }}
+          >
+            <CircularProgress />
+          </div>
+        )}
 
         {selectedZone && (
           <div
@@ -384,54 +384,54 @@ const MaharashtraMap = (catogoryBar) => {
 
         {
 
-(sub_role == 'IG/DIG' || role == 'chief secretary') && catogory == 'FIR'  ?
+          (sub_role == 'IG/DIG' || role == 'chief secretary') && catogory == 'FIR' ?
 
-      (  <div
-          style={{
-            position: "absolute",
-            right: 0,
-            top: "10%",
-            transform: "translateY(-50%)",
-            padding: "0",
-            background: "#fff",
-            boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
-            borderRadius: "8px",
-            fontSize: "10px",
-            fontWeight: "bold",
-            textAlign: "center",
-            zIndex: "999",
-            cursor: "pointer",
-            width: "20vw",
-            display: "flex",
-            flexDirection: "column",
-            gap: "5px"
-          }}
-        >
-          <h6>Type of Data</h6>
-          <Select
-          className="h-[40px]"
-        labelId="form-type-label"
-        id="form-type"
-        value={selectedForm}
-        onChange={handleChange}
-      >
-        {options.map((form) => (
-          <MenuItem key={form} value={form}>
-            {form}
-          </MenuItem>
-        ))}
-      </Select>
-        </div>)
-        :
-        null
+            (<div
+              style={{
+                position: "absolute",
+                right: 0,
+                top: "10%",
+                transform: "translateY(-50%)",
+                padding: "0",
+                background: "#fff",
+                boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
+                borderRadius: "8px",
+                fontSize: "10px",
+                fontWeight: "bold",
+                textAlign: "center",
+                zIndex: "999",
+                cursor: "pointer",
+                width: "20vw",
+                display: "flex",
+                flexDirection: "column",
+                gap: "5px"
+              }}
+            >
+              <h6>Type of Data</h6>
+              <Select
+                className="h-[40px]"
+                labelId="form-type-label"
+                id="form-type"
+                value={selectedForm}
+                onChange={handleChange}
+              >
+                {options.map((form) => (
+                  <MenuItem key={form} value={form}>
+                    {form}
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>)
+            :
+            null
 
-}
+        }
         <div id="map" style={{ flex: 1, borderRadius: "8px" }}></div>
         <div
           style={{
             position: "absolute",
             right: 60,
-            bottom: "-30%",
+            bottom: "-7%",
             transform: "translateY(-50%)",
             padding: "10px",
             background: "#fff",
@@ -443,27 +443,28 @@ const MaharashtraMap = (catogoryBar) => {
             zIndex: "999",
             cursor: "pointer",
             width: "15vw",
-            height: (sub_role == 'IG/DIG' || role == 'chief secretary') ? "51vh" : '32vh',
+            minHeight: "auto", // Auto-adjust height
+            // height: (sub_role == 'IG/DIG' || role == 'chief secretary') ? "51vh" : '32vh',
             display: "flex",
             flexDirection: "column",
             gap: "10px"
           }}
         >
- 
-          <div style={{ textAlign: "center", marginBottom: "5px", fontWeight: "bold", padding:"10px", width:"300px"}}>Legend</div>
+
+          <div style={{ textAlign: "center", marginBottom: "5px", fontWeight: "bold", padding: "10px", width: "300px" }}>Legend</div>
           {(sub_role == 'IG/DIG' || role == 'chief secretary') ? (
             <>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span>Population</span> <span>12.73 Crore</span>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span>Districts</span> <span>36</span>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span>Commissionerates</span> <span>12</span>
-          </div>
-          </>
-          ):null}
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span>Population</span> <span>12.73 Crore</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span>Districts</span> <span>36</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span>Commissionerates</span> <span>12</span>
+              </div>
+            </>
+          ) : null}
 
           <hr style={{ margin: "5px 0", borderColor: "#ccc" }} />
 
