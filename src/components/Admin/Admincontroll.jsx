@@ -13,6 +13,7 @@ const Admincontroll = ({ onRegister, onClose }) => {
     sub_role: "",
     rank: "",
     state: "",
+    city: "",
     zone: "",
     district: "",
     mobile_number: "",
@@ -26,6 +27,7 @@ const Admincontroll = ({ onRegister, onClose }) => {
   });
 
   const [selectedZone, setSelectedZone] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -56,6 +58,12 @@ const Admincontroll = ({ onRegister, onClose }) => {
     setSelectedZone(zone);
     setFormData((prev) => ({ ...prev, zone, district: [] })); // Reset district when zone changes
     setSelectedDistrict([]); // Reset selected district
+  };
+  const handleCityChange = (e) => {
+    const city = e.target.value;
+    setSelectedCity(city);
+    setFormData((prev) => ({ ...prev, city })); // Reset district when zone changes
+    
   };
 
   // const handleDistrictChange = (e) => {
@@ -217,7 +225,7 @@ const Admincontroll = ({ onRegister, onClose }) => {
     )}
 
     {/* Rank */}
-    <div>
+    {/* <div>
       <Label htmlFor="rank">Rank</Label>
       <select
         id="rank"
@@ -234,7 +242,7 @@ const Admincontroll = ({ onRegister, onClose }) => {
         <option value="B">B</option>
         <option value="C">C</option>
       </select>
-    </div>
+    </div> */}
 
     {/* State */}
     <div>
@@ -247,13 +255,17 @@ const Admincontroll = ({ onRegister, onClose }) => {
         required
         className="w-full p-2 border rounded-md"
       >
-        <option value="">Select State</option>
         <option value="Maharashtra">Maharashtra</option>
       </select>
     </div>
 
     {/* Zone and District */}
+
     <div>
+    {(formData.sub_role !== "CP") && 
+      
+      (
+        <>
       <Label htmlFor="zone">Zone</Label>
       <select
         id="zone"
@@ -270,10 +282,38 @@ const Admincontroll = ({ onRegister, onClose }) => {
           </option>
         ))}
       </select>
+      </>
+      )}
 
       {/* District Dropdown (Conditional Rendering) */}
-      {formData.sub_role !== "IG/DIG" && (
-  <div ref={dropdownRef} className="relative">
+      {(formData.sub_role !== "IG/DIG" || formData.sub_role !== "CP") && (
+
+        formData.sub_role == "CP" ? (<div ref={dropdownRef} className="relative">
+          <Label htmlFor="district">City</Label>
+          <select
+        id="city"
+        value={selectedCity}
+        onChange={handleCityChange} // Use the updated function
+        className="w-full p-2 border rounded-md bg-white"
+      >
+        <option value="">Select City</option>
+        <option value="Mumbai City">Mumbai City</option>
+        <option value="Thane City">Thane City</option>
+        <option value="Mira Bhainder">Mira Bhainder</option>
+        <option value="Navi Mumbai">Navi Mumbai</option>
+        <option value="Pune City">Pune City</option>
+        <option value="Pimpri Chinchwad">Pimpri Chinchwad</option>
+        <option value="Amravati City">Amravati City</option>
+        <option value="Nagpur City">Nagpur City</option>
+        <option value="Nashik City">Nashik City</option>
+        <option value="Aurangabad City">Aurangabad City</option>
+        <option value="Solapur City">Solapur City</option>
+       
+      </select>
+      
+        </div>) :
+
+  (<div ref={dropdownRef} className="relative">
     <Label htmlFor="district">District</Label>
     <select
   id="district"
@@ -290,7 +330,7 @@ const Admincontroll = ({ onRegister, onClose }) => {
     ))}
 </select>
 
-  </div>
+  </div>)
 )}
 
       {/* {formData.sub_role !== "IG/DIG" && (
