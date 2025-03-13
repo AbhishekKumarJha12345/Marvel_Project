@@ -452,7 +452,7 @@ const MaharashtraMap = (catogoryBar) => {
           style={{
             position: "absolute",
             right: 60,
-            bottom: "-30%",
+            bottom: "-70%",
             transform: "translateY(-50%)",
             padding: "10px",
             background: "#fff",
