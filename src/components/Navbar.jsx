@@ -133,6 +133,11 @@ export default function Dashboard({ users }) {
   const [activeSubMenu, setActiveSubMenu] = useState(null);
   const [activeSection, setActiveSection] = useState(null); // Unified state for all sections
 
+  const sub_role = localStorage.getItem("sub_role")
+
+  console.log("sub_role : ",sub_role);
+  
+
   const resetContent = () => {
     setActiveSection(null); // Reset active section
     setIsOpen(false); // Close main dropdown
@@ -260,7 +265,7 @@ export default function Dashboard({ users }) {
       <div className="content">
           <h1 className="heading" style={{ marginLeft: "40rem" }}>Police - Training</h1>         
 
-          <MaharashtraPoliceMap tableName="police_training" />
+          <MaharashtraPoliceMap catogoryBar="Training" />
 
 
         {/* <PoliceTraining ref={trainingRef} /> */}
@@ -278,7 +283,7 @@ export default function Dashboard({ users }) {
     "FIR": <div className="content">
           <h1 className="heading" style={{ marginLeft: "40rem" }}>Police - FIR</h1>
           
-      <MaharashtraPoliceMap tableName="fir_data" /></div>,
+      <MaharashtraPoliceMap catogoryBar="FIR" /></div>,
     "admin": <div className="content"><Adminviewe /> </div>,
   };
   const [openmodal, setOpenmodal] = useState(false);
@@ -655,6 +660,7 @@ export default function Dashboard({ users }) {
               </div>
             ) : (
               <>
+              {['SP', 'CP'].some(role => sub_role.includes(role))  ? (
               <button
               className="bg-blue-500 text-white px-4 py-2 rounded-lg"
               style={{ backgroundColor: "#2d3748",position:"absolute",right:"0",top:"70px" }}
@@ -665,6 +671,7 @@ export default function Dashboard({ users }) {
               >
               Add Data
               </button>
+              ) : null}
               <div className="nav_main" style={{ display: "flex" }}>
                 <button
                   className={`nav-link ${
