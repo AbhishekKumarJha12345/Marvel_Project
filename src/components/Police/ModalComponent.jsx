@@ -281,6 +281,76 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       "month_year_from": "From Date",
       "month_year_to": "To Date"
     },
+    "Offences against body under BNS": {
+      "act_and_section": "Act and Section",
+      "registered_cases": "Registered Cases",
+      "detected_cases": "Detected Cases",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "Untraced Missing": {
+      "age_group": "Age Group",
+      "no_of_untraced_persons": "No of Untraced Persons",
+      "no_of_missing_persons": "No of Missing Persons",
+      "traced": "Traced",
+      "percent_traced": "% of Untraced Persons",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "Important sections introduced in BNS": {
+      "act_and_section": "Act and Section",
+      "registered_cases": "Registered Cases",
+      "detected_cases": "Detected Cases",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "Property offences under BNS": {
+      "act_and_section": "Act and Section",
+      "registered_cases": "Registered Cases",
+      "detected_cases": "Detected Cases",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "eSakshya Details": {
+      "total_ios":"Total No of IO's Registered",
+      "registered_ios_on_esakshya": "No of IO's Registered on eSakshya",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "FIR's and Zero FIR's": {
+      "total_zero_firs_received": "Total Zero FIR's Received",
+      "total_firs_registered": "Total FIR's Registered",
+      "total_transferred_zero_firs": "Total Transferred Zero FIR's",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "eFIR": {
+      "total_ecomplaints_received": "Total eComplaints Received on Citizen Portal",
+      "total_ecomplaints_converted_to_firs": "Total eComplaints Converted to Regular FIR's",
+      "disposed_of_ecomplaints": "Disposed of eComplaints",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "ITSSO Compliance Form": {
+      "total_pocso_bns_cases": "Total No. of registered POCSO + BNS cases",
+      "charge_sheeted_within_60_days": "No. of cases (POCSO + BNS) chargesheet within 60 days",
+      "reasons_for_pending": "Compliance Rate",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "Stolen & Recovered Property": {
+      "total_cases": "Total Cases",
+      "value_stolen_property": "Value of Stolen Property",
+      "value_recovered_property": "Value of Recovered Property",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "Visit of Forensic Teams": {
+      "total_cases_gt_7_years" : "No. of cases registered in which punishment is 7 years or more",
+      "cases_forensic_team_visited" : "Cases in which Forensic Teams Visited",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
     "Training Data": {
       "month_year_from": "From Date",
       "month_year_to": "To Date",
@@ -306,50 +376,48 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         "20,10,15,14,02-03-2025,13-03-2025",
       ],
       "Offences against body under BNS": [
-        "unit,police_station,act_and_section,registered_cases,detected_cases,percent_detection,month_year_from,month_year_to",
-        "Unit-2,Station-5,IPC 302,50,30,60,Mar-2024,Mar-2030",
+        "act_and_section,registered_cases,detected_cases,month_year_from,month_year_to",
+        "text,22,3,02-03-2025,13-03-2025",
       ],
       "Untraced Missing": [
-        "district,unit,police_station,age_group,no_of_untraced_persons,no_of_missing_persons,total_missing_persons,traced,untraced,percent_untraced,month_year_from,month_year_to",
-        "Pune,Unit-3,Station-8,18-25,15,50,65,50,15,23.1,Feb-2024,Mar-2030",
+        "age_group,no_of_untraced_persons,no_of_missing_persons,traced,percent_traced,month_year_from,month_year_to",
+        "below-18,22,13,4,12,02-03-2025,13-03-2025",
       ],
       "Important sections introduced in BNS": [
-        "district,unit,police_station,act_and_section,registered_cases,detected_cases,percent_detection,month_year_from,month_year_to",
-        "Mumbai,Unit-4,Station-12,IPC 420,30,20,66.7,Jan-2024,Mar2030",
+        "act_and_section,registered_cases,detected_cases,month_year_from,month_year_to",
+        "text,22,3,02-03-2025,13-03-2025",
       ],
       "Property offences under BNS": [
-        "unit,police_station,act_and_section,registered_cases,detected_cases,percent_detection,month_year_from,month_year_to",
-        "Unit-5,Station-15,IPC 376,40,35,87.5,Apr-2024,MAR-2025",
+        "act_and_section,registered_cases,detected_cases,month_year_from,month_year_to",
+        "text,22,3,02-03-2025,13-03-2025",
       ],
       "eSakshya Details": [
-        "unit,total_ios_nagpur_rural,registered_ios_on_esakshya,esakshya_usage_percentage,month_year_from,month_year_to",
-        "Unit-G1,15,10,5000,Mar-2024,Mar-2030"
+       "total_ios,registered_ios_on_esakshya,month_year_from,month_year_to",
+       "12,3,02-03-2024,13-02-2025"
       ],
-
-      "Use of eSakshya App in cases with punishment of 7 yrs. or more": [
-        "unit,total_cases,total_offences_with_esakshya,total_offences_without_esakshya,total_charge_sheeted_with_esakshya,total_under_investigation_without_esakshya,percentage_usage,month_year_from,month_year_to",
-        "Unit-H1,100,60,40,55,35,75.5,Mar-2024,Mar-2030"
-      ],
-
+      // "Use of eSakshya App in cases with punishment of 7 yrs. or more": [
+      //   "unit,total_cases,total_offences_with_esakshya,total_offences_without_esakshya,total_charge_sheeted_with_esakshya,total_under_investigation_without_esakshya,percentage_usage,month_year_from,month_year_to",
+      //   "Unit-H1,100,60,40,55,35,75.5,Mar-2024,Mar-2030"
+      // ],
       "FIR's and Zero FIR's": [
-        "unit,section,total_zero_firs_received,total_firs_registered,pending,total_transferred_zero_firs,month_year_from,month_year_to",
-        "Unit-I1,Below 18,0,5,Mar-2024,Mar-2030"
+        "total_zero_firs_received,total_firs_registered,total_transferred_zero_firs,month_year_from,month_year_to",
+        "23,25,12,02-03-2025,13-03-2025"
       ],
       "eFIR": [
-        "unit,police_station,total_ecomplaints_received,total_ecomplaints_converted_to_firs,disposed_of_ecomplaints,month_year_from,month_year_to",
-        "Unit-J1,Station-J1,10,8,Mar-2024,Mar-2030"
+        "total_ecomplaints_received,total_ecomplaints_converted_to_firs,disposed_of_ecomplaints,month_year_from,month_year_to",
+        "23,12,3,02-03-2025,13-03-2025"
       ],
       "ITSSO Compliance Form": [
-        "total_pocso,bns_cases,charge_sheeted_within_60_days,pending_cases,reasons_for_pending,percentage,month_year_from,month_year_to",
-        "20,15,10,5,Investigation Delay,80,Mar-2024,Mar-2030"
+        "total_pocso_bns_cases,charge_sheeted_within_60_days,reasons_for_pending,month_year_from,month_year_to",
+        "12,23,2,02-03-2025,13-03-2025"
       ],
       "Stolen & Recovered Property": [
-        "total_cases,value_stolen_property,value_recovered_property,recovery_percentage,month_year_from,month_year_to",
-        "100,500000,300000,60,Mar-2024,,Mar-2030"
+       "total_cases,value_stolen_property,value_recovered_property,month_year_from,month_year_to",
+       "10,4,2,02-03-2025,13-03-2025"
       ],
       "Visit of Forensic Teams": [
-        "total_cases_gt_7_years,forensic_team_deployment_percentage,cases_forensic_team_visited,month_year_from,month_year_to",
-        "50,70,35,Mar-2024,Mar-2030"
+        "total_cases_gt_7_years,cases_forensic_team_visited,month_year_from,month_year_to",
+        "23,23,02-03-2025,13-03-2025"
       ],
       "Training Data": [
         "month_year_from,month_year_to,total_personnel,personnel_trained,total_officers,officers_trained",
@@ -441,6 +509,43 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   // };
 
   // ---------------------------------new------------------------------------------
+  // const handleFileUpload = (e) => {
+  //   const file = e.target.files[0];
+
+  //   if (!file) return;
+
+  //   const fileType = file.name.split(".").pop().toLowerCase();
+
+  //   if (["csv", "xls", "xlsx"].includes(fileType)) {
+  //     setFileInfo({ name: file.name, size: (file.size / 1024).toFixed(2) + " KB" });
+  //     setCheckingCsv(true);
+  //     setFormData((prev) => ({ ...prev, uploadedFile: file.name })); 
+
+  //     if (fileType === "csv") {
+  //       const reader = new FileReader();
+  //       reader.onload = (event) => {
+  //         const csvText = event.target.result;
+  //         processFileData(csvText.split("\n").map(row => row.split(","))); // Convert CSV to array
+  //       };
+  //       reader.readAsText(file);
+  //     } else {
+  //       // Handle Excel Parsing
+  //       const reader = new FileReader();
+  //       reader.onload = (event) => {
+  //         const data = new Uint8Array(event.target.result);
+  //         const workbook = XLSX.read(data, { type: "array" });
+  //         const sheetName = workbook.SheetNames[0];
+  //         const worksheet = workbook.Sheets[sheetName];
+  //         const excelData = XLSX.utils.sheet_to_csv(worksheet); // Convert Excel to CSV
+  //         processFileData(excelData.split("\n").map(row => row.split(","))); // Convert CSV to array
+  //       };
+  //       reader.readAsArrayBuffer(file);
+  //     }
+  //   } else {
+  //     alert("Only CSV, XLS, or XLSX files are allowed");
+  //   }
+  // };
+
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
 
@@ -451,9 +556,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
     if (["csv", "xls", "xlsx"].includes(fileType)) {
       setFileInfo({ name: file.name, size: (file.size / 1024).toFixed(2) + " KB" });
       setCheckingCsv(true);
-      setFormData((prev) => ({ ...prev, uploadedFile: file.name })); // Store only filename
+      setFormData((prev) => ({ ...prev, uploadedFile: file }));
 
-      if (fileType === "csv") {
+      if (fileType === "csv" || fileType == "") {
         const reader = new FileReader();
         reader.onload = (event) => {
           const csvText = event.target.result;
@@ -478,47 +583,6 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
     }
   };
 
-  // const handleFileUpload = (e) => {
-  //   const files = e.target.files;
-
-  //   if (!files.length) return;
-
-  //   const validFileTypes = ["csv", "xls", "xlsx"];
-  //   const uploadedFiles = [];
-
-  //   Array.from(files).forEach((file) => {
-  //     const fileType = file.name.split(".").pop().toLowerCase();
-
-  //     if (validFileTypes.includes(fileType)) {
-  //       uploadedFiles.push({ name: file.name, size: (file.size / 1024).toFixed(2) + " KB" });
-
-  //       const reader = new FileReader();
-  //       if (fileType === "csv") {
-  //         reader.onload = (event) => {
-  //           const csvText = event.target.result;
-  //           processFileData(csvText.split("\n").map(row => row.split(",")));
-  //         };
-  //         reader.readAsText(file);
-  //       } else {
-  //         reader.onload = (event) => {
-  //           const data = new Uint8Array(event.target.result);
-  //           const workbook = XLSX.read(data, { type: "array" });
-  //           const sheetName = workbook.SheetNames[0];
-  //           const worksheet = workbook.Sheets[sheetName];
-  //           const excelData = XLSX.utils.sheet_to_csv(worksheet);
-  //           processFileData(excelData.split("\n").map(row => row.split(",")));
-  //         };
-  //         reader.readAsArrayBuffer(file);
-  //       }
-  //     } else {
-  //       alert(`${file.name} is not a valid file type. Only CSV, XLS, or XLSX files are allowed.`);
-  //     }
-  //   });
-
-  //   setFileInfo(uploadedFiles);
-  //   setCheckingCsv(true);
-  //   setFormData((prev) => ({ ...prev, uploadedFiles: uploadedFiles.map(file => file.name) }));
-  // };
 
   const processFileData = (data) => {
     if (!data || data.length === 0) {
@@ -636,8 +700,34 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       console.log("formtype", formData);
       if (formData.uploadedFile) {
         console.log("Inside this upload file");
-        formDataToSend.append("type", selectedType);
-        formDataToSend.append("file", formData.uploadedFile);
+        // ----------------------------added for reverse keys------------------------------------------
+                // Get the header mapping for the selected form
+                const selectedHeadersMapping = headerMappings[selectedForm];
+
+                // Reverse mapping: from displayed headers (in file) back to original internal keys
+                // For example, mapping "From Date" back to "month_year_from"
+                const reversedMapping = Object.fromEntries(
+                  Object.entries(selectedHeadersMapping).map(([key, value]) => [value.toLowerCase(), key])
+                );
+
+                // Process the header row: convert each header from the file to lowercase and then map it
+                const uploadedHeaders = csvData[0].map(header => header.trim().toLowerCase());
+                const convertedHeaders = uploadedHeaders.map(header => reversedMapping[header] || header);
+
+                // Reassemble the CSV content: use the converted headers and then the rest of the rows
+                const newCsvContent = [
+                  convertedHeaders.join(","),
+                  ...csvData.slice(1).map(row => row.join(","))
+                ].join("\n");
+
+                // Create a new file blob with the updated CSV content
+                const newFileBlob = new Blob([newCsvContent], { type: "text/csv" });
+                // Append additional data and the new file blob to formDataToSend
+                formDataToSend.append("type", selectedType);
+                formDataToSend.append("file", newFileBlob, "processed_file.csv");
+        // -------------------------------------------------------------------------------------------------------
+        // formDataToSend.append("type", selectedType);
+        // formDataToSend.append("file", formData.uploadedFile);
         formDataToSend.append("unit", localStorage.getItem("zone") || "");
         formDataToSend.append("district", localStorage.getItem("district") || "");
         formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
