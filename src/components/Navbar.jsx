@@ -131,12 +131,13 @@ Overall Trends & Recommendations:
 export default function Dashboard({ users }) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSubMenu, setActiveSubMenu] = useState(null);
-  const [activeSection, setActiveSection] = useState(null); // Unified state for all sections
+  const [activeSection, setActiveSection] = useState({ section: "training" }); // Unified state for all sections
+  // const [activeSection, setActiveSection] = useState(null); // Unified state for all sections
 
   const sub_role = localStorage.getItem("sub_role")
 
-  console.log("sub_role : ",sub_role);
-  
+  console.log("sub_role : ", sub_role);
+
 
   const resetContent = () => {
     setActiveSection(null); // Reset active section
@@ -191,35 +192,35 @@ export default function Dashboard({ users }) {
   }, []);
 
   const trainingRef = useRef(null); // Reference to PoliceTraining component
-  const [rloading,setRloading]=useState(false)
+  const [rloading, setRloading] = useState(false)
   const handleExportPoliceTraining = async () => {
     setRloading(true)
     const pdf = new jsPDF("p", "mm", "a4"); // Create A4 size PDF
     const margin = 10;
     let yPosition = 20; // Start position for text
-  
+
     // 📌 Capture PoliceTraining component as an image
     if (trainingRef.current) {
       const canvas = await html2canvas(trainingRef.current, { scale: 2 });
       const imgData = canvas.toDataURL("image/png");
-  
+
       const imgWidth = 180; // Fit image width into A4
       const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
-  
+
       pdf.addImage(imgData, "PNG", margin, yPosition, imgWidth, imgHeight);
       yPosition += imgHeight + 10; // Move below image
     }
-  
+
     // 📌 Add a separator
     pdf.setDrawColor(0);
     pdf.line(10, yPosition, 200, yPosition);
     yPosition += 10;
-  
+
     // 📌 Loop through exporttrainingRefDetails and add formatted text
     exporttrainingRefDetails.forEach((item, index) => {
       pdf.setFontSize(14);
       pdf.setFont("helvetica", "bold");
-  
+
       // 🟢 Check if title fits, else move to a new page
       if (yPosition + 10 > 280) {
         pdf.addPage();
@@ -227,15 +228,15 @@ export default function Dashboard({ users }) {
       }
       pdf.text(item.name, margin, yPosition);
       yPosition += 6;
-  
+
       pdf.setFontSize(11);
       pdf.setFont("helvetica", "normal");
-  
+
       // 📌 Properly format long text for PDF
       const textLines = pdf.splitTextToSize(item.data, 180);
       let pageHeight = 280; // Usable page height
       let lineHeight = 6; // Space between lines
-  
+
       textLines.forEach((line) => {
         // 🟢 Check if line fits on the current page
         if (yPosition + lineHeight > pageHeight) {
@@ -245,27 +246,27 @@ export default function Dashboard({ users }) {
         pdf.text(line, margin, yPosition);
         yPosition += lineHeight;
       });
-  
+
       // 📌 Add separator for sections
       if (index !== exporttrainingRefDetails.length - 1) {
         pdf.line(10, yPosition, 200, yPosition);
         yPosition += 10;
       }
     });
-  
+
     // 📌 Save the PDF
     pdf.save("PoliceTraining_Report.pdf");
     setRloading(false)
   };
-  
- 
+
+
 
   const contentMap = {
     "training":
       <div className="content">
-          <h1 className="heading" style={{ marginLeft: "40rem" }}>Police - Training</h1>         
+        <h1 className="heading" style={{ marginLeft: "40rem" }}>Police - Training</h1>
 
-          <MaharashtraPoliceMap catogoryBar="Training" />
+        <MaharashtraPoliceMap catogoryBar="Training" />
 
 
         {/* <PoliceTraining ref={trainingRef} /> */}
@@ -281,14 +282,14 @@ export default function Dashboard({ users }) {
     "zerofir": <div className="content"><FirZero /></div>,
     "efir": <div className="content"><Efir /></div>,
     "FIR": <div className="content">
-          <h1 className="heading" style={{ marginLeft: "40rem" }}>Police - FIR</h1>
-          
+      <h1 className="heading" style={{ marginLeft: "40rem" }}>Police - FIR</h1>
+
       <MaharashtraPoliceMap catogoryBar="FIR" /></div>,
     "admin": <div className="content"><Adminviewe /> </div>,
   };
   const [openmodal, setOpenmodal] = useState(false);
-    const [showModal, setShowModal] = useState(false);
-  
+  const [showModal, setShowModal] = useState(false);
+
   const openreportmodal = () => {
     setOpenmodal(true);
   };
@@ -600,7 +601,7 @@ export default function Dashboard({ users }) {
                 </button>
 
                 {isOpen && (
-                  <div className="dropdown" style={{zIndex:"999"}}>
+                  <div className="dropdown" style={{ zIndex: "999" }}>
                     <button
                       className="dropdown-item"
                       onClick={() => handleSectionClick("training")}
@@ -614,41 +615,6 @@ export default function Dashboard({ users }) {
                     >
                       FIR
                     </button>
-
-                    {/* {activeSubMenu === 1 && (
-                      <div className="sub-dropdown">
-                        <button
-                          className="sub-dropdown-item"
-                          onClick={() => handleSectionClick("newcriminal")}
-                        >
-                          New Criminal Stats
-                        </button>
-                        <button
-                          className="sub-dropdown-item"
-                          onClick={() => handleSectionClick("chargesheet")}
-                        >
-                          Charge Sheet
-                        </button>
-                        <button
-                          className="sub-dropdown-item"
-                          onClick={() => handleSectionClick("zerofir")}
-                        >
-                          Zero FIR
-                        </button>
-                        <button
-                          className="sub-dropdown-item"
-                          onClick={() => handleSectionClick("efir")}
-                        >
-                          E FIR
-                        </button>
-                      </div>
-                    )} */}
-                    {/* <button
-                      className="dropdown-item"
-                      onClick={() => handleSectionClick("awareness/campaign")}
-                    >
-                      Awareness/Campaign
-                    </button> */}
                     <button
                       className="dropdown-item"
                       onClick={() => handleSectionClick("forensic/visits")}
@@ -660,62 +626,60 @@ export default function Dashboard({ users }) {
               </div>
             ) : (
               <>
-              {['SP', 'CP'].some(role => sub_role.includes(role))  ? (
-              <button
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-              style={{ backgroundColor: "#2d3748",position:"absolute",right:"0",top:"70px" }}
-              onClick={() => {
-                console.log("Open modal");
-                setShowModal(true);
-              }}
-              >
-              Add Data
-              </button>
-              ) : null}
-              <div className="nav_main" style={{ display: "flex" }}>
-                <button
-                  className={`nav-link ${
-                    activeSection?.section === "training" ? "active" : ""
-                  }`}
-                  onClick={() => handleSectionClick("training")}
-                >
-                  <img
-                    src={training}
-                    alt="Training Icon"
-                    className="nav-icon"
-                  />{" "}
-                  Training
-                </button>
-                <div className="nav-divider"></div>
-                <button
-                  className={`nav-link ${activeSection?.section === "FIR" ? "active" : ""
-                    }`}
-                  onClick={() => handleSectionClick("FIR")}
-                >
-                  <img
-                    src={fir}
-                    alt="Training Icon"
-                    className="nav-icon"
-                  />{" "}
-                  FIR
-                </button>
+                {['SP', 'CP'].some(role => sub_role.includes(role)) ? (
+                  <button
+                    className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                    style={{ backgroundColor: "#2d3748", position: "absolute", right: "0", top: "70px" }}
+                    onClick={() => {
+                      console.log("Open modal");
+                      setShowModal(true);
+                    }}
+                  >
+                    Add Data
+                  </button>
+                ) : null}
+                <div className="nav_main" style={{ display: "flex" }}>
+                  <button
+                    className={`nav-link ${activeSection?.section === "training" ? "active" : ""
+                      }`}
+                    onClick={() => handleSectionClick("training")}
+                  >
+                    <img
+                      src={training}
+                      alt="Training Icon"
+                      className="nav-icon"
+                    />{" "}
+                    Training
+                  </button>
+                  <div className="nav-divider"></div>
+                  <button
+                    className={`nav-link ${activeSection?.section === "FIR" ? "active" : ""
+                      }`}
+                    onClick={() => handleSectionClick("FIR")}
+                  >
+                    <img
+                      src={fir}
+                      alt="Training Icon"
+                      className="nav-icon"
+                    />{" "}
+                    FIR
+                  </button>
 
-                <div className="nav-divider"></div>
+                  <div className="nav-divider"></div>
 
-                <button
-                  className={`nav-link ${
-                    activeSection?.section === "forensic/visits" ? "active" : ""
-                  }`}
-                  onClick={() => handleSectionClick("forensic/visits")}
-                >
-                  <img
-                    src={forensicvisit}
-                    alt="Training Icon"
-                    className="nav-icon"
-                  />{" "}
-                  Forensic Visits
-                </button>
-              </div>
+                  <button
+                    className={`nav-link ${activeSection?.section === "forensic/visits" ? "active" : ""
+                      }`}
+                    onClick={() => handleSectionClick("forensic/visits")}
+                  >
+                    <img
+                      src={forensicvisit}
+                      alt="Training Icon"
+                      className="nav-icon"
+                    />{" "}
+                    Forensic Visits
+                  </button>
+                </div>
               </>
             ))}
 
@@ -725,9 +689,8 @@ export default function Dashboard({ users }) {
 
           {(users === "chief secretary" || users === "Prosecutor") && (
             <li
-              className={`nav-link ${
-                activeSection?.section === "prosecution" ? "active" : ""
-              }`}
+              className={`nav-link ${activeSection?.section === "prosecution" ? "active" : ""
+                }`}
               onClick={() => handleSectionClick("prosecution")}
             >
               {/* <Home /> Prosecution */}
@@ -741,9 +704,8 @@ export default function Dashboard({ users }) {
 
           {(users === "chief secretary" || users === "Court") && (
             <li
-              className={`nav-link ${
-                activeSection?.section === "court" ? "active" : ""
-              }`}
+              className={`nav-link ${activeSection?.section === "court" ? "active" : ""
+                }`}
               onClick={() => handleSectionClick("court")}
             >
               {/* <TbTable size={25} /> Court */}
@@ -759,8 +721,8 @@ export default function Dashboard({ users }) {
             users === "Correction") && (
               <li
                 className={`nav-link ${activeSection?.section === "correctionalservices"
-                    ? "active"
-                    : ""
+                  ? "active"
+                  : ""
                   }`}
                 onClick={() => handleSectionClick("correctionalservices")}
               >
@@ -776,12 +738,11 @@ export default function Dashboard({ users }) {
           {(users === "chief secretary" || users === "Forensic") && (
             <>
 
-            
+
               {/* Forensic Science Section */}
               <li
-                className={`nav-link ${
-                  activeSection?.section === "science" ? "active" : ""
-                }`}
+                className={`nav-link ${activeSection?.section === "science" ? "active" : ""
+                  }`}
                 onClick={() => handleSectionClick("science")}
               >
                 <BiotechIcon size={25} /> Forensic Science Department
@@ -811,27 +772,12 @@ export default function Dashboard({ users }) {
       {
         users === 'chief secretary' ? contentMap[activeSection?.section] || (
 
-          // <div style={{ height: "74vh", marginTop: "3rem", display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center" }}>
-          //   <h2 style={{ fontSize: "29px", fontWeight: "500" }}>ICJS-Interoperable Criminal Justice System</h2>
-          //   {/* <p style={{ fontSize: "18px" }}>MAHARASHTRA RESEARCH & VIGILANCE MARVEL FOR ENHANCED LAW ENFORCEMENT LIMITED</p> */}
-          //   <img src={logo} alt="Logo" style={{ width: "20rem" }} />
-
-          // </div>
-          // <div className="flex justify-between bg-white">
-
-
-          // <MaharashtraPoliceMap tableName={"police_training"} />
-
-
-          // </div>
-
-
           contentMap["training"]
 
-          ) : contentMap[activeSection?.section] || (users === "police" ? contentMap["training"]
-            : users === "Court" ? contentMap["court"]
-              : users === "Forensic" ? contentMap["science"]
-                : users === "Prosecutor" ? contentMap["prosecution"]
+        ) : contentMap[activeSection?.section] || (users === "police" ? contentMap["training"]
+          : users === "Court" ? contentMap["court"]
+            : users === "Forensic" ? contentMap["science"]
+              : users === "Prosecutor" ? contentMap["prosecution"]
                 : users === "admin" ? contentMap["admin"]
                   : contentMap["correctionalservices"])
       }
@@ -839,6 +785,7 @@ export default function Dashboard({ users }) {
       <ModalComponent
         open={showModal}
         type="police"
+        training_active={activeSection} // Pass the selected section as a prop
         onClose={() => setShowModal(false)}
       />
     </div>
