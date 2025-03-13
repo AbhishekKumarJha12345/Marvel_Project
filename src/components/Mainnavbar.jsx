@@ -22,7 +22,7 @@ import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import logocs from "../assets/cs_court_prosection_logo.png";
 import { PiPowerDuotone } from "react-icons/pi";
-
+import "../styles/mainnavbar.css"
 
 function Mainnavbar() {
   const [isOpen, setIsOpen] = useState({ language: false, notifications: false, profile: false });
@@ -123,7 +123,7 @@ function Mainnavbar() {
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         }}
       >
-        <div className="flex items-center">
+        <div className="flex items-center ml-6">
           <img
             src={userLogo}
             alt="Logo"
@@ -154,9 +154,9 @@ function Mainnavbar() {
           <div className="relative">
             <button
               onClick={() => toggleDropdown("notifications")}
-              className="relative text-gray-700 hover:text-blue-500 mt-1"
+              className="relative text-black-900 hover:text-blue-500 mt-2"
             >
-              <IoIosNotificationsOutline size={25} />
+              <IoIosNotificationsOutline size={30} />
             </button>
             {isOpen.notifications && (
               <div className="absolute right-0 mt-2 w-48 bg-white shadow-md rounded-lg p-2">
@@ -225,7 +225,7 @@ function Mainnavbar() {
                 </button>
               </div>
             )} */}
-            <button title="logout" onClick={handelLogout} className="bg-500 text-black p-2 rounded-lg hover:bg-red-700 transition-all relative group">
+            <button title="logout" onClick={handelLogout} className="power">
               <PiPowerDuotone size={29} />
               <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-red-600 rounded opacity-0 group-hover:opacity-100 transition-opacity">
                 Logout

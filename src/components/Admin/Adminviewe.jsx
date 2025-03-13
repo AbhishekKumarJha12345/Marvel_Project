@@ -190,12 +190,12 @@ const AdminUserTable = () => {
       name: "Role",
       selector: (row) => {
         const roles = {
-          "chief secretary": "Chief Secretary",
+          "Chief secretary": "Chief Secretary",
           "Correction": "Correctional Services",
           "Forensic": "Forensic",
-          "police": "Police",
+          "Police": "Police",
           "Prosecutor": "Prosecution",
-          "admin": "Admin",
+          "Admin": "Admin",
           "Court": "Courts"
         };
         return roles[row.role] || row.role;
