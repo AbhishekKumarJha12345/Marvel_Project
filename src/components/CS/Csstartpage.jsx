@@ -281,8 +281,9 @@ if(sub_role == 'CP' || sub_role == 'SP'){
 
 
 
-        if ((selectedZone && districtName == "Nagpur Rural") || (district == "Nagpur Rural")) {
-
+        if ((selectedZone == 'Nagpur Rural' && districtName == "Nagpur Rural") || (district == "Nagpur Rural")) {
+          
+  
 
 
           const nagpurDistricts = ["Nagpur Rural", "Nagpur"];
