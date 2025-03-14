@@ -368,6 +368,8 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       "bns_sections": "BNS Section",
       "cases_decided": "Cases Decided",
       "cases_convicted": "Cases Convictied",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date",
       // "conviction_rate": "Conviction Rate (%)"
     }
   };
@@ -428,8 +430,8 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         "02-03-2025,13-03-2025,20,10,20,10"
       ],
       "Conviction under BNS": [
-        "type_of_court,bns_sections,cases_decided,cases_convicted",
-        "session,285,88,72"
+        "type_of_court,bns_sections,cases_decided,cases_convicted,month_year_from,month_year_to",
+        "session,285,88,72,02-03-2025,13-03-2025"
       ],
     };
 
@@ -901,6 +903,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
           formDataToSend.append("city", localStorage.getItem("city") || "N/A");
+          formDataToSend.append("unit", localStorage.getItem("unit") || "N/A");
           formDataToSend.append("total_cases_gt_7_years", formData.total_cases_gt_7_years || "");
           formDataToSend.append("forensic_team_deployment_percentage", formData.forensic_team_deployment_percentage || "");
           formDataToSend.append("cases_forensic_team_visited", formData.cases_forensic_team_visited || "");
