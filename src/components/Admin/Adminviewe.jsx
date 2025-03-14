@@ -25,7 +25,7 @@ const AdminUserTable = () => {
     Amravati: ["Akola", "Amravati", "Buldana", "Washim", "Yavatmal"],
     Aurangabad: ["Aurangabad", "Beed", "Hingoli", "Jalna", "Latur", "Nanded", "Osmanabad", "Parbhani"],
     Konkan: ["Mumbai", "Mumbai Suburban", "Palghar", "Raigad", "Ratnagiri", "Sindhudurg", "Thane"],
-    Nagpur: ["Bhandara", "Chandrapur", "Gadchiroli", "Gondia", "Nagpur", "Wardha"],
+    Nagpur_Rural: ["Bhandara", "Chandrapur", "Gadchiroli", "Gondia", "Nagpur Rural", "Wardha"],
     Nashik: ["Ahmednagar", "Dhule", "Jalgaon", "Nandurbar", "Nashik"],
     Pune: ["Kolhapur", "Pune", "Sangli", "Satara", "Solapur"],
   };
@@ -370,7 +370,7 @@ className="w-full p-2 border rounded-md bg-white"
 </div>) :
 
 (<div ref={dropdownRef} className="relative">
-<Label htmlFor="district">District</Label>
+<label htmlFor="district">District</label>
 <select
 id="district"
 value={selectedDistrict}
@@ -417,14 +417,14 @@ zones[selectedZone].map((district) => (
 
 
         {/* Filters */}
-        <div className="mb-4 grid grid-cols-5 gap-2 px-3">
+        {/* <div className="mb-4 grid grid-cols-5 gap-2 px-3">
           {columns.filter((col) => col.filterKey).map((col, index) => (
             <div key={index} className="flex flex-col">
               <label className="text-sm">{col.name}:</label>
               <input type={col.name === 'Created On' ? 'date' : 'text'} placeholder={`Search by ${col.name}`} value={filters[col.filterKey] || ""} onChange={(e) => handleFilter(e, col.filterKey)} className="p-2 border border-gray-300 rounded-md w-[270px]" />
             </div>
           ))}
-        </div>
+        </div> */}
         <div className='p-3'>
           <DataTable columns={columns} data={filteredData} pagination highlightOnHover striped responsive customStyles={customStyles} />
         </div>

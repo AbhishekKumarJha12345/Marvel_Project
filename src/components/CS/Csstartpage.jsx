@@ -135,21 +135,7 @@ console.log("filterDataOption : ",filterDataOption);
 
         setZonePercentages(response.data.zones);
         setDistrictPercentages(response.data.districts);
-        // setCityPercentages(response.data.districts);
-        setcityPercentages({
-          "Mumbai City": 92,
-          "Thane City": 78,
-          "Mira Bhayandar": 85,
-          "Navi Mumbai": 97,
-          "Pune City": 88,
-          "Pimpri Chinchwad": 76,
-          "Amravati City": 81,
-          "Nagpur City": 94,
-          "Nashik City": 69,
-          "Aurangabad City": 73,
-          "Solapur City": 90
-        }
-        );
+        setcityPercentages(response.data.city);
       } catch (error) {
         console.error("Error fetching Maharashtra police data:", error);
       }
