@@ -1016,7 +1016,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         alert("Data inserted successfully");
         setFormData(getInitialFormData());
         setFileInfo(null);
-        // window.location.reload();
+        window.location.reload();
       } else {
         throw new Error(`Unexpected response: ${response.status}`);
       }
