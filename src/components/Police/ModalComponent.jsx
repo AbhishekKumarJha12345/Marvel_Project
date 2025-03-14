@@ -17,6 +17,7 @@ import * as XLSX from "xlsx";
 import Papa from "papaparse";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { toDate } from "date-fns";
+import CloseIcon from "@mui/icons-material/Close";
 
 
 const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => {
@@ -110,7 +111,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       detected_cases: "",
       offences_registerd: "",
 
-      total_zero_firs : "",
+      total_zero_firs: "",
       total_no_zero_fir_transferred_outer_state_to_mh: "",
       pending_for_re_registration: "",
       re_reg_firs: "",
@@ -355,15 +356,15 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
     // },
 
     "Zero FIR's": {
-      "total_no_zero_fir_transferred_outside_mh" : "No. of Zero FIRs transferred outside Maharashtra",
-      "total_no_zero_fir_transferred_outer_state_to_mh" : "No. of Zero FIRs transferred from other State to Maharashtra",
-      "total_zero_firs" : "Total No of Zero FIRs",
-      "total_firs_registered" : "Zero FIR's in Maharashtra",
-      "pending_to_transfer_outside_mh" : "Pending for Transfer outside Maharashtra",
-      "re_reg_firs" : "Re-Registered FIRs in Maharashtra",
-      "total_transferred_zero_firs_in_mh" : "No of Zero FIR's Transferred Within Maharashtra",
-      "pending_for_transfer_within_mh" : "Pending for Transfer within Maharashtra",
-      "pending_for_re_registration" : "Pending for Re-registration",
+      "total_no_zero_fir_transferred_outside_mh": "No. of Zero FIRs transferred outside Maharashtra",
+      "total_no_zero_fir_transferred_outer_state_to_mh": "No. of Zero FIRs transferred from other State to Maharashtra",
+      "total_zero_firs": "Total No of Zero FIRs",
+      "total_firs_registered": "Zero FIR's in Maharashtra",
+      "pending_to_transfer_outside_mh": "Pending for Transfer outside Maharashtra",
+      "re_reg_firs": "Re-Registered FIRs in Maharashtra",
+      "total_transferred_zero_firs_in_mh": "No of Zero FIR's Transferred Within Maharashtra",
+      "pending_for_transfer_within_mh": "Pending for Transfer within Maharashtra",
+      "pending_for_re_registration": "Pending for Re-registration",
       "month_year_from": "From Date",
       "month_year_to": "To Date"
     },
@@ -925,10 +926,10 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("unit", localStorage.getItem("unit") || "N/A");
           // formDataToSend.append("total_pocso", formData.total_pocso || "");
           // formDataToSend.append("bns_cases", formData.bns_cases || "");
-          formDataToSend.append("charge_sheeted_within_60_days", formData.charge_sheeted_within_60_days || "");
-          formDataToSend.append("total_pocso_bns_cases", formData.total_pocso_bns_cases || "");
+          formDataToSend.append("charge_sheeted_within_60_days", formData.charge_sheeted_within_60_days || "0");
+          formDataToSend.append("total_pocso_bns_cases", formData.total_pocso_bns_cases || "0");
           // formDataToSend.append("reasons_for_pending", formData.reasons_for_pending || "");
-          formDataToSend.append("percentage", formData.percentage || "");
+          formDataToSend.append("percentage", formData.percentage || "0");
           formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
@@ -938,12 +939,12 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
           formDataToSend.append("city", localStorage.getItem("city") || "N/A");
           formDataToSend.append("unit", localStorage.getItem("unit") || "N/A");
-          formDataToSend.append("total_cases", formData.total_cases || "");
-          formDataToSend.append("value_stolen_property", formData.value_stolen_property || "");
-          formDataToSend.append("value_recovered_property", formData.value_recovered_property || "");
-          formDataToSend.append("recovery_percentage", formData.recovery_percentage || "");
-          formDataToSend.append("detected_cases", formData.detected_cases || "");
-          formDataToSend.append("offences_registerd", formData.offences_registerd || "");
+          formDataToSend.append("total_cases", formData.total_cases || "0");
+          formDataToSend.append("value_stolen_property", formData.value_stolen_property || "0");
+          formDataToSend.append("value_recovered_property", formData.value_recovered_property || "0");
+          formDataToSend.append("recovery_percentage", formData.recovery_percentage || "0");
+          formDataToSend.append("detected_cases", formData.detected_cases || "0");
+          formDataToSend.append("offences_registerd", formData.offences_registerd || "0");
           formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
@@ -953,25 +954,25 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
           formDataToSend.append("city", localStorage.getItem("city") || "N/A");
           formDataToSend.append("unit", localStorage.getItem("unit") || "N/A");
-          formDataToSend.append("total_cases_gt_7_years", formData.total_cases_gt_7_years || "");
-          formDataToSend.append("forensic_team_deployment_percentage", formData.forensic_team_deployment_percentage || "");
-          formDataToSend.append("cases_forensic_team_visited", formData.cases_forensic_team_visited || "");
+          formDataToSend.append("total_cases_gt_7_years", formData.total_cases_gt_7_years || "0");
+          formDataToSend.append("forensic_team_deployment_percentage", formData.forensic_team_deployment_percentage || "0");
+          formDataToSend.append("cases_forensic_team_visited", formData.cases_forensic_team_visited || "0");
           formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
         if (formData.formType === "Training Data") {   //Tested
           formDataToSend.append("type", "police_training");
-          formDataToSend.append("district", localStorage.getItem("district") || "");
+          formDataToSend.append("district", localStorage.getItem("district") || "N/A");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
           formDataToSend.append("city", localStorage.getItem("city") || "N/A");
           formDataToSend.append("unit", localStorage.getItem("zone") || "Nagpur Rural");
-          formDataToSend.append("total_personnel", formData.total_personal || "");
-          formDataToSend.append("sessions_personnel", formData.no_of_personal || "");
-          formDataToSend.append("personnel_trained", formData.personal_trained || "");
-          formDataToSend.append("percent_personnel_trained", formData.percentage_personal_trained || "");
-          formDataToSend.append("total_officers", formData.total_officers || "");
-          formDataToSend.append("sessions_officers", formData.no_of_session_officers || "");
-          formDataToSend.append("officers_trained", formData.officers_trained || "");
+          formDataToSend.append("total_personnel", formData.total_personal || "0");
+          formDataToSend.append("sessions_personnel", formData.no_of_personal || "0");
+          formDataToSend.append("personnel_trained", formData.personal_trained || "0");
+          formDataToSend.append("percent_personnel_trained", formData.percentage_personal_trained || "0");
+          formDataToSend.append("total_officers", formData.total_officers || "0");
+          formDataToSend.append("sessions_officers", formData.no_of_session_officers || "0");
+          formDataToSend.append("officers_trained", formData.officers_trained || "0");
           // formDataToSend.append("total_persons_trained", formData.total_persons_trained || "");
           formDataToSend.append("percent_officers_trained", formData.percentage_officers_trained || "");
           // formDataToSend.append("overall_cumulative", formData.overall_cumulative || "");
@@ -979,22 +980,22 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
         if (formData.formType === "Conviction under BNS") { //Tested
-          formDataToSend.append("type", "conviction_rate_in_bns");
-          formDataToSend.append("district", localStorage.getItem("district") || "");
+          formDataToSend.append("type", "conviction_rate_in_bns" || "0");
+          formDataToSend.append("district", localStorage.getItem("district") || "0");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
           formDataToSend.append("city", localStorage.getItem("city") || "N/A");
           formDataToSend.append("unit", localStorage.getItem("zone") || "Nagpur Rural");
           formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
-          formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
-          formDataToSend.append("type_of_court", formData.type_of_court || "");
-          formDataToSend.append("bns_sections", formData.bns_sections || "");
+          formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "0");
+          formDataToSend.append("type_of_court", formData.type_of_court || "0");
+          formDataToSend.append("bns_sections", formData.bns_sections || "0");
           // If "Other" is selected in BNS Sections, send the custom value
           if (formData.bns_sections === "Other") {
-            formDataToSend.append("other_bns_section", formData.other_bns_section || "");
+            formDataToSend.append("other_bns_section", formData.other_bns_section || "0");
           }
-          formDataToSend.append("cases_decided", formData.cases_decided || "");
-          formDataToSend.append("cases_convicted", formData.convicted_cases || "");
-          formDataToSend.append("conviction_rate", formData.conviction_rate || "");
+          formDataToSend.append("cases_decided", formData.cases_decided || "0");
+          formDataToSend.append("cases_convicted", formData.convicted_cases || "0");
+          formDataToSend.append("conviction_rate", formData.conviction_rate || "0");
         }
       }
 
@@ -1063,6 +1064,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   useEffect(() => {
     const fetchConvictionData = async () => {
       try {
+
         const response = await axios.get("http://192.168.1.33:5555/api/conviction");
         setConvictionData(response.data);
       } catch (error) {
@@ -1094,6 +1096,87 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
 
   // ================================================================================================================
+
+  // const [historyData, setHistoryData] = useState(null); // Store response
+
+  // useEffect(() => {
+  //   if (formData.formType) {
+  //     const fetchHistory = async () => {
+  //       const payload = {
+  //         fromDate: formData.fromDate,
+  //         toDate: formData.toDate,
+  //         formType: formData.formType,
+  //       };
+
+  //       try {
+  //         const response = await axios.post("/history", payload);
+  //         console.log("History Response:", response.data);
+  //         setHistoryData(response.data); // Store the response data
+  //       } catch (error) {
+  //         console.error("Error fetching history:", error);
+  //       }
+  //     };
+
+  //     fetchHistory();
+  //   }
+  // }, [formData.formType]); // Trigger when formType changes
+
+  const [historyData, setHistoryData] = useState([]); // Store response as an array
+  const [openModal, setOpenModal] = useState(false); // State for modal visibility
+  const excludedFields = ["city", "file_path", "district", "id", "unit", "uploaded_by", "police_station"]; // Fields to exclude
+
+  const fetchHistory = async () => {
+    if (!formData.formType) {
+      alert("Please select a Form Type before fetching history.");
+      return;
+    }
+
+    const token = localStorage.getItem("token"); // Retrieve token from localStorage
+
+    const payload = {
+      fromDate: localStorage.getItem("from_date") || "N/A",
+      toDate: localStorage.getItem("to_date") || "N/A",
+      table_name: formData.formType,
+    };
+
+    try {
+      const response = await axiosInstance.post("/history", payload, {
+        headers: {
+          Authorization: `${token}`, // Include token
+        },
+      });
+
+      console.log("History Response:", response.data);
+      setHistoryData(response.data); // Store the response data
+      setOpenModal(true); // Open the modal after fetching data
+    } catch (error) {
+      console.error("Error fetching history:", error);
+    }
+  };
+
+
+  // const fetchHistory = async () => {
+  //   if (!formData.formType) {
+  //     alert("Please select a Form Type before fetching history.");
+  //     return;
+  //   }
+
+  //   const payload = {
+  //     fromDate: localStorage.getItem("from_date") || "N/A",
+  //     toDate: localStorage.getItem("to_date") || "N/A",
+  //     formType: formData.formType,
+  //   };
+
+  //   try {
+  //     const response = await axios.post("/history", payload);
+  //     console.log("History Response:", response.data);
+  //     setHistoryData(response.data); // Store the response data
+  //     setOpenModal(true); // Open the modal after fetching data
+  //   } catch (error) {
+  //     console.error("Error fetching history:", error);
+  //   }
+  // };
+
   // ========================kiran_kumar====================================
 
   // ---------------------------------------------------------------------
@@ -1155,53 +1238,113 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   </FormControl>
 
                 </Box>
+                <div>
+                  {/* Form Type Selection Dropdown */}
+                  <FormControl fullWidth variant="outlined">
+                    <InputLabel id="form-type-label">Form Type</InputLabel>
+                    <Select
+                      labelId="form-type-label"
+                      id="form-type"
+                      value={formData.formType}
+                      onChange={(e) => setFormData({ ...formData, formType: e.target.value })}
+                      label="Form Type"
+                    >
+                      {(() => {
+                        let formOptions = [];
 
-                {/* Form Type Selection Dropdown */}
-                <FormControl fullWidth variant="outlined">
-                  <InputLabel id="form-type-label">Form Type</InputLabel>
-                  <Select
-                    labelId="form-type-label"
-                    id="form-type"
-                    value={formData.formType}
-                    onChange={(e) => setFormData({ ...formData, formType: e.target.value })}
-                    label="Form Type"
+                        if (training_active?.section === "training") {
+                          formOptions = ["Training Data"];
+                        } else if (training_active?.section === "forensic/visits") {
+                          formOptions = [
+
+                            "Visit of Forensic Teams",
+                          ];
+                        } else if (training_active?.section === "FIR") {
+                          formOptions = [
+                            "Pendency of cases under BNS",
+                            "Offences against body under BNS",
+                            "Untraced Missing",
+                            "Important sections introduced in BNS",
+                            "Property offences under BNS",
+                            "eSakshya Details",
+                            "Use of eSakshya App in cases with punishment of 7 yrs. or more",
+                            "Zero FIR's",
+                            "eFIR",
+                            "ITSSO Compliance Form",
+                            "Stolen & Recovered Property",
+                            "Conviction under BNS",
+                          ];
+                        }
+
+                        return formOptions.map((form) => (
+                          <MenuItem key={form} value={form}>
+                            {form}
+                          </MenuItem>
+                        ));
+                      })()}
+                    </Select>
+                  </FormControl>
+
+                  {/* History Button */}
+                  <Button variant="contained" color="primary" onClick={fetchHistory} className="mt-4">
+                    View History
+                  </Button>
+
+                  {/* History Modal */}
+                  <Dialog
+                    open={openModal}
+                    onClose={() => setOpenModal(false)}
+                    fullWidth
+                    maxWidth="md"
+                    sx={{ color: "white", borderRadius: "10px" }} // White text for contrast
                   >
-                    {(() => {
-                      let formOptions = [];
+                    <DialogTitle sx={{ fontWeight: "bold" }}>
+                      History Data
+                      <IconButton
+                        aria-label="close"
+                        onClick={() => setOpenModal(false)}
+                        sx={{ position: "absolute", right: 10, top: 10, color: "black" }}
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    </DialogTitle>
 
-                      if (training_active?.section === "training") {
-                        formOptions = ["Training Data"];
-                      } else if (training_active?.section === "forensic/visits") {
-                        formOptions = [
+                    <DialogContent>
+                      {historyData?.data && Array.isArray(historyData.data) && historyData.data.length > 0 ? (
+                        <table className="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden">
+                          <thead>
+                            <tr className="bg-gray-700 text-white"> {/* Header Background Only */}
+                              {Object.keys(historyData.data[0])
+                                .filter((key) => !excludedFields.includes(key)) // Remove unwanted fields
+                                .map((key) => (
+                                  <th key={key} className="border border-gray-300 p-3 text-left">
+                                    {key.replace(/_/g, " ").toUpperCase()}
+                                  </th>
+                                ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {historyData.data.map((row, index) => (
+                              <tr key={index} className="hover:bg-gray-100"> {/* Subtle hover effect */}
+                                {Object.keys(row)
+                                  .filter((key) => !excludedFields.includes(key)) // Remove unwanted fields
+                                  .map((key, i) => (
+                                    <td key={i} className="border border-gray-300 p-3">
+                                      {row[key] !== null ? row[key].toString() : "N/A"}
+                                    </td>
+                                  ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      ) : (
+                        <p>No history data available.</p>
+                      )}
+                    </DialogContent>
+                  </Dialog>
 
-                          "Visit of Forensic Teams",
-                        ];
-                      } else if (training_active?.section === "FIR") {
-                        formOptions = [
-                          "Pendency of cases under BNS",
-                          "Offences against body under BNS",
-                          "Untraced Missing",
-                          "Important sections introduced in BNS",
-                          "Property offences under BNS",
-                          "eSakshya Details",
-                          "Use of eSakshya App in cases with punishment of 7 yrs. or more",
-                          "Zero FIR's",
-                          "eFIR",
-                          "ITSSO Compliance Form",
-                          "Stolen & Recovered Property",
-                          "Conviction under BNS",
-                        ];
-                      }
 
-                      return formOptions.map((form) => (
-                        <MenuItem key={form} value={form}>
-                          {form}
-                        </MenuItem>
-                      ));
-                    })()}
-                  </Select>
-                </FormControl>
-
+                </div>
 
 
 
@@ -1642,7 +1785,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         />
                       </div>
 
-                      
+
 
                       <div>
                         <label className="block text-sm font-medium">
