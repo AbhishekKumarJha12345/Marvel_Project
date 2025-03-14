@@ -101,6 +101,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       cases_decided: "",
       convicted_cases: "",
       conviction_rate: "",
+      overall_cumulative : ""
 
     };
   }
@@ -231,12 +232,12 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       "month_year_to"
     ],
     "ITSSO Compliance Form": [
-      "total_pocso",
-      "bns_cases",
+      // "total_pocso",
+      // "bns_cases",
       "charge_sheeted_within_60_days",
-      "pending_cases",
-      "reasons_for_pending",
-      "percentage",
+      "total_pocso_bns_cases",
+      // "reasons_for_pending",
+      // "percentage",
       "month_year_from",
       "month_year_to"
     ],
@@ -290,7 +291,6 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       "no_of_untraced_persons": "No of Untraced Persons",
       "no_of_missing_persons": "No of Missing Persons",
       "traced": "Traced",
-      "percent_traced": "% of Untraced Persons",
       "month_year_from": "From Date",
       "month_year_to": "To Date"
     },
@@ -339,7 +339,6 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
     "ITSSO Compliance Form": {
       "total_pocso_bns_cases": "Total No. of registered POCSO + BNS cases",
       "charge_sheeted_within_60_days": "No. of cases (POCSO + BNS) chargesheet within 60 days",
-      "reasons_for_pending": "Compliance Rate",
       "month_year_from": "From Date",
       "month_year_to": "To Date"
     },
@@ -369,7 +368,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       "bns_sections": "BNS Section",
       "cases_decided": "Cases Decided",
       "cases_convicted": "Cases Convictied",
-      "conviction_rate": "Conviction Rate (%)"
+      // "conviction_rate": "Conviction Rate (%)"
     }
   };
 
@@ -385,8 +384,8 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         "text,22,3,02-03-2025,13-03-2025",
       ],
       "Untraced Missing": [
-        "age_group,no_of_untraced_persons,no_of_missing_persons,traced,percent_traced,month_year_from,month_year_to",
-        "below-18,22,13,4,12,02-03-2025,13-03-2025",
+        "age_group,no_of_untraced_persons,no_of_missing_persons,traced,month_year_from,month_year_to",
+        "below-18,22,13,4,02-03-2025,13-03-2025",
       ],
       "Important sections introduced in BNS": [
         "act_and_section,registered_cases,detected_cases,month_year_from,month_year_to",
@@ -413,8 +412,8 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         "23,12,3,02-03-2025,13-03-2025"
       ],
       "ITSSO Compliance Form": [
-        "total_pocso_bns_cases,charge_sheeted_within_60_days,reasons_for_pending,month_year_from,month_year_to",
-        "12,23,2,02-03-2025,13-03-2025"
+        "total_pocso_bns_cases,charge_sheeted_within_60_days,month_year_from,month_year_to",
+        "12,23,02-03-2025,13-03-2025"
       ],
       "Stolen & Recovered Property": [
         "total_cases,value_stolen_property,value_recovered_property,month_year_from,month_year_to",
@@ -429,8 +428,8 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         "02-03-2025,13-03-2025,20,10,20,10"
       ],
       "Conviction under BNS": [
-        "type_of_court,bns_sections,cases_decided,cases_convicted,conviction_rate",
-        "session,285,88,72,20"
+        "type_of_court,bns_sections,cases_decided,cases_convicted",
+        "session,285,88,72"
       ],
     };
 
@@ -736,6 +735,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         formDataToSend.append("unit", localStorage.getItem("zone") || "");
         formDataToSend.append("district", localStorage.getItem("district") || "");
         formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
+        // formDataToSend.append("unit", localStorage.getItem("unit") || "N/A");
         // formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
         // formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
       }
@@ -874,11 +874,12 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
           formDataToSend.append("city", localStorage.getItem("city") || "N/A");
-          formDataToSend.append("total_pocso", formData.total_pocso || "");
-          formDataToSend.append("bns_cases", formData.bns_cases || "");
+          formDataToSend.append("unit", localStorage.getItem("unit") || "N/A");
+          // formDataToSend.append("total_pocso", formData.total_pocso || "");
+          // formDataToSend.append("bns_cases", formData.bns_cases || "");
           formDataToSend.append("charge_sheeted_within_60_days", formData.charge_sheeted_within_60_days || "");
-          formDataToSend.append("pending_cases", formData.pending_cases || "");
-          formDataToSend.append("reasons_for_pending", formData.reasons_for_pending || "");
+          formDataToSend.append("total_pocso_bns_cases", formData.total_pocso_bns_cases || "");
+          // formDataToSend.append("reasons_for_pending", formData.reasons_for_pending || "");
           formDataToSend.append("percentage", formData.percentage || "");
           formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
@@ -920,6 +921,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("sessions_officers", formData.no_of_session_officers || "");
           formDataToSend.append("officers_trained", formData.officers_trained || "");
           formDataToSend.append("percent_officers_trained", formData.percentage_officers_trained || "");
+          formDataToSend.append("overall_cumulative", formData.overall_cumulative || "");
           formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
@@ -960,7 +962,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         alert("Data inserted successfully");
         setFormData(getInitialFormData());
         setFileInfo(null);
-        window.location.reload();
+        // window.location.reload();
       } else {
         throw new Error(`Unexpected response: ${response.status}`);
       }
@@ -1558,9 +1560,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         <input
                           type="number"
                           className="w-full p-2 border rounded mt-3"
-                          value={formData.pending_cases || ""}
+                          value={formData.total_pocso_bns_cases || ""}
                           onChange={(e) =>
-                            setFormData({ ...formData, pending_cases: e.target.value })
+                            setFormData({ ...formData, total_pocso_bns_cases: e.target.value })
                           }
                         />
                       </div>
@@ -1579,7 +1581,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                             })
                           }
                         />
-                        {parseInt(formData.charge_sheeted_within_60_days) > parseInt(formData.pending_cases) && (
+                        {parseInt(formData.charge_sheeted_within_60_days) > parseInt(formData.total_pocso_bns_cases) && (
                           <p className="text-red-500 text-sm mt-1">No. of cases (POCSO + BNS) chargesheet within 60 days cannot exceed Total No. of registered POCSO + BNS cases.</p>
                         )}
                       </div>
@@ -1589,7 +1591,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.percentage = ((Number(formData.charge_sheeted_within_60_days) / Number(formData.pending_cases) * 100).toFixed(2))}
+                          value={formData.percentage = ((Number(formData.charge_sheeted_within_60_days) / Number(formData.total_pocso_bns_cases) * 100).toFixed(2))}
                           onChange={(e) =>
                             setFormData({ ...formData, percentage: e.target.value })
                           }
@@ -1794,6 +1796,21 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           value={formData.percentage_officers_trained = ((Number(formData.officers_trained) / Number(formData.total_officers)) * 100).toFixed(2)}
                           onChange={(e) =>
                             setFormData({ ...formData, percentage_officers_trained: e.target.value })
+                          }
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Overall Cumulative %</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.overall_cumulative = (
+                            ((Number(formData.percentage_personal_trained) || 0) +
+                             (Number(formData.percentage_officers_trained) || 0)) / 2
+                          ).toFixed(2)}
+                          onChange={(e) =>
+                            setFormData({ ...formData, overall_cumulative: e.target.value })
                           }
                         />
                       </div>

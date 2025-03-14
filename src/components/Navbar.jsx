@@ -65,6 +65,7 @@ import awareness from '../assets/police/awareness.svg'
 import PoliceTraining from "./Police/PoliceTraining";
 
 import { DialogActions } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 
 
@@ -568,19 +569,12 @@ export default function Dashboard({ users }) {
 
   const [showDateRangeModal, setShowDateRangeModal] = useState(false); // Show date picker first
   const [dateRange, setDateRange] = useState({ fromDate: "", toDate: "" });
-
-  // Function to handle Date Selection
-  // const handleDateSelection = () => {
-  //   setShowDateRangeModal(false); // Close Date Picker
-  //   setShowModal(true); // Show Main Modal
-  // };
-
   const handleDateSelection = () => {
     setDateRange((prev) => ({
       ...prev,
       toDate: prev.toDate || new Date().toISOString().split("T")[0], // Ensure toDate is set
     }));
-  
+
     setShowDateRangeModal(false); // Close Date Picker
     setShowModal(true); // Show Main Modal
   };
@@ -811,8 +805,14 @@ export default function Dashboard({ users }) {
 
 
       {/* Date Range Picker Modal */}
-      <Dialog open={showDateRangeModal} fullWidth maxWidth="sm" >
-        <DialogTitle sx={{ backgroundColor: "#2d3748", color: "white" }}>Select Date Range</DialogTitle>
+      <Dialog open={showDateRangeModal} fullWidth maxWidth="sm" onClose={() => setShowDateRangeModal(false)}>
+        <DialogTitle sx={{ backgroundColor: "#2d3748", color: "white", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          Select Date Range
+          <IconButton onClick={() => setShowDateRangeModal(false)} sx={{ color: "white" }}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+
         <DialogContent>
           <Box display="flex" gap={2} flexDirection="column">
             <TextField
@@ -824,7 +824,7 @@ export default function Dashboard({ users }) {
               fullWidth
               className="mt-5"
             />
-             <TextField
+            <TextField
               label="As on Date"
               type="date"
               InputLabelProps={{ shrink: true }}
@@ -834,6 +834,7 @@ export default function Dashboard({ users }) {
             />
           </Box>
         </DialogContent>
+
         <DialogActions>
           <Button onClick={handleDateSelection} color="primary" variant="contained" sx={{ backgroundColor: "#4a5568", "&:hover": { backgroundColor: "#5a667a" } }}>
             OK
