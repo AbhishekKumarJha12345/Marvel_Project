@@ -568,18 +568,29 @@ export default function Dashboard({ users }) {
 
 
   const [showDateRangeModal, setShowDateRangeModal] = useState(false); // Show date picker first
-  const [dateRange, setDateRange] = useState({ fromDate: "", toDate: "" });
-  const handleDateSelection = () => {
-    setDateRange((prev) => ({
-      ...prev,
-      toDate: prev.toDate || new Date().toISOString().split("T")[0], // Ensure toDate is set
-    }));
+  const [dateRange, setDateRange] = useState({
+    fromDate: localStorage.getItem("from_date") || "",
+    toDate: localStorage.getItem("to_date") || new Date().toISOString().split("T")[0], // Default to today's date
+  });
 
-    setShowDateRangeModal(false); // Close Date Picker
-    setShowModal(true); // Show Main Modal
-  };
-  
 
+  useEffect(() => {
+  if (!localStorage.getItem("to_date")) {
+    localStorage.setItem("to_date", dateRange.toDate);
+  }
+}, [dateRange.toDate]);
+
+const handleDateSelection = () => {
+  setDateRange((prev) => {
+    const updatedToDate = prev.toDate || new Date().toISOString().split("T")[0]; // Ensure toDate is set
+    localStorage.setItem("to_date", updatedToDate); // Store in localStorage
+
+    return { ...prev, toDate: updatedToDate };
+  });
+
+  setShowDateRangeModal(false); // Close Date Picker
+  setShowModal(true); // Show Main Modal
+};
 
 
 
@@ -779,22 +790,22 @@ export default function Dashboard({ users }) {
       </div>
 
 
-    {
-  contentMap[activeSection?.section] ||
-  (users === "chief secretary"
-    ? contentMap["training"] 
-    : users === "police"
-    ? contentMap["training"] && setActiveSection( {section: "training" })
-    : users === "Court"
-    ? contentMap["court"]
-    : users === "Forensic"
-    ? contentMap["science"]
-    : users === "Prosecutor"
-    ? contentMap["prosecution"]
-    : users === "admin"
-    ? contentMap["admin"]
-    : contentMap["correctionalservices"])
-}
+      {
+        contentMap[activeSection?.section] ||
+        (users === "chief secretary"
+          ? contentMap["training"]
+          : users === "police"
+            ? contentMap["training"] && setActiveSection({ section: "training" })
+            : users === "Court"
+              ? contentMap["court"]
+              : users === "Forensic"
+                ? contentMap["science"]
+                : users === "Prosecutor"
+                  ? contentMap["prosecution"]
+                  : users === "admin"
+                    ? contentMap["admin"]
+                    : contentMap["correctionalservices"])
+      }
 
       {/* <ModalComponent
         open={showModal}
@@ -820,7 +831,11 @@ export default function Dashboard({ users }) {
               type="date"
               InputLabelProps={{ shrink: true }}
               value={dateRange.fromDate}
-              onChange={(e) => setDateRange({ ...dateRange, fromDate: e.target.value })}
+              onChange={(e) => {
+                const newFromDate = e.target.value;
+                setDateRange((prev) => ({ ...prev, fromDate: newFromDate }));
+                localStorage.setItem("from_date", newFromDate);
+              }}
               fullWidth
               className="mt-5"
             />
@@ -828,9 +843,9 @@ export default function Dashboard({ users }) {
               label="As on Date"
               type="date"
               InputLabelProps={{ shrink: true }}
-              value={dateRange.toDate || new Date().toISOString().split("T")[0]} // Default to today's date
+              value={dateRange.toDate} // Default to today's date
               fullWidth
-              InputProps={{ readOnly: true }} // Make it read-only
+              InputProps={{ readOnly: true }} // Read-only, cannot be changed manually
             />
           </Box>
         </DialogContent>

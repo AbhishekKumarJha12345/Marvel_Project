@@ -13,6 +13,7 @@ import { FormControl, InputLabel, Select, MenuItem, CircularProgress } from "@mu
 import policeLatLong from './police_stations.json'
 
 import policeCP from './maharashtraCP.json'
+import { Category } from "@mui/icons-material";
 
 
 const policeStationIcon = new L.Icon({
@@ -72,14 +73,10 @@ const MaharashtraMap = (catogoryBar) => {
     "Officers Trained"
   ]
 
-  console.log("catogory : ",catogory);
-  
-  const filterDataOption = catogory == 'Training' ? triningFilter[0]  :  catogory == 'FIR' ? options[0] : null
-
-console.log("filterDataOption : ",filterDataOption);
 
 
-  const [selectedForm, setSelectedForm] = useState(filterDataOption);
+
+  const [selectedForm, setSelectedForm] = useState( options[0]);
 
 
   const handleChange = (event) => {
@@ -98,18 +95,20 @@ console.log("filterDataOption : ",filterDataOption);
   const sub_role = localStorage.getItem("sub_role")
   const role = localStorage.getItem("role")
 
+if(sub_role == 'CP' || sub_role == 'SP'){
+
+  var from_date = localStorage.getItem("from_date")
+  var to_date = localStorage.getItem("to_date")
+
+
+}
+
   console.log("Zone : ", zone, " ", "district : ", district, " ", "role : ", sub_role, " ", "assignedCPCity : ", assignedCPCity);
 
 
 
   const userZones = sub_role == 'IG/DIG' || sub_role == 'CP' || sub_role == 'SP' ? zone : ""; // Example single zone
   const userDistricts = sub_role == 'CP' || sub_role == 'SP' ? district : ""; // Example single district
-
-
-  console.log("userZones : ", userZones);
-  console.log("userDistricts : ", userDistricts);
-
-
 
 
   const mapRef = useRef(null);
@@ -120,7 +119,7 @@ console.log("filterDataOption : ",filterDataOption);
 
       try {
         const response = await axiosInstance.get("/maharashtra-police-data", {
-          params: { zone: zoneName, district: districtName, table: catogory, typeFilter: selectedForm }
+          params: { zone: zoneName, district: districtName, table: catogory, typeFilter: selectedForm, start_date:to_date, end_date:from_date }
         });
 
         console.log("district : ", district);
@@ -149,12 +148,12 @@ console.log("filterDataOption : ",filterDataOption);
 
   }, [catogory, selectedForm]);
 
-  useEffect(()=>{
-    const filterDataOption = catogory == 'Training' ? triningFilter[0]  :  catogory == 'FIR' ? options[0] : null
+//   useEffect(()=>{
+//     const filterDataOption = catogory == 'Training' ? triningFilter[0]  :  catogory == 'FIR' ? options[0] : null
 
-setSelectedForm(filterDataOption)
+// setSelectedForm(filterDataOption)
 
-  },[catogory])
+//   },[catogory])
 
 
   useEffect(() => {
@@ -218,7 +217,7 @@ setSelectedForm(filterDataOption)
     if (percentage > 80) return "#37C503";
     if (percentage >= 60) return "#9AD911";
     if (percentage >= 40) return "#FF8585";
-    return "#F45546";
+    return "#FFA726";
   };
 
 
@@ -317,7 +316,7 @@ setSelectedForm(filterDataOption)
             const percentage = cityPercentages[station.city] || 0; // Get the percentage, default to 0
             const CpColorStrok = percentage > 80 ? "#37C503" :
               percentage >= 60 ? "#9AD911" :
-                percentage >= 40 ? "#FF8585" : "#F45546";
+                percentage >= 40 ? "#FF8585" : "#FFA726";
 
             const policeCPIcon = new L.Icon({
               iconUrl: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
@@ -524,58 +523,45 @@ setSelectedForm(filterDataOption)
           </div>
         )}
 
-        {
+{catogory === "FIR" && (
+  <div
+    style={{
+      position: "absolute",
+      right: 0,
+      top: "10%",
+      transform: "translateY(-50%)",
+      padding: "0",
+      background: "#fff",
+      boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
+      borderRadius: "8px",
+      fontSize: "10px",
+      fontWeight: "bold",
+      textAlign: "center",
+      zIndex: 999,
+      cursor: "pointer",
+      width: "20vw",
+      display: "flex",
+      flexDirection: "column",
+      gap: "5px",
+    }}
+  >
+    <h6>Type of Data</h6>
+    <Select
+      className="h-[40px]"
+      labelId="form-type-label"
+      id="form-type"
+      value={selectedForm}
+      onChange={handleChange}
+    >
+      {options.map((form) => (
+        <MenuItem key={form} value={form}>
+          {form}
+        </MenuItem>
+      ))}
+    </Select>
+  </div>
+)}
 
-          catogory == 'FIR' || catogory == 'Training' ?
-
-            (<div
-              style={{
-                position: "absolute",
-                right: 0,
-                top: "10%",
-                transform: "translateY(-50%)",
-                padding: "0",
-                background: "#fff",
-                boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
-                borderRadius: "8px",
-                fontSize: "10px",
-                fontWeight: "bold",
-                textAlign: "center",
-                zIndex: "999",
-                cursor: "pointer",
-                width: "20vw",
-                display: "flex",
-                flexDirection: "column",
-                gap: "5px"
-              }}
-            >
-              <h6>Type of Data</h6>
-              <Select
-                className="h-[40px]"
-                labelId="form-type-label"
-                id="form-type"
-                value={selectedForm}
-                onChange={handleChange}
-              >
-                {catogory === 'Training' ? (
-                  triningFilter.map((form) => (
-                    <MenuItem key={form} value={form}>
-                      {form}
-                    </MenuItem>
-                  ))
-                ) : (
-                  options.map((form) => (
-                    <MenuItem key={form} value={form}>
-                      {form}
-                    </MenuItem>
-                  ))
-                )}
-              </Select>
-            </div>)
-            :
-            null
-
-        }
         <div id="map" style={{ flex: 1, borderRadius: "8px" }}></div>
         <div
           style={{
@@ -601,7 +587,8 @@ setSelectedForm(filterDataOption)
           }}
         >
 
-          <div style={{ textAlign: "center", marginBottom: "5px", fontWeight: "bold", padding: "10px", width: "200px" }}>Legend</div>
+          <div style={{ textAlign: "center", marginBottom: "5px", fontWeight: "bold", adding: "10px", width: "200px" }}>Legend</div>
+          <div style={{ textAlign: "center", marginBottom: "5px", fontWeight: "normal", padding: "px", width: "200px", fontSize:"15px" }}>{catogory == 'Training' ? 'Overall Training Percentage Range' : catogory == 'FORENSIC' ? "Overall Forinsic Team vist Percentage Range" : `${selectedForm} Percentage Ranges` }</div>
           {(sub_role == 'IG/DIG' || role == 'chief secretary') ? (
             <>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -619,20 +606,20 @@ setSelectedForm(filterDataOption)
           <hr style={{ margin: "5px 0", borderColor: "#ccc" }} />
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
-            <span>80</span>
+            <span>80%</span>
             <div style={{ width: "30px", height: "10px", background: "#37C503", borderRadius: "2px" }}></div>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
-            <span>60-80</span>
+            <span>60% - 80%</span>
             <div style={{ width: "30px", height: "10px", background: "#9AD911", borderRadius: "2px" }}></div>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
-            <span>40-60</span>
+            <span>40% - 60%</span>
             <div style={{ width: "30px", height: "10px", background: "#FF8585", borderRadius: "2px" }}></div>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
-            <span>less than 40</span>
-            <div style={{ width: "30px", height: "10px", background: "#F45546", borderRadius: "2px" }}></div>
+            <span>less than 40 %</span>
+            <div style={{ width: "30px", height: "10px", background: "#FFA726", borderRadius: "2px" }}></div>
           </div>
 
         </div>
