@@ -1,0 +1,68 @@
+[
+    {
+      "city": "Mumbai City",
+      "latitude": 19.0760,
+      "longitude": 72.8777,
+      "zone": "Konkan"
+    },
+    {
+      "city": "Thane City",
+      "latitude": 19.218330,
+      "longitude": 72.978088,
+      "zone": "Konkan"
+    },
+    {
+      "city": "Mira Bhayandar",
+      "latitude": 19.295233,
+      "longitude": 72.854393,
+      "zone": "Konkan"
+    },
+    {
+      "city": "Navi Mumbai",
+      "latitude": 19.036810,
+      "longitude": 73.015820,
+      "zone": "Konkan"
+    },
+    {
+      "city": "Pune City",
+      "latitude": 18.520430,
+      "longitude": 73.856744,
+      "zone": "Pune"
+    },
+    {
+      "city": "Pimpri Chinchwad",
+      "latitude": 18.629781,
+      "longitude": 73.799709,
+      "zone": "Pune"
+    },
+    {
+      "city": "Amravati City",
+      "latitude": 20.937424,
+      "longitude": 77.779551,
+      "zone": "Amravati"
+    },
+    {
+      "city": "Nagpur City",
+      "latitude": 21.145800,
+      "longitude": 79.088155,
+      "zone": "Nagpur"
+    },
+    {
+      "city": "Nashik City",
+      "latitude": 19.997454,
+      "longitude": 73.789803,
+      "zone": "Nashik"
+    },
+    {
+      "city": "Aurangabad City",
+      "latitude": 19.876165,
+      "longitude": 75.343314,
+      "zone": "Aurangabad"
+    },
+    {
+      "city": "Solapur City",
+      "latitude": 17.659918,
+      "longitude": 75.906391,
+      "zone": "Pune"
+    }
+]

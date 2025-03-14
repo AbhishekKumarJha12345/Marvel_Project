@@ -12,6 +12,8 @@ import { FormControl, InputLabel, Select, MenuItem, CircularProgress } from "@mu
 
 import policeLatLong from './police_stations.json'
 
+import policeCP from './maharashtraCP.json'
+
 
 const policeStationIcon = new L.Icon({
   iconUrl: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
@@ -26,14 +28,17 @@ const policeStationIcon = new L.Icon({
   popupAnchor: [0, 0], // Adjusted popup anchor
 });
 
+
 const MaharashtraMap = (catogoryBar) => {
   const [selectedZone, setSelectedZone] = useState(null);
   const [zonePercentages, setZonePercentages] = useState({});
   const [districtPercentages, setDistrictPercentages] = useState({});
+  const [cityPercentages, setcityPercentages] = useState({});
   const [percent, setpercent] = useState(0);
 
   const [loading, setLoading] = useState(false); // Loader state
 
+  const catogory = catogoryBar.catogoryBar
 
   const options = [
     "Pendency of cases under BNS",
@@ -41,27 +46,40 @@ const MaharashtraMap = (catogoryBar) => {
     "Untraced Missing",
     "Important sections introduced in BNS",
     "Property offences under BNS",
-    "Esakshya Wrt Unit",
-    "Esakshya wrt 7yrs or more",
-    "FIR's and Zero FIR's",
+    "eSakshya Details",
+    "Use of eSakshya App in cases with punishment of 7 yrs. or more",
+    "Zero FIR's",
     "eFIR",
-    "ITSSO Compliance",
-    "Stolen Recovered Property",
-    "Forensic Team Deployment"
-  ];
+    "ITSSO Compliance Form",
+    "Stolen & Recovered Property",
+    "Conviction under BNS",
+
+    ];
 
   const staionsFilters = [
-  "Offences against body under BNS",
+    "Offences against body under BNS",
 
-  "Untraced Missing",
-  "Important sections introduced in BNS",
+    "Untraced Missing",
+    "Important sections introduced in BNS",
 
-  "Property offences under BNS",
+    "Property offences under BNS",
 
-  "eFIR"]
+    "eFIR"]
 
 
-  const [selectedForm, setSelectedForm] = useState(options[0]);
+  const triningFilter = [
+    "Constabulary Trained",
+    "Officers Trained"
+  ]
+
+  console.log("catogory : ",catogory);
+  
+  const filterDataOption = catogory == 'Training' ? triningFilter[0]  :  catogory == 'FIR' ? options[0] : null
+
+console.log("filterDataOption : ",filterDataOption);
+
+
+  const [selectedForm, setSelectedForm] = useState(filterDataOption);
 
 
   const handleChange = (event) => {
@@ -69,17 +87,18 @@ const MaharashtraMap = (catogoryBar) => {
   };
 
 
-  const catogory = catogoryBar.catogoryBar
 
 
   const zone = localStorage.getItem("zone")
+
+  const assignedCPCity = localStorage.getItem("city")
 
   const district = localStorage.getItem("district")
 
   const sub_role = localStorage.getItem("sub_role")
   const role = localStorage.getItem("role")
 
-  console.log("Zone : ", zone, " ", "district : ", district, " ", "role : ", sub_role);
+  console.log("Zone : ", zone, " ", "district : ", district, " ", "role : ", sub_role, " ", "assignedCPCity : ", assignedCPCity);
 
 
 
@@ -103,19 +122,34 @@ const MaharashtraMap = (catogoryBar) => {
         const response = await axiosInstance.get("/maharashtra-police-data", {
           params: { zone: zoneName, district: districtName, table: catogory, typeFilter: selectedForm }
         });
-        
-        console.log("district : ",district);
-        console.log("response.data.districts : ",response.data);
 
-        district ? setpercent(response.data.districts[district] || 0) : setpercent( 0)
+        console.log("district : ", district);
+        console.log("response.data.districts : ", response.data);
+
+        district ? setpercent(response.data.districts[district] || 0) : setpercent(0)
 
         role == 'chief secretary' && !selectedZone ? setpercent(response.data.zones) : setpercent(response.data.districts)
 
         // selectedZone ? districtName : zoneName || district
-        
+
 
         setZonePercentages(response.data.zones);
         setDistrictPercentages(response.data.districts);
+        // setCityPercentages(response.data.districts);
+        setcityPercentages({
+          "Mumbai City": 92,
+          "Thane City": 78,
+          "Mira Bhayandar": 85,
+          "Navi Mumbai": 97,
+          "Pune City": 88,
+          "Pimpri Chinchwad": 76,
+          "Amravati City": 81,
+          "Nagpur City": 94,
+          "Nashik City": 69,
+          "Aurangabad City": 73,
+          "Solapur City": 90
+        }
+        );
       } catch (error) {
         console.error("Error fetching Maharashtra police data:", error);
       }
@@ -124,11 +158,17 @@ const MaharashtraMap = (catogoryBar) => {
 
     fetchData("", ""); // Fetch all data initially
 
-    console.log("districtPercentages : ",districtPercentages);
+    console.log("selectedForm : ", selectedForm);
     
 
+  }, [catogory, selectedForm]);
 
-  }, [catogory,selectedForm]);
+  useEffect(()=>{
+    const filterDataOption = catogory == 'Training' ? triningFilter[0]  :  catogory == 'FIR' ? options[0] : null
+
+setSelectedForm(filterDataOption)
+
+  },[catogory])
 
 
   useEffect(() => {
@@ -187,7 +227,7 @@ const MaharashtraMap = (catogoryBar) => {
       // Treat it as a string and fetch the percentage normally
       percentage = zonePercentages[name] || districtPercentages[name] || 0;
     }
-    
+
     // Determine the color based on percentage
     if (percentage > 80) return "#37C503";
     if (percentage >= 60) return "#9AD911";
@@ -213,9 +253,9 @@ const MaharashtraMap = (catogoryBar) => {
         map.removeLayer(layer);
       }
     });
-  
-  
-   
+
+
+
 
 
     const isDistrictAllowed = (districtName) => {
@@ -238,9 +278,9 @@ const MaharashtraMap = (catogoryBar) => {
 
 
 
-        const markersLayer = L.layerGroup().addTo(map);
+    const markersLayer = L.layerGroup().addTo(map);
 
-        let percentageDisplay;
+    let percentageDisplay;
     let maharashtraLayer = L.geoJSON(filteredFeatures, {
       style: (feature) => {
         const districtName = selectedZone ? feature.properties.dtname : feature.properties.division;
@@ -248,33 +288,115 @@ const MaharashtraMap = (catogoryBar) => {
           ? Object.keys(zoneMapping).find(zone => zoneMapping[zone].includes(districtName))
           : Object.keys(zoneMapping);
 
-          // Get the percentage for the district or zone
-          percentageDisplay = selectedZone 
-          ? zonePercentages[districtName] || districtPercentages[districtName] || 0 
+        // Get the percentage for the district or zone
+        percentageDisplay = selectedZone
+          ? zonePercentages[districtName] || districtPercentages[districtName] || 0
           : zonePercentages[zoneName] || districtPercentages[zoneName] || 0;
 
 
 
 
-        if((selectedZone && districtName == "Nagpur Rural" ) || (district == "Nagpur Rural")  ){
+        if ((selectedZone && districtName == "Nagpur Rural") || (district == "Nagpur Rural")) {
 
-          
 
-          const nagpurDistricts = ["Nagpur Rural","Nagpur"];
-          const nagpurStations = policeLatLong.filter(station => 
+
+          const nagpurDistricts = ["Nagpur Rural", "Nagpur"];
+          const nagpurStations = policeLatLong.filter(station =>
             nagpurDistricts.includes(station.District) // Adjust this based on your JSON structure
           );
-      
+
           // Add markers for each police station
           nagpurStations.forEach(station => {
             const marker = L.marker([station.Latitude, station.Longitude], { icon: policeStationIcon })
               .addTo(markersLayer)
-              .bindPopup(`<b>${station.PoliceStation}</b><br>${station.District}`);
+
+              .on('mouseover', function () {
+                this.bindPopup(`<b>${station.PoliceStation}</b><br>${station.District}`, {
+                  offset: L.point(2, 10) // Adjust offset
+                }).openPopup();
+              })
+              .on('mouseout', function () {
+                this.closePopup();
+              })
           });
-      }
-    
-       
-    
+        }
+
+        if (sub_role === 'CP' || role === 'chief secretary') {
+          // Filter policeCP based on selectedZone
+          const filteredStations = selectedZone || zone
+            ? policeCP.filter(station => station.zone === selectedZone)
+            : policeCP;
+
+          filteredStations.forEach(station => {
+            const percentage = cityPercentages[station.city] || 0; // Get the percentage, default to 0
+            const CpColorStrok = percentage > 80 ? "#37C503" :
+              percentage >= 60 ? "#9AD911" :
+                percentage >= 40 ? "#FF8585" : "#F45546";
+
+            const policeCPIcon = new L.Icon({
+              iconUrl: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                <svg width="15px" height="15px" viewBox="0 0 40 47" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <g filter="url(#filter0_d_82_279)">
+                    <ellipse cx="20.2439" cy="15.854" rx="8.53659" ry="9.5122" fill="white"/>
+                    <path d="M23.9094 22.0951L24.9445 22.7161L24.6517 21.5451L23.5597 17.1769L26.9935 14.2114L27.8696 13.4548L26.7181 13.3357L22.1787 12.8661L20.4605 8.80485L19.9913 7.69584L19.5369 8.81103L17.8212 13.0223L13.2989 13.3342L12.0875 13.4177L13.0065 14.2114L16.4403 17.1769L15.3482 21.5451L15.0555 22.7161L16.0906 22.0951L20 19.7494L23.9094 22.0951ZM20 35.907C19.9621 35.863 19.9215 35.8158 19.8784 35.7655C19.5621 35.3964 19.1095 34.8584 18.566 34.1855C17.4786 32.8392 16.0295 30.9553 14.5814 28.8038C13.1324 26.6509 11.6905 24.2392 10.6124 21.8366C9.53124 19.4272 8.83331 17.0646 8.83331 14.9997C8.83331 8.77582 13.7761 3.83301 20 3.83301C26.2238 3.83301 31.1666 8.77582 31.1666 14.9997C31.1666 17.0646 30.4687 19.4272 29.3875 21.8366C28.3095 24.2392 26.8676 26.6509 25.4185 28.8038C23.9704 30.9553 22.5214 32.8392 21.4339 34.1855C20.8904 34.8584 20.4378 35.3964 20.1216 35.7655C20.0785 35.8158 20.0379 35.863 20 35.907Z"
+                    fill="${CpColorStrok}" stroke="black"/>
+                  </g>
+                </svg>
+              `),
+              iconSize: [30, 30],
+              iconAnchor: [15, 30],
+              popupAnchor: [0, -30]
+            });
+
+            const marker = L.marker([station.latitude, station.longitude], { icon: policeCPIcon })
+              .addTo(markersLayer)
+              .on('mouseover', function () {
+                this.bindPopup(`<b>${station.city} CP</b></br>Percentage : ${percentage}%`, {
+                  offset: L.point(2, 10) // Adjust offset
+                }).openPopup();
+              })
+              .on('mouseout', function () {
+                this.closePopup();
+              })
+              .on('click', function () {
+                // Only allow zoom if the CP's assigned city matches the station's city
+                if (sub_role === 'CP' && station.city === assignedCPCity) {
+                  // Zoom into the clicked city
+                  map.setView([station.latitude, station.longitude], 12);
+
+
+                  // Clear previous markers and layers
+                  markersLayer.clearLayers();
+                  if (window.cityRadiusLayer) {
+                    map.removeLayer(window.cityRadiusLayer);
+                  }
+
+                  // Filter police stations in the clicked city
+                  const cityStations = policeLatLong.filter(st => st.city === station.city);
+
+                  // Add markers for the city's police stations
+                  cityStations.forEach(st => {
+                    L.marker([st.Latitude, st.Longitude], { icon: policeStationIcon })
+                      .addTo(markersLayer)
+                      .bindPopup(`<b>${st.PoliceStation}</b><br>${st.city}`);
+                  });
+
+                  // Draw a radius (circle) around the city
+                  window.cityRadiusLayer = L.circle([station.latitude, station.longitude], {
+                    color: "blue",
+                    fillColor: "lightblue",
+                    fillOpacity: 0.3,
+                    radius: 5000 // 5 km radius
+                  }).addTo(map);
+                }
+              });
+          });
+        }
+
+
+
+
+
 
         return {
           fillColor: selectedZone ? getZoneColor(districtName) : getZoneColor(zoneName),
@@ -287,6 +409,7 @@ const MaharashtraMap = (catogoryBar) => {
         const districtName = selectedZone ? feature.properties.dtname : feature.properties.division;
         const zoneName = getZoneForDistrict(districtName);
 
+        // if (sub_role != 'CP' && !assignedCPCity) {  
         layer.on({
           click: (e) => {
             setSelectedZone(zoneName);
@@ -295,19 +418,20 @@ const MaharashtraMap = (catogoryBar) => {
           mouseover: (e) => {
             layer.setStyle({ color: "#ffff", weight: 2 });
             L.popup()
-            .setLatLng(e.latlng)
-            .setContent(`<b>${selectedZone ? districtName : zoneName || district}</b><br>Percentage: ${ selectedZone ? percent[districtName] || 0 : percent[zoneName]||0 || percent[district] ||0}%`)
-            .openOn(map);
-                    },
+              .setLatLng(e.latlng)
+              .setContent(`<b>${selectedZone ? districtName : zoneName || district}</b><br>Percentage: ${selectedZone ? percent[districtName] || 0 : percent[zoneName] || 0 || percent[district] || 0}%`)
+              .openOn(map);
+          },
           mouseout: () => {
             layer.setStyle({ color: "#ffff", fillOpacity: 0.7 });
             map.closePopup();
           },
         });
+        // }
 
       },
     }).addTo(map);
-    
+
 
     const bounds = maharashtraLayer.getBounds();
     map.fitBounds(bounds);
@@ -360,13 +484,13 @@ const MaharashtraMap = (catogoryBar) => {
     return () => {
       if (map.hasLayer(maharashtraLayer)) {
         map.removeLayer(maharashtraLayer);
-      markersLayer.clearLayers(); // Clean up markers on unmount
+        markersLayer.clearLayers(); // Clean up markers on unmount
 
       }
     };
- 
 
-  }, [selectedZone, zonePercentages,selectedForm]);
+
+  }, [selectedZone, zonePercentages, selectedForm]);
 
   return (
     <div style={{ display: "flex", height: "80vh", width: "100%", zIndex: "0" }}>
@@ -416,7 +540,7 @@ const MaharashtraMap = (catogoryBar) => {
 
         {
 
-           catogory == 'FIR' ?
+          catogory == 'FIR' || catogory == 'Training' ?
 
             (<div
               style={{
@@ -447,11 +571,19 @@ const MaharashtraMap = (catogoryBar) => {
                 value={selectedForm}
                 onChange={handleChange}
               >
-                {options.map((form) => (
-                  <MenuItem key={form} value={form}>
-                    {form}
-                  </MenuItem>
-                ))}
+                {catogory === 'Training' ? (
+                  triningFilter.map((form) => (
+                    <MenuItem key={form} value={form}>
+                      {form}
+                    </MenuItem>
+                  ))
+                ) : (
+                  options.map((form) => (
+                    <MenuItem key={form} value={form}>
+                      {form}
+                    </MenuItem>
+                  ))
+                )}
               </Select>
             </div>)
             :
@@ -483,7 +615,7 @@ const MaharashtraMap = (catogoryBar) => {
           }}
         >
 
-          <div style={{ textAlign: "center", marginBottom: "5px", fontWeight: "bold", padding: "10px", width: "300px" }}>Legend</div>
+          <div style={{ textAlign: "center", marginBottom: "5px", fontWeight: "bold", padding: "10px", width: "200px" }}>Legend</div>
           {(sub_role == 'IG/DIG' || role == 'chief secretary') ? (
             <>
               <div style={{ display: "flex", justifyContent: "space-between" }}>

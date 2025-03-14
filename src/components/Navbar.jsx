@@ -64,6 +64,9 @@ import fir from '../assets/police/fir.svg'
 import awareness from '../assets/police/awareness.svg'
 import PoliceTraining from "./Police/PoliceTraining";
 
+import { DialogActions } from "@mui/material";
+
+
 
 
 const exporttrainingRefDetails = [
@@ -131,7 +134,7 @@ Overall Trends & Recommendations:
 export default function Dashboard({ users }) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSubMenu, setActiveSubMenu] = useState(null);
-  const [activeSection, setActiveSection] = useState({ section: "training" }); // Unified state for all sections
+  const [activeSection, setActiveSection] = useState({}); // Unified state for all sections
   // const [activeSection, setActiveSection] = useState(null); // Unified state for all sections
 
   const sub_role = localStorage.getItem("sub_role")
@@ -266,14 +269,9 @@ export default function Dashboard({ users }) {
     "training":
       <div className="content">
         <h1 className="heading" style={{ marginLeft: "40rem" }}>Police - Training</h1>
-
         <MaharashtraPoliceMap catogoryBar="Training" />
-
-
-        {/* <PoliceTraining ref={trainingRef} /> */}
       </div>,
-    // "awareness/campaign"    : <div className="content"><h1 className="heading">Awareness Campaigns</h1><Carousel /></div>,
-    "forensic/visits": <div className="content"><h1 className="heading">Forensic Visits</h1><MaharashtraPoliceMap catogoryBar="FORENSIC" /></div>,
+    "forensic/visits": <div className="content"><h1 className="heading">Police - Forensic Visits</h1><MaharashtraPoliceMap catogoryBar="FORENSIC" /></div>,
     "court": <div className="content"><h1 className="heading">Court Visits</h1><Dashboard2 /></div>,
     "science": <div className="content"><h1 className="heading">Forensic Science Department</h1><Dashboard1 /></div>,
     "prosecution": <div className="content"><h1 className="heading">Prosecution Visits</h1><CriminalPages /></div>,
@@ -568,6 +566,26 @@ export default function Dashboard({ users }) {
 
 
 
+  const [showDateRangeModal, setShowDateRangeModal] = useState(false); // Show date picker first
+  const [dateRange, setDateRange] = useState({ fromDate: "", toDate: "" });
+
+  // Function to handle Date Selection
+  // const handleDateSelection = () => {
+  //   setShowDateRangeModal(false); // Close Date Picker
+  //   setShowModal(true); // Show Main Modal
+  // };
+
+  const handleDateSelection = () => {
+    setDateRange((prev) => ({
+      ...prev,
+      toDate: prev.toDate || new Date().toISOString().split("T")[0], // Ensure toDate is set
+    }));
+  
+    setShowDateRangeModal(false); // Close Date Picker
+    setShowModal(true); // Show Main Modal
+  };
+  
+
 
 
 
@@ -633,7 +651,8 @@ export default function Dashboard({ users }) {
                     style={{ backgroundColor: "#2d3748", position: "absolute", right: "0", top: "70px" }}
                     onClick={() => {
                       console.log("Open modal");
-                      setShowModal(true);
+                      setShowDateRangeModal(true);
+                      // setShowModal(true);
                     }}
                   >
                     Add Data
@@ -684,9 +703,9 @@ export default function Dashboard({ users }) {
               </>
             ))}
 
-          {users === "chief secretary" ? (
+          {/* {users === "chief secretary" ? (
             <div className="nav-divider"></div>
-          ) : null}
+          ) : null} */}
 
           {/* {(users === "chief secretary" || users === "Prosecutor") && (
             <li
@@ -769,9 +788,9 @@ export default function Dashboard({ users }) {
     {
   contentMap[activeSection?.section] ||
   (users === "chief secretary"
-    ? contentMap["training"]
+    ? contentMap["training"] 
     : users === "police"
-    ? contentMap["training"]
+    ? contentMap["training"] && setActiveSection( {section: "training" })
     : users === "Court"
     ? contentMap["court"]
     : users === "Forensic"
@@ -779,16 +798,61 @@ export default function Dashboard({ users }) {
     : users === "Prosecutor"
     ? contentMap["prosecution"]
     : users === "admin"
-    ? contentMap["admin"] // ✅ Now "admin" gets the correct content
+    ? contentMap["admin"]
     : contentMap["correctionalservices"])
 }
 
-      <ModalComponent
+      {/* <ModalComponent
         open={showModal}
         type="police"
         training_active={activeSection} // Pass the selected section as a prop
         onClose={() => setShowModal(false)}
-      />
+      /> */}
+
+
+      {/* Date Range Picker Modal */}
+      <Dialog open={showDateRangeModal} fullWidth maxWidth="sm" >
+        <DialogTitle sx={{ backgroundColor: "#2d3748", color: "white" }}>Select Date Range</DialogTitle>
+        <DialogContent>
+          <Box display="flex" gap={2} flexDirection="column">
+            <TextField
+              label="From Date"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              value={dateRange.fromDate}
+              onChange={(e) => setDateRange({ ...dateRange, fromDate: e.target.value })}
+              fullWidth
+              className="mt-5"
+            />
+             <TextField
+              label="As on Date"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              value={dateRange.toDate || new Date().toISOString().split("T")[0]} // Default to today's date
+              fullWidth
+              InputProps={{ readOnly: true }} // Make it read-only
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDateSelection} color="primary" variant="contained" sx={{ backgroundColor: "#4a5568", "&:hover": { backgroundColor: "#5a667a" } }}>
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Main Modal (Opens after selecting Date Range) */}
+      {showModal && (
+        <ModalComponent
+          open={showModal}
+          type="police"
+          training_active={activeSection} // Pass the selected section
+          onClose={() => setShowModal(false)}
+          dateRange={dateRange} // Pass selected date range
+        />
+      )}
+
+
     </div>
   );
 }
