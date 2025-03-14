@@ -1076,50 +1076,45 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   }, []);
 
   // Handle BNS Section selection
+  // const handleBnsSectionChange = (e) => {
+  //   const selectedSection = e.target.value;
+
+  //   // Find matching data
+  //   const matchedData = convictionData.find((item) => item.bns_section === selectedSection);
+
+  //   setFormData((prev) => ({
+  //     ...prev, // Preserve other form data
+  //     bns_sections: selectedSection,
+  //     total_cases_convicted: matchedData ? matchedData.total_cases_convicted : "waiting for backend value",
+  //     total_cases_decided: matchedData ? matchedData.total_cases_decided : "waiting for backend value",
+  //   }));
+  // };
+
+  // useEffect(() => {
+  //   console.log(formData.total_cases_convicted, formData.total_cases_decided, formData.bns_sections, "...................tpaoca.........");
+  // }, [formData]); // Runs whenever formData changes
+
   const handleBnsSectionChange = (e) => {
     const selectedSection = e.target.value;
 
     // Find matching data
     const matchedData = convictionData.find((item) => item.bns_section === selectedSection);
 
+    // Update form data
     setFormData((prev) => ({
-      ...prev, // Preserve other form data
+      ...prev,
       bns_sections: selectedSection,
-      total_cases_convicted: matchedData ? matchedData.total_cases_convicted : "waiting for backend value",
-      total_cases_decided: matchedData ? matchedData.total_cases_decided : "waiting for backend value",
+      total_cases_convicted: matchedData ? matchedData.total_cases_convicted : 0,
+      total_cases_decided: matchedData ? matchedData.total_cases_decided : 0,
     }));
+
+    console.log("Selected Section:", selectedSection);
   };
 
-  useEffect(() => {
-    console.log(formData.total_cases_convicted, formData.total_cases_decided, formData.bns_sections, "...................tpaoca.........");
-  }, [formData]); // Runs whenever formData changes
+
 
 
   // ================================================================================================================
-
-  // const [historyData, setHistoryData] = useState(null); // Store response
-
-  // useEffect(() => {
-  //   if (formData.formType) {
-  //     const fetchHistory = async () => {
-  //       const payload = {
-  //         fromDate: formData.fromDate,
-  //         toDate: formData.toDate,
-  //         formType: formData.formType,
-  //       };
-
-  //       try {
-  //         const response = await axios.post("/history", payload);
-  //         console.log("History Response:", response.data);
-  //         setHistoryData(response.data); // Store the response data
-  //       } catch (error) {
-  //         console.error("Error fetching history:", error);
-  //       }
-  //     };
-
-  //     fetchHistory();
-  //   }
-  // }, [formData.formType]); // Trigger when formType changes
 
   const [historyData, setHistoryData] = useState([]); // Store response as an array
   const [openModal, setOpenModal] = useState(false); // State for modal visibility
@@ -2233,7 +2228,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                       </div>
 
                       {/* BNS Sections Dropdown */}
-                      <div>
+                      {/* <div>
                         <label className="block text-sm font-medium">BNS Sections</label>
                         <select
                           className="w-full p-2 border rounded"
@@ -2248,27 +2243,30 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           ))}
                           <option value="Other">Other BNS Sections</option>
                         </select>
-                      </div>
-                      {/* <div>
+                      </div> */}
+
+                      <div>
                         <label className="block text-sm font-medium">BNS Sections</label>
                         <select
                           className="w-full p-2 border rounded"
                           value={formData.bns_sections || ""}
-                          onChange={(e) => setFormData({ ...formData, bns_sections: e.target.value, other_bns_section: "" })}
+                          onChange={(e) => handleBnsSectionChange(e)}
                         >
                           <option value="">Select</option>
                           <option value="285">285</option>
                           <option value="281">281</option>
                           <option value="287">287</option>
-                          <option value="287">303(2)</option>
-                          <option value="287">125</option>
-                          <option value="287">305</option>
-                          <option value="287">223</option>
-                          <option value="287">293</option>
-                          <option value="287">289</option>
+                          <option value="303(2)">303(2)</option>
+                          <option value="125">125</option>
+                          <option value="305">305</option>
+                          <option value="223">223</option>
+                          <option value="293">293</option>
+                          <option value="289">289</option>
                           <option value="Other">Other BNS Sections</option>
                         </select>
-                      </div> */}
+                      </div>
+
+
                       {/* Other BNS Section (Only show if 'Other' is selected) */}
                       {formData.bns_sections === "Other" && (
                         <div>
@@ -2324,7 +2322,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         />
                       </div>
 
-                      <div>
+                      {/* <div>
                         <label className="block text-sm font-medium">Total Cases Convicted</label>
                         <input
                           type="number"
@@ -2337,16 +2335,33 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           }
                           readOnly
                         />
+                      </div> */}
+                      <div>
+                        <label className="block text-sm font-medium">Total Cases Convicted</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={
+                            formData.total_cases_convicted !== undefined && formData.total_cases_convicted !== null
+                              ? Number(formData.total_cases_convicted) + Number(formData.convicted_cases || 0)
+                              : 0
+                          }
+                          onChange={(e) =>
+                            setFormData({ ...formData, total_cases_convicted: e.target.value })
+                          }
+                          readOnly
+                        />
                       </div>
+
 
                       <div>
                         <label className="block text-sm font-medium">Total Cases Decided</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.total_cases_decided
+                          value={formData.total_cases_decided !== undefined && formData.total_cases_decided !== null
                             ? Number(formData.total_cases_decided) + Number(formData.cases_decided || 0)
-                            : "waiting for backend value"}
+                            : 0}
                           onChange={(e) =>
                             setFormData({ ...formData, total_cases_decided: e.target.value })
                           }
@@ -2362,7 +2377,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.total_cases_convicted || "waiting for backend value"}
+                          value={formData.total_cases_convicted !== undefined && formData.total_cases_convicted !== null
+                            ? formData.total_cases_convicted
+                            : 0}
                           onChange={(e) =>
                             setFormData({ ...formData, total_cases_convicted: e.target.value })
                           }
@@ -2375,13 +2392,16 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.total_cases_decided || "waiting for backend value"}
+                          value={formData.total_cases_decided !== undefined && formData.total_cases_decided !== null
+                            ? formData.total_cases_decided
+                            : 0}
                           onChange={(e) =>
                             setFormData({ ...formData, total_cases_decided: e.target.value })
                           }
                           readOnly
                         />
                       </div>
+
 
 
                       {/* <div>
