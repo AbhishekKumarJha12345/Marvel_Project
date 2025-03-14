@@ -101,11 +101,28 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       cases_decided: "",
       convicted_cases: "",
       conviction_rate: "",
-      overall_cumulative : ""
+      overall_cumulative: "",
+      total_persons_trained: "",
+
+      bns_sections: "",
+      total_cases_convicted: "waiting for backend value",
+      total_cases_decided: "waiting for backend value",
+      detected_cases: "",
+      offences_registerd: "",
+
+      total_zero_firs : "",
+      total_no_zero_fir_transferred_outer_state_to_mh: "",
+      pending_for_re_registration: "",
+      re_reg_firs: "",
+      total_transferred_zero_firs_in_mh: "",
+      pending_for_transfer_within_mh: "",
+      total_firs_registered: "",
+      total_no_zero_fir_transferred_outside_mh: "",
+      pending_to_transfer_outside_mh: ""
 
     };
   }
-
+  const [convictionData, setConvictionData] = useState([]);
   const [formData, setFormData] = useState(getInitialFormData());
   // const [formData, setFormData] = useState(getInitialFormData(), { toDate: currentDate });
 
@@ -246,6 +263,8 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       "value_stolen_property",
       "value_recovered_property",
       "recovery_percentage",
+      "detected_cases",
+      "offences_registerd",
       "month_year_from",
       "month_year_to"
     ],
@@ -322,10 +341,29 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       "month_year_from": "From Date",
       "month_year_to": "To Date"
     },
+
+    // "columns": {
+    //     "total_zero_firs",
+    //     "total_no_zero_fir_transferred_outer_state_to_mh",
+    //     "pending_for_re_registration",
+    //     "re_reg_firs",
+    //     "total_transferred_zero_firs_in_mh",
+    //     "pending_for_transfer_within_mh",
+    //     "total_firs_registered",
+    //     "total_no_zero_fir_transferred_outside_mh",
+    //     "pending_to_transfer_outside_mh"
+    // },
+
     "Zero FIR's": {
-      "total_zero_firs_received": "Total Zero FIR's Received",
-      "total_firs_registered": "Total FIR's Registered",
-      "total_transferred_zero_firs": "Total Transferred Zero FIR's",
+      "total_no_zero_fir_transferred_outside_mh" : "No. of Zero FIRs transferred outside Maharashtra",
+      "total_no_zero_fir_transferred_outer_state_to_mh" : "No. of Zero FIRs transferred from other State to Maharashtra",
+      "total_zero_firs" : "Total No of Zero FIRs",
+      "total_firs_registered" : "Zero FIR's in Maharashtra",
+      "pending_to_transfer_outside_mh" : "Pending for Transfer outside Maharashtra",
+      "re_reg_firs" : "Re-Registered FIRs in Maharashtra",
+      "total_transferred_zero_firs_in_mh" : "No of Zero FIR's Transferred Within Maharashtra",
+      "pending_for_transfer_within_mh" : "Pending for Transfer within Maharashtra",
+      "pending_for_re_registration" : "Pending for Re-registration",
       "month_year_from": "From Date",
       "month_year_to": "To Date"
     },
@@ -346,6 +384,8 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       "total_cases": "Total Cases",
       "value_stolen_property": "Value of Stolen Property",
       "value_recovered_property": "Value of Recovered Property",
+      "detected_cases": "Detected Cases",
+      "offences_registerd": "Offences Registered",
       "month_year_from": "From Date",
       "month_year_to": "To Date"
     },
@@ -405,9 +445,10 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         "total_cases,total_offences_with_esakshya,total_charge_sheeted_with_esakshya,total_under_investigation_without_esakshya,month_year_from,month_year_to",
         "13,12,1,2,02-03-2025,13-03-2025"
       ],
+
       "Zero FIR's": [
-        "total_zero_firs_received,total_firs_registered,total_transferred_zero_firs,month_year_from,month_year_to",
-        "23,25,12,02-03-2025,13-03-2025"
+        "total_no_zero_fir_transferred_outside_mh,total_no_zero_fir_transferred_outer_state_to_mh,total_zero_firs,total_firs_registered,pending_to_transfer_outside_mh,re_reg_firs,total_transferred_zero_firs_in_mh,pending_for_transfer_within_mh,pending_for_re_registration,month_year_from,month_year_to",
+        "23,25,12,23,23,23,23,23,23,02-03-2025,13-03-2025"
       ],
       "eFIR": [
         "total_ecomplaints_received,total_ecomplaints_converted_to_firs,disposed_of_ecomplaints,month_year_from,month_year_to",
@@ -418,8 +459,8 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         "12,23,02-03-2025,13-03-2025"
       ],
       "Stolen & Recovered Property": [
-        "total_cases,value_stolen_property,value_recovered_property,month_year_from,month_year_to",
-        "10,4,2,02-03-2025,13-03-2025"
+        "total_cases,value_stolen_property,value_recovered_property,detected_cases,Offences_registerd,month_year_from,month_year_to",
+        "10,4,2,20,40,02-03-2025,13-03-2025"
       ],
       "Visit of Forensic Teams": [
         "total_cases_gt_7_years,cases_forensic_team_visited,month_year_from,month_year_to",
@@ -734,8 +775,8 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         // -------------------------------------------------------------------------------------------------------
         // formDataToSend.append("type", selectedType);
         // formDataToSend.append("file", formData.uploadedFile);
-        formDataToSend.append("unit", localStorage.getItem("zone") || "");
-        formDataToSend.append("district", localStorage.getItem("district") || "");
+        formDataToSend.append("unit", localStorage.getItem("zone") || "N/A");
+        formDataToSend.append("district", localStorage.getItem("district") || "N/A");
         formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
         // formDataToSend.append("unit", localStorage.getItem("unit") || "N/A");
         // formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
@@ -844,17 +885,22 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
+
         if (formData.formType === "Zero FIR's") {
           formDataToSend.append("type", "fir_and_zero_firs");
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
           formDataToSend.append("city", localStorage.getItem("city") || "N/A");
-          formDataToSend.append("unit", formData.unit);
-          formDataToSend.append("section", formData.sections);
-          formDataToSend.append("total_zero_firs_received", formData.totalZeroFIRsReceived);
-          formDataToSend.append("total_firs_registered", formData.totalFIRsRegistered);
-          formDataToSend.append("pending", formData.pending);
-          formDataToSend.append("total_transferred_zero_firs", formData.totalTransferredZeroFIRs);
+          formDataToSend.append("unit", localStorage.getItem("unit") || "N/A");
+          formDataToSend.append("total_no_zero_fir_transferred_outside_mh", formData.total_no_zero_fir_transferred_outside_mh);
+          formDataToSend.append("total_no_zero_fir_transferred_outer_state_to_mh", formData.total_no_zero_fir_transferred_outer_state_to_mh);
+          formDataToSend.append("total_zero_firs", formData.total_zero_firs);
+          formDataToSend.append("total_firs_registered", formData.total_firs_registered);
+          formDataToSend.append("pending_to_transfer_outside_mh", formData.pending_to_transfer_outside_mh);
+          formDataToSend.append("re_reg_firs", formData.re_reg_firs);
+          formDataToSend.append("total_transferred_zero_firs_in_mh", formData.total_transferred_zero_firs_in_mh);
+          formDataToSend.append("pending_for_transfer_within_mh", formData.pending_for_transfer_within_mh);
+          formDataToSend.append("pending_for_re_registration", formData.pending_for_re_registration);
           formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
@@ -891,10 +937,13 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("district", localStorage.getItem("district") || "");
           formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
           formDataToSend.append("city", localStorage.getItem("city") || "N/A");
+          formDataToSend.append("unit", localStorage.getItem("unit") || "N/A");
           formDataToSend.append("total_cases", formData.total_cases || "");
           formDataToSend.append("value_stolen_property", formData.value_stolen_property || "");
           formDataToSend.append("value_recovered_property", formData.value_recovered_property || "");
           formDataToSend.append("recovery_percentage", formData.recovery_percentage || "");
+          formDataToSend.append("detected_cases", formData.detected_cases || "");
+          formDataToSend.append("offences_registerd", formData.offences_registerd || "");
           formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
@@ -923,8 +972,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           formDataToSend.append("total_officers", formData.total_officers || "");
           formDataToSend.append("sessions_officers", formData.no_of_session_officers || "");
           formDataToSend.append("officers_trained", formData.officers_trained || "");
+          // formDataToSend.append("total_persons_trained", formData.total_persons_trained || "");
           formDataToSend.append("percent_officers_trained", formData.percentage_officers_trained || "");
-          formDataToSend.append("overall_cumulative", formData.overall_cumulative || "");
+          // formDataToSend.append("overall_cumulative", formData.overall_cumulative || "");
           formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
           formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
         }
@@ -977,16 +1027,70 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
 
 
+  // useEffect(() => {
+  //   setFormData(prevState => ({
+  //     ...getInitialFormData(),
+  //     formType: prevState.formType, // Keep the selected form type
+  //   }));
+  // }, [formData.formType]);
+
+  // useEffect(() => {
+  //   setFormData(getInitialFormData());
+  // }, [training_active]);
+
+  // const [convictionData, setConvictionData] = useState(null);
+
+  // useEffect(() => {
+  //   const fetchConvictionData = async () => {
+  //     try {
+  //       const response = await fetch("http://192.168.1.33:5555/api/conviction");
+  //       if (!response.ok) {
+  //         throw new Error("Failed to fetch data");
+  //       }
+  //       const data = await response.json();
+  //       setConvictionData(data);
+  //     } catch (error) {
+  //       console.error("Error fetching conviction data:", error);
+  //     }
+  //   };
+
+  //   fetchConvictionData();
+  // }, []); // Empty dependency array ensures it runs only once on mount
+
+  // console.log(convictionData); // Check the API response
+
+  // Fetch data from API on component mount
   useEffect(() => {
-    setFormData(prevState => ({
-      ...getInitialFormData(),
-      formType: prevState.formType, // Keep the selected form type
+    const fetchConvictionData = async () => {
+      try {
+        const response = await axios.get("http://192.168.1.33:5555/api/conviction");
+        setConvictionData(response.data);
+      } catch (error) {
+        console.error("Error fetching conviction data:", error);
+      }
+    };
+
+    fetchConvictionData();
+  }, []);
+
+  // Handle BNS Section selection
+  const handleBnsSectionChange = (e) => {
+    const selectedSection = e.target.value;
+
+    // Find matching data
+    const matchedData = convictionData.find((item) => item.bns_section === selectedSection);
+
+    setFormData((prev) => ({
+      ...prev, // Preserve other form data
+      bns_sections: selectedSection,
+      total_cases_convicted: matchedData ? matchedData.total_cases_convicted : "waiting for backend value",
+      total_cases_decided: matchedData ? matchedData.total_cases_decided : "waiting for backend value",
     }));
-  }, [formData.formType]);
+  };
 
   useEffect(() => {
-    setFormData(getInitialFormData());
-  }, [training_active]);
+    console.log(formData.total_cases_convicted, formData.total_cases_decided, formData.bns_sections, "...................tpaoca.........");
+  }, [formData]); // Runs whenever formData changes
 
 
   // ================================================================================================================
@@ -1246,6 +1350,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         >
                           <option value="">Select Age Group</option>
                           <option value="below18">Below 18 years</option>
+                          <option value="below18">Equal to 18 years</option>
                           <option value="above18">Above 18 years</option>
                         </select>
                       </div>
@@ -1370,6 +1475,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                 {formData.formType === "Use of eSakshya App in cases with punishment of 7 yrs. or more" && (
                   <div className="mt-4 border p-4 rounded-lg bg-gray-100">
                     <div className="grid grid-cols-2 gap-4">
+
                       <div>
                         <label className="block text-sm font-medium">Total No of Cases</label>
                         <input
@@ -1379,6 +1485,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           onChange={(e) => setFormData({ ...formData, totalCases: e.target.value })}
                         />
                       </div>
+
                       <div>
                         <label className="block text-sm font-medium">Total Offences in which eSakshya has been Used</label>
                         <input
@@ -1391,18 +1498,20 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           <p className="text-red-500 text-sm mt-1"> Total Offences in which eSakshya has been Used cannot exceed Total No of Cases.</p>
                         )}
                       </div>
+
                       <div>
                         <label className="block text-sm font-medium">Total Offences in which eSakshya has not been Used</label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.totalOffencesNotUsed}
+                          value={formData.totalOffencesNotUsed = (Number(formData.totalCases) - Number(formData.totalOffencesUsed))}
                           onChange={(e) => setFormData({ ...formData, totalOffencesNotUsed: e.target.value })}
                         />
                         {parseInt(formData.totalOffencesNotUsed) > parseInt(formData.totalCases) && (
                           <p className="text-red-500 text-sm mt-1"> Total Offences in which eSakshya has not been Used cannot exceed Total No of Cases.</p>
                         )}
                       </div>
+
                       <div>
                         <label className="block text-sm font-medium">% of Using eSakshya</label>
                         <input
@@ -1412,6 +1521,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           onChange={(e) => setFormData({ ...formData, percentageOfUsingEsakshya: e.target.value })}
                         />
                       </div>
+
                       <div>
                         <label className="block text-sm font-medium">Total Offences in Which eSakshya has been Used and Charge Sheeted</label>
                         <input
@@ -1420,21 +1530,41 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           value={formData.offencesUsedChargeCheet}
                           onChange={(e) => setFormData({ ...formData, offencesUsedChargeCheet: e.target.value })}
                         />
+                        {parseInt(formData.offencesUsedChargeCheet) > parseInt(formData.totalOffencesUsed) && (
+                          <p className="text-red-500 text-sm mt-1">Total Offences in Which eSakshya has been Used and Charge Sheeted cannot exceed Total Offences in which eSakshya has been Used.</p>
+                        )}
                       </div>
+
                       <div>
-                        <label className="block text-sm font-medium">Total Offences in which eSakshya has not been used and are Under Investigation</label>
+                        <label className="block text-sm font-medium">
+                          Total Offences in which eSakshya has not been used and are Under Investigation
+                        </label>
+
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.offencesNotUsedUnderInvestigation}
+                          value={
+                            formData.totalOffencesNotUsed && formData.offencesUsedChargeCheet
+                              ? Number(formData.totalOffencesUsed) - Number(formData.offencesUsedChargeCheet)
+                              : 0
+                          }
                           onChange={(e) => setFormData({ ...formData, offencesNotUsedUnderInvestigation: e.target.value })}
                         />
+
+                        {parseInt(formData.offencesNotUsedUnderInvestigation || 0) > parseInt(formData.totalCases || 0) && (
+                          <p className="text-red-500 text-sm mt-1">
+                            Total Offences in which eSakshya has not been used and are Under Investigation cannot exceed Total No of Cases.
+                          </p>
+                        )}
                       </div>
-                     
+
+
 
                     </div>
                   </div>
                 )}
+
+
 
                 {formData.formType === "Zero FIR's" && (
                   <div className="mt-4 border p-4 rounded-lg bg-gray-100 ">
@@ -1442,44 +1572,42 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                       <div>
                         <label className="block text-sm font-medium">
-                          Total FIRs Registered
+                          No. of Zero FIRs transferred outside Maharashtra
                         </label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.totalFIRsRegistered || ""}
+                          value={formData.total_no_zero_fir_transferred_outside_mh || ""}
                           onChange={(e) =>
-                            setFormData({ ...formData, totalFIRsRegistered: e.target.value })
+                            setFormData({ ...formData, total_no_zero_fir_transferred_outside_mh: e.target.value })
                           }
                         />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">
-                          Total Zero FIRs Received
-                        </label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.totalZeroFIRsReceived || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, totalZeroFIRsReceived: e.target.value })
-                          }
-                        />
-                        {parseInt(formData.totalZeroFIRsReceived) > parseInt(formData.totalFIRsRegistered) && (
-                          <p className="text-red-500 text-sm mt-1"> Total Zero FIRs Received cannot exceed Total FIRs Registered.</p>
-                        )}
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium">
-                          Pending
+                          No. of Zero FIRs transferred from other State to Maharashtra
                         </label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.pending = ((Number(formData.totalFIRsRegistered) - Number(formData.totalZeroFIRsReceived)))}
+                          value={formData.total_no_zero_fir_transferred_outer_state_to_mh || ""}
                           onChange={(e) =>
-                            setFormData({ ...formData, pending: e.target.value })
+                            setFormData({ ...formData, total_no_zero_fir_transferred_outer_state_to_mh: e.target.value })
+                          }
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">
+                          Total No of Zero FIRs
+                        </label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.total_zero_firs = ((Number(formData.total_no_zero_fir_transferred_outside_mh) + Number(formData.total_no_zero_fir_transferred_outer_state_to_mh))) || ""}
+                          onChange={(e) =>
+                            setFormData({ ...formData, total_zero_firs: e.target.value })
                           }
                           readOnly
                         />
@@ -1487,21 +1615,98 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                       <div>
                         <label className="block text-sm font-medium">
-                          Total Transfered Zero FIR's
+                          Pending for Transfer outside Maharashtra
                         </label>
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formData.totalTransferredZeroFIRs || ""}
+                          value={formData.pending_to_transfer_outside_mh = ((Number(formData.total_zero_firs) - Number(formData.total_no_zero_fir_transferred_outside_mh))) || ""}
                           onChange={(e) =>
-                            setFormData({ ...formData, totalTransferredZeroFIRs: e.target.value })
+                            setFormData({ ...formData, pending_to_transfer_outside_mh: e.target.value })
+                          }
+                          readOnly
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">
+                          Zero FIR's in Maharashtra
+                        </label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.total_firs_registered || ""}
+                          onChange={(e) =>
+                            setFormData({ ...formData, total_firs_registered: e.target.value })
                           }
                         />
-                        {parseInt(formData.totalTransferredZeroFIRs) > parseInt(formData.totalZeroFIRsReceived) && (
-                          <p className="text-red-500 text-sm mt-1">  Total Transfered Zero FIR's cannot exceed Total Zero FIRs Received.</p>
+                      </div>
+
+                      
+
+                      <div>
+                        <label className="block text-sm font-medium">
+                          Re-Registered FIRs in Maharashtra
+                        </label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.re_reg_firs || ""}
+                          onChange={(e) =>
+                            setFormData({ ...formData, re_reg_firs: e.target.value })
+                          }
+                        />
+                        {parseInt(formData.re_reg_firs) > parseInt(formData.total_no_zero_fir_transferred_outer_state_to_mh) && (
+                          <p className="text-red-500 text-sm mt-1">Re-Registered FIRs in Maharashtra cannot exceed No. of Zero FIRs transferred from other State to Maharashtra.</p>
                         )}
                       </div>
 
+                      <div>
+                        <label className="block text-sm font-medium">
+                          No of Zero FIR's Transferred Within Maharashtra
+                        </label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.total_transferred_zero_firs_in_mh || ""}
+                          onChange={(e) =>
+                            setFormData({ ...formData, total_transferred_zero_firs_in_mh: e.target.value })
+                          }
+                        />
+                        {parseInt(formData.total_transferred_zero_firs_in_mh) > parseInt(formData.re_reg_firs) && (
+                          <p className="text-red-500 text-sm mt-1">No of Zero FIR's Transferred Within Maharashtra cannot exceed Re-Registered FIRs in Maharashtra.</p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">
+                          Pending for Transfer within Maharashtra
+                        </label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.pending_for_transfer_within_mh = ((Number(formData.re_reg_firs) - Number(formData.total_transferred_zero_firs_in_mh))) || ""}
+                          onChange={(e) =>
+                            setFormData({ ...formData, pending_for_transfer_within_mh: e.target.value })
+                          }
+                          readOnly
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">
+                          Pending for Re-registration
+                        </label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.pending_for_re_registration = ((Number(formData.total_no_zero_fir_transferred_outer_state_to_mh) - Number(formData.re_reg_firs))) || ""}
+                          onChange={(e) =>
+                            setFormData({ ...formData, pending_for_re_registration: e.target.value })
+                          }
+                          readOnly
+                        />
+                      </div>
 
                     </div>
                   </div>
@@ -1536,6 +1741,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                             setFormData({ ...formData, totalComplaintsConverted: e.target.value })
                           }
                         />
+                        {parseInt(formData.totalComplaintsConverted) > parseInt(formData.totalEComplaintsReceived) && (
+                          <p className="text-red-500 text-sm mt-1">Total eComplaints Converted to Regular FIRs cannot exceed Total eComplaints Received on Citizen Portal.</p>
+                        )}
                       </div>
                       <div>
                         <label className="block text-sm font-medium">
@@ -1549,6 +1757,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                             setFormData({ ...formData, disposedEComplaints: e.target.value })
                           }
                         />
+                        {parseInt(formData.disposedEComplaints) > parseInt(formData.totalEComplaintsReceived) && (
+                          <p className="text-red-500 text-sm mt-1">Disposed of eComplaints cannot exceed Total eComplaints Received on Citizen Portal.</p>
+                        )}
                       </div>
 
                     </div>
@@ -1627,6 +1838,18 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                       </div>
 
                       <div>
+                        <label className="block text-sm font-medium">Offences Registered</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.offences_registerd || ""}
+                          onChange={(e) =>
+                            setFormData({ ...formData, offences_registerd: e.target.value })
+                          }
+                        />
+                      </div>
+
+                      <div>
                         <label className="block text-sm font-medium">Value of Stolen Property</label>
                         <input
                           type="number"
@@ -1637,6 +1860,19 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           }
                         />
                       </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Detected Registered</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.detected_cases || ""}
+                          onChange={(e) =>
+                            setFormData({ ...formData, detected_cases: e.target.value })
+                          }
+                        />
+                      </div>
+
                       <div>
                         <label className="block text-sm font-medium">Value of Recovered Property</label>
                         <input
@@ -1651,6 +1887,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           <p className="text-red-500 text-sm mt-1">Value of Recovered Property cannot exceed Value of Stolen Property.</p>
                         )}
                       </div>
+
                       <div>
                         <label className="block text-sm font-medium">Recovery % </label>
                         <input
@@ -1810,10 +2047,22 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           className="w-full p-2 border rounded"
                           value={formData.overall_cumulative = (
                             ((Number(formData.percentage_personal_trained) || 0) +
-                             (Number(formData.percentage_officers_trained) || 0)) / 2
+                              (Number(formData.percentage_officers_trained) || 0)) / 2
                           ).toFixed(2)}
                           onChange={(e) =>
                             setFormData({ ...formData, overall_cumulative: e.target.value })
+                          }
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Total Persons Trained</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.total_persons_trained = ((Number(formData.personal_trained) + Number(formData.officers_trained)))}
+                          onChange={(e) =>
+                            setFormData({ ...formData, total_persons_trained: e.target.value })
                           }
                         />
                       </div>
@@ -1845,6 +2094,22 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         <label className="block text-sm font-medium">BNS Sections</label>
                         <select
                           className="w-full p-2 border rounded"
+                          value={formData.bns_sections}
+                          onChange={handleBnsSectionChange}
+                        >
+                          <option value="">Select</option>
+                          {convictionData.map((item) => (
+                            <option key={item.bns_section} value={item.bns_section}>
+                              {item.bns_section}
+                            </option>
+                          ))}
+                          <option value="Other">Other BNS Sections</option>
+                        </select>
+                      </div>
+                      {/* <div>
+                        <label className="block text-sm font-medium">BNS Sections</label>
+                        <select
+                          className="w-full p-2 border rounded"
                           value={formData.bns_sections || ""}
                           onChange={(e) => setFormData({ ...formData, bns_sections: e.target.value, other_bns_section: "" })}
                         >
@@ -1860,7 +2125,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           <option value="287">289</option>
                           <option value="Other">Other BNS Sections</option>
                         </select>
-                      </div>
+                      </div> */}
                       {/* Other BNS Section (Only show if 'Other' is selected) */}
                       {formData.bns_sections === "Other" && (
                         <div>
@@ -1915,6 +2180,66 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           }
                         />
                       </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Total Cases Convicted</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.total_cases_convicted
+                            ? Number(formData.total_cases_convicted) + Number(formData.convicted_cases || 0)
+                            : "waiting for backend value"}
+                          onChange={(e) =>
+                            setFormData({ ...formData, total_cases_convicted: e.target.value })
+                          }
+                          readOnly
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Total Cases Decided</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.total_cases_decided
+                            ? Number(formData.total_cases_decided) + Number(formData.cases_decided || 0)
+                            : "waiting for backend value"}
+                          onChange={(e) =>
+                            setFormData({ ...formData, total_cases_decided: e.target.value })
+                          }
+                          readOnly
+                        />
+                      </div>
+
+                      <div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Previous Cases Convicted</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.total_cases_convicted || "waiting for backend value"}
+                          onChange={(e) =>
+                            setFormData({ ...formData, total_cases_convicted: e.target.value })
+                          }
+                          readOnly
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium">Previous Cases Decided</label>
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formData.total_cases_decided || "waiting for backend value"}
+                          onChange={(e) =>
+                            setFormData({ ...formData, total_cases_decided: e.target.value })
+                          }
+                          readOnly
+                        />
+                      </div>
+
 
                       {/* <div>
                         <label className="block text-sm font-medium"></label>
