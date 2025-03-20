@@ -10,7 +10,7 @@ const ScheduledUpdateNotice = () => {
           <br />
           There is a scheduled update for the portal till evening.
           <br />
-          <strong>Please revisit us after 4:30 p.m.</strong>
+          <strong>Please revisit us after 5 p.m.</strong>
         </p>
       </div>
     </div>
