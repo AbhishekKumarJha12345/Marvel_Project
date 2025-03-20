@@ -655,9 +655,9 @@ const handleDateSelection = () => {
                     className="bg-blue-500 text-white px-4 py-2 rounded-lg"
                     style={{ backgroundColor: "#2d3748", position: "absolute", right: "0", top: "70px" }}
                     onClick={() => {
-                      console.log("Open modal");
-                      setShowDateRangeModal(true);
-                      // setShowModal(true);
+                      console.log("Open modal : ",activeSection);
+                      // setShowDateRangeModal(true);
+                      setShowModal(true);
                     }}
                   >
                     Add Data

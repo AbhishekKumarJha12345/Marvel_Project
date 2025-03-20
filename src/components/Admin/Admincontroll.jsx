@@ -13,9 +13,9 @@ const Admincontroll = ({ onRegister, onClose }) => {
     sub_role: "",
     rank: "",
     state: "",
-    city: "",
-    zone: "",
-    district: "",
+    city: null,
+    zone: null,
+    district: null,
     mobile_number: "",
     alter_mobile_number: "",
     tele_phone_number: "",
@@ -33,12 +33,12 @@ const Admincontroll = ({ onRegister, onClose }) => {
   const dropdownRef = useRef(null);
 
   const zones = {
-    Amravati: ["Akola", "Amravati", "Buldana", "Washim", "Yavatmal"],
+    Amravati: ["Akola", "Amravati Rural", "Buldana", "Washim", "Yavatmal"],
     Aurangabad: ["Aurangabad", "Beed", "Hingoli", "Jalna", "Latur", "Nanded", "Osmanabad", "Parbhani"],
-    Konkan: ["Mumbai", "Mumbai Suburban", "Palghar", "Raigad", "Ratnagiri", "Sindhudurg", "Thane"],
-    Nagpur_Rural: ["Bhandara", "Chandrapur", "Gadchiroli", "Gondia", "Nagpur Rural", "Wardha"],
+    Konkan: ["Mumbai", "Mumbai Suburban", "Palghar", "Raigad", "Ratnagiri", "Sindhudurg", "Thane Rural"],
+    Nagpur: ["Bhandara", "Chandrapur", "Gadchiroli", "Gondia", "Nagpur Rural", "Wardha"],
     Nashik: ["Ahmednagar", "Dhule", "Jalgaon", "Nandurbar", "Nashik"],
-    Pune: ["Kolhapur", "Pune", "Sangli", "Satara", "Solapur"],
+    Pune: ["Kolhapur", "Pune Rural", "Sangli", "Satara", "Solapur Rural"],
   };
 
   const handleChange = (e) => {
@@ -66,22 +66,7 @@ const Admincontroll = ({ onRegister, onClose }) => {
     
   };
 
-  // const handleDistrictChange = (e) => {
-  //   const { value, checked } = e.target;
 
-  //   setSelectedDistrict((prev) => {
-  //     const updatedSelection = checked
-  //       ? [...prev, value] // Add selected district
-  //       : prev.filter((district) => district !== value); // Remove if unchecked
-
-  //     setFormData((prevFormData) => ({
-  //       ...prevFormData,
-  //       district: updatedSelection, // Store in formData
-  //     }));
-
-  //     return updatedSelection; // Update state
-  //   });
-  // };
   const handleDistrictChange = (e) => {
     const { value } = e.target;
   
@@ -177,10 +162,10 @@ const Admincontroll = ({ onRegister, onClose }) => {
                 <option value="">Select Role</option>
                 <option value="chief secretary">Chief Secretary</option>
                 <option value="police">Police</option>
-                <option value="Prosecutor">Prosecutor</option>
+                {/* <option value="Prosecutor">Prosecutor</option>
                 <option value="Correction">Correctional Services</option>
                 <option value="Court">Courts</option>
-                <option value="Forensic">Forensic</option>
+                <option value="Forensic">Forensic</option> */}
               </select>
             </div>
             {formData.role !== "chief secretary" && (

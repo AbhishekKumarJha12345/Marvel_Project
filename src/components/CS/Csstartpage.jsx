@@ -57,15 +57,6 @@ const MaharashtraMap = (catogoryBar) => {
 
     ];
 
-  const staionsFilters = [
-    "Offences against body under BNS",
-
-    "Untraced Missing",
-    "Important sections introduced in BNS",
-
-    "Property offences under BNS",
-
-    "eFIR"]
 
 
   const triningFilter = [
@@ -95,6 +86,8 @@ const MaharashtraMap = (catogoryBar) => {
   const sub_role = localStorage.getItem("sub_role")
   const role = localStorage.getItem("role")
 
+
+
 if(sub_role == 'CP' || sub_role == 'SP'){
 
   var from_date = localStorage.getItem("from_date")
@@ -102,9 +95,6 @@ if(sub_role == 'CP' || sub_role == 'SP'){
 
 
 }
-
-  console.log("Zone : ", zone, " ", "district : ", district, " ", "role : ", sub_role, " ", "assignedCPCity : ", assignedCPCity);
-
 
 
   const userZones = sub_role == 'IG/DIG' || sub_role == 'CP' || sub_role == 'SP' ? zone : ""; // Example single zone
@@ -122,14 +112,10 @@ if(sub_role == 'CP' || sub_role == 'SP'){
           params: { zone: zoneName, district: districtName, table: catogory, typeFilter: selectedForm, start_date:to_date, end_date:from_date }
         });
 
-        console.log("district : ", district);
-        console.log("response.data.districts : ", response.data);
+      (district && district != 'null') || selectedZone ? setpercent(response.data.districts || 0) :  zone ? setpercent(response.data.zones || 0) : setpercent(0)
+       
 
-        district ? setpercent(response.data.districts[district] || 0) : setpercent(0)
-
-        role == 'chief secretary' && !selectedZone ? setpercent(response.data.zones) : setpercent(response.data.districts)
-
-        // selectedZone ? districtName : zoneName || district
+        role == 'chief secretary' && !selectedZone ? setpercent(response.data.zones) : null
 
 
         setZonePercentages(response.data.zones);
@@ -142,22 +128,15 @@ if(sub_role == 'CP' || sub_role == 'SP'){
     }
 
     fetchData("", ""); // Fetch all data initially
-
-    console.log("selectedForm : ", selectedForm);
     
 
-  }, [catogory, selectedForm]);
+  }, [catogory, selectedForm,selectedZone]);
 
-//   useEffect(()=>{
-//     const filterDataOption = catogory == 'Training' ? triningFilter[0]  :  catogory == 'FIR' ? options[0] : null
-
-// setSelectedForm(filterDataOption)
-
-//   },[catogory])
 
 
   useEffect(() => {
     if (mapRef.current) return;
+    
 
     const map = L.map("map", {
       center: [19.7515, 75.7139],
@@ -172,23 +151,22 @@ if(sub_role == 'CP' || sub_role == 'SP'){
     //   maxZoom: 18,
     // }).addTo(map);
 
-
     mapRef.current = map;
 
     return () => {
       map.remove();
       mapRef.current = null;
     };
-  }, []);
+  }, [zonePercentages,districtPercentages,cityPercentages]);
 
 
   const zoneMapping = {
-    "Amravati": ["Akola", "Amravati", "Buldana", "Washim", "Yavatmal"],
-    "Aurangabad": ["Aurangabad", "Beed", "Hingoli", "Jalna", "Latur", "Nanded", "Osmanabad", "Parbhani"],
-    "Konkan": ["Mumbai", "Mumbai Suburban", "Palghar", "Raigad", "Ratnagiri", "Sindhudurg", "Thane"],
-    "Nagpur Rural": ["Bhandara", "Chandrapur", "Gadchiroli", "Gondia", "Nagpur Rural", "Wardha"],
-    "Nashik": ["Ahmednagar", "Dhule", "Jalgaon", "Nandurbar", "Nashik"],
-    "Pune": ["Kolhapur", "Pune", "Sangli", "Satara", "Solapur"],
+    Amravati: ["Akola", "Amravati Rural", "Buldana", "Washim", "Yavatmal"],
+    Aurangabad: ["Aurangabad", "Beed", "Hingoli", "Jalna", "Latur", "Nanded", "Osmanabad", "Parbhani"],
+    Konkan: ["Mumbai", "Mumbai Suburban", "Palghar", "Raigad", "Ratnagiri", "Sindhudurg", "Thane Rural"],
+    Nagpur: ["Bhandara", "Chandrapur", "Gadchiroli", "Gondia", "Nagpur Rural", "Wardha"],
+    Nashik: ["Ahmednagar", "Dhule", "Jalgaon", "Nandurbar", "Nashik"],
+    Pune: ["Kolhapur", "Pune Rural", "Sangli", "Satara", "Solapur Rural"],
   };
 
   const getZoneForDistrict = (district) => {
@@ -200,9 +178,7 @@ if(sub_role == 'CP' || sub_role == 'SP'){
 
   let percentage;
   const getZoneColor = (name) => {
-    console.log("name:", name);
-    console.log("selectedZone:", selectedZone);
-    console.log("zonePercentages:", zonePercentages);
+
 
     // Handle cases where name is an array
     if (Array.isArray(name)) {
@@ -214,10 +190,10 @@ if(sub_role == 'CP' || sub_role == 'SP'){
     }
 
     // Determine the color based on percentage
-    if (percentage > 80) return "#37C503";
-    if (percentage >= 60) return "#9AD911";
-    if (percentage >= 40) return "#FF8585";
-    return "#FFA726";
+    if (percentage > 80) return "#37C5037A";
+    if (percentage >= 60) return "#9AD91180";
+    if (percentage >= 40) return "#FF85855C";
+    return "#F455466B";
   };
 
 
@@ -244,7 +220,6 @@ if(sub_role == 'CP' || sub_role == 'SP'){
 
 
     const isDistrictAllowed = (districtName) => {
-      console.log("userZones : ", zoneMapping[userZones]?.includes(districtName));
 
       if (!userDistricts && !userZones) return true; // Show all if no restriction
       if (userDistricts) return districtName === userDistricts; // Only allow the specific district
@@ -273,15 +248,17 @@ if(sub_role == 'CP' || sub_role == 'SP'){
           ? Object.keys(zoneMapping).find(zone => zoneMapping[zone].includes(districtName))
           : Object.keys(zoneMapping);
 
-        // Get the percentage for the district or zone
-        percentageDisplay = selectedZone
+          
+          
+          // Get the percentage for the district or zone
+          percentageDisplay = selectedZone
           ? zonePercentages[districtName] || districtPercentages[districtName] || 0
           : zonePercentages[zoneName] || districtPercentages[zoneName] || 0;
+          
+          
 
 
-
-
-        if ((selectedZone == 'Nagpur Rural' && districtName == "Nagpur Rural") || (district == "Nagpur Rural")) {
+        if ((selectedZone == 'Nagpur' && districtName == "Nagpur Rural") || (district == "Nagpur Rural")) {
           
   
 
@@ -385,7 +362,7 @@ if(sub_role == 'CP' || sub_role == 'SP'){
 
 
         return {
-          fillColor: selectedZone ? getZoneColor(districtName) : getZoneColor(zoneName),
+          fillColor: selectedZone ? getZoneColor(sub_role == 'SP' ? district : districtName) : getZoneColor(sub_role == 'SP' ? zone : zoneName),
           fillOpacity: 0.7,
           color: "#ffff",
           weight: 1.5,
@@ -399,10 +376,13 @@ if(sub_role == 'CP' || sub_role == 'SP'){
         layer.on({
           click: (e) => {
             setSelectedZone(zoneName);
-            L.popup().setLatLng(e.latlng).setContent(`<b>${zoneName}</b>`).openOn(map);
+           
           },
           mouseover: (e) => {
             layer.setStyle({ color: "#ffff", weight: 2 });
+            console.log("selectedZone : ",selectedZone);
+            console.log("percent : ",percent);
+            
             L.popup()
               .setLatLng(e.latlng)
               .setContent(`<b>${selectedZone ? districtName : zoneName || district}</b><br>Percentage: ${selectedZone ? percent[districtName] || 0 : percent[zoneName] || 0 || percent[district] || 0}%`)

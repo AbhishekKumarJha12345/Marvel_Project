@@ -21331,7 +21331,7 @@
       "properties": {
         "st_cen_cd": 27,
         "st_nm": "Maharashtra",
-        "division": "Pune"
+        "division": "Pune Rural"
       },
       "geometry": {
         "type": "Polygon",
@@ -45997,7 +45997,7 @@
       "properties": {
         "st_cen_cd": 27,
         "st_nm": "Maharashtra",
-        "division": "Amravati"
+        "division": "Amravati Rural"
       },
       "geometry": {
         "type": "Polygon",
