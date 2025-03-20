@@ -16,12 +16,12 @@ function App() {
   return (
     <>
       {/* Define routes for LoginPage and Mainnavbar */}
-      {/* <Routes>
+      <Routes>
         <Route path="/" element={<LoginPage />} /> 
         <Route path="/mainnavbar"  element={<ProtectedRoute element={<Mainnavbar />} />} /> 
-      </Routes> */}
+      </Routes>
 
-      <Scheduler/>
+      {/* <Scheduler/> */}
     </>
   );
 }
