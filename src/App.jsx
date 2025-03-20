@@ -4,6 +4,8 @@ import LoginPage from './components/Loginpage.jsx';
 import Mainnavbar from './components/Mainnavbar.jsx';
 import { Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Scheduler from './scehdule' 
+
 
 function App() {
   const ProtectedRoute = ({ element }) => {
@@ -14,10 +16,12 @@ function App() {
   return (
     <>
       {/* Define routes for LoginPage and Mainnavbar */}
-      <Routes>
-        <Route path="/" element={<LoginPage />} /> {/* Login page route */}
+      {/* <Routes>
+        <Route path="/" element={<LoginPage />} /> 
         <Route path="/mainnavbar"  element={<ProtectedRoute element={<Mainnavbar />} />} /> 
-      </Routes>
+      </Routes> */}
+
+      <Scheduler/>
     </>
   );
 }
