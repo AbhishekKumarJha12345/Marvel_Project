@@ -16,6 +16,7 @@ import FirNewcriminal from "./Police/FIR/Newcriminal/FirNewcriminal";
 import FirZero from "./Police/FIR/Zerofir/FirZero";
 import Correctionalservicetab from "./Correctional Services/Correctionalservicetab";
 import "../styles/Dashboard.scss";
+import axios from "axios";
 import axiosInstance from "../utils/axiosInstance";
 import GavelIcon from '@mui/icons-material/Gavel';
 import BiotechIcon from '@mui/icons-material/Biotech';
@@ -265,11 +266,286 @@ export default function Dashboard({ users }) {
   };
 
 
+  const zoneMapping = {
+    Amravati: ["Akola", "Amravati Rural", "Buldana", "Washim", "Yavatmal"],
+    'Chhatrapati Sambhajinagar': ["Chhatrapati Sambhajinagar", "Beed", "Hingoli", "Jalna", "Latur", "Nanded", "Osmanabad", "Parbhani"],
+    Konkan: ["Mumbai", "Mumbai Suburban", "Palghar", "Raigad", "Ratnagiri", "Sindhudurg", "Thane Rural"],
+    'Nagpur Rural': ["Bhandara", "Chandrapur", "Gadchiroli", "Gondia", "Nagpur Rural", "Wardha"],
+    Nashik: ["Ahmednagar", "Dhule", "Jalgaon", "Nandurbar", "Nashik"],
+    Pune: ["Kolhapur", "Pune Rural", "Sangli", "Satara", "Solapur Rural"],
+  };
+
+    const downloadPDF = (newData, subrole) => {
+      console.log("Generating PDF for subrole:", subrole);
+      console.log("newData:", newData);
+  
+      const doc = new jsPDF({ orientation: "landscape" });
+      let pageHeight = doc.internal.pageSize.height;
+      let pageWidth = doc.internal.pageSize.width;
+      let y = 15; // Start vertical position
+      let pageNumber = 1;
+  
+      const { timeStamp, submited_by, email, rang, district, sampleDataIN } = newData;
+      const assignedZone = localStorage.getItem("zone");
+      const assignedDistrict = localStorage.getItem("district");
+  
+      // const getFilteredData = () => {
+      //     if (subrole === "CS" || subrole === "ACS") {
+      //         return sampleDataIN;
+      //     } else if (subrole === "IG/DIG" || subrole === "DIG") {
+      //         return assignedZone ? { [assignedZone]: sampleDataIN[assignedZone] } : {};
+      //     } else if (subrole === "CP" || subrole === "SP") {
+      //         for (const [zone, districts] of Object.entries(zoneMapping)) {
+      //             if (districts.includes(assignedDistrict)) {
+      //                 return sampleDataIN[zone] && sampleDataIN[zone][assignedDistrict]
+      //                     ? { [zone]: { [assignedDistrict]: sampleDataIN[zone][assignedDistrict] } }
+      //                     : {};
+      //             }
+      //         }
+      //         return {};
+      //     }
+      // };
+  
+      // const filteredData = getFilteredData();
+      // console.log("Filtered Data:", filteredData);
+  
+      // Function to add footer
+      const addFooter = () => {
+          doc.setFontSize(10);
+          doc.setTextColor(100);
+          doc.text(`Email: ${email}`, 14, pageHeight - 10);
+          doc.text(`Page ${pageNumber}`, pageWidth - 30, pageHeight - 10);
+      };
+  
+      // Add Header Logo
+      const logo = "src/assets/logo22.png";
+      doc.addImage(logo, "PNG", pageWidth / 2 - 15, y, 30, 30);
+      y += 40;
+  
+      // Title
+      doc.setFontSize(22);
+      doc.setTextColor(30, 30, 120);
+      doc.setFont("helvetica", "bold");
+      doc.text("MARVEL CONSOLIDATED REPORT", pageWidth / 2 - 55, y);
+      y += 12;
+  
+      // Divider Line
+      doc.setDrawColor(100, 100, 100);
+      doc.line(10, y, pageWidth - 10, y);
+      y += 8;
+  
+      // Report Metadata
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+      doc.setFont("helvetica", "bold");
+      doc.text(`Download On:`, 14, y);
+      doc.text(`Download by:`, 14, y + 8);
+      doc.text(`Email:`, 14, y + 16);
+
+
+
+      // doc.setDrawColor(100, 100, 100);
+      // doc.line(10, y, pageWidth - 10, y);
+      // y += 8;
+  
+      doc.setFont("helvetica", "normal");
+      doc.text(timeStamp, 50, y);
+      doc.text(submited_by, 50, y + 8);
+      doc.text(email, 50, y + 16);
+      doc.text(subrole, 50, y + 24);
+      doc.text(rang, 50, y + 32);
+      doc.text(district, 50, y + 40);
+  
+      y += 50;
+  
+      if (Object.keys(sampleDataIN).length === 0) {
+          doc.setTextColor(255, 0, 0);
+          doc.setFontSize(14);
+          doc.text("⚠ No data available for the assigned zone/district.", 14, y);
+          addFooter();
+          doc.save("Filtered_Report.pdf");
+          return;
+      }
+  
+      // // Iterate Over Zones
+      // Object.entries(filteredData).forEach(([zone, districts]) => {
+      //     doc.setFontSize(14);
+      //     doc.setTextColor(200, 0, 0);
+      //     doc.setFont("helvetica", "bold");
+      //     y += 8;
+      //     doc.setDrawColor(200, 0, 0);
+      //     doc.line(14, y, pageWidth - 14, y);
+      //     y += 6;
+  
+      //     Object.entries(districts).forEach(([district, forms]) => {
+      //         doc.setFontSize(12);
+      //         doc.setTextColor(0, 0, 255);
+      //         doc.setFont("helvetica", "bold");
+      //         y += 5;
+  
+      const formatColumnName = (str) => {
+        return str
+            .split('_')  // Split by underscore
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
+            .join(' '); // Join with space
+    };
+    
+    Object.entries(sampleDataIN).forEach(([formType, records]) => {
+        doc.setFontSize(10);
+        doc.setTextColor(0, 0, 0);
+        doc.setFont("helvetica", "bold");
+    
+        // Format the form type title
+        const formattedFormType = formatColumnName(formType);
+        doc.text(`${formattedFormType}`, 10, y);  
+        y += 4;
+    
+        if (records.length > 0) {
+            // Convert keys to formatted headers
+            const tableColumn = Object.keys(records[0]).map(formatColumnName);
+            const tableRows = records.map(row => Object.values(row));
+    
+            doc.autoTable({
+                startY: y + 2,
+                head: [tableColumn],
+                body: tableRows,
+                theme: "grid",
+                margin: { left: 14, right: 14 },
+                styles: {
+                    fontSize: 9,
+                    cellPadding: 3,
+                    halign: "center",
+                    textColor: [50, 50, 50],
+                },
+                headStyles: {
+                    fillColor: [41, 128, 185],
+                    textColor: [255, 255, 255],
+                    fontSize: 10,
+                    fontStyle: "bold",
+                },
+                bodyStyles: {
+                    fillColor: (rowIndex) => (rowIndex % 2 === 0 ? [245, 245, 245] : [255, 255, 255]),
+                },
+                alternateRowStyles: {
+                    fillColor: [235, 235, 235],
+                },
+                didDrawPage: () => {
+                    addFooter();
+                },
+            });
+    
+            y = doc.autoTable.previous.finalY + 10;
+    
+            if (y > pageHeight - 20) {
+                doc.addPage();
+                pageNumber++;
+                y = 15;
+            }
+        } else {
+            doc.setFont("helvetica", "italic");
+            doc.setTextColor(150, 0, 0);
+            doc.text("No data available", 30, y);
+            y += 5;
+        }
+    });
+  
+      //         y += 8;
+      //     });
+  
+      //     y += 12;
+      // });
+  
+      addFooter();
+      doc.save("Filtered_Report.pdf");
+  };
+  
+
+// ---------------------------------------------------------------------------------------
+  const handleReport = async () => {
+    try {
+      const district = localStorage.getItem("district");
+      const zone = localStorage.getItem("zone");
+      // const type = "police_training";
+      const type = ['police_training','pendency_in_bns','offences_against_body','sections_in_bns','property_offenses',
+        'untraced_missing','esakshya_unit','itsso_compliance','esakshya_7_more','stolen_recovered_property',"conviction_rate_in_bns" ,'fir_and_zero_firs' ,
+        'e_firs','forensic_visits'];
+      const token = localStorage.getItem("token"); // Ensure token is available
+  
+      const requestBody = {
+        district,
+        zone,
+        type,
+      };
+  
+      const response = await axiosInstance.post("/get_reports", requestBody, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`, // Include token
+        },
+      });
+  
+      console.log("Report Data:", response.data);
+
+      
+
+      const subrole = localStorage.getItem('sub_role')
+
+      const newData = {
+        timeStamp: (() => {
+          const date = new Date();
+          const day = String(date.getDate()).padStart(2, '0'); // Add leading zero for single digits
+          const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+          const year = date.getFullYear();
+          const hours = String(date.getHours()).padStart(2, '0');
+          const minutes = String(date.getMinutes()).padStart(2, '0');
+          const seconds = String(date.getSeconds()).padStart(2, '0');
+          return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+        })(),
+        submited_by: localStorage.getItem('userName') || "",
+        email: localStorage.getItem('email') || "",
+        rang: localStorage.getItem('zone') || "",
+        district: localStorage.getItem('district') || "",
+        sampleDataIN:response.data
+      };
+      
+      downloadPDF(newData,subrole);
+
+    } catch (error) {
+      console.error("Error fetching report:", error);
+    }
+  };
+  // -----------------------------------------------------------------------------------
+
+
 
   const contentMap = {
     "training":
       <div className="content">
-        <h1 className="heading" style={{ marginLeft: "40rem" }}>Police - Training</h1>
+        <h1 className="heading" style={{ marginLeft: "40rem" }}>Police</h1>
+
+
+{users === "chief secretary" || users === 'ACS' ?
+        (<div style={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem" }}>
+          <button 
+            onClick={() => handleReport()} 
+            style={{
+              padding: "10px 20px",
+              fontSize: "16px",
+              fontWeight: "bold",
+              backgroundColor: "#007BFF",
+              color: "#fff",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+              transition: "background 0.3s ease"
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = "#0056b3"}
+            onMouseOut={(e) => e.target.style.backgroundColor = "#007BFF"}
+          >
+            Generate Report
+          </button>
+        </div>) : null}
+
         <MaharashtraPoliceMap catogoryBar="Training" />
       </div>,
     "forensic/visits": <div className="content"><h1 className="heading">Police - Forensic Visits</h1><MaharashtraPoliceMap catogoryBar="FORENSIC" /></div>,
@@ -612,10 +888,10 @@ const handleDateSelection = () => {
           }
 
 
-          {(users === 'chief secretary' || users === 'police') && (
+          {(users === 'chief secretary' || users === 'police' || users === 'ACS') && (
 
 
-            users === "chief secretary" ? (
+            (users === "chief secretary" || users === 'ACS') ? (
               <div className="nav_main" ref={dropdownRef}>
                 <button
                   className={`nav-link ${isOpen ? "active" : ""}`}
@@ -674,9 +950,9 @@ const handleDateSelection = () => {
                       alt="Training Icon"
                       className="nav-icon"
                     />{" "}
-                    Training
+                    Police
                   </button>
-                  <div className="nav-divider"></div>
+                  {/* <div className="nav-divider"></div>
                   <button
                     className={`nav-link ${activeSection?.section === "FIR" ? "active" : ""
                       }`}
@@ -703,7 +979,7 @@ const handleDateSelection = () => {
                       className="nav-icon"
                     />{" "}
                     Forensic Visits
-                  </button>
+                  </button> */}
                 </div>
               </>
             ))}
@@ -793,6 +1069,8 @@ const handleDateSelection = () => {
       {
         contentMap[activeSection?.section] ||
         (users === "chief secretary"
+          ? contentMap["training"]:
+          users === "ACS"
           ? contentMap["training"]
           : users === "police"
             ? contentMap["training"] && setActiveSection({ section: "training" })

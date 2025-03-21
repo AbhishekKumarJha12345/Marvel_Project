@@ -23,7 +23,7 @@ const AdminUserTable = () => {
   // Zones data
   const zones = {
     Amravati: ["Akola", "Amravati", "Buldana", "Washim", "Yavatmal"],
-    Aurangabad: ["Aurangabad", "Beed", "Hingoli", "Jalna", "Latur", "Nanded", "Osmanabad", "Parbhani"],
+    'Chhatrapati Sambhajinagar': ["Chhatrapati Sambhajinagar", "Beed", "Hingoli", "Jalna", "Latur", "Nanded", "Osmanabad", "Parbhani"],
     Konkan: ["Mumbai", "Mumbai Suburban", "Palghar", "Raigad", "Ratnagiri", "Sindhudurg", "Thane"],
     Nagpur_Rural: ["Bhandara", "Chandrapur", "Gadchiroli", "Gondia", "Nagpur Rural", "Wardha"],
     Nashik: ["Ahmednagar", "Dhule", "Jalgaon", "Nandurbar", "Nashik"],
@@ -362,7 +362,7 @@ className="w-full p-2 border rounded-md bg-white"
 <option value="Amravati City">Amravati City</option>
 <option value="Nagpur City">Nagpur City</option>
 <option value="Nashik City">Nashik City</option>
-<option value="Aurangabad City">Aurangabad City</option>
+<option value="Chhatrapati Sambhajinagar City">Chhatrapati Sambhajinagar City</option>
 <option value="Solapur City">Solapur City</option>
 
 </select>

@@ -34,7 +34,7 @@ const Admincontroll = ({ onRegister, onClose }) => {
 
   const zones = {
     Amravati: ["Akola", "Amravati Rural", "Buldana", "Washim", "Yavatmal"],
-    Aurangabad: ["Aurangabad", "Beed", "Hingoli", "Jalna", "Latur", "Nanded", "Osmanabad", "Parbhani"],
+    'Chhatrapati Sambhajinagar': ["Chhatrapati Sambhajinagar", "Beed", "Hingoli", "Jalna", "Latur", "Nanded", "Osmanabad", "Parbhani"],
     Konkan: ["Mumbai", "Mumbai Suburban", "Palghar", "Raigad", "Ratnagiri", "Sindhudurg", "Thane Rural"],
     Nagpur: ["Bhandara", "Chandrapur", "Gadchiroli", "Gondia", "Nagpur Rural", "Wardha"],
     Nashik: ["Ahmednagar", "Dhule", "Jalgaon", "Nandurbar", "Nashik"],
@@ -161,6 +161,7 @@ const Admincontroll = ({ onRegister, onClose }) => {
               >
                 <option value="">Select Role</option>
                 <option value="chief secretary">Chief Secretary</option>
+                <option value="ACS">ACS</option>
                 <option value="police">Police</option>
                 {/* <option value="Prosecutor">Prosecutor</option>
                 <option value="Correction">Correctional Services</option>
@@ -168,7 +169,7 @@ const Admincontroll = ({ onRegister, onClose }) => {
                 <option value="Forensic">Forensic</option> */}
               </select>
             </div>
-            {formData.role !== "chief secretary" && (
+            {formData.role !== "chief secretary" || formData.role !== "ACS" && (
   <>
     {/* Sub-Role (Conditional Rendering) */}
     {formData.role === "police" ? (
@@ -291,7 +292,7 @@ const Admincontroll = ({ onRegister, onClose }) => {
         <option value="Amravati City">Amravati City</option>
         <option value="Nagpur City">Nagpur City</option>
         <option value="Nashik City">Nashik City</option>
-        <option value="Aurangabad City">Aurangabad City</option>
+        <option value="Chhatrapati Sambhajinagar City">Chhatrapati Sambhajinagar City</option>
         <option value="Solapur City">Solapur City</option>
        
       </select>

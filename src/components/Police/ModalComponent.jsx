@@ -27,7 +27,8 @@ import './form.css'
 
 import CloseIcon from "@mui/icons-material/Close";
 
-
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 
 
@@ -47,12 +48,6 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
        [section]: !prev[section],
      }));
    };
-
-
-
-  
-
-
 
    // ----------------------------------------------------------------
 
@@ -168,8 +163,14 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       pending_for_transfer_within_mh: "",
       total_firs_registered: "",
       total_no_zero_fir_transferred_outside_mh: "",
-      pending_to_transfer_outside_mh: ""
+      pending_to_transfer_outside_mh: "",
 
+      detectedCases_1: "",
+      registeredCases_1: "",
+      actAndSection_1: "",
+      detectedCasesPercentage_1: '',
+
+      esakshyaWage_1: "",
     };
   }
   const [convictionData, setConvictionData] = useState([]);
@@ -206,27 +207,25 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
   const expectedHeaders = {
 
-    "Pendency of cases under BNS": [
+    "pendency_in_bns": [
       "total_cases_registered",
       "cases_disposed",
       "cases_pending_investigation",
       "percent_pendency",
       "cases_punishment_less_than_7_years",
       "cases_punishment_7_years_or_more",
-      "month_year_from",
-      "month_year_to"
-    ],
-    "Offences against body under BNS": [
+      
+          ],
+    "Offences_against_body_under_BNS": [
       "unit",
       "police_station",
       "act_and_section",
       "registered_cases",
       "detected_cases",
       "percent_detection",
-      "month_year_from",
-      "month_year_to"
-    ],
-    "Untraced Missing": [
+      
+          ],
+    "untraced_missing": [
       "district",
       "unit",
       "police_station",
@@ -237,10 +236,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       "traced",
       "untraced",
       "percent_untraced",
-      "month_year_from",
-      "month_year_to"
-    ],
-    "Important sections introduced in BNS": [
+      
+          ],
+    "Important_sections_introduced_in_BNS": [
       "district",
       "unit",
       "police_station",
@@ -248,88 +246,78 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       "registered_cases",
       "detected_cases",
       "percent_detection",
-      "month_year_from",
-      "month_year_to"
-    ],
-    "Property offences under BNS": [
+      
+          ],
+    "Property_offences_under_BNS": [
       "unit",
       "police_station",
       "act_and_section",
       "registered_cases",
       "detected_cases",
       "percent_detection",
-      "month_year_from",
-      "month_year_to"
-    ],
-    "eSakshya Details": [
+      
+          ],
+    "esakshya_unit": [
       "unit",
       "total_ios_nagpur_rural",
       "registered_ios_on_esakshya",
       "esakshya_usage_percentage",
-      "month_year_from",
-      "month_year_to"
-    ],
+      
+          ],
 
-    "Use of eSakshya App in cases with punishment of 7 yrs. or more": [
+    "esakshya_7_more": [
       "total_cases",
       "total_offences_with_esakshya",
       "total_charge_sheeted_with_esakshya",
       "total_under_investigation_without_esakshya",
-      "month_year_from",
-      "month_year_to"
-    ],
+      
+          ],
 
-    "Zero FIR's": [
+    "fir_and_zero_firs": [
       "unit",
       "section",
       "total_zero_firs_received",
       "total_firs_registered",
       "pending",
       "total_transferred_zero_firs",
-      "month_year_from",
-      "month_year_to"
-    ],
+      
+          ],
 
-    "eFIR": [
+    "e_fir": [
       "unit",
       "police_station",
       "total_ecomplaints_received",
       "total_ecomplaints_converted_to_firs",
       "disposed_of_ecomplaints",
-      "month_year_from",
-      "month_year_to"
-    ],
-    "ITSSO Compliance Form": [
-      // "total_pocso",
-      // "bns_cases",
+      
+          ],
+    "itsso_compliance": [
+   
       "charge_sheeted_within_60_days",
       "total_pocso_bns_cases",
-      // "reasons_for_pending",
-      // "percentage",
-      "month_year_from",
-      "month_year_to"
-    ],
-    "Stolen & Recovered Property": [
+      "reasons_for_pending",
+      "percentage",
+      
+          ],
+    "stolen_recovered_property": [
       "total_cases",
       "value_stolen_property",
       "value_recovered_property",
       "recovery_percentage",
       "detected_cases",
       "offences_registerd",
-      "month_year_from",
-      "month_year_to"
-    ],
-    "Visit of Forensic Teams": [
+      
+          ],
+    "forensic_team_deployment": [
       "total_cases_gt_7_years",
       "forensic_team_deployment_percentage",
       "cases_forensic_team_visited",
-      "month_year_from",
-      "month_year_to"
-    ],
+      
+          ],
 
-    "Training Data": ["month_year_from", "month_year_to", "total_personnel", "personnel_trained", "total_officers", "officers_trained"],
+    "police_training": [  "total_personnel", "personnel_trained", "total_officers", "officers_trained"],
 
-    "Conviction under BNS": [
+    "conviction_rate_in_bns": [
       "type_of_court",
       "bns_sections",
       "cases_decided",
@@ -559,215 +547,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
     document.body.removeChild(a);
   };
 
-  //   const csvContent = sampleFiles[selectedForm]?.join("\n") || "No data available";
-  //   const blob = new Blob([csvContent], { type: "text/csv" });
-  //   const url = URL.createObjectURL(blob);
-
-  //   const a = document.createElement("a");
-  //   a.href = url;
-  //   a.download = `${selectedForm.toLowerCase()}_sample.csv`;
-  //   document.body.appendChild(a);
-  //   a.click();
-  //   document.body.removeChild(a);
-  // };
-  // ---------------------------------------old_exists_original---------------------------------------
-
-  // --------------------------------old---------------------------------
-  // const handleFileUpload = (e) => {
-  //   const file = e.target.files[0];
-
-  //   if (file && file.type === "text/csv") {
-  //     setFileInfo({ name: file.name, size: (file.size / 1024).toFixed(2) + " KB" });
-  //     setCheckingCsv(true);
-
-  //     Papa.parse(file, {
-  //       complete: (result) => {
-  //         const headers = result.data[0]; // Extract headers from the uploaded CSV
-  //         const selectedHeaders = expectedHeaders[selectedForm]; // Get expected headers for the selected form type
-
-  //         if (!selectedHeaders) {
-  //           setCsvValidationMessage({ text: "Invalid form type selected", color: "red" });
-  //           setCheckingCsv(false);
-  //           return;
-  //         }
-
-  //         if (JSON.stringify(headers) === JSON.stringify(selectedHeaders)) {
-  //           setCsvValidationMessage({ text: "CSV Matched", color: "green" });
-  //         } else {
-  //           setCsvValidationMessage({ text: "Headers Not Matching", color: "red" });
-  //         }
-
-  //         setCsvData(result.data);
-  //         setCheckingCsv(false);
-  //       },
-  //     });
-  //   } else {
-  //     alert("Only CSV files are allowed");
-  //   }
-  // };
-
-  // ---------------------------------new------------------------------------------
-  // const handleFileUpload = (e) => {
-  //   const file = e.target.files[0];
-
-  //   if (!file) return;
-
-  //   const fileType = file.name.split(".").pop().toLowerCase();
-
-  //   if (["csv", "xls", "xlsx"].includes(fileType)) {
-  //     setFileInfo({ name: file.name, size: (file.size / 1024).toFixed(2) + " KB" });
-  //     setCheckingCsv(true);
-  //     setFormData((prev) => ({ ...prev, uploadedFile: file.name })); 
-
-  //     if (fileType === "csv") {
-  //       const reader = new FileReader();
-  //       reader.onload = (event) => {
-  //         const csvText = event.target.result;
-  //         processFileData(csvText.split("\n").map(row => row.split(","))); // Convert CSV to array
-  //       };
-  //       reader.readAsText(file);
-  //     } else {
-  //       // Handle Excel Parsing
-  //       const reader = new FileReader();
-  //       reader.onload = (event) => {
-  //         const data = new Uint8Array(event.target.result);
-  //         const workbook = XLSX.read(data, { type: "array" });
-  //         const sheetName = workbook.SheetNames[0];
-  //         const worksheet = workbook.Sheets[sheetName];
-  //         const excelData = XLSX.utils.sheet_to_csv(worksheet); // Convert Excel to CSV
-  //         processFileData(excelData.split("\n").map(row => row.split(","))); // Convert CSV to array
-  //       };
-  //       reader.readAsArrayBuffer(file);
-  //     }
-  //   } else {
-  //     alert("Only CSV, XLS, or XLSX files are allowed");
-  //   }
-  // };
-
-  // const handleFileUpload = (e) => {
-  //   const file = e.target.files[0];
-
-  //   if (!file) return;
-
-  //   const fileType = file.name.split(".").pop().toLowerCase();
-
-  //   if (["csv", "xls", "xlsx"].includes(fileType)) {
-  //     setFileInfo({ name: file.name, size: (file.size / 1024).toFixed(2) + " KB" });
-  //     setCheckingCsv(true);
-  //     setFormData((prev) => ({ ...prev, uploadedFile: file }));
-
-  //     if (fileType === "csv" || fileType == "") {
-  //       const reader = new FileReader();
-  //       reader.onload = (event) => {
-  //         const csvText = event.target.result;
-  //         processFileData(csvText.split("\n").map(row => row.split(","))); // Convert CSV to array
-  //       };
-  //       reader.readAsText(file);
-  //     } else {
-  //       // Handle Excel Parsing
-  //       const reader = new FileReader();
-  //       reader.onload = (event) => {
-  //         const data = new Uint8Array(event.target.result);
-  //         const workbook = XLSX.read(data, { type: "array" });
-  //         const sheetName = workbook.SheetNames[0];
-  //         const worksheet = workbook.Sheets[sheetName];
-  //         const excelData = XLSX.utils.sheet_to_csv(worksheet); // Convert Excel to CSV
-  //         processFileData(excelData.split("\n").map(row => row.split(","))); // Convert CSV to array
-  //       };
-  //       reader.readAsArrayBuffer(file);
-  //     }
-  //   } else {
-  //     alert("Only CSV, XLS, or XLSX files are allowed");
-  //   }
-  // };
-
-
-  // const processFileData = (data) => {
-  //   if (!data || data.length === 0) {
-  //     setCsvValidationMessage({ text: "Empty or invalid file", color: "red" });
-  //     setCheckingCsv(false);
-  //     return;
-  //   }
-
-  //   const selectedHeadersMapping = headerMappings[selectedForm];
-
-  //   if (!selectedHeadersMapping) {
-  //     setCsvValidationMessage({ text: "Invalid form type selected", color: "red" });
-  //     setCheckingCsv(false);
-  //     return;
-  //   }
-
-  //   // Reverse mapping: Convert displayed headers back to internal keys
-  //   const reversedMapping = Object.fromEntries(
-  //     Object.entries(selectedHeadersMapping).map(([key, value]) => [value.toLowerCase(), key])
-  //   );
-
-  //   // Convert uploaded headers to lowercase
-  //   const headers = data[0].map(header => header.trim().toLowerCase());
-
-  //   // Convert expected mapped values to internal keys
-  //   const expectedHeaders = Object.values(selectedHeadersMapping).map(h => h.toLowerCase());
-
-  //   // Convert uploaded headers to internal keys using reversed mapping
-  //   const convertedHeaders = headers.map(header => reversedMapping[header] || header);
-
-  //   // Find missing and extra headers after mapping
-  //   const missingHeaders = Object.keys(selectedHeadersMapping).filter(header => !convertedHeaders.includes(header));
-  //   const extraHeaders = convertedHeaders.filter(header => !Object.keys(selectedHeadersMapping).includes(header));
-
-  //   if (missingHeaders.length === 0 && extraHeaders.length === 0) {
-  //     setCsvValidationMessage({ text: "Headers Matched", color: "green" });
-  //   } else {
-  //     let errorMessage = "Headers Not Matching:\n";
-
-  //     if (missingHeaders.length > 0) {
-  //       errorMessage += `Missing: ${missingHeaders.map(h => selectedHeadersMapping[h]).join(", ")}\n`;
-  //     }
-  //     if (extraHeaders.length > 0) {
-  //       errorMessage += `Extra: ${extraHeaders.join(", ")}\n`;
-  //     }
-
-  //     setCsvValidationMessage({ text: errorMessage, color: "red" });
-  //   }
-
-  //   setCsvData(data);
-  //   setCheckingCsv(false);
-  // };
-
-
-  // const processFileData = (data) => {
-  //   const headers = data[0].map(header => header.trim()); // Extract and trim headers
-  //   const selectedHeaders = expectedHeaders[selectedForm]?.map(header => header.trim()); // Expected headers for selected form
-
-  //   if (!selectedHeaders) {
-  //     setCsvValidationMessage({ text: "Invalid form type selected", color: "red" });
-  //     setCheckingCsv(false);
-  //     return;
-  //   }
-
-  //   // Find missing and extra headers
-  //   const missingHeaders = selectedHeaders.filter(header => !headers.includes(header));
-  //   const extraHeaders = headers.filter(header => !selectedHeaders.includes(header));
-
-  //   if (missingHeaders.length === 0 && extraHeaders.length === 0) {
-  //     setCsvValidationMessage({ text: "Headers Matched", color: "green" });
-  //   } else {
-  //     let errorMessage = "Headers Not Matching:\n";
-  //     if (missingHeaders.length > 0) {
-  //       errorMessage += `Missing: ${missingHeaders.join(", ")}\n`;
-  //     }
-  //     if (extraHeaders.length > 0) {
-  //       errorMessage += `Extra: ${extraHeaders.join(", ")}\n`;
-  //     }
-  //     setCsvValidationMessage({ text: errorMessage, color: "red" });
-  //   }
-
-  //   setCsvData(data);
-  //   setCheckingCsv(false);
-  // };
-
-
-
+  
   // =====================================================handlesubmit============================================
   // ------mapping -- for upload file ----------------
   const formTypeMapping = {
@@ -788,369 +568,577 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   };
   const selectedType = formTypeMapping[selectedForm];
 
+
+  const subrole = localStorage.getItem("sub_role",null)
+
+  const zoneMapping = {
+    Amravati: ["Akola", "Amravati Rural", "Buldana", "Washim", "Yavatmal"],
+    'Chhatrapati Sambhajinagar': ["Chhatrapati Sambhajinagar", "Beed", "Hingoli", "Jalna", "Latur", "Nanded", "Osmanabad", "Parbhani"],
+    Konkan: ["Mumbai", "Mumbai Suburban", "Palghar", "Raigad", "Ratnagiri", "Sindhudurg", "Thane Rural"],
+    Nagpur: ["Bhandara", "Chandrapur", "Gadchiroli", "Gondia", "Nagpur Rural", "Wardha"],
+    Nashik: ["Ahmednagar", "Dhule", "Jalgaon", "Nandurbar", "Nashik"],
+    Pune: ["Kolhapur", "Pune Rural", "Sangli", "Satara", "Solapur Rural"],
+  };
+
+  
+  const downloadPDF = (newData, subrole) => {
+    console.log("Generating PDF for subrole:", subrole);
+    console.log("newData:", newData);
+
+    const doc = new jsPDF({ orientation: "landscape" });
+    let pageHeight = doc.internal.pageSize.height;
+    let pageWidth = doc.internal.pageSize.width;
+    let y = 15; // Start vertical position
+    let pageNumber = 1;
+
+    const { timeStamp, submited_by, email, rang, district, sampleDataIN } = newData;
+    const assignedZone = localStorage.getItem("zone");
+    const assignedDistrict = localStorage.getItem("district");
+
+    const getFilteredData = () => {
+        if (subrole === "CS" || subrole === "ACS") {
+            return sampleDataIN;
+        } else if (subrole === "IG/DIG" || subrole === "DIG") {
+            return assignedZone ? { [assignedZone]: sampleDataIN[assignedZone] } : {};
+        } else if (subrole === "CP" || subrole === "SP") {
+            for (const [zone, districts] of Object.entries(zoneMapping)) {
+                if (districts.includes(assignedDistrict)) {
+                    return sampleDataIN[zone] && sampleDataIN[zone][assignedDistrict]
+                        ? { [zone]: { [assignedDistrict]: sampleDataIN[zone][assignedDistrict] } }
+                        : {};
+                }
+            }
+            return {};
+        }
+    };
+
+    const filteredData = getFilteredData();
+    console.log("Filtered Data:", filteredData);
+
+    // Function to add footer
+    const addFooter = () => {
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(`Email: ${email}`, 14, pageHeight - 10);
+        doc.text(`Page ${pageNumber}`, pageWidth - 30, pageHeight - 10);
+    };
+
+    // Add Header Logo
+    const logo = "src/assets/logo22.png";
+    doc.addImage(logo, "PNG", pageWidth / 2 - 15, y, 30, 30);
+    y += 40;
+
+    // Title
+    doc.setFontSize(22);
+    doc.setTextColor(30, 30, 120);
+    doc.setFont("helvetica", "bold");
+    doc.text("MARVEL DATA REPORT", pageWidth / 2 - 50, y);
+    y += 12;
+
+    // Divider Line
+    doc.setDrawColor(100, 100, 100);
+    doc.line(10, y, pageWidth - 10, y);
+    y += 8;
+
+    // Report Metadata
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont("helvetica", "bold");
+    doc.text(`Submitted On:`, 14, y);
+    doc.text(`Submitted by:`, 14, y + 8);
+    doc.text(`Email:`, 14, y + 16);
+    doc.text(`Rank:`, 14, y + 24);
+    doc.text(`Range:`, 14, y + 32);
+    doc.text(`District:`, 14, y + 40);
+
+    doc.setFont("helvetica", "normal");
+    doc.text(timeStamp, 50, y);
+    doc.text(submited_by, 50, y + 8);
+    doc.text(email, 50, y + 16);
+    doc.text(subrole, 50, y + 24);
+    doc.text(rang, 50, y + 32);
+    doc.text(district, 50, y + 40);
+
+    y += 50;
+
+    if (Object.keys(filteredData).length === 0) {
+        doc.setTextColor(255, 0, 0);
+        doc.setFontSize(14);
+        doc.text("⚠ No data available for the assigned zone/district.", 14, y);
+        addFooter();
+        doc.save("Filtered_Report.pdf");
+        return;
+    }
+
+    // Iterate Over Zones
+    Object.entries(filteredData).forEach(([zone, districts]) => {
+        doc.setFontSize(14);
+        doc.setTextColor(200, 0, 0);
+        doc.setFont("helvetica", "bold");
+        y += 8;
+        doc.setDrawColor(200, 0, 0);
+        doc.line(14, y, pageWidth - 14, y);
+        y += 6;
+
+        Object.entries(districts).forEach(([district, forms]) => {
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 255);
+            doc.setFont("helvetica", "bold");
+            y += 5;
+
+            Object.entries(forms).forEach(([formType, records]) => {
+                doc.setFontSize(10);
+                doc.setTextColor(0, 0, 0);
+                doc.setFont("helvetica", "bold");
+                doc.text(`${formType}`, 10, y);
+                y += 4;
+
+                if (records.length > 0) {
+                    const tableColumn = Object.keys(records[0]);
+                    const tableRows = records.map((row) => Object.values(row));
+
+                    doc.autoTable({
+                        startY: y + 2,
+                        head: [tableColumn],
+                        body: tableRows,
+                        theme: "grid",
+                        margin: { left: 14, right: 14 },
+                        styles: {
+                            fontSize: 9,
+                            cellPadding: 3,
+                            halign: "center",
+                            textColor: [50, 50, 50],
+                        },
+                        headStyles: {
+                            fillColor: [41, 128, 185],
+                            textColor: [255, 255, 255],
+                            fontSize: 10,
+                            fontStyle: "bold",
+                        },
+                        bodyStyles: {
+                            fillColor: (rowIndex) => (rowIndex % 2 === 0 ? [245, 245, 245] : [255, 255, 255]),
+                        },
+                        alternateRowStyles: {
+                            fillColor: [235, 235, 235],
+                        },
+                        didDrawPage: () => {
+                            addFooter();
+                        },
+                    });
+
+                    y = doc.autoTable.previous.finalY + 10;
+
+                    if (y > pageHeight - 20) {
+                        doc.addPage();
+                        pageNumber++;
+                        y = 15;
+                    }
+                } else {
+                    doc.setFont("helvetica", "italic");
+                    doc.setTextColor(150, 0, 0);
+                    doc.text("No data available", 30, y);
+                    y += 5;
+                }
+            });
+
+            y += 8;
+        });
+
+        y += 12;
+    });
+
+    addFooter();
+    doc.save("Filtered_Report.pdf");
+};
+
+  
+  
+  
+  // const sampleData = {
+  //   Nagpur: {
+  //     'Nagpur Rural': {
+  //       "Crime Report": [
+  //         { month_year: "January 2025", caseID: "CR001", description: "Robbery", status: "Pending" },
+  //         { month_year: "February 2025", caseID: "CR002", description: "Burglary", status: "Closed" },
+  //       ],
+  //       "Traffic Violations": [
+  //         { month_year: "January 2025", violationID: "TV001", vehicle: "MH12AB1234", fine: "$50" },
+  //       ],
+  //     },
+  //     "Amravati Rural": {
+  //       "Crime Report": [
+  //         { month_year: "March 2025", caseID: "CR003", description: "Theft", status: "Ongoing" },
+  //       ],
+  //     },
+  //   },
+  //   Aurangabad: {
+  //     Aurangabad: {
+  //       "Accident Report": [
+  //         { month_year: "January 2025", reportID: "AR001", location: "City Center", severity: "High" },
+  //       ],
+  //     },
+  //     Beed: {
+  //       "Crime Report": [
+  //         { month_year: "February 2025", caseID: "CR004", description: "Murder", status: "Investigation" },
+  //       ],
+  //       "Missing Persons": [
+  //         { month_year: "March 2025", personID: "MP001", name: "John Doe", age: 35 },
+  //       ],
+  //     },
+  //   },
+   
+  // };
+  
+
+
+
+
+  
   const handleSubmit = async () => {
     try {
-      const formDataToSend = new FormData();
-      const token = localStorage.getItem("token"); // Get token from localStorage
-
-      formDataToSend.append("data",JSON.stringify(formValues));
-
-
-      formDataToSend.append("username", localStorage.getItem("userName"));
-      formDataToSend.append("email", localStorage.getItem("email"));
-      formDataToSend.append("emp_id", localStorage.getItem("emp_id"));
-
-
-
-      formDataToSend.append("city", localStorage.getItem("city"));
-      formDataToSend.append("zone", localStorage.getItem("zone"));
-      formDataToSend.append("unit", localStorage.getItem("unit"));
-
-      // if (formData.uploadedFile) {
-      //   console.log("Inside this upload file");
-      //   // ----------------------------added for reverse keys------------------------------------------
-      //   // Get the header mapping for the selected form
-      //   const selectedHeadersMapping = headerMappings[selectedForm];
-
-      //   // Reverse mapping: from displayed headers (in file) back to original internal keys
-      //   // For example, mapping "From Date" back to "month_year_from"
-      //   const reversedMapping = Object.fromEntries(
-      //     Object.entries(selectedHeadersMapping).map(([key, value]) => [value.toLowerCase(), key])
-      //   );
-
-      //   // Process the header row: convert each header from the file to lowercase and then map it
-      //   const uploadedHeaders = csvData[0].map(header => header.trim().toLowerCase());
-      //   const convertedHeaders = uploadedHeaders.map(header => reversedMapping[header] || header);
-
-      //   // Reassemble the CSV content: use the converted headers and then the rest of the rows
-      //   const newCsvContent = [
-      //     convertedHeaders.join(","),
-      //     ...csvData.slice(1).map(row => row.join(","))
-      //   ].join("\n");
-
-      //   // Create a new file blob with the updated CSV content
-      //   const newFileBlob = new Blob([newCsvContent], { type: "text/csv" });
-      //   // Append additional data and the new file blob to formDataToSend
-      //   formDataToSend.append("type", selectedType);
-      //   formDataToSend.append("file", newFileBlob, "processed_file.csv");
-      //   // -------------------------------------------------------------------------------------------------------
-      //   // formDataToSend.append("type", selectedType);
-      //   // formDataToSend.append("file", formData.uploadedFile);
-      //   formDataToSend.append("unit", localStorage.getItem("zone") || "N/A");
-      //   formDataToSend.append("district", localStorage.getItem("district") || "N/A");
-      //   formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-      //   // formDataToSend.append("unit", localStorage.getItem("unit") || "N/A");
-      //   // formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
-      //   // formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
-      // }
-      // else {
-
-      //   console.log("training_active?.section : ", training_active?.section);
-
-
-      //   if (formData.formType === "Pendency of cases under BNS") {
-      //     formDataToSend.append("type", "pendency_in_bns");
-      //     formDataToSend.append("district", localStorage.getItem("district") || "");
-      //     formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-      //     formDataToSend.append("city", localStorage.getItem("city") || "N/A");
-      //     formDataToSend.append("unit", formData.unit);
-      //     formDataToSend.append("total_cases_registered", formData.totalCases);
-      //     formDataToSend.append("cases_disposed", formData.disposedCases);
-      //     formDataToSend.append("cases_pending_investigation", formData.pendingCases);
-      //     formDataToSend.append("percent_pendency", formData.pendingPercentage);
-      //     formDataToSend.append("cases_punishment_less_than_7_years", formData.punishmentLessThan7);
-      //     formDataToSend.append("cases_punishment_7_years_or_more", formData.punishmentMoreThan7);
-      //     formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
-      //     formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
-      //   }
-      //   if (formData.formType === "Offences against body under BNS") {
-      //     formDataToSend.append("type", "offences_against_body");
-      //     formDataToSend.append("district", localStorage.getItem("district") || "");
-      //     formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-      //     formDataToSend.append("city", localStorage.getItem("city") || "N/A");
-      //     formDataToSend.append("unit", formData.unit);
-      //     formDataToSend.append("police_station", formData.policeStation);
-      //     formDataToSend.append("act_and_section", formData.actAndSection);
-      //     formDataToSend.append("registered_cases", formData.registeredCases);
-      //     formDataToSend.append("detected_cases", formData.detectedCases);
-      //     formDataToSend.append("percent_detection", formData.detectedCasesPercentage);
-      //     formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
-      //     formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
-      //   }
-      //   if (formData.formType === "Untraced Missing") {  //Tested
-      //     formDataToSend.append("type", "untraced_missing");
-      //     formDataToSend.append("district", localStorage.getItem("district") || "");
-      //     formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-      //     formDataToSend.append("city", localStorage.getItem("city") || "N/A");
-      //     formDataToSend.append("unit", formData.unit);
-      //     formDataToSend.append("police_station", formData.policeStationD);
-      //     formDataToSend.append("age_group", formData.ageGroup);
-      //     formDataToSend.append("no_of_untraced_persons", formData.untracedPersons);
-      //     formDataToSend.append("no_of_missing_persons", formData.missingPersons);
-      //     formDataToSend.append("total_missing_persons", formData.totalMissing);
-      //     formDataToSend.append("traced", formData.traced);
-      //     formDataToSend.append("untraced", formData.untraced);
-      //     formDataToSend.append("percent_untraced", formData.untracedPercentage);
-      //     formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
-      //     formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
-      //   }
-      //   if (formData.formType === "Important sections introduced in BNS") { //Tested
-      //     formDataToSend.append("type", "sections_in_bns");
-      //     formDataToSend.append("district", localStorage.getItem("district") || "");
-      //     formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-      //     formDataToSend.append("city", localStorage.getItem("city") || "N/A");
-      //     formDataToSend.append("unit", formData.unit);
-      //     formDataToSend.append("police_station", formData.policeStation);
-      //     formDataToSend.append("act_and_section", formData.actAndSection);
-      //     formDataToSend.append("registered_cases", formData.registeredCases);
-      //     formDataToSend.append("detected_cases", formData.detectedCases);
-      //     formDataToSend.append("percent_detection", formData.detectedCasesPercentage);
-      //     formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
-      //     formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
-      //   }
-      //   if (formData.formType === "Property offences under BNS") { //Tested
-      //     formDataToSend.append("type", "property_offenses");
-      //     formDataToSend.append("district", localStorage.getItem("district") || "");
-      //     formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-      //     formDataToSend.append("city", localStorage.getItem("city") || "N/A");
-      //     formDataToSend.append("unit", formData.unit);
-      //     formDataToSend.append("police_station", formData.policeStation);
-      //     formDataToSend.append("act_and_section", formData.actAndSection);
-      //     formDataToSend.append("registered_cases", formData.registeredCases);
-      //     formDataToSend.append("detected_cases", formData.detectedCases);
-      //     formDataToSend.append("percent_detection", formData.detectedCasesPercentage);
-      //     formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
-      //     formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
-      //   }
-      //   if (formData.formType === "eSakshya Details") { //Tested
-      //     formDataToSend.append("type", "esakshya_units");
-      //     formDataToSend.append("district", localStorage.getItem("district") || "");
-      //     formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-      //     formDataToSend.append("city", localStorage.getItem("city") || "N/A");
-      //     formDataToSend.append("unit", formData.unit);
-      //     formDataToSend.append("total_ios_nagpur_rural", formData.totalIOsNagapur);
-      //     formDataToSend.append("registered_ios_on_esakshya", formData.totalIOsEsakshya);
-      //     formDataToSend.append("esakshya_usage_percentage", formData.esakshyaWage);
-      //     formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
-      //     formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
-      //   }
-      //   if (formData.formType === "Use of eSakshya App in cases with punishment of 7 yrs. or more") {
-      //     formDataToSend.append("type", "esakshya_7_more");
-      //     formDataToSend.append("district", localStorage.getItem("district") || "");
-      //     formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-      //     formDataToSend.append("city", localStorage.getItem("city") || "N/A");
-      //     formDataToSend.append("unit", formData.unit);
-      //     formDataToSend.append("total_cases", formData.totalCases);
-      //     formDataToSend.append("total_offences_with_esakshya", formData.totalOffencesUsed);
-      //     formDataToSend.append("total_offences_without_esakshya", formData.totalOffencesNotUsed);
-      //     formDataToSend.append("total_charge_sheeted_with_esakshya", formData.offencesUsedChargeCheet);
-      //     formDataToSend.append("total_under_investigation_without_esakshya", formData.offencesNotUsedUnderInvestigation);
-      //     formDataToSend.append("percentage_usage", formData.percentageOfUsingEsakshya);
-      //     formDataToSend.append("total_under_investigation_without_esakshya", 1);
-      //     formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
-      //     formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
-      //   }
-
-      //   if (formData.formType === "Zero FIR's") {
-      //     formDataToSend.append("type", "fir_and_zero_firs");
-      //     formDataToSend.append("district", localStorage.getItem("district") || "");
-      //     formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-      //     formDataToSend.append("city", localStorage.getItem("city") || "N/A");
-      //     formDataToSend.append("unit", localStorage.getItem("unit") || "N/A");
-      //     formDataToSend.append("total_no_zero_fir_transferred_outside_mh", formData.total_no_zero_fir_transferred_outside_mh);
-      //     formDataToSend.append("total_no_zero_fir_transferred_outer_state_to_mh", formData.total_no_zero_fir_transferred_outer_state_to_mh);
-      //     formDataToSend.append("total_zero_firs", formData.total_zero_firs);
-      //     formDataToSend.append("total_firs_registered", formData.total_firs_registered);
-      //     formDataToSend.append("pending_to_transfer_outside_mh", formData.pending_to_transfer_outside_mh);
-      //     formDataToSend.append("re_reg_firs", formData.re_reg_firs);
-      //     formDataToSend.append("total_transferred_zero_firs_in_mh", formData.total_transferred_zero_firs_in_mh);
-      //     formDataToSend.append("pending_for_transfer_within_mh", formData.pending_for_transfer_within_mh);
-      //     formDataToSend.append("pending_for_re_registration", formData.pending_for_re_registration);
-      //     formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
-      //     formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
-      //   }
-      //   if (formData.formType === "eFIR") {
-      //     formDataToSend.append("type", "e_fir");
-      //     formDataToSend.append("district", localStorage.getItem("district") || "");
-      //     formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-      //     formDataToSend.append("city", localStorage.getItem("city") || "N/A");
-      //     formDataToSend.append("unit", formData.unit);
-      //     formDataToSend.append("police_station", formData.policeStation);
-      //     formDataToSend.append("total_ecomplaints_received", formData.totalEComplaintsReceived);
-      //     formDataToSend.append("total_ecomplaints_converted_to_firs", formData.totalComplaintsConverted);
-      //     formDataToSend.append("disposed_of_ecomplaints", formData.disposedEComplaints);
-      //     formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
-      //     formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
-      //   }
-      //   if (formData.formType === "ITSSO Compliance Form") {
-      //     formDataToSend.append("type", "itsso_compliance");
-      //     formDataToSend.append("district", localStorage.getItem("district") || "");
-      //     formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-      //     formDataToSend.append("city", localStorage.getItem("city") || "N/A");
-      //     formDataToSend.append("unit", localStorage.getItem("unit") || "N/A");
-      //     // formDataToSend.append("total_pocso", formData.total_pocso || "");
-      //     // formDataToSend.append("bns_cases", formData.bns_cases || "");
-      //     formDataToSend.append("charge_sheeted_within_60_days", formData.charge_sheeted_within_60_days || "");
-      //     formDataToSend.append("total_pocso_bns_cases", formData.total_pocso_bns_cases || "");
-      //     // formDataToSend.append("reasons_for_pending", formData.reasons_for_pending || "");
-      //     formDataToSend.append("percentage", formData.percentage || "");
-      //     formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
-      //     formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
-      //   }
-      //   if (formData.formType === "Stolen & Recovered Property") {
-      //     formDataToSend.append("type", "stolen_recovered_property");
-      //     formDataToSend.append("district", localStorage.getItem("district") || "");
-      //     formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-      //     formDataToSend.append("city", localStorage.getItem("city") || "N/A");
-      //     formDataToSend.append("unit", localStorage.getItem("unit") || "N/A");
-      //     formDataToSend.append("total_cases", formData.total_cases || "");
-      //     formDataToSend.append("value_stolen_property", formData.value_stolen_property || "");
-      //     formDataToSend.append("value_recovered_property", formData.value_recovered_property || "");
-      //     formDataToSend.append("recovery_percentage", formData.recovery_percentage || "");
-      //     formDataToSend.append("detected_cases", formData.detected_cases || "");
-      //     formDataToSend.append("offences_registerd", formData.offences_registerd || "");
-      //     formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
-      //     formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
-      //   }
-      //   if (formData.formType === "Visit of Forensic Teams") {  //Tested
-      //     formDataToSend.append("type", "forensic_team_deployment");
-      //     formDataToSend.append("district", localStorage.getItem("district") || "");
-      //     formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-      //     formDataToSend.append("city", localStorage.getItem("city") || "N/A");
-      //     formDataToSend.append("unit", localStorage.getItem("unit") || "N/A");
-      //     formDataToSend.append("total_cases_gt_7_years", formData.total_cases_gt_7_years || "");
-      //     formDataToSend.append("forensic_team_deployment_percentage", formData.forensic_team_deployment_percentage || "");
-      //     formDataToSend.append("cases_forensic_team_visited", formData.cases_forensic_team_visited || "");
-      //     formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
-      //     formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
-      //   }
-      //   if (training_active?.section === "training") {   //Tested
-
-      //     formDataToSend.append("type", "police_training");
-      //     formDataToSend.append("district", localStorage.getItem("district") || null);
-      //     formDataToSend.append("police_station", localStorage.getItem("police_station") || null);
-      //     formDataToSend.append("city", localStorage.getItem("city") || null);
-      //     formDataToSend.append("unit", localStorage.getItem("zone") || null);
-
-      //     formDataToSend.append("formValues", JSON.stringify(formValues))
-
-
-
-      //   }
-      //   if (formData.formType === "Conviction under BNS") { //Tested
-      //     formDataToSend.append("type", "conviction_rate_in_bns");
-      //     formDataToSend.append("district", localStorage.getItem("district") || "");
-      //     formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-      //     formDataToSend.append("city", localStorage.getItem("city") || "N/A");
-      //     formDataToSend.append("unit", localStorage.getItem("zone") || "Nagpur Rural");
-      //     formDataToSend.append("month_year_from", formData.fromDate || dateRange.fromDate || "");
-      //     formDataToSend.append("month_year_to", formData.toDate || dateRange.toDate || "");
-      //     formDataToSend.append("type_of_court", formData.type_of_court || "");
-      //     formDataToSend.append("bns_sections", formData.bns_sections || "");
-      //     // If "Other" is selected in BNS Sections, send the custom value
-      //     if (formData.bns_sections === "Other") {
-      //       formDataToSend.append("other_bns_section", formData.other_bns_section || "");
-      //     }
-      //     formDataToSend.append("cases_decided", formData.cases_decided || "");
-      //     formDataToSend.append("cases_convicted", formData.convicted_cases || "");
-      //     formDataToSend.append("conviction_rate", formData.conviction_rate || "");
-      //   }
-      // }
-
-      // console.log("formDataToSend : ", formDataToSend);
-
-      console.log("formDataToSend : ",formDataToSend);
       
-      const response = await axiosInstance.post("/data", formDataToSend, {
+      
+      
+      
+      const token = localStorage.getItem("token");
+      // Extract form values based on types
+      const transformedData = {
+        police_training: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "police_training",
+          total_personnel: formValues[month].total_personnel || "",
+          total_officers: formValues[month].total_officers || "",
+          personnel_trained: formValues[month].personnel_trained || "",
+          officers_trained: formValues[month].officers_trained || "",
+          percent_personnel_trained: formValues[month].percent_personnel_trained || "",
+          percent_officers_trained: formValues[month].percent_officers_trained || "",
+          overall_cumulative: formValues[month].overall_cumulative || "",
+        })),
+
+        pendency: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "pendency_in_bns",
+          totalCases: formValues[month].totalCases || "",
+          disposedCases: formValues[month].disposedCases || "",
+          pendingCases: formValues[month].pendingCases || "",
+          pendingPercentage: formValues[month].pendingPercentage || "",
+          punishmentLessThan7: formValues[month].punishmentLessThan7 || "",
+          punishmentMoreThan7: formValues[month].punishmentMoreThan7 || "",
+        })),
+        
+        offences_against_body: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "offences_against_body",
+          actAndSection: formValues[month].actAndSection || "",
+          registeredCases: formValues[month].registeredCases || "",
+          detectedCases: formValues[month].detectedCases || "",
+          detectedCasesPercentage: formValues[month].detectedCasesPercentage || "",
+        })),
+        
+        untraced_missing: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "untraced_missing",
+          ageGroup: formValues[month].ageGroup || "",
+          untracedPersons: formValues[month].untracedPersons || "",
+        })),
+        
+        sections_in_bns: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "sections_in_bns",
+          actAndSection: formValues[month].actAndSection || "",
+          registeredCases: formValues[month].registeredCases || "",
+          detectedCases: formValues[month].detectedCases || "",
+          detectedCasesPercentage: formValues[month].detectedCasesPercentage || "",
+        })),
+        
+        property_offenses: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: 'property_offenses',
+          actAndSection: formValues[month].actAndSection || "",
+          registeredCases: formValues[month].registeredCases || "",
+          detectedCases: formValues[month].detectedCases || "",
+          detectedCasesPercentage: formValues[month].detectedCasesPercentage || "",
+        })),
+        
+        esakshya_units: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "esakshya_units",
+          totalIOsEsakshyaRegistered: formValues[month].totalIOsEsakshyaRegistered || "",
+          totalIOsEsakshyaDownload: formValues[month].totalIOsEsakshyaDownload || "",
+          esakshyaWage_1: formValues[month].esakshyaWage_1 || "",
+        })),
+        
+        esakshya_7_more: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "esakshya_7_more",
+          totalIOsNagapur: formValues[month].totalIOsNagapur || "",
+          totalIOsEsakshya: formValues[month].totalIOsEsakshya || "",
+          esakshyaWage: formValues[month].esakshyaWage || "",
+        })),
+        
+        fir_and_zero_firs: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "fir_and_zero_firs",
+          total_no_zero_fir_transferred_outside_mh: formValues[month].total_no_zero_fir_transferred_outside_mh || "",
+          total_no_zero_fir_transferred_outer_state_to_mh: formValues[month].total_no_zero_fir_transferred_outer_state_to_mh || "",
+          total_zero_firs: formValues[month].total_zero_firs || "",
+          pending_to_transfer_outside_mh: formValues[month].pending_to_transfer_outside_mh || "",
+          total_firs_registered: formValues[month].total_firs_registered || "",
+          re_reg_firs: formValues[month].re_reg_firs || "",
+          total_transferred_zero_firs_in_mh: formValues[month].total_transferred_zero_firs_in_mh || "",
+          pending_for_transfer_within_mh: formValues[month].pending_for_transfer_within_mh || "",
+          pending_for_re_registration: formValues[month].pending_for_re_registration || "",
+        })),
+        
+        e_fir: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "e_fir",
+          totalEComplaintsReceived: formValues[month].totalEComplaintsReceived || "",
+          totalComplaintsConverted: formValues[month].totalComplaintsConverted || "",
+          disposedEComplaints: formValues[month].disposedEComplaints || "",
+        })),
+        
+        itsso_compliance: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "itsso_compliance",
+          total_pocso_bns_cases: formValues[month].total_pocso_bns_cases || "",
+          charge_sheeted_within_60_days: formValues[month].charge_sheeted_within_60_days || "",
+          percentage: formValues[month].percentage || "",
+        })),
+        
+        stolen_recovered_property: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "stolen_recovered_property",
+          total_cases: formValues[month].total_cases || "",
+          offences_registered: formValues[month].offences_registered || "",
+          value_stolen_property: formValues[month].value_stolen_property || "",
+          detected_cases: formValues[month].detected_cases || "",
+          value_recovered_property: formValues[month].value_recovered_property || "",
+          recovery_percentage: formValues[month].recovery_percentage || "",
+        })),
+        
+        conviction_rate_in_bns: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "conviction_rate_in_bns",
+          type_of_court: formValues[month].type_of_court || "",
+          bns_sections: formValues[month].bns_sections || "",
+          cases_decided: formValues[month].cases_decided || "",
+          convicted_cases: formValues[month].convicted_cases || "",
+          conviction_rate: formValues[month].conviction_rate || "",
+          total_cases_convicted: formValues[month].total_cases_convicted || "",
+          total_cases_decided: formValues[month].total_cases_decided || "",
+        })),
+
+        forensic_visits: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "forensic_visits",
+          total_cases_gt_7_years: formValues[month].total_cases_gt_7_years || "",
+          cases_forensic_team_visited: formValues[month].cases_forensic_team_visited || "",
+          forensic_team_deployment_percentage: formValues[month].forensic_team_deployment_percentage || "",
+        })),
+        
+      };
+
+
+
+
+      const reportData = {
+        'Police Training': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Total Constabulary": formValues[month].total_personnel || 0,
+            'Constabulary Trained': formValues[month].total_officers || 0,
+            '% Constabulary Trained': formValues[month].personnel_trained || 0,
+            'Total Officers': formValues[month].officers_trained || 0,
+            'Officers Trained': formValues[month].percent_personnel_trained || 0,
+            '% Officers Trained': formValues[month].percent_officers_trained || 0,
+            'Overall Cumulative': formValues[month].overall_cumulative || 0,
+        })),
+    
+        'Pendency of cases under BNS': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Total Cases": formValues[month].totalCases || 0,
+            "Disposed Cases": formValues[month].disposedCases || 0,
+            "Pending Cases": formValues[month].pendingCases || 0,
+            "Pending Percentage": formValues[month].pendingPercentage || 0,
+            "Punishment Less Than 7 yrs.": formValues[month].punishmentLessThan7 || 0,
+            "Punishment More Than 7 yrs.": formValues[month].punishmentMoreThan7 || 0,
+        })),
+        
+        'Offences Against Body under BNS': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Act and Section": formValues[month].actAndSection || 0,
+            "Registered Cases": formValues[month].registeredCases || 0,
+            "Detected Cases": formValues[month].detectedCases || 0,
+            "Detected Cases %": formValues[month].detectedCasesPercentage || 0,
+        })),
+        
+        'Untraced Missing': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Age Group": formValues[month].ageGroup || 0,
+            "Untraced Persons": formValues[month].untracedPersons || 0,
+        })),
+        
+        'Sections Under BNS': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Act and Section": formValues[month].actAndSection || 0,
+            "Registered Cases": formValues[month].registeredCases || 0,
+            "Detected Cases": formValues[month].detectedCases || 0,
+            "Detected Cases %": formValues[month].detectedCasesPercentage || 0,
+        })),
+        
+        'Property Offences under BNS': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Act and Section": formValues[month].actAndSection || 0,
+            "Registered Cases": formValues[month].registeredCases || 0,
+            "Detected Cases": formValues[month].detectedCases || 0,
+            "Detected Cases %": formValues[month].detectedCasesPercentage || 0,
+        })),
+        
+        'eSakshya Details': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Total IO's eSaklshya Registered": formValues[month].totalIOsEsakshyaRegistered || 0,
+            "Total IO's eSakshya Downloaded": formValues[month].totalIOsEsakshyaDownload || 0,
+            "eSakshya Wage": formValues[month].esakshyaWage_1 || 0,
+        })),
+        
+        'Use of eSakshya App. in cases with punishment of 7 yrs. or more': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Totak IO's Nagpur": formValues[month].totalIOsNagapur || 0,
+            "Totak IO's eSakshya": formValues[month].totalIOsEsakshya || 0,
+            "eSakshya Wage": formValues[month].esakshyaWage || 0,
+        })),
+        
+        "Zero FIR's": Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            'Total No. Zero FIRs Transferred Outside Maharashtra': formValues[month].total_no_zero_fir_transferred_outside_mh || 0,
+            "Total No. Zero FIRs Transferred Outer State to Maharashtra": formValues[month].total_no_zero_fir_transferred_outer_state_to_mh || 0,
+            "Totak Zero FIRs": formValues[month].total_zero_firs || 0,
+            "Pending To Transfer Outside Maharashtra": formValues[month].pending_to_transfer_outside_mh || 0,
+            "Total FIRs Registered": formValues[month].total_firs_registered || 0,
+            "Re-Register FIRs": formValues[month].re_reg_firs || 0,
+            "Total Transferred Zero FIRs in Maharashtra": formValues[month].total_transferred_zero_firs_in_mh || 0,
+            "Pending For Transfer Within Maharashtra": formValues[month].pending_for_transfer_within_mh || 0,
+            "Pending For Re-Registration": formValues[month].pending_for_re_registration || 0,
+        })),
+        
+        'eFIR': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Total EComplaints Received": formValues[month].totalEComplaintsReceived || 0,
+            "Total Complaints Converted": formValues[month].totalComplaintsConverted || 0,
+            'Disposed EComplaints': formValues[month].disposedEComplaints || 0,
+        })),
+        
+        'ITSSO (Investigation Tracking System for Sexual offences)': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Total Pocso BNS Cases": formValues[month].total_pocso_bns_cases || 0,
+            "No. Charge Sheet Within 60 Days": formValues[month].charge_sheeted_within_60_days || 0,
+            "Percentage": formValues[month].percentage || 0,
+        })),
+        
+        'Stolen / Recovered Property': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Total Cases": formValues[month].total_cases || 0,
+            "Offences Registered": formValues[month].offences_registered || 0,
+            "Value Stolen Property": formValues[month].value_stolen_property || 0,
+            "Detected Cases": formValues[month].detected_cases || 0,
+            "Value Recovered Property": formValues[month].value_recovered_property || 0,
+            "Recovery %": formValues[month].recovery_percentage || 0,
+        })),
+        
+        'Conviction under BNS': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Type of Court": formValues[month].type_of_court || 0,
+            "BNS Section": formValues[month].bns_sections || 0,
+            "Cases Decided": formValues[month].cases_decided || 0,
+            "Convicted Cases": formValues[month].convicted_cases || 0,
+            "Convicted Rate": formValues[month].conviction_rate || 0,
+            "Total Cases Convicted": formValues[month].total_cases_convicted || 0,
+            "Total Cases Decided": formValues[month].total_cases_decided || 0,
+        })),
+
+        'Visit of Forensic Teams': Object.keys(formValues).map((month) => ({
+          'Month-year': month, 
+          "Total Cases Greater Than 7 yrs.": formValues[month].total_cases_gt_7_years || 0,
+          "Cases Forensic Team Visited": formValues[month].cases_forensic_team_visited || 0,
+          "Forensic Team Deployment %": formValues[month].forensic_team_deployment_percentage || 0,
+        })),
+    };
+      
+
+
+      // Full request body in JSON format
+      const requestBody = {
+        data: transformedData,
+        username: localStorage.getItem("userName") || "",
+        email: localStorage.getItem("email") || "",
+        emp_id: localStorage.getItem("emp_id") || "",
+        city: localStorage.getItem("city") || "",
+        zone: localStorage.getItem("zone") || "",
+        unit: localStorage.getItem("zone") || "",
+        district: localStorage.getItem("district") || "",
+        police_station: localStorage.getItem("police_station") || "",
+        // month: month,
+      };
+      
+
+      console.log(requestBody, "..........pavan.........");
+
+
+      // Make the API request with axios
+      const response = await axiosInstance.post("/fir_form", requestBody, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `${token}`, // Include token
         },
       });
-      // const response = await axios.post("http://192.168.1.33:5555/api/fir_form", formDataToSend, {
-      //   headers: {
-      //     "Content-Type": "multipart/form-data",
-      //     Authorization: `${token}`, // Ensure token is valid
-      //   },
-      // });
 
       if (response.status === 201) {
         alert("Data inserted successfully");
         setFormData(getInitialFormData());
         setFileInfo(null);
-        setReload(true)
-        // window.location.reload();
+        setReload(true);
+
+
+        const zone  = localStorage.getItem('zone') || ""
+        const district  = localStorage.getItem('district') || ""
+
+        console.log("transformedData['data'] : ",transformedData);
+        
+
+
+        const newData = {
+          timeStamp: (() => {
+            const date = new Date();
+            const day = String(date.getDate()).padStart(2, '0'); // Add leading zero for single digits
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+            const year = date.getFullYear();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+          })(),
+          submited_by: localStorage.getItem('userName') || "",
+          email: localStorage.getItem('email') || "",
+          rang: localStorage.getItem('zone') || "",
+          district: localStorage.getItem('district') || "",
+          sampleDataIN:{
+            [zone]:{
+              [district]:reportData
+            }
+            
+            }
+        };
+        
+        downloadPDF(newData,subrole);
       } else {
         alert("Data inserted successfully");
-
       }
     } catch (error) {
-      alert("Data inserted successfully");
-
+      console.error("Error submitting form:", error);
+      alert("Failed to insert data.");
     }
   };
 
-
-
-  // const handlePreviewClick = async () => {
-  //   try {
-  //     // Convert formValues to FormData
-  //     const formDataToSend = new FormData();
-  //     formDataToSend.append("data", JSON.stringify(formValues));
-  
-  //     // Send data to /data route using axios
-  //     const response = await axiosInstance.post("/data", formDataToSend, {
-  //       headers: {
-  //         "Content-Type": "multipart/form-data",
-  //         Authorization: `${token}`, // Include token if required
-  //       },
-  //     });
-  
-  //     console.log("Response from server:", response.data);
-  
-  //     // Open Dialog
-  //     setDialogOpen(true);
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   }
-  // };
-
-
-
-  // useEffect(() => {
-  //   setFormData(prevState => ({
-  //     ...getInitialFormData(),
-  //     formType: prevState.formType, // Keep the selected form type
-  //   }));
-  // }, [formData.formType]);
-
-  // useEffect(() => {
-  //   setFormData(getInitialFormData());
-  // }, [training_active]);
-
-  // const [convictionData, setConvictionData] = useState(null);
-
-  // useEffect(() => {
-  //   const fetchConvictionData = async () => {
-  //     try {
-  //       const response = await fetch("http://192.168.1.33:5555/api/conviction");
-  //       if (!response.ok) {
-  //         throw new Error("Failed to fetch data");
-  //       }
-  //       const data = await response.json();
-  //       setConvictionData(data);
-  //     } catch (error) {
-  //       console.error("Error fetching conviction data:", error);
-  //     }
-  //   };
-
-  //   fetchConvictionData();
-  // }, []); // Empty dependency array ensures it runs only once on mount
-
-  // console.log(convictionData); // Check the API response
-
-  // Fetch data from API on component mount
-  
   
   
   useEffect(() => {
@@ -1176,8 +1164,8 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
     setFormData((prev) => ({
       ...prev, // Preserve other form data
       bns_sections: selectedSection,
-      total_cases_convicted: matchedData ? matchedData.total_cases_convicted : "waiting for backend value",
-      total_cases_decided: matchedData ? matchedData.total_cases_decided : "waiting for backend value",
+      total_cases_convicted: matchedData ? matchedData.total_cases_convicted : "0",
+      total_cases_decided: matchedData ? matchedData.total_cases_decided : "0",
     }));
   };
 
@@ -1308,11 +1296,15 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           const registeredCases = Number(updatedForm.registeredCases) || 0;
           const detectedCases = Number(updatedForm.detectedCases) || 0;
 
-
           updatedForm.detectedCasesPercentage =
             (registeredCases > 0) ? ((detectedCases / registeredCases) * 100).toFixed(2) : "0.00";
+        // --- added by me pavan kalyan important sections in bns ---
+          const registeredCases_1 = Number(updatedForm.registeredCases_1) || 0;
+          const detectedCases_1 = Number(updatedForm.detectedCases_1) || 0;
 
-
+          updatedForm.detectedCasesPercentage_1 =
+            (registeredCases_1 > 0) ? ((detectedCases_1 / registeredCases_1) * 100).toFixed(2) : "0.00";
+          
         // } else if (formData.formType === 'eSakshya Details') {
 
           const totalIOsEsakshya = Number(updatedForm.totalIOsEsakshya) || 0;
@@ -1320,6 +1312,13 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
           updatedForm.esakshyaWage =
             (totalIOsNagapur > 0) ? ((totalIOsEsakshya / totalIOsNagapur) * 100).toFixed(2) : "0.00";
+
+        // -----pavan -- esakshaya details ----
+        const totalIOsEsakshyaRegistered = Number(updatedForm.totalIOsEsakshyaRegistered) || 0;
+        const totalIOsEsakshyaDownload = Number(updatedForm.totalIOsEsakshyaDownload) || 0;
+
+        updatedForm.esakshyaWage_1 =
+          (totalIOsEsakshyaDownload > 0) ? ((totalIOsEsakshyaDownload / totalIOsEsakshyaRegistered) * 100).toFixed(2) : "0.00";
         // } else if (formData.formType === 'Use of eSakshya App in cases with punishment of 7 yrs. or more') {
           const totalCaseseSK = Number(updatedForm.totalCases) || 0;
           const totalOffencesUsedeSK = Number(updatedForm.totalOffencesUsed) || 0;
@@ -1685,7 +1684,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                       className="w-[50%] p-2"
                       required
                       value={formValues[id]?.total_personnel || ""}
-                      disabled={!isPrevFormFilled}
+                      
                       onChange={(e) => handleInputChange(id, "total_personnel", e.target.value)}
                     />
                   </td>
@@ -1695,7 +1694,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                       required
                       className="w-[50%] p-1"
                       value={formValues[id]?.personnel_trained || ""}
-                      disabled={!isPrevFormFilled}
+                      
                       onChange={(e) => handleInputChange(id, "personnel_trained", e.target.value)}
                       style={{
                         border:
@@ -1708,7 +1707,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   </td>
                   <td className="border px-4 py-2">
 
-                    <input type="number" required className="w-[50%] p-2" value={formValues[id]?.percent_personnel_trained || ""} readOnly />
+                    <input type="number" required className="w-[50%] p-2" value={formValues[id]?.percent_personnel_trained || ""}  />
                   </td>
                   <td className="border px-4 py-2">
                     <input
@@ -1716,7 +1715,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                       required
                       className="w-[50%] p-1"
                       value={formValues[id]?.total_officers || ""}
-                      disabled={!isPrevFormFilled}
+                      
                       onChange={(e) => handleInputChange(id, "total_officers", e.target.value)}
                     />
                   </td>
@@ -1726,7 +1725,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                       className="w-[50%] p-1"
                       required
                       value={formValues[id]?.officers_trained || ""}
-                      disabled={!isPrevFormFilled}
+                      
                       onChange={(e) => handleInputChange(id, "officers_trained", e.target.value)}
                       style={{
                         border:
@@ -1739,7 +1738,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   </td>
                   <td className="border px-4 py-2">
 
-                    <input type="number" required className="w-[50%] p-2" value={formValues[id]?.percent_officers_trained || ""} readOnly />
+                    <input type="number" required className="w-[50%] p-2" value={formValues[id]?.percent_officers_trained || ""}  />
                   </td>
                   <td className="border px-4 py-2">
                     <input
@@ -1749,7 +1748,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         (Number(formValues[id]?.personnel_trained) || 0) +
                         (Number(formValues[id]?.officers_trained) || 0)
                       )}
-                      readOnly
+                      
                     />
                   </td>
                   <td className="border px-4 py-2">
@@ -1760,7 +1759,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         ((Number(formValues[id]?.percent_personnel_trained) || 0) +
                           (Number(formValues[id]?.percent_officers_trained) || 0)) / 2
                       ).toFixed(2)}
-                      readOnly
+                      
                     />
 
                   </td>
@@ -1836,7 +1835,6 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   <th className="border px-4 py-2">No. of Cases Disposed</th>
                   <th className="border px-4 py-2">Total Pending Cases</th>
                   <th className="border px-4 py-2">Pendency Percentage</th>
-                  <th className="border px-4 py-2">% of Pendency</th>
                   <th className="border px-4 py-2">
                     Less than 7 yrs Punishment cases out of Reg.Cases
                   </th>
@@ -1880,20 +1878,14 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                             handleInputChange(id, "disposedCases", e.target.value)
                           }
                         />
-                        {Number(formValues[id]?.disposedCases) >
-                          Number(formValues[id]?.totalCases) && (
-                          <p className="text-red-500 text-sm mt-1">
-                            No of Disposed cases should not Exceed then Total Cases
-                            Registered.
-                          </p>
-                        )}
+                        
                       </td>
                       <td className="border px-4 py-2">
                         <input
                           type="number"
                           className="w-[40%] p-2 border rounded"
                           value={formValues[id]?.pendingCases || ""}
-                          readOnly
+                          
                         />
                       </td>
                       <td className="border px-4 py-2">
@@ -1923,15 +1915,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                             )
                           }
                         />
-                        {Number(formValues[id]?.punishmentLessThan7) >
-                          Number(formValues[id]?.totalCases) -
-                            Number(formValues[id]?.punishmentMoreThan7) && (
-                          <p className="text-red-500 text-sm mt-1">
-                            Make sure to Balence the Punishment cases Less then 7
-                            yrs and More then 7 yrs with respect to Total Registered
-                            Cases .
-                          </p>
-                        )}
+                        
                       </td>
                       <td className="border px-4 py-2">
                         <input
@@ -1946,27 +1930,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                             )
                           }
                         />
-                        {Number(formValues[id]?.punishmentMoreThan7) >
-                          Number(formValues[id]?.totalCases) -
-                            Number(formValues[id]?.punishmentLessThan7) && (
-                          <p className="text-red-500 text-sm mt-1">
-                            Make sure to Balence the Punishment cases More then 7
-                            yrs and Less then 7 yrs with respect to Total Registered
-                            Cases ..
-                          </p>
-                        )}
+                        
                       </td>
-                      <td className="border px-4 py-2">
-                        <input
-                          type="number"
-                          className="w-[50%] p-2"
-                          value={
-                            (Number(formValues[id]?.personnel_trained) || 0) +
-                            (Number(formValues[id]?.officers_trained) || 0)
-                          }
-                          readOnly
-                        />
-                      </td>
+                    
                     </tr>
                   );
                 })}
@@ -1985,6 +1951,14 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   <th className="border px-4 py-2">Month-Year</th>
                   <th className="border px-4 py-2">Untraced Details Age Group</th>
                   <th className="border px-4 py-2">No of Untraced Persons</th>
+                  <th className="border px-4 py-2">No of Missing Persons</th>
+                  <th className="border px-4 py-2">Total Missing Persons</th>
+                  <th className="border px-4 py-2">Traced</th>
+                  <th className="border px-4 py-2">Untraced</th>
+                  <th className="border px-4 py-2">Untraced %</th>
+    
+    
+                  
     
                   {/* <th className="border px-4 py-2">Total Trained %</th> */}
                 </tr>
@@ -2000,6 +1974,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     (item) => item.id === id
                   );
                   const isLastRow = index === arr.length - 1; // Check if this is the last row
+    
+    
+    
     
                   return (
                     <tr key={id}>
@@ -2027,6 +2004,68 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           }
                         />
                       </td>
+    
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.missingPersons || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "missingPersons", e.target.value)
+                          }
+                        />
+                      </td>
+    
+    
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.totalMissing || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "totalMissing", e.target.value)
+                          }
+                        />
+                      </td>
+    
+    
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.traced || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "traced", e.target.value)
+                          }
+                        />
+                      </td>
+    
+    
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.untraced || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "untraced", e.target.value)
+                          }
+                        />
+                      </td>
+    
+    
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.untracedPercentage || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "untracedPercentage", e.target.value)
+                          }
+                        />
+                      </td>
+    
+    
+    
                     </tr>
                   );
                 })}
@@ -2101,23 +2140,6 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                               </option>
                           
     
-                          {/* If formType is "Property offences under BNS", show this set */}
-                          {formData.formType === "Property offences under BNS" && (
-                            <>
-                              <option value="Dacoity (BNS Sec. 310)">
-                                Dacoity (BNS Sec. 310)
-                              </option>
-                              <option value="Robbery (BNS Sec. 309)">
-                                Robbery (BNS Sec. 309)
-                              </option>
-                              <option value="HBT (BNS Sec. 331 to 334)">
-                                HBT (BNS Sec. 331 to 334)
-                              </option>
-                              <option value="Theft (BNS Sec. 303 & 305)">
-                                Theft (BNS Sec. 303 & 305)
-                              </option>
-                            </>
-                          )}
                         </select>
                       </td>
                       <td className="border px-4 py-2">
@@ -2151,7 +2173,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           type="number"
                           className="w-[40%] p-2 border rounded"
                           value={formValues[id]?.detectedCasesPercentage || ""}
-                          readOnly
+                          
                         />
                       </td>
                     </tr>
@@ -2197,9 +2219,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                       <td className="border px-4 py-2">
                         <select
                           className="w-full p-2 border rounded"
-                          value={formValues[id]?.actAndSection || ""}
+                          value={formValues[id]?.actAndSection_1 || ""}
                           onChange={(e) =>
-                            handleInputChange(id, "actAndSection", e.target.value)
+                            handleInputChange(id, "actAndSection_1", e.target.value)
                           }
                         >
                           <option value="" disabled>
@@ -2232,9 +2254,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         <input
                           type="number"
                           className="w-[40%] p-2 border rounded"
-                          value={formValues[id]?.registeredCases || ""}
+                          value={formValues[id]?.registeredCases_1 || ""}
                           onChange={(e) =>
-                            handleInputChange(id, "registeredCases", e.target.value)
+                            handleInputChange(id, "registeredCases_1", e.target.value)
                           }
                         />
                       </td>
@@ -2242,13 +2264,13 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         <input
                           type="number"
                           className="w-[40%] p-2 border rounded"
-                          value={formValues[id]?.detectedCases || ""}
+                          value={formValues[id]?.detectedCases_1 || ""}
                           onChange={(e) =>
-                            handleInputChange(id, "detectedCases", e.target.value)
+                            handleInputChange(id, "detectedCases_1", e.target.value)
                           }
                         />
-                        {parseInt(formValues[id]?.detectedCases) >
-                          parseInt(formValues[id]?.registeredCases) && (
+                        {parseInt(formValues[id]?.detectedCases_1) >
+                          parseInt(formValues[id]?.registeredCases_1) && (
                           <p className="text-red-500 text-sm mt-1">
                             Detected Cases cannot exceed Reg'd Cases.
                           </p>
@@ -2258,8 +2280,8 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         <input
                           type="number"
                           className="w-[40%] p-2 border rounded"
-                          value={formValues[id]?.detectedCasesPercentage || ""}
-                          readOnly
+                          value={formValues[id]?.detectedCasesPercentage_1 || ""}
+                          
                         />
                       </td>
                     </tr>
@@ -2359,7 +2381,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           type="number"
                           className="w-[40%] p-2 border rounded"
                           value={formValues[id]?.detectedCasesPercentage || ""}
-                          readOnly
+                          
                         />
                       </td>
                     </tr>
@@ -2405,9 +2427,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         <input
                           type="number"
                           className="w-[40%] p-2 border rounded"
-                          value={formValues[id]?.totalIOsNagapur || ""}
+                          value={formValues[id]?.totalIOsEsakshyaRegistered || ""}
                           onChange={(e) =>
-                            handleInputChange(id, "totalIOsNagapur", e.target.value)
+                            handleInputChange(id, "totalIOsEsakshyaRegistered", e.target.value)
                           }
                         />
                       </td>
@@ -2415,30 +2437,24 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         <input
                           type="number"
                           className="w-[40%] p-2 border rounded"
-                          value={formValues[id]?.totalIOsEsakshya || ""}
+                          value={formValues[id]?.totalIOsEsakshyaDownload || ""}
                           onChange={(e) =>
                             handleInputChange(
                               id,
-                              "totalIOsEsakshya",
+                              "totalIOsEsakshyaDownload",
                               e.target.value
                             )
                           }
                         />
     
-                        {parseInt(formValues[id]?.totalIOsEsakshya) >
-                          parseInt(formValues[id]?.totalIOsNagapur) && (
-                          <p className="text-red-500 text-sm mt-1">
-                            No of IO's Registered on eSakshya cannot exceed Total No
-                            of IO's Registered.
-                          </p>
-                        )}
+                        
                       </td>
                       <td className="border px-4 py-2">
                         <input
                           type="number"
                           className="w-[40%] p-2 border rounded"
-                          value={formValues[id]?.esakshyaWage || ""}
-                          readOnly
+                          value={formValues[id]?.esakshyaWage_1 || ""}
+                          
                         />
                       </td>
                     </tr>
@@ -2503,20 +2519,13 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           }
                         />
     
-                        {parseInt(formValues[id]?.totalIOsEsakshya) >
-                          parseInt(formValues[id]?.totalIOsNagapur) && (
-                          <p className="text-red-500 text-sm mt-1">
-                            No of IO's Registered on eSakshya cannot exceed Total No
-                            of IO's Registered.
-                          </p>
-                        )}
                       </td>
                       <td className="border px-4 py-2">
                         <input
                           type="number"
                           className="w-[40%] p-2 border rounded"
                           value={formValues[id]?.esakshyaWage || ""}
-                          readOnly
+                          
                         />
                       </td>
     
@@ -2612,20 +2621,14 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           }
                         />
     
-                        {parseInt(formValues[id]?.totalIOsEsakshya) >
-                          parseInt(formValues[id]?.totalIOsNagapur) && (
-                          <p className="text-red-500 text-sm mt-1">
-                            No of IO's Registered on eSakshya cannot exceed Total No
-                            of IO's Registered.
-                          </p>
-                        )}
+                        
                       </td>
                       <td className="border px-4 py-2">
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formValues[id]?.total_zero_firs || ""}
-                          readOnly
+                          value={formValues[id]?.total_zero_firs || 0}
+                          
                         />
                       </td>
                       <td className="border px-4 py-2">
@@ -2633,9 +2636,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           type="number"
                           className="w-full p-2 border rounded"
                           value={
-                            formValues[id]?.pending_to_transfer_outside_mh || ""
+                            formValues[id]?.pending_to_transfer_outside_mh || 0
                           }
-                          readOnly
+                          
                         />
                       </td>
                       <td className="border px-4 py-2">
@@ -2661,16 +2664,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                             handleInputChange(id, "re_reg_firs", e.target.value)
                           }
                         />
-                        {parseInt(formValues[id]?.re_reg_firs) >
-                          parseInt(
-                            formValues[id]
-                              ?.total_no_zero_fir_transferred_outer_state_to_mh
-                          ) && (
-                          <p className="text-red-500 text-sm mt-1">
-                            Re-Registered FIRs in Maharashtra cannot exceed No. of
-                            Zero FIRs transferred from other State to Maharashtra.
-                          </p>
-                        )}
+                       
                       </td>
                       <td className="border px-4 py-2">
                         <input
@@ -2687,31 +2681,24 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                             )
                           }
                         />
-                        {parseInt(
-                          formValues[id]?.total_transferred_zero_firs_in_mh
-                        ) > parseInt(formValues[id]?.re_reg_firs) && (
-                          <p className="text-red-500 text-sm mt-1">
-                            No of Zero FIR's Transferred Within Maharashtra cannot
-                            exceed Re-Registered FIRs in Maharashtra.
-                          </p>
-                        )}
+                       
                       </td>
                       <td className="border px-4 py-2">
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
                           value={
-                            formValues[id]?.pending_for_transfer_within_mh || ""
+                            formValues[id]?.pending_for_transfer_within_mh || 0
                           }
-                          readOnly
+                          
                         />
                       </td>
                       <td className="border px-4 py-2">
                         <input
                           type="number"
                           className="w-full p-2 border rounded"
-                          value={formValues[id]?.pending_for_re_registration || ""}
-                          readOnly
+                          value={formValues[id]?.pending_for_re_registration || 0}
+                          
                         />
                       </td>
                     </tr>
@@ -2849,7 +2836,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                       type="number"
                       required
                       className="w-[60%] p-1"
-                      disabled={!isPrevFormFilled}
+                      
                       value={formValues[id]?.disposedEComplaints || ""}
                       onChange={(e) => handleInputChange(id, "disposedEComplaints", e.target.value)}
                       style={{
@@ -2871,64 +2858,6 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       </div>
     );
   };
-
-
-
-  // const ITSSOComplianceForm = (month) => {
-  //   return (
-  //     <>
-  //       <h3 className="font-semibold text-lg">{month} - {formData.formType}</h3>
-
-  //       <legend className="text-sm font-medium p-2 border border-gray-400 rounded-lg w-fit m-0">
-  //         {formData.formType}
-  //       </legend>
-  //       <fieldset className="border border-gray-400 bg-white shadow-md p-4 rounded-lg mb-4">
-
-  //         <div className="grid grid-cols-2 gap-4 mt-2">
-
-  //           {/* Total No. of registered POCSO + BNS cases */}
-  //           <div>
-  //             <label className="block text-sm font-medium">Total No. of registered POCSO + BNS cases</label>
-  //             <input
-  //               type="number"
-  //               className="w-full p-2 border rounded mt-3"
-  //               value={formValues[month]?.total_pocso_bns_cases || ""}
-  //               onChange={(e) => handleInputChange(month, "total_pocso_bns_cases", e.target.value)}
-  //             />
-  //           </div>
-
-  //           {/* No. of cases (POCSO + BNS) chargesheet within 60 days */}
-  //           <div>
-  //             <label className="block text-sm font-medium">No. of cases (POCSO + BNS) chargesheet within 60 days</label>
-  //             <input
-  //               type="number"
-  //               className="w-full p-2 border rounded"
-  //               value={formValues[month]?.charge_sheeted_within_60_days || ""}
-  //               onChange={(e) => handleInputChange(month, "charge_sheeted_within_60_days", e.target.value)}
-  //             />
-  //             {parseInt(formValues[month]?.charge_sheeted_within_60_days) > parseInt(formValues[month]?.total_pocso_bns_cases) && (
-  //               <p className="text-red-500 text-sm mt-1">No. of cases (POCSO + BNS) chargesheet within 60 days cannot exceed Total No. of registered POCSO + BNS cases.</p>
-  //             )}
-  //           </div>
-
-  //           {/* Compliance Rate */}
-  //           <div>
-  //             <label className="block text-sm font-medium">Compliance Rate</label>
-  //             <input
-  //               type="number"
-  //               className="w-full p-2 border rounded"
-  //               value={formValues[month]?.percentage || ""}
-  //               readOnly
-  //             />
-  //           </div>
-
-  //         </div>
-  //       </fieldset>
-  //     </>
-  //   );
-  // };
-
-
 
   
   const ITSSOComplianceForm = (monthsInRange, duplicatedMonths) => {
@@ -2973,7 +2902,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                       type="number"
                       required
                       className="w-[60%] p-1"
-                      disabled={!isPrevFormFilled}
+                      
                       value={formValues[id]?.charge_sheeted_within_60_days || ""}
                       onChange={(e) => handleInputChange(id, "charge_sheeted_within_60_days", e.target.value)}
                       style={{
@@ -2988,7 +2917,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   </td>
                   <td className="border px-4 py-2">
 
-                    <input type="number" required className="w-[60%] p-2" value={formValues[id]?.percentage || ""} readOnly />
+                    <input type="number" required className="w-[60%] p-2" value={formValues[id]?.percentage || ""}  />
                   </td>
 
 
@@ -3000,103 +2929,6 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       </div>
     );
   };
-
-
-
-
-
-
-  // const StolenRecoveredProperty = (month) => {
-  //   return (
-  //     <>
-  //       <h3 className="font-semibold text-lg">{month} - {formData.formType}</h3>
-
-  //       <legend className="text-sm font-medium p-2 border border-gray-400 rounded-lg w-fit m-0">
-  //         {formData.formType}
-  //       </legend>
-  //       <fieldset className="border border-gray-400 bg-white shadow-md p-4 rounded-lg mb-4">
-
-  //         <div className="grid grid-cols-2 gap-4">
-
-  //           {/* Total Cases */}
-  //           <div>
-  //             <label className="block text-sm font-medium">Total Cases</label>
-  //             <select
-  //               className="w-full p-2 border rounded"
-  //               value={formValues[month]?.total_cases || ""}
-  //               onChange={(e) => handleInputChange(month, "total_cases", e.target.value)}
-  //             >
-  //               <option value="" disabled>Select Total Cases</option>
-  //               <option value="Dacoity">Dacoity</option>
-  //               <option value="Robbery">Robbery</option>
-  //               <option value="HBT">HBT</option>
-  //               <option value="Theft">Theft</option>
-  //             </select>
-  //           </div>
-
-  //           {/* Offences Registered */}
-  //           <div>
-  //             <label className="block text-sm font-medium">Offences Registered</label>
-  //             <input
-  //               type="number"
-  //               className="w-full p-2 border rounded"
-  //               value={formValues[month]?.offences_registered || ""}
-  //               onChange={(e) => handleInputChange(month, "offences_registered", e.target.value)}
-  //             />
-  //           </div>
-
-  //           {/* Value of Stolen Property */}
-  //           <div>
-  //             <label className="block text-sm font-medium">Value of Stolen Property</label>
-  //             <input
-  //               type="number"
-  //               className="w-full p-2 border rounded"
-  //               value={formValues[month]?.value_stolen_property || ""}
-  //               onChange={(e) => handleInputChange(month, "value_stolen_property", e.target.value)}
-  //             />
-  //           </div>
-
-  //           {/* Detected Registered */}
-  //           <div>
-  //             <label className="block text-sm font-medium">Detected Registered</label>
-  //             <input
-  //               type="number"
-  //               className="w-full p-2 border rounded"
-  //               value={formValues[month]?.detected_cases || ""}
-  //               onChange={(e) => handleInputChange(month, "detected_cases", e.target.value)}
-  //             />
-  //           </div>
-
-  //           {/* Value of Recovered Property */}
-  //           <div>
-  //             <label className="block text-sm font-medium">Value of Recovered Property</label>
-  //             <input
-  //               type="number"
-  //               className="w-full p-2 border rounded"
-  //               value={formValues[month]?.value_recovered_property || ""}
-  //               onChange={(e) => handleInputChange(month, "value_recovered_property", e.target.value)}
-  //             />
-  //             {parseInt(formValues[month]?.value_recovered_property) > parseInt(formValues[month]?.value_stolen_property) && (
-  //               <p className="text-red-500 text-sm mt-1">Value of Recovered Property cannot exceed Value of Stolen Property.</p>
-  //             )}
-  //           </div>
-
-  //           {/* Recovery % */}
-  //           <div>
-  //             <label className="block text-sm font-medium">Recovery %</label>
-  //             <input
-  //               type="number"
-  //               className="w-full p-2 border rounded"
-  //               value={formValues[month]?.recovery_percentage || ""}
-  //               readOnly
-  //             />
-  //           </div>
-
-  //         </div>
-  //       </fieldset>
-  //     </>
-  //   );
-  // };
 
 
   const StolenRecoveredProperty = (monthsInRange, duplicatedMonths) => {
@@ -3134,7 +2966,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <select
                       className="w-[100%] p-2 border rounded"
                       required
-                      disabled={!isPrevFormFilled}
+                      
 
                       value={formValues[id]?.total_cases || ""}
                       onChange={(e) => handleInputChange(id, "total_cases", e.target.value)}
@@ -3151,7 +2983,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <input
                       className="w-[100%] p-2 border rounded"
                       required
-                      disabled={!isPrevFormFilled}
+                      
                       type="number"
                       value={formValues[id]?.offences_registered || ""}
                       onChange={(e) => handleInputChange(id, "offences_registered", e.target.value)}
@@ -3167,7 +2999,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <input
                       className="w-[80%] p-2 border rounded"
                       required
-                      disabled={!isPrevFormFilled}
+                      
                       type="number"
                       value={formValues[id]?.value_stolen_property || ""}
                       onChange={(e) => handleInputChange(id, "value_stolen_property", e.target.value)}
@@ -3180,7 +3012,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <input
                       className="w-[80%] p-2 border rounded"
                       required
-                      disabled={!isPrevFormFilled}
+                      
                       type="number"
                       value={formValues[id]?.detected_cases || ""}
                       onChange={(e) => handleInputChange(id, "detected_cases", e.target.value)}
@@ -3195,7 +3027,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <input
                       className="w-[80%] p-2 border rounded"
                       required
-                      disabled={!isPrevFormFilled}
+                      
                       type="number"
                       value={formValues[id]?.value_recovered_property || ""}
                       onChange={(e) => handleInputChange(id, "value_recovered_property", e.target.value)}
@@ -3216,10 +3048,10 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <input
                       className="w-[80%] p-2 border rounded"
                       required
-                      disabled={!isPrevFormFilled}
+                      
                       type="number"
                       value={formValues[id]?.recovery_percentage || ""}
-                      readOnly
+                      
                     />
 
 
@@ -3343,7 +3175,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   //               type="number"
   //               className="w-full p-2 border rounded"
   //               value={formValues[month]?.conviction_rate || ""}
-  //               readOnly
+  //               
   //             />
   //           </div>
 
@@ -3353,7 +3185,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   //               type="number"
   //               className="w-full p-2 border rounded"
   //               value={formValues[month]?.total_cases_convicted || ""}
-  //               readOnly
+  //               
   //             />
   //           </div>
 
@@ -3363,7 +3195,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   //               type="number"
   //               className="w-full p-2 border rounded"
   //               value={formValues[month]?.total_cases_decided || ""}
-  //               readOnly
+  //               
   //             />
   //           </div>
 
@@ -3413,7 +3245,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <select
                       className="w-[100%] p-2 border rounded"
                       required
-                      disabled={!isPrevFormFilled}
+                      
 
                       value={formValues[id]?.type_of_court || ""}
                       onChange={(e) => handleInputChange(id, "type_of_court", e.target.value)}
@@ -3428,7 +3260,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <select
                       className="w-[80%] p-2 border rounded"
                       required
-                      disabled={!isPrevFormFilled}
+                      
                       value={formValues[id]?.bns_sections || ""}
                       onChange={(e) => handleInputChange(id, "bns_sections", e.target.value)}
                     >
@@ -3451,7 +3283,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                       <input
                         className="w-[80%] p-2 border rounded"
                         required
-                        disabled={!isPrevFormFilled}
+                        
                         type="text"
                         value={formValues[id]?.other_bns_section || ""}
                         onChange={(e) => handleInputChange(id, "other_bns_section", e.target.value)}
@@ -3475,7 +3307,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <input
                       className="w-[80%] p-2 border rounded"
                       required
-                      disabled={!isPrevFormFilled}
+                      
                       value={formValues[month]?.convicted_cases || ""}
                       onChange={(e) => handleInputChange(month, "convicted_cases", e.target.value)}
                       style={{
@@ -3492,10 +3324,10 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <input
                       className="w-[80%] p-2 border rounded"
                       required
-                      disabled={!isPrevFormFilled}
+                      
                       type="number"
                       value={formValues[id]?.conviction_rate || ""}
-                      readOnly
+                      
                     />
 
                   </td>
@@ -3505,10 +3337,10 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <input
                       className="w-[80%] p-2 border rounded"
                       required
-                      disabled={!isPrevFormFilled}
+                      
                       type="number"
-                      value={formValues[month]?.total_cases_convicted || ""}
-                      readOnly
+                      value={formValues[month]?.total_cases_convicted || "0"}
+                      
                     />
 
 
@@ -3518,10 +3350,10 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <input
                       className="w-[80%] p-2 border rounded"
                       required
-                      disabled={!isPrevFormFilled}
+                      
                       type="number"
-                      value={formValues[month]?.total_cases_decided || ""}
-                      readOnly
+                      value={formValues[month]?.total_cases_decided || "0"}
+                      
                     />
                   </td>
 
@@ -3584,7 +3416,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   //               type="number"
   //               className="w-full p-2 border rounded"
   //               value={formValues[month]?.forensic_team_deployment_percentage || ""}
-  //               readOnly
+  //               
   //             />
   //           </div>
 
@@ -3626,7 +3458,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                       type="number"
                       className="w-[60%] p-2"
                       required
-                      disabled={!isPrevFormFilled}
+                      
                       value={formValues[id]?.total_cases_gt_7_years || ""}
                       onChange={(e) => handleInputChange(id, "total_cases_gt_7_years", e.target.value)}
                     />
@@ -3638,7 +3470,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                       type="number"
                       required
                       className="w-[60%] p-1"
-                      disabled={!isPrevFormFilled}
+                      
                       value={formValues[id]?.cases_forensic_team_visited || ""}
                       onChange={(e) => handleInputChange(id, "cases_forensic_team_visited", e.target.value)}
                       style={{
@@ -3652,7 +3484,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                   </td>
                   <td className="border px-4 py-2">
-                    <input type="number" required className="w-[60%] p-2" value={formValues[id]?.forensic_team_deployment_percentage || ""} readOnly />
+                    <input type="number" required className="w-[60%] p-2" value={formValues[id]?.forensic_team_deployment_percentage || ""}  />
                   </td>
 
 
@@ -3877,12 +3709,12 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         {/* 12 option */}
         <button
           className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
-          onClick={() => toggleSection("conviction_bns")}
+          onClick={() => toggleSection("forensic_visits")}
         >
           Forensic visists
         </button>
 
-        <div className={`overflow-hidden transition-all duration-500 ${openSections.conviction_bns ? "opacity-100" : "max-h-0 opacity-0"}`}>
+        <div className={`overflow-hidden transition-all duration-500 ${openSections.forensic_visits ? "opacity-100" : "max-h-0 opacity-0"}`}>
           { VisitOfForensicTeams(monthsInRange, duplicatedMonths)}
 
         </div>
@@ -3955,7 +3787,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         uploadDate.fromDate ?
 
                           (
-                            <input type="text" className="w-full p-2 border rounded" value={uploadDate.fromDate} readOnly />
+                            <input type="text" className="w-full p-2 border rounded" value={uploadDate.fromDate}  />
                           )
 
                           : (<input
@@ -3982,7 +3814,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         uploadDate.toDate ?
 
                           (
-                            <input type="text" className="w-full p-2 border rounded" value={uploadDate.toDate} readOnly />
+                            <input type="text" className="w-full p-2 border rounded" value={uploadDate.toDate}  />
                           )
 
                           : (<input
@@ -4245,7 +4077,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   }}
 
                 >
-                  Pre-View
+                  Submit
                 </Button>
                 {/* <Button fullWidth variant="contained" disabled={!verified} sx={{ backgroundColor: "#2d3748", color: "white", width: "30%" }} onClick={handleSubmit}>
                   Submit

@@ -40,6 +40,7 @@ function Mainnavbar() {
     Prosecutor: logocs,
     police: logo,
     "chief secretary": logocs,
+    ACS: logocs,
     admin: logocs,
     Court: logocs,
     Forensic: Forensic_logo,
@@ -131,6 +132,7 @@ function Mainnavbar() {
               users === "admin" || //added_25   
                 users === "Prosecutor" ||
                 users === "chief secretary" ||
+                users === "ACS" ||
                 users === "Court" ||
                 users == "Forensic" ||
                 users == "Correction"
@@ -175,7 +177,7 @@ function Mainnavbar() {
               className="flex items-center space-x-2 text-gray-700 hover:[#2d3748]" style={{ display: "flex", alignItems: "center" }}
             >
               <FaUser size={22} />
-              <span>{toCamelCase(users)}</span>
+              <span>{user?.userName}</span>
               {/* <span>{users ? toCamelCase(users) : "Guest"}</span> */}
 
 
@@ -186,6 +188,10 @@ function Mainnavbar() {
             {isOpen.profile && (
               <div className="absolute top-5 right-0  mt-5 w-85 bg-white border border-gray-200 rounded-lg shdow-lg z-[1000]">
                 <div className="p-4 space-y-2">
+                  <div className="flex justify-between">
+                    <p className="text-sm font-semibold text-gray-600 mr-2">Name:</p>
+                    <p className="text-sm text-gray-800">{user?.userName}</p>
+                  </div>
                   <div className="flex justify-between">
                     <p className="text-sm font-semibold text-gray-600 mr-2">Email:</p>
                     <p className="text-sm text-gray-800">{user?.email}</p>
@@ -215,16 +221,7 @@ function Mainnavbar() {
               </div>
 
             )}
-            {/* {isOpen.profile && (
-              <div className="absolute right-0 mt-2 w-36 bg-white shadow-md rounded-lg" style={{ zIndex: "1" }}>
-                <button
-                  className="block px-4 py-2 w-full rounded-lg text-left text-white bg-[#ef3535]"
-                  onClick={handelLogout}
-                >
-                  Logout
-                </button>
-              </div>
-            )} */}
+          
             <button title="logout" onClick={handelLogout} className="power">
               <PiPowerDuotone size={29} />
               <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-red-600 rounded opacity-0 group-hover:opacity-100 transition-opacity">
