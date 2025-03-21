@@ -32,7 +32,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
-import logo from "../../../dist/assets/logo22.png";
+import logo from "../../../dist/assets/logo22-DGid_2oD.png";
 
 
 
@@ -199,7 +199,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
 
   // if (!formData.date || !formData.zone || !formData.district || !formData.totalCases) {
-  //     alert("Please fill in all required fields.");
+  //     alert("Please fill in all  fields.");
   //     return;
   // }
 
@@ -674,7 +674,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         doc.setFontSize(14);
         doc.text("⚠ No data available for the assigned zone/district.", 14, y);
         addFooter();
-        doc.save("Filtered_Report.pdf");
+        doc.save("user_Report.pdf");
         return;
     }
 
@@ -1504,7 +1504,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       return;
     }
 
-    const requiredColumns = [
+    const Columns = [
       "mm/yyyy",
       "Total No. of Constabulary",
       "No. of Constabulary Trained",
@@ -1526,7 +1526,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       }
 
       const fileColumns = Object.keys(jsonData[0]);
-      const missingColumns = requiredColumns.filter(col => !fileColumns.includes(col));
+      const missingColumns = Columns.filter(col => !fileColumns.includes(col));
 
       if (missingColumns.length > 0) {
         alert(`Missing columns: ${missingColumns.join(", ")}`);
@@ -1690,7 +1690,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <input
                       type="number"
                       className="w-[50%] p-2"
-                      required
+                      
                       value={formValues[id]?.total_personnel || ""}
                       
                       onChange={(e) => handleInputChange(id, "total_personnel", e.target.value)}
@@ -1699,7 +1699,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   <td className="border px-4 py-2">
                     <input
                       type="number"
-                      required
+                      
                       className="w-[50%] p-1"
                       value={formValues[id]?.personnel_trained || ""}
                       
@@ -1715,12 +1715,12 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   </td>
                   <td className="border px-4 py-2">
 
-                    <input type="number" required className="w-[50%] p-2" value={formValues[id]?.percent_personnel_trained || ""}  />
+                    <input type="number"  className="w-[50%] p-2" value={formValues[id]?.percent_personnel_trained || ""}  />
                   </td>
                   <td className="border px-4 py-2">
                     <input
                       type="number"
-                      required
+                      
                       className="w-[50%] p-1"
                       value={formValues[id]?.total_officers || ""}
                       
@@ -1731,7 +1731,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <input
                       type="number"
                       className="w-[50%] p-1"
-                      required
+                      
                       value={formValues[id]?.officers_trained || ""}
                       
                       onChange={(e) => handleInputChange(id, "officers_trained", e.target.value)}
@@ -1746,7 +1746,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   </td>
                   <td className="border px-4 py-2">
 
-                    <input type="number" required className="w-[50%] p-2" value={formValues[id]?.percent_officers_trained || ""}  />
+                    <input type="number"  className="w-[50%] p-2" value={formValues[id]?.percent_officers_trained || ""}  />
                   </td>
                   <td className="border px-4 py-2">
                     <input
@@ -2812,7 +2812,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                     <input
                       className="w-[60%] p-2"
-                      required
+                      
                       type="number"
                       value={formValues[id]?.totalEComplaintsReceived || ""}
                       onChange={(e) => handleInputChange(id, "totalEComplaintsReceived", e.target.value)}
@@ -2822,7 +2822,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   <td className="border px-4 py-2">
                     <input
                       type="number"
-                      required
+                      
                       className="w-[60%] p-1"
                       value={formValues[id]?.totalComplaintsConverted || ""}
                       onChange={(e) => handleInputChange(id, "totalComplaintsConverted", e.target.value)}
@@ -2842,7 +2842,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                   <input
                       type="number"
-                      required
+                      
                       className="w-[60%] p-1"
                       
                       value={formValues[id]?.disposedEComplaints || ""}
@@ -2898,7 +2898,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     
                     <input
                       className="w-[60%] p-2"
-                      required
+                      
                       type="number"
                       value={formValues[id]?.total_pocso_bns_cases || ""}
                       onChange={(e) => handleInputChange(id, "total_pocso_bns_cases", e.target.value)}
@@ -2908,7 +2908,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   <td className="border px-4 py-2">
                     <input
                       type="number"
-                      required
+                      
                       className="w-[60%] p-1"
                       
                       value={formValues[id]?.charge_sheeted_within_60_days || ""}
@@ -2925,7 +2925,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   </td>
                   <td className="border px-4 py-2">
 
-                    <input type="number" required className="w-[60%] p-2" value={formValues[id]?.percentage || ""}  />
+                    <input type="number"  className="w-[60%] p-2" value={formValues[id]?.percentage || ""}  />
                   </td>
 
 
@@ -2973,7 +2973,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                     <select
                       className="w-[100%] p-2 border rounded"
-                      required
+                      
                       
 
                       value={formValues[id]?.total_cases || ""}
@@ -2990,7 +2990,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                     <input
                       className="w-[100%] p-2 border rounded"
-                      required
+                      
                       
                       type="number"
                       value={formValues[id]?.offences_registered || ""}
@@ -3006,7 +3006,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                     <input
                       className="w-[80%] p-2 border rounded"
-                      required
+                      
                       
                       type="number"
                       value={formValues[id]?.value_stolen_property || ""}
@@ -3019,7 +3019,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                     <input
                       className="w-[80%] p-2 border rounded"
-                      required
+                      
                       
                       type="number"
                       value={formValues[id]?.detected_cases || ""}
@@ -3034,7 +3034,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                     <input
                       className="w-[80%] p-2 border rounded"
-                      required
+                      
                       
                       type="number"
                       value={formValues[id]?.value_recovered_property || ""}
@@ -3055,7 +3055,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                     <input
                       className="w-[80%] p-2 border rounded"
-                      required
+                      
                       
                       type="number"
                       value={formValues[id]?.recovery_percentage || ""}
@@ -3252,7 +3252,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   <td className="border px-4 py-2">
                     <select
                       className="w-[100%] p-2 border rounded"
-                      required
+                      
                       
 
                       value={formValues[id]?.type_of_court || ""}
@@ -3267,7 +3267,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                     <select
                       className="w-[80%] p-2 border rounded"
-                      required
+                      
                       
                       value={formValues[id]?.bns_sections || ""}
                       onChange={(e) => handleInputChange(id, "bns_sections", e.target.value)}
@@ -3290,7 +3290,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                       <input
                         className="w-[80%] p-2 border rounded"
-                        required
+                        
                         
                         type="text"
                         value={formValues[id]?.other_bns_section || ""}
@@ -3304,7 +3304,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                     <input
                       type="number"
-                      required
+                      
                       className="w-[50%] p-1"
                       value={formValues[id]?.cases_decided || ""}
                       onChange={(e) => handleInputChange(id, "cases_decided", e.target.value)}
@@ -3314,7 +3314,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   <td className="border px-4 py-2">
                     <input
                       className="w-[80%] p-2 border rounded"
-                      required
+                      
                       
                       value={formValues[month]?.convicted_cases || ""}
                       onChange={(e) => handleInputChange(month, "convicted_cases", e.target.value)}
@@ -3331,7 +3331,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                     <input
                       className="w-[80%] p-2 border rounded"
-                      required
+                      
                       
                       type="number"
                       value={formValues[id]?.conviction_rate || ""}
@@ -3344,7 +3344,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                     <input
                       className="w-[80%] p-2 border rounded"
-                      required
+                      
                       
                       type="number"
                       value={formValues[month]?.total_cases_convicted || "0"}
@@ -3357,7 +3357,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   <td className="border px-4 py-2">
                     <input
                       className="w-[80%] p-2 border rounded"
-                      required
+                      
                       
                       type="number"
                       value={formValues[month]?.total_cases_decided || "0"}
@@ -3465,7 +3465,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <input
                       type="number"
                       className="w-[60%] p-2"
-                      required
+                      
                       
                       value={formValues[id]?.total_cases_gt_7_years || ""}
                       onChange={(e) => handleInputChange(id, "total_cases_gt_7_years", e.target.value)}
@@ -3476,7 +3476,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   <td className="border px-4 py-2">
                     <input
                       type="number"
-                      required
+                      
                       className="w-[60%] p-1"
                       
                       value={formValues[id]?.cases_forensic_team_visited || ""}
@@ -3492,7 +3492,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                   </td>
                   <td className="border px-4 py-2">
-                    <input type="number" required className="w-[60%] p-2" value={formValues[id]?.forensic_team_deployment_percentage || ""}  />
+                    <input type="number"  className="w-[60%] p-2" value={formValues[id]?.forensic_team_deployment_percentage || ""}  />
                   </td>
 
 

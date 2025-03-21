@@ -25,7 +25,7 @@ import BalanceIcon from '@mui/icons-material/Balance';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 
 import FluorescentIcon from '@mui/icons-material/Fluorescent';
-import logo from '../../dist/assets/logo22.png'
+import logo from '../../dist/assets/logo22-DGid_2oD.png'
 import ModalComponent from './Police/ModalComponent'
 
 import Demo from '../components/Police/Demo'
