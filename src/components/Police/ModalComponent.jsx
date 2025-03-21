@@ -4065,7 +4065,10 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
               {formValues != {} && (<TrainingDataTable
                 open={dialogOpen}
-                onClose={() => setDialogOpen(false)}
+                onClose={() => {
+                  window.location.reload();
+                  setDialogOpen(false);
+                }}
                 data={formValues}
                 onSubmit={handleSubmit}
                 onEdit={handleEdit}
