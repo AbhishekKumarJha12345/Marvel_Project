@@ -205,14 +205,17 @@ function Mainnavbar() {
                     <p className="text-sm font-semibold text-gray-600 mr-2">State:</p>
                     <p className="text-sm text-gray-800">{user?.state}</p>
                   </div>
+                  {user?.sub_role == 'SP' ? (
                   <div className="flex justify-between">
                     <p className="text-sm font-semibold text-gray-600 mr-2">District:</p>
                     <p className="text-sm text-gray-800">{user.district != '{}' ? user?.district : '--'}</p>
-                  </div>
+                  </div>) : null}
+
+                  {user?.sub_role == 'SP' || user?.sub_role == 'IG/DIG'  ? (
                   <div className="flex justify-between">
                     <p className="text-sm font-semibold text-gray-600 mr-2">Zone:</p>
                     <p className="text-sm text-gray-800">{user?.zone}</p>
-                  </div>
+                  </div>):null}
                   <div className="flex justify-between">
                     <p className="text-sm font-semibold text-gray-600 mr-2">Mobile:</p>
                     <p className="text-sm text-gray-800">{user?.mobile_number}</p>

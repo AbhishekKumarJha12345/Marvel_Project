@@ -289,26 +289,7 @@ export default function Dashboard({ users }) {
       const assignedZone = localStorage.getItem("zone");
       const assignedDistrict = localStorage.getItem("district");
   
-      // const getFilteredData = () => {
-      //     if (subrole === "CS" || subrole === "ACS") {
-      //         return sampleDataIN;
-      //     } else if (subrole === "IG/DIG" || subrole === "DIG") {
-      //         return assignedZone ? { [assignedZone]: sampleDataIN[assignedZone] } : {};
-      //     } else if (subrole === "CP" || subrole === "SP") {
-      //         for (const [zone, districts] of Object.entries(zoneMapping)) {
-      //             if (districts.includes(assignedDistrict)) {
-      //                 return sampleDataIN[zone] && sampleDataIN[zone][assignedDistrict]
-      //                     ? { [zone]: { [assignedDistrict]: sampleDataIN[zone][assignedDistrict] } }
-      //                     : {};
-      //             }
-      //         }
-      //         return {};
-      //     }
-      // };
-  
-      // const filteredData = getFilteredData();
-      // console.log("Filtered Data:", filteredData);
-  
+      
       // Function to add footer
       const addFooter = () => {
           doc.setFontSize(10);
@@ -318,7 +299,7 @@ export default function Dashboard({ users }) {
       };
   
       // Add Header Logo
-      const logo = "src/assets/logo22.png";
+      const logo = "public/images/logo22.png";
       doc.addImage(logo, "PNG", pageWidth / 2 - 15, y, 30, 30);
       y += 40;
   

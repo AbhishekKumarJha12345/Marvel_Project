@@ -24,6 +24,8 @@ import MaharashtraPoliceMap from '../CS/Csstartpage'
 
 import './form.css'
 
+import logo from "@/assets/logo22.png";
+
 
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -624,7 +626,8 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
     };
 
     // Add Header Logo
-    const logo = "src/assets/logo22.png";
+    
+    const logo = "public/images/logo22.png";
     doc.addImage(logo, "PNG", pageWidth / 2 - 15, y, 30, 30);
     y += 40;
 
