@@ -25,7 +25,7 @@ import BalanceIcon from '@mui/icons-material/Balance';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 
 import FluorescentIcon from '@mui/icons-material/Fluorescent';
-import logo from '../assets/logo22.png'
+import logo from '../../dist/assets/logo22.png'
 import ModalComponent from './Police/ModalComponent'
 
 import Demo from '../components/Police/Demo'
@@ -299,6 +299,8 @@ export default function Dashboard({ users }) {
       };
   
       // Add Header Logo
+
+      
       doc.addImage(logo, "PNG", pageWidth / 2 - 15, y, 30, 30);
       y += 40;
   
@@ -343,7 +345,7 @@ export default function Dashboard({ users }) {
           doc.setFontSize(14);
           doc.text("⚠ No data available for the assigned zone/district.", 14, y);
           addFooter();
-          doc.save("Filtered_Report.pdf");
+          doc.save("Marvel_Consolidated_Report.pdf");
           return;
       }
   

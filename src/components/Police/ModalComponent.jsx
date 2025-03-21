@@ -32,7 +32,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
-import logo from "../../assets/logo22.png";
+import logo from "../../../dist/assets/logo22.png";
 
 
 
@@ -631,6 +631,8 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
     // Add Header Logo
     
     // const logo = "public/images/logo22.png";
+
+    
     doc.addImage(logo, "PNG", pageWidth / 2 - 15, y, 30, 30);
     y += 40;
 
