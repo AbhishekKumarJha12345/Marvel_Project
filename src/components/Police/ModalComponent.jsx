@@ -3764,13 +3764,13 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                 >
                   Form
                 </Button>
-                <Button
+                {/* <Button
                   variant={selectedTab === "upload" ? "contained" : "outlined"}
                   onClick={() => setSelectedTab("upload")}
                   sx={{ backgroundColor: selectedTab === "upload" ? "#2d3748" : "transparent", color: selectedTab === "upload" ? "white" : "inherit" }}
                 >
                   Upload
-                </Button>
+                </Button> */}
               </Box>
               {selectedTab === "form" && (
                 <Box display="flex" flexDirection="column" gap={2} minHeight="60vh">
