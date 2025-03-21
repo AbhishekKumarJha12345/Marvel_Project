@@ -588,19 +588,19 @@ if(sub_role == 'CP' || sub_role == 'SP'){
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
             <span>80%</span>
-            <div style={{ width: "30px", height: "10px", background: "#37C503", borderRadius: "2px" }}></div>
+            <div style={{ width: "30px", height: "10px", background: "#37C5037A", borderRadius: "2px" }}></div>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
             <span>60% - 80%</span>
-            <div style={{ width: "30px", height: "10px", background: "#9AD911", borderRadius: "2px" }}></div>
+            <div style={{ width: "30px", height: "10px", background: "#9AD91180", borderRadius: "2px" }}></div>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
             <span>40% - 60%</span>
-            <div style={{ width: "30px", height: "10px", background: "#FF8585", borderRadius: "2px" }}></div>
+            <div style={{ width: "30px", height: "10px", background: "#FF85855C", borderRadius: "2px" }}></div>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
             <span>less than 40 %</span>
-            <div style={{ width: "30px", height: "10px", background: "#FFA726", borderRadius: "2px" }}></div>
+            <div style={{ width: "30px", height: "10px", background: "#F455466B", borderRadius: "2px" }}></div>
           </div>
 
         </div>
