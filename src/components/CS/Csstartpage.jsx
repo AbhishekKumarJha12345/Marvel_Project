@@ -127,7 +127,7 @@ if(sub_role == 'CP' || sub_role == 'SP'){
       setTimeout(() => setLoading(false), 1000); // Add 2-sec delay before hiding loader
     }
 
-    fetchData("", ""); // Fetch all data initially
+    fetchData(userZones, userDistricts); // Fetch all data initially
     
 
   }, [catogory, selectedForm,selectedZone]);
