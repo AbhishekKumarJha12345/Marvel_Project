@@ -115,7 +115,7 @@ if(sub_role == 'CP' || sub_role == 'SP'){
       (district && district != 'null') || selectedZone ? setpercent(response.data.districts || 0) :  zone ? setpercent(response.data.zones || 0) : setpercent(0)
        
 
-        role == 'chief secretary' && !selectedZone ? setpercent(response.data.zones) : null
+        (role == 'chief secretary' || role == 'ACS' || role == 'DGP') && !selectedZone ? setpercent(response.data.zones) : null
 
 
         setZonePercentages(response.data.zones);
@@ -284,7 +284,7 @@ if(sub_role == 'CP' || sub_role == 'SP'){
           });
         }
 
-        if (sub_role === 'CP' || role === 'chief secretary') {
+        if (sub_role === 'CP' || role === 'chief secretary' || role == 'ACS' || role == 'DGP') {
           // Filter policeCP based on selectedZone
           const filteredStations = selectedZone || zone
             ? policeCP.filter(station => station.zone === selectedZone)
@@ -570,7 +570,7 @@ if(sub_role == 'CP' || sub_role == 'SP'){
 
           <div style={{ textAlign: "center", marginBottom: "5px", fontWeight: "bold", adding: "10px", width: "200px" }}>Legend</div>
           <div style={{ textAlign: "center", marginBottom: "5px", fontWeight: "normal", padding: "px", width: "200px", fontSize:"15px" }}>{catogory == 'Training' ? 'Overall Training Percentage Range' : catogory == 'FORENSIC' ? "Overall Forinsic Team vist Percentage Range" : `${selectedForm} Percentage Ranges` }</div>
-          {(sub_role == 'IG/DIG' || role == 'chief secretary') ? (
+          {(sub_role == 'IG/DIG' || role == 'chief secretary' || role == 'ACS' || role == 'DGP' ) ? (
             <>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <span>Population</span> <span>12.73 Crore</span>

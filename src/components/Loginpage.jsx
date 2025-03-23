@@ -69,39 +69,7 @@ function Login() {
     }
   };
 
-  // ✅ Handle Login
-
-  // const handleLogin = async () => {
-  //   const email = emailRef.current?.value.trim();
-  //   const password = passwordRef.current?.value.trim();
-  //   const otpValue = otpRefs.current.map((ref) => ref.current?.value || "").join("");
-
-  //   if (!email || !password || (showOTPField && otpValue.length !== 6)) {
-  //     setError("All fields are required.");
-  //     return;
-  //   }
-
-  //   try {
-  //     console.log("Logging in with:", { email, password, otp: otpValue });
-
-  //     const response = await axiosInstance.post("/login", { email, password, otp: otpValue });
-
-  //     if (response.status === 200) {
-  //       localStorage.setItem("token", response.data.token);
-  //       localStorage.setItem("role", response.data.role);
-  //       localStorage.setItem("role", response.data.state);
-
-  //       console.log("Pavan_Kalyan");
-  //       console.log(response.data);
-  //       navigate("/mainnavbar", { state: { users: response.data.role, userName: response.data.userName } });
-  //     } else {
-  //       setError("Login failed. Check your credentials.");
-  //     }
-  //   } catch (err) {
-  //     console.error("Login error:", err);
-  //     setError("Error logging in. Check your details and try again.");
-  //   }
-  // };
+  
   const handleLogin = async () => {
     const payload = {
       email: emailRef.current.value,

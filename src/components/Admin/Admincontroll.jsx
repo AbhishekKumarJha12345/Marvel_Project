@@ -12,7 +12,7 @@ const Admincontroll = ({ onRegister, onClose }) => {
     role: "",
     sub_role: "",
     rank: "",
-    state: "",
+    state: "Maharashtra",
     city: null,
     zone: null,
     district: null,
@@ -25,6 +25,9 @@ const Admincontroll = ({ onRegister, onClose }) => {
     created_on: new Date().toISOString().split("T")[0],
     created_by: "admin",
   });
+
+  const [error, setError] = useState(null);
+  
 
   const [selectedZone, setSelectedZone] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
@@ -77,6 +80,17 @@ const Admincontroll = ({ onRegister, onClose }) => {
       district: value, // Store the selected district in formData
     }));
   };
+
+
+     useEffect(() => {
+    console.log("Error : ",error);
+    
+      if (error) {
+        const timer = setTimeout(() => setError(null), 1000);
+        return () => clearTimeout(timer);
+      }
+    }, [error]);
+
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -84,10 +98,18 @@ const Admincontroll = ({ onRegister, onClose }) => {
       const response = await axiosInstance.post("/create_user", formData);
       if (onRegister) onRegister(response.data);
       if (onClose) onClose(); // Close modal after successful registration
+      console.log("response : ",response);
+      
+      setError({ msg: response.data.message || "User Created Successfully.", status: response.status });
     } catch (error) {
       console.error("Registration failed", error);
+      setError({
+        msg: "Error Occurred while creating the User.",
+        status: error.response ? error.response.status : 500, // Default to 500 if response is undefined
+      });
     }
   };
+  
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -100,8 +122,31 @@ const Admincontroll = ({ onRegister, onClose }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+
+
+
+
+
   return (
+
+    
     <Card className="max-w-md mx-auto shadow-lg rounded-2xl p-6">
+
+      {error && (
+        <div
+                className={`fixed top-5 right-5 p-2 z-50 ${
+                  error.status >= 200 && error.status <= 209 ? "bg-green-500" : "bg-red-500"
+                } text-white rounded-lg shadow-lg`}
+              >
+                <div className="flex justify-between items-center px-4 py-2">
+                  <div className="px-4 py-2">{error.msg}</div>
+                  <button className="text-xl font-bold" onClick={() => setError(null)}>
+                    &times;
+                  </button>
+                </div>
+              </div>
+            )}
       <CardContent>
         <h2 className="text-xl font-semibold text-center mb-4">Register Admin</h2>
         <div className="max-h-[700px] overflow-y-auto p-2">
@@ -162,6 +207,7 @@ const Admincontroll = ({ onRegister, onClose }) => {
                 <option value="">Select Role</option>
                 <option value="chief secretary">Chief Secretary</option>
                 <option value="ACS">ACS</option>
+                <option value="DGP">DGP</option>
                 <option value="police">Police</option>
                 {/* <option value="Prosecutor">Prosecutor</option>
                 <option value="Correction">Correctional Services</option>
@@ -169,10 +215,9 @@ const Admincontroll = ({ onRegister, onClose }) => {
                 <option value="Forensic">Forensic</option> */}
               </select>
             </div>
-            {formData.role !== "chief secretary" || formData.role !== "ACS" && (
-  <>
-    {/* Sub-Role (Conditional Rendering) */}
-    {formData.role === "police" ? (
+           
+    {formData.role === "police" && (
+      
       <div>
         <Label htmlFor="sub_role">Sub Role</Label>
         <select
@@ -185,70 +230,35 @@ const Admincontroll = ({ onRegister, onClose }) => {
         >
           <option value="">Select SubRole</option>
           <option value="IG/DIG">IG/DIG</option>
-          <option value="SP">SP</option>
           <option value="CP">CP</option>
-          {/* <option value="ADDL_SP/DSP">ADDL-SP/DSP</option>
-          <option value="INSPR">INSPR</option>
-          <option value="SI">SI</option>
-          <option value="ASI">ASI</option>
-          <option value="HC">HC</option> */}
+          <option value="SP">SP</option>
+
         </select>
-      </div>
-    ) : (
-      <div>
-        <Label htmlFor="sub_role">Sub Role</Label>
-        <input
-          type="text"
-          id="sub_role"
-          name="sub_role"
-          value={formData.sub_role}
-          onChange={handleChange}
-          required
-          className="w-full p-2 border rounded-md bg-white"
-          placeholder="Enter Sub Role"
-        />
       </div>
     )}
 
-    {/* Rank */}
-    {/* <div>
-      <Label htmlFor="rank">Rank</Label>
-      <select
-        id="rank"
-        name="rank"
-        value={formData.rank}
-        onChange={handleChange}
-        required
-        className="w-full p-2 border rounded-md"
-      >
-        <option value="">Select Rank</option>
-        <option value="S">S</option>
-        <option value="E">E</option>
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="C">C</option>
-      </select>
-    </div> */}
+   
 
     {/* State */}
     <div>
       <Label htmlFor="state">State</Label>
-      <select
-        id="state"
-        name="state"
-        value={formData.state}
-        onChange={handleChange}
-        required
-        className="w-full p-2 border rounded-md"
-      >
-        <option value="Maharashtra">Maharashtra</option>
-      </select>
+
+      <input
+                type="text"
+                id="state"
+                name="state"
+                value={formData.state}
+                onChange={handleChange}
+                className={`w-full p-2 border rounded-md`}
+                readOnly
+                
+              />
     </div>
 
     {/* Zone and District */}
 
     <div>
-    {(formData.sub_role !== "CP") && 
+    {((formData.role === "police") && (formData.sub_role == "IG/DIG") || (formData.sub_role == "SP")) && 
       
       (
         <>
@@ -272,10 +282,11 @@ const Admincontroll = ({ onRegister, onClose }) => {
       )}
 
       {/* District Dropdown (Conditional Rendering) */}
-      {(formData.sub_role !== "IG/DIG" || formData.sub_role !== "CP") && (
+      {(formData.role == "police") && (
 
-        formData.sub_role == "CP" ? (<div ref={dropdownRef} className="relative">
-          <Label htmlFor="district">City</Label>
+        formData.sub_role == "CP" ? (
+        <div ref={dropdownRef} className="relative mt-2">
+          <Label htmlFor="city">City</Label>
           <select
         id="city"
         value={selectedCity}
@@ -299,7 +310,9 @@ const Admincontroll = ({ onRegister, onClose }) => {
       
         </div>) :
 
-  (<div ref={dropdownRef} className="relative">
+formData.sub_role == "SP" ?
+
+  (<div ref={dropdownRef} className="relative mt-2">
     <Label htmlFor="district">District</Label>
     <select
   id="district"
@@ -316,41 +329,13 @@ const Admincontroll = ({ onRegister, onClose }) => {
     ))}
 </select>
 
-  </div>)
+  </div>) : null
+
 )}
 
-      {/* {formData.sub_role !== "IG/DIG" && (
-        <div ref={dropdownRef} className="relative">
-          <Label htmlFor="district">District</Label>
-          <button
-            type="button"
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="w-full p-2 border rounded-md bg-white text-left"
-          >
-            {selectedDistrict.length > 0 ? selectedDistrict.join(", ") : "Select District"}
-          </button>
-
-          {isDropdownOpen && selectedZone && (
-            <div className="absolute top-full left-0 w-full bg-white border rounded-md shadow-lg p-2 z-50 max-h-40 overflow-auto">
-              {zones[selectedZone].map((district) => (
-                <label key={district} className="flex items-center space-x-2 p-1">
-                  <input
-                    type="checkbox"
-                    value={district}
-                    checked={selectedDistrict.includes(district)}
-                    onChange={handleDistrictChange}
-                    className="form-checkbox text-blue-500"
-                  />
-                  <span className="text-gray-800">{district}</span>
-                </label>
-              ))}
-            </div>
-          )}
-        </div>
-      )} */}
+     
     </div>
-  </>
-)}
+  
             {/* Mobile Number */}
             <div>
               <Label htmlFor="mobile_number">Mobile Number</Label>

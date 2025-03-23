@@ -41,6 +41,7 @@ function Mainnavbar() {
     police: logo,
     "chief secretary": logocs,
     ACS: logocs,
+    DGP: logocs,
     admin: logocs,
     Court: logocs,
     Forensic: Forensic_logo,
@@ -133,6 +134,7 @@ function Mainnavbar() {
                 users === "Prosecutor" ||
                 users === "chief secretary" ||
                 users === "ACS" ||
+                users === "DGP" ||
                 users === "Court" ||
                 users == "Forensic" ||
                 users == "Correction"

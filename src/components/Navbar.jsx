@@ -506,7 +506,7 @@ export default function Dashboard({ users }) {
         <h1 className="heading" style={{ marginLeft: "40rem" }}>Police</h1>
 
 
-{users === "chief secretary" || users === 'ACS' ?
+{users === "chief secretary" || users === 'ACS' || users == 'DGP' ?
         (<div style={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem" }}>
           <button 
             onClick={() => handleReport()} 
@@ -870,10 +870,10 @@ const handleDateSelection = () => {
           }
 
 
-          {(users === 'chief secretary' || users === 'police' || users === 'ACS') && (
+          {(users === 'chief secretary' || users === 'police' || users === 'ACS' || users == 'DGP') && (
 
 
-            (users === "chief secretary" || users === 'ACS') ? (
+            (users === "chief secretary" || users === 'ACS' || users == 'DGP') ? (
               <div className="nav_main" ref={dropdownRef}>
                 <button
                   className={`nav-link ${isOpen ? "active" : ""}`}
@@ -1053,6 +1053,8 @@ const handleDateSelection = () => {
         (users === "chief secretary"
           ? contentMap["training"]:
           users === "ACS"
+          ? contentMap["training"] :
+          users === "DGP"
           ? contentMap["training"]
           : users === "police"
             ? contentMap["training"] && setActiveSection({ section: "training" })
