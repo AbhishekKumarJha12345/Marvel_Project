@@ -601,7 +601,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
     const assignedDistrict = localStorage.getItem("district");
 
     const getFilteredData = () => {
-        if (subrole === "CS" || subrole === "ACS") {
+        if (subrole === "CS" || subrole === "ACS" ) {
             return sampleDataIN;
         } else if (subrole === "IG/DIG" || subrole === "DIG") {
             return assignedZone ? { [assignedZone]: sampleDataIN[assignedZone] } : {};
@@ -1344,17 +1344,17 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           updatedForm.totalOffencesNotUsed = totalCases - totalOffencesUsed;
 
         // } else if (formData.formType === "eFIR") {
-          const totalEComplaintsReceived = Number(updatedForm.totalEComplaintsReceived) || 0;
-          const totalComplaintsConverted = Number(updatedForm.totalComplaintsConverted) || 0;
+          // const totalEComplaintsReceived = Number(updatedForm.totalEComplaintsReceived) || 0;
+          // const totalComplaintsConverted = Number(updatedForm.totalComplaintsConverted) || 0;
 
-          // Calculate Disposed of eComplaints
-          updatedForm.disposedEComplaints = totalComplaintsConverted; // Assuming all converted complaints are disposed
+          // // Calculate Disposed of eComplaints
+          // updatedForm.disposedEComplaints = totalComplaintsConverted; // Assuming all converted complaints are disposed
 
-          // Validation for Total Complaints Converted
-          if (totalComplaintsConverted > totalEComplaintsReceived) {
-            // Handle the error case as needed
-            console.error("Total eComplaints Converted to Regular FIRs cannot exceed Total eComplaints Received on Citizen Portal.");
-          }
+          // // Validation for Total Complaints Converted
+          // if (totalComplaintsConverted > totalEComplaintsReceived) {
+          //   // Handle the error case as needed
+          //   console.error("Total eComplaints Converted to Regular FIRs cannot exceed Total eComplaints Received on Citizen Portal.");
+          // }
         // } else if (formData.formType === "Zero FIR's") {
           const total_no_zero_fir_transferred_outside_mh = Number(updatedForm.total_no_zero_fir_transferred_outside_mh) || 0;
           const total_no_zero_fir_transferred_outer_state_to_mh = Number(updatedForm.total_no_zero_fir_transferred_outer_state_to_mh) || 0;
@@ -2826,12 +2826,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                       className="w-[60%] p-1"
                       value={formValues[id]?.totalComplaintsConverted || ""}
                       onChange={(e) => handleInputChange(id, "totalComplaintsConverted", e.target.value)}
-                      style={{
-                        border:
-                          Number(formValues[id]?.totalComplaintsConverted) > Number(formValues[id]?.totalEComplaintsReceived)
-                            ? "2px solid #ff8e8e"
-                            : "1px solid #0000004b"
-                      }}
+                      
                     />
 
 
@@ -2847,12 +2842,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                       
                       value={formValues[id]?.disposedEComplaints || ""}
                       onChange={(e) => handleInputChange(id, "disposedEComplaints", e.target.value)}
-                      style={{
-                        border:
-                          Number(formValues[id]?.disposedEComplaints) > Number(formValues[id]?.totalEComplaintsReceived)
-                            ? "2px solid #ff8e8e"
-                            : "1px solid #0000004b"
-                      }}
+                     
                     />
 
                   </td>
