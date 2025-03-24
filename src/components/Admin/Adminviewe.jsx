@@ -285,7 +285,7 @@ const AdminUserTable = () => {
                 </div>
                 <div className="mb-4">
                   <label className="block text-sm font-medium">Username</label>
-                  <input type="text" name="user_name" value={editFormData.username} onChange={handleEditChange} className="p-2 border border-gray-300 rounded-md w-full" />
+                  <input type="text" name="username" value={editFormData.username} onChange={handleEditChange} className="p-2 border border-gray-300 rounded-md w-full" />
                 </div>
                 <div className="mb-4">
                   <label className="block text-sm font-medium">Role</label>
