@@ -601,7 +601,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
     const assignedDistrict = localStorage.getItem("district");
 
     const getFilteredData = () => {
-        if (subrole === "CS" || subrole === "ACS") {
+        if (subrole === "CS" || subrole === "ACS" || subrole === "DGP") {
             return sampleDataIN;
         } else if (subrole === "IG/DIG" || subrole === "DIG") {
             return assignedZone ? { [assignedZone]: sampleDataIN[assignedZone] } : {};
@@ -3783,7 +3783,6 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
               {selectedTab === "form" && (
                 <Box display="flex" flexDirection="column" gap={2} minHeight="60vh">
 
-                  {training_active?.section === "FIR" ? firDropdown() : null}
 
 
                   <Box display="flex" gap={2} width="100%">
@@ -3800,7 +3799,6 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
                           : (<input
                             type="month"
-                            disabled={(training_active?.section != "FIR") ? false : (!training_active?.section === "FIR" || !formData.formType) ? true : false}
                             className="w-full p-2 border rounded"
                             value={formData.fromDate || dateRange.fromDate}
                             onChange={(e) => {
@@ -3828,7 +3826,6 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                           : (<input
                             type="month"
                             className="w-full p-2 border rounded"
-                            disabled={(training_active?.section != "FIR") ? false : (!training_active?.section === "FIR" || !formData.formType) ? true : false}
                             value={formData.toDate || dateRange.toDate}
                             onChange={(e) => {
                               const newToDate = e.target.value;

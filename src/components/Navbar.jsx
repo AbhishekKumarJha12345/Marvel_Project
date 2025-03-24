@@ -934,7 +934,7 @@ const handleDateSelection = () => {
                     />{" "}
                     Police
                   </button>
-                  {/* <div className="nav-divider"></div>
+                  <div className="nav-divider"></div>
                   <button
                     className={`nav-link ${activeSection?.section === "FIR" ? "active" : ""
                       }`}
@@ -961,7 +961,7 @@ const handleDateSelection = () => {
                       className="nav-icon"
                     />{" "}
                     Forensic Visits
-                  </button> */}
+                  </button>
                 </div>
               </>
             ))}
