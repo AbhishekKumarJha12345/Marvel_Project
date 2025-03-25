@@ -6,6 +6,8 @@ import { Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Scheduler from './scehdule' 
 
+// import Profile from './components/Profile/Profile.jsx'
+
 
 function App() {
   const ProtectedRoute = ({ element }) => {

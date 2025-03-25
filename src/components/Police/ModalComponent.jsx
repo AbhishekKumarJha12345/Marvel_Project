@@ -1011,8 +1011,8 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         
         'Use of eSakshya App. in cases with punishment of 7 yrs. or more': Object.keys(formValues).map((month) => ({
             'Month-Year': month, 
-            "Totak IO's Nagpur": formValues[month].totalIOsNagapur || 0,
-            "Totak IO's eSakshya": formValues[month].totalIOsEsakshya || 0,
+            "Totak IO's eSaklshya Registered": formValues[month].totalIOsNagapur || 0,
+            "Totak IO's eSakshya Downloaded": formValues[month].totalIOsEsakshya || 0,
             "eSakshya Wage": formValues[month].esakshyaWage || 0,
         })),
         

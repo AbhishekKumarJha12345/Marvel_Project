@@ -276,7 +276,6 @@ export default function Dashboard({ users }) {
   };
 
     const downloadPDF = (newData, subrole) => {
-      console.log("Generating PDF for subrole:", subrole);
       console.log("newData:", newData);
   
       const doc = new jsPDF({ orientation: "landscape" });
@@ -286,8 +285,7 @@ export default function Dashboard({ users }) {
       let pageNumber = 1;
   
       const { timeStamp, submited_by, email, rang, district, sampleDataIN } = newData;
-      const assignedZone = localStorage.getItem("zone");
-      const assignedDistrict = localStorage.getItem("district");
+     
   
       
       // Function to add footer
@@ -438,7 +436,7 @@ export default function Dashboard({ users }) {
       // });
   
       addFooter();
-      doc.save("Filtered_Report.pdf");
+      doc.save("Marvel_Consolidated_Report.pdf");
   };
   
 

@@ -24,6 +24,9 @@ import logocs from "../assets/cs_court_prosection_logo.png";
 import { PiPowerDuotone } from "react-icons/pi";
 import "../styles/mainnavbar.css"
 
+
+import ProfileView from './Profile/Profile'
+
 function Mainnavbar() {
   const [isOpen, setIsOpen] = useState({ language: false, notifications: false, profile: false });
   const [user, setUser] = useState(null);
@@ -32,6 +35,9 @@ function Mainnavbar() {
   const location = useLocation(); // Access location state
   const { users, userName } = location.state || {};
   // const { users = "", userName = "" } = location.state || {}; // Default to empty string   
+
+
+  const [profileview,setProfileview] = useState(false)
 
   console.log(users, "users_details");
 
@@ -66,6 +72,14 @@ function Mainnavbar() {
     localStorage.clear();
     navigate("/");
   };
+
+
+  const handelProfile = () =>{
+    // navigate('/profile')
+
+    setProfileview(true)
+  }
+
 
   if (users === undefined) {
     handelLogout();
@@ -188,56 +202,47 @@ function Mainnavbar() {
 
             {/* Profile Dropdown */}
             {isOpen.profile && (
-              <div className="absolute top-5 right-0  mt-5 w-85 bg-white border border-gray-200 rounded-lg shdow-lg z-[1000]">
-                <div className="p-4 space-y-2">
-                  <div className="flex justify-between">
-                    <p className="text-sm font-semibold text-gray-600 mr-2">Name:</p>
-                    <p className="text-sm text-gray-800">{user?.userName}</p>
-                  </div>
-                  <div className="flex justify-between">
-                    <p className="text-sm font-semibold text-gray-600 mr-2">Email:</p>
-                    <p className="text-sm text-gray-800">{user?.email}</p>
+              <div className="absolute top-[-15px] right-[-5px] mt-5 w-[12vw] bg-white border border-gray-200 rounded-lg shadow-lg z-[1000]">
+                <div className="p-1 space-y-2">
+
+                  <div
+                    className="px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md cursor-pointer"
+                    onClick={handelProfile}
+                  >
+                    Profile
                   </div>
 
-                  <div className="flex justify-between">
-                    <p className="text-sm font-semibold text-gray-600 mr-2">Officer Role:</p>
-                    <p className="text-sm text-gray-800">{user?.role}</p>
+                  <div
+                    className="px-4 py-2 text-red-600 hover:bg-red-500 hover:text-white rounded-md cursor-pointer"
+                    onClick={handelLogout}
+                  >
+                    Log Out
                   </div>
-                  <div className="flex justify-between">
-                    <p className="text-sm font-semibold text-gray-600 mr-2">State:</p>
-                    <p className="text-sm text-gray-800">{user?.state}</p>
-                  </div>
-                  {user?.sub_role == 'SP' ? (
-                  <div className="flex justify-between">
-                    <p className="text-sm font-semibold text-gray-600 mr-2">District:</p>
-                    <p className="text-sm text-gray-800">{user.district != '{}' ? user?.district : '--'}</p>
-                  </div>) : null}
 
-                  {user?.sub_role == 'SP' || user?.sub_role == 'IG/DIG'  ? (
-                  <div className="flex justify-between">
-                    <p className="text-sm font-semibold text-gray-600 mr-2">Zone:</p>
-                    <p className="text-sm text-gray-800">{user?.zone}</p>
-                  </div>):null}
-                  <div className="flex justify-between">
-                    <p className="text-sm font-semibold text-gray-600 mr-2">Mobile:</p>
-                    <p className="text-sm text-gray-800">{user?.mobile_number}</p>
-                  </div>
                 </div>
               </div>
-
             )}
-          
+
+            {/*           
             <button title="logout" onClick={handelLogout} className="power">
               <PiPowerDuotone size={29} />
               <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-red-600 rounded opacity-0 group-hover:opacity-100 transition-opacity">
                 Logout
               </span>
-            </button>
+            </button> */}
           </div>
         </div>
       </nav>
-      {/* <Navbar/> */}
-      <Navbar users={users} />
+      
+      
+      
+{
+      
+      profileview ? (<ProfileView />) : (<Navbar users={users} />)
+
+      
+}
+      
     </div>
   );
 }
