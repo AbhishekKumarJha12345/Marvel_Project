@@ -68,7 +68,7 @@ const TrainingDataDialog = ({ open, onClose, data, onSubmit, onEdit }) => {
       <Table sx={{ minWidth: 650, border: "1px solid #ddd", borderRadius: "8px", overflow: "hidden" }}>
         <TableHead>
           <TableRow sx={{ backgroundColor: "#2d3748" }}>
-            {["total_personnel", "personnel_trained", "percent_personnel_trained", "total_officers", "officers_trained", "percent_officers_trained"].map((key) => (
+            {["total_personnel", "personnel_trained", "percent_personnel_trained", "total_officers", "officers_trained", "percent_officers_trained", "total_trained", "total_trained_percentage"].map((key) => (
               <TableCell
                 key={key}
                 sx={{
@@ -92,7 +92,7 @@ const TrainingDataDialog = ({ open, onClose, data, onSubmit, onEdit }) => {
 
             return (
               <TableRow key={index} sx={{ "&:nth-of-type(odd)": { backgroundColor: "#f5f5f5" } }}>
-                {["total_personnel", "personnel_trained", "percent_personnel_trained", "total_officers", "officers_trained", "percent_officers_trained"].map((key) => {
+                {["total_personnel", "personnel_trained", "percent_personnel_trained", "total_officers", "officers_trained", "percent_officers_trained", "total_trained", "total_trained_percentage"].map((key) => {
                   const isError =
                     (key === "personnel_trained" && hasPersonnelError) ||
                     (key === "officers_trained" && hasOfficersError);
@@ -276,7 +276,7 @@ const TrainingDataDialog = ({ open, onClose, data, onSubmit, onEdit }) => {
       <Table sx={{ minWidth: 650, border: "1px solid #ddd", borderRadius: "8px", overflow: "hidden" }}>
         <TableHead>
           <TableRow sx={{ backgroundColor: "#2d3748" }}>
-            {["ageGroup", "untracedPersons"].map((key) => (
+            {["ageGroup", "untracedPersons", "missingPersons", "totalMissing", "traced", "untraced", "untracedPercentage"].map((key) => (
               <TableCell
                 key={key}
                 sx={{
@@ -300,7 +300,7 @@ const TrainingDataDialog = ({ open, onClose, data, onSubmit, onEdit }) => {
 
             return (
               <TableRow key={index} sx={{ "&:nth-of-type(odd)": { backgroundColor: "#f5f5f5" } }}>
-                {["ageGroup", "untracedPersons"].map((key) => {
+                {["ageGroup", "untracedPersons", "missingPersons", "totalMissing", "traced", "untraced", "untracedPercentage"].map((key) => {
                   const isError =
                     (key === "personnel_trained" && hasPersonnelError) ||
                     (key === "officers_trained" && hasOfficersError);
@@ -474,7 +474,7 @@ const TrainingDataDialog = ({ open, onClose, data, onSubmit, onEdit }) => {
       <Table sx={{ minWidth: 650, border: "1px solid #ddd", borderRadius: "8px", overflow: "hidden" }}>
         <TableHead>
           <TableRow sx={{ backgroundColor: "#2d3748" }}>
-            {["actAndSection", "registeredCases", "detectedCases", "detectedCasesPercentage"].map((key) => (
+            {["actAndSection_1", "registeredCases_1", "detectedCases_1", "detectedCasesPercentage_1"].map((key) => (
               <TableCell
                 key={key}
                 sx={{
@@ -498,7 +498,7 @@ const TrainingDataDialog = ({ open, onClose, data, onSubmit, onEdit }) => {
 
             return (
               <TableRow key={index} sx={{ "&:nth-of-type(odd)": { backgroundColor: "#f5f5f5" } }}>
-                {["actAndSection", "registeredCases", "detectedCases", "detectedCasesPercentage"].map((key) => {
+                {["actAndSection_1", "registeredCases_1", "detectedCases_1", "detectedCasesPercentage_1"].map((key) => {
                   const isError =
                     (key === "personnel_trained" && hasPersonnelError) ||
                     (key === "officers_trained" && hasOfficersError);
