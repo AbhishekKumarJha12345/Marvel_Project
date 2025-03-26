@@ -46,11 +46,27 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
   // ------------------for table purpose---------------------------
   const [openSections, setOpenSections] = useState({});
+  const [openSection, setOpenSection] = useState(null);
 
-  const toggleSection = (section) => {
+
+
+  // const toggleSection = (section) => {
+  //   setOpenSections((prev) => ({
+  //     ...prev,
+  //     [section]: !prev[section],
+  //   }));
+  // };
+
+
+
+  const toggleSection = (sectionKey) => {
+    // For single open section behavior (collapses previous)
+    setOpenSection(openSection === sectionKey ? null : sectionKey);
+    
+    // For individual toggle capability
     setOpenSections((prev) => ({
       ...prev,
-      [section]: !prev[section],
+      [sectionKey]: !prev[sectionKey],
     }));
   };
 
@@ -1558,7 +1574,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
     return (
       <div className="overflow-x-auto d-flex justify-center">
-        <table className="min-w-[25%] border border-gray-400 shadow-md">
+        <table className="w-full border border-gray-400 shadow-md">
           <thead>
             <tr className="bg-gray-200 text-left">
               <th className="border px-4 py-2">Month-Year</th>
@@ -1739,7 +1755,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   const pendencyForm = (monthsInRange, duplicatedMonths) => {
     return (
       <div className="overflow-x-auto d-flex justify-center">
-        <table className="min-w-[25%] border border-gray-400 shadow-md">
+        <table className="w-full border border-gray-400 shadow-md">
           <thead>
             <tr className="bg-gray-200 text-left">
               <th className="border px-4 py-2">Month-Year</th>
@@ -1857,7 +1873,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   const untraced = (monthsInRange, duplicatedMonths) => {
     return (
       <div className="overflow-x-auto d-flex justify-center">
-        <table className="min-w-[25%] border border-gray-400 shadow-md">
+        <table className="w-full border border-gray-400 shadow-md">
           <thead>
             <tr className="bg-gray-200 text-left">
               <th className="border px-4 py-2">Month-Year</th>
@@ -1990,7 +2006,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   const offencesAgainstBody = (monthsInRange, duplicatedMonths) => {
     return (
       <div className="overflow-x-auto d-flex justify-center">
-        <table className="min-w-[25%] border border-gray-400 shadow-md">
+        <table className="w-full border border-gray-400 shadow-md">
           <thead>
             <tr className="bg-gray-200 text-left">
               <th className="border px-4 py-2">Month-Year</th>
@@ -2101,7 +2117,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   const ImportantAgainstBody = (monthsInRange, duplicatedMonths) => {
     return (
       <div className="overflow-x-auto d-flex justify-center">
-        <table className="min-w-[25%] border border-gray-400 shadow-md">
+        <table className="w-full border border-gray-400 shadow-md">
           <thead>
             <tr className="bg-gray-200 text-left">
               <th className="border px-4 py-2">Month-Year</th>
@@ -2204,10 +2220,12 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       </div>
     );
   };
+
   const PropertyAgainstBody = (monthsInRange, duplicatedMonths) => {
+   
     return (
       <div className="overflow-x-auto d-flex justify-center">
-        <table className="min-w-[25%] border border-gray-400 shadow-md">
+        <table className="w-full border border-gray-400 shadow-md">
           <thead>
             <tr className="bg-gray-200 text-left">
               <th className="border px-4 py-2">Month-Year</th>
@@ -2309,7 +2327,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   const esakshyaDetails = (monthsInRange, duplicatedMonths) => {
     return (
       <div className="overflow-x-auto d-flex justify-center">
-        <table className="min-w-[25%] border border-gray-400 shadow-md">
+        <table className="w-full border border-gray-400 shadow-md">
           <thead>
             <tr className="bg-gray-200 text-left">
               <th className="border px-4 py-2">Month-Year</th>
@@ -2381,7 +2399,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   const useOfEsakshyaDetails = (monthsInRange, duplicatedMonths) => {
     return (
       <div className="overflow-x-auto d-flex justify-center">
-        <table className="min-w-[25%] border border-gray-400 shadow-md">
+        <table className="w-full border border-gray-400 shadow-md">
           <thead>
             <tr className="bg-gray-200 text-left">
               <th className="border px-4 py-2">Month-Year</th>
@@ -2453,7 +2471,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   const ZeroFIRDetails = (monthsInRange, duplicatedMonths) => {
     return (
       <div className="overflow-x-auto d-flex">
-        <table className="min-w-[20%] border border-gray-400 shadow-md">
+        <table className="w-full border border-gray-400 shadow-md">
           <thead>
             <tr className="bg-gray-200 text-left">
               <th className="border px-4 py-2">Month-Year</th>
@@ -2629,7 +2647,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
     return (
       <div className="overflow-x-auto d-flex justify-center">
-        <table className="min-w-[100%] border border-gray-400 shadow-md">
+        <table className="w-full border border-gray-400 shadow-md">
           <thead>
             <tr className="bg-gray-200 text-left">
               <th className="border px-4 py-2">Month-Year</th>
@@ -2715,7 +2733,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
     return (
       <div className="overflow-x-auto d-flex justify-center">
-        <table className="min-w-[100%] border border-gray-400 shadow-md">
+        <table className="w-full border border-gray-400 shadow-md">
           <thead>
             <tr className="bg-gray-200 text-left">
               <th className="border px-4 py-2">Month-Year</th>
@@ -2785,7 +2803,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
     return (
       <div className="overflow-x-auto d-flex justify-center">
-        <table className="min-w-[100%] border border-gray-400 shadow-md">
+        <table className="w-full border border-gray-400 shadow-md">
           <thead>
             <tr className="bg-gray-200 text-left">
               <th className="border px-4 py-2">Month-Year</th>
@@ -2937,7 +2955,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
     return (
       <div className="overflow-x-auto d-flex justify-center">
-        <table className="min-w-[100%] border border-gray-400 shadow-md">
+        <table className="w-full border border-gray-400 shadow-md">
           <thead>
             <tr className="bg-gray-200 text-left">
               <th className="border px-4 py-2">Month-Year</th>
@@ -3093,72 +3111,13 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   };
 
 
-
-  // Forisic Visits
-
-
-  // const VisitOfForensicTeams = (month) => {
-  //   return (
-  //     <>
-  //       <h3 className="font-semibold text-lg">{month} - {formData.formType}</h3>
-
-  //       <legend className="text-sm font-medium p-2 border border-gray-400 rounded-lg w-fit m-0">
-  //         {formData.formType}
-  //       </legend>
-  //       <fieldset className="border border-gray-400 bg-white shadow-md p-4 rounded-lg mb-4">
-
-  //         <div className="grid grid-cols-2 gap-4">
-
-  //           {/* No. of cases registered in which punishment is 7 years or more */}
-  //           <div>
-  //             <label className="block text-sm font-medium">No. of cases registered in which punishment is 7 years or more</label>
-  //             <input
-  //               type="number"
-  //               className="w-full p-2 border rounded"
-  //               value={formValues[month]?.total_cases_gt_7_years || ""}
-  //               onChange={(e) => handleInputChange(month, "total_cases_gt_7_years", e.target.value)}
-  //             />
-  //           </div>
-
-  //           {/* Cases in which Forensic Teams Visited */}
-  //           <div>
-  //             <label className="block text-sm font-medium">Cases in which Forensic Teams Visited</label>
-  //             <input
-  //               type="number"
-  //               className="w-full p-2 border rounded mt-3"
-  //               value={formValues[month]?.cases_forensic_team_visited || ""}
-  //               onChange={(e) => handleInputChange(month, "cases_forensic_team_visited", e.target.value)}
-  //             />
-  //             {parseInt(formValues[month]?.cases_forensic_team_visited) > parseInt(formValues[month]?.total_cases_gt_7_years) && (
-  //               <p className="text-red-500 text-sm mt-1">Cases in which Forensic Teams Visited cannot exceed No. of cases registered in which punishment is 7 years or more.</p>
-  //             )}
-  //           </div>
-
-  //           {/* Percentage */}
-  //           <div>
-  //             <label className="block text-sm font-medium">Percentage</label>
-  //             <input
-  //               type="number"
-  //               className="w-full p-2 border rounded"
-  //               value={formValues[month]?.forensic_team_deployment_percentage || ""}
-  //               
-  //             />
-  //           </div>
-
-  //         </div>
-  //       </fieldset>
-  //     </>
-  //   );
-  // };
-
-
   const VisitOfForensicTeams = (monthsInRange, duplicatedMonths) => {
 
 
 
     return (
       <div className="overflow-x-auto d-flex justify-center">
-        <table className="min-w-[100%] border border-gray-400 shadow-md">
+        <table className="w-full border border-gray-400 shadow-md">
           <thead>
             <tr className="bg-gray-200 text-left">
               <th className="border px-4 py-2">Month-Year</th>
@@ -3276,6 +3235,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
 
 
+  
 
 
 
@@ -3283,168 +3243,236 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
     return (
       // <div className="overflow-x-auto d-flex justify-center">
+      // <div className="p-4 border rounded-lg shadow-md">
+      //   <button
+      //     className="px-4 py-2 bg-grey-500 text-black rounded w-full text-center"
+      //     onClick={() => toggleSection("training")}
+      //   >
+      //     Training Data
+      //   </button>
+
+      //   <div className={`overflow-hidden transition-all duration-500 ${openSections.training ? "opacity-100" : "max-h-0 opacity-0"}`}>
+
+
+      //     {TrainingForm(monthsInRange, duplicatedMonths)}
+
+      //   </div>
+      //   {/* 2 option */}
+      //   <button
+      //     className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+      //     onClick={() => toggleSection("pendency")}
+      //   // onClick={() => setIsPendencyOpen(!isPendencyOpen)}
+      //   >
+      //     Pendency of cases under BNS
+      //   </button>
+
+      //   <div className={`overflow-hidden transition-all duration-500 ${openSections.pendency ? "opacity-100 max-h-screen" : "max-h-0 opacity-0"}`}>
+
+      //     {pendencyForm(monthsInRange, duplicatedMonths)}
+
+
+      //   </div>
+      //   {/* 3 option */}
+      //   <button
+      //     className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+      //     onClick={() => toggleSection("untraced")}
+      //   >
+      //     Untraced Missing
+      //   </button>
+
+      //   <div className={`overflow-hidden transition-all duration-500 ${openSections.untraced ? "opacity-100" : "max-h-0 opacity-0"}`}>
+      //     {untraced(monthsInRange, duplicatedMonths)}
+
+      //   </div>
+      //   {/* 4 option */}
+      //   <button
+      //     className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+      //     onClick={() => toggleSection("offences_against")}
+      //   >
+      //     Offences against body under BNS
+      //   </button>
+
+      //   <div className={`overflow-hidden transition-all duration-500 ${openSections.offences_against ? "opacity-100" : "max-h-0 opacity-0"}`}>
+      //     {offencesAgainstBody(monthsInRange, duplicatedMonths)}
+
+      //   </div>
+      //   {/* 5 option */}
+      //   <button
+      //     className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+      //     onClick={() => toggleSection("important_bns")}
+      //   >
+      //     Important sections introduced in BNS
+      //   </button>
+
+      //   <div className={`overflow-hidden transition-all duration-500 ${openSections.important_bns ? "opacity-100" : "max-h-0 opacity-0"}`}>
+      //     {ImportantAgainstBody(monthsInRange, duplicatedMonths)}
+      //   </div>
+        
+      //   {/* 5 option */}
+      //   <button
+      //     className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+      //     onClick={() => toggleSection("property_offences")}
+      //   >
+      //     Property Offences under BNS
+      //   </button>
+
+      //   <div className={`overflow-hidden transition-all duration-500 ${openSections.property_offences ? "opacity-100" : "max-h-0 opacity-0"}`}>
+      //     {PropertyAgainstBody(monthsInRange, duplicatedMonths)}
+      //   </div>
+
+      //   {/* 6 option */}
+      //   <button
+      //     className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+      //     onClick={() => toggleSection("esakshya")}
+      //   >
+      //     eSakshya Details
+      //   </button>
+
+      //   <div className={`overflow-hidden transition-all duration-500 ${openSections.esakshya ? "opacity-100" : "max-h-0 opacity-0"}`}>
+      //     {esakshyaDetails(monthsInRange, duplicatedMonths)}
+      //   </div>
+      //   {/* 7 option */}
+      //   <button
+      //     className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+      //     onClick={() => toggleSection("esakshya_app")}
+      //   >
+      //     Use of eSakshya App in cases with punishment of 7 yrs. or more
+      //   </button>
+
+      //   <div className={`overflow-hidden transition-all duration-500 ${openSections.esakshya_app ? "opacity-100" : "max-h-0 opacity-0"}`}>
+      //     {useOfEsakshyaDetails(monthsInRange, duplicatedMonths)}
+
+      //   </div>
+      //   {/* 8 option */}
+      //   <button
+      //     className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+      //     onClick={() => toggleSection("zero_fir")}
+      //   >
+      //     Zero FIR's
+      //   </button>
+
+      //   <div className={`overflow-hidden transition-all duration-500 ${openSections.zero_fir ? "opacity-100" : "max-h-0 opacity-0"}`}>
+      //     {ZeroFIRDetails(monthsInRange, duplicatedMonths)}
+
+      //   </div>
+      //   {/* 9 option */}
+      //   <button
+      //     className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+      //     onClick={() => toggleSection("eFIR")}
+      //   >
+      //     eFIR's
+      //   </button>
+
+      //   <div className={`overflow-hidden transition-all duration-500 ${openSections.eFIR ? "opacity-100" : "max-h-0 opacity-0"}`}>
+      //     {EFIRDetails(monthsInRange, duplicatedMonths)}
+
+      //   </div>
+      //   {/* 10 option */}
+      //   <button
+      //     className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+      //     onClick={() => toggleSection("ITSSO")}
+      //   >
+      //     ITSSO Compilance Form
+      //   </button>
+
+      //   <div className={`overflow-hidden transition-all duration-500 ${openSections.ITSSO ? "opacity-100" : "max-h-0 opacity-0"}`}>
+      //     {ITSSOComplianceForm(monthsInRange, duplicatedMonths)}
+
+      //   </div>
+      //   {/* 11 option */}
+      //   <button
+      //     className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+      //     onClick={() => toggleSection("stolen_recover")}
+      //   >
+      //     Stolen & Recovered Property
+      //   </button>
+
+      //   <div className={`overflow-hidden transition-all duration-500 ${openSections.stolen_recover ? "opacity-100" : "max-h-0 opacity-0"}`}>
+      //     {StolenRecoveredProperty(monthsInRange, duplicatedMonths)}
+
+      //   </div>
+      //   {/* 12 option */}
+      //   <button
+      //     className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+      //     onClick={() => toggleSection("conviction_bns")}
+      //   >
+      //     Conviction Under BNS
+      //   </button>
+
+      //   <div className={`overflow-hidden transition-all duration-500 ${openSections.conviction_bns ? "opacity-100" : "max-h-0 opacity-0"}`}>
+      //     {ConvictionUnderBNS(monthsInRange, duplicatedMonths)}
+
+      //   </div>
+
+      //   {/* 12 option */}
+      //   <button
+      //     className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+      //     onClick={() => toggleSection("forensic_visits")}
+      //   >
+      //     Forensic visists
+      //   </button>
+
+      //   <div className={`overflow-hidden transition-all duration-500 ${openSections.forensic_visits ? "opacity-100" : "max-h-0 opacity-0"}`}>
+      //     {VisitOfForensicTeams(monthsInRange, duplicatedMonths)}
+
+      //   </div>
+
+      // </div>
+
       <div className="p-4 border rounded-lg shadow-md">
-        <button
-          className="px-4 py-2 bg-grey-500 text-black rounded w-full text-center"
-          onClick={() => toggleSection("training")}
-        >
-          Training Data
-        </button>
+      {[
+        { key: "training", label: "Training Data" },
+        { key: "pendency", label: "Pendency of cases under BNS" },
+        { key: "untraced", label: "Untraced Missing" },
+        { key: "offences_against", label: "Offences against body under BNS" },
+        { key: "important_bns", label: "Important sections introduced in BNS" },
+        { key: "property_offences", label: "Property Offences under BNS" },
+        { key: "esakshya", label: "eSakshya Details" },
+        { key: "esakshya_app", label: "Use of eSakshya App in cases with punishment of 7 yrs. or more" },
+        { key: "zero_fir", label: "Zero FIR's" },
+        { key: "eFIR", label: "eFIR's" },
+        { key: "ITSSO", label: "ITSSO Compliance Form" },
+        { key: "stolen_recover", label: "Stolen & Recovered Property" },
+        { key: "conviction_bns", label: "Conviction Under BNS" },
+        { key: "forensic_visits", label: "Forensic visits" },
+      ].map((section) => (
+        <div key={section.key}>
+          <button
+            className={`px-4 py-2 rounded w-full text-center mb-1 ${
+              openSection === section.key ? "bg-blue-400 text-white" : "bg-gray-700 text-white"
+            }`}
+            onClick={() => toggleSection(section.key)}
+          >
+            {section.label}
+          </button>
 
-        <div className={`overflow-hidden transition-all duration-500 ${openSections.training ? "opacity-100" : "max-h-0 opacity-0"}`}>
-
-
-          {TrainingForm(monthsInRange, duplicatedMonths)}
-
+          <div className={`overflow-hidden transition-all duration-500 ${
+            openSection === section.key ? "opacity-100 max-h-screen" : "max-h-0 opacity-0"
+          }`}>
+            {(() => {
+              switch(section.key) {
+                case "training": return TrainingForm(monthsInRange, duplicatedMonths);
+                case "pendency": return pendencyForm(monthsInRange, duplicatedMonths);
+                case "untraced": return untraced(monthsInRange, duplicatedMonths);
+                case "offences_against": return offencesAgainstBody(monthsInRange, duplicatedMonths);
+                case "important_bns": return ImportantAgainstBody(monthsInRange, duplicatedMonths);
+                case "property_offences": return PropertyAgainstBody(monthsInRange, duplicatedMonths);
+                case "esakshya": return esakshyaDetails(monthsInRange, duplicatedMonths);
+                case "esakshya_app": return useOfEsakshyaDetails(monthsInRange, duplicatedMonths);
+                case "zero_fir": return ZeroFIRDetails(monthsInRange, duplicatedMonths);
+                case "eFIR": return EFIRDetails(monthsInRange, duplicatedMonths);
+                case "ITSSO": return ITSSOComplianceForm(monthsInRange, duplicatedMonths);
+                case "stolen_recover": return StolenRecoveredProperty(monthsInRange, duplicatedMonths);
+                case "conviction_bns": return ConvictionUnderBNS(monthsInRange, duplicatedMonths);
+                case "forensic_visits": return VisitOfForensicTeams(monthsInRange, duplicatedMonths);
+                default: return null;
+              }
+            })()}
+          </div>
         </div>
-        {/* 2 option */}
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
-          onClick={() => toggleSection("pendency")}
-        // onClick={() => setIsPendencyOpen(!isPendencyOpen)}
-        >
-          Pendency of cases under BNS
-        </button>
+      ))}
+    </div>
 
-        <div className={`overflow-hidden transition-all duration-500 ${openSections.pendency ? "opacity-100 max-h-screen" : "max-h-0 opacity-0"}`}>
-
-          {pendencyForm(monthsInRange, duplicatedMonths)}
-
-
-        </div>
-        {/* 3 option */}
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
-          onClick={() => toggleSection("untraced")}
-        >
-          Untraced Missing
-        </button>
-
-        <div className={`overflow-hidden transition-all duration-500 ${openSections.untraced ? "opacity-100" : "max-h-0 opacity-0"}`}>
-          {untraced(monthsInRange, duplicatedMonths)}
-
-        </div>
-        {/* 4 option */}
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
-          onClick={() => toggleSection("offences_against")}
-        >
-          Offences against body under BNS
-        </button>
-
-        <div className={`overflow-hidden transition-all duration-500 ${openSections.offences_against ? "opacity-100" : "max-h-0 opacity-0"}`}>
-          {offencesAgainstBody(monthsInRange, duplicatedMonths)}
-
-        </div>
-        {/* 5 option */}
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
-          onClick={() => toggleSection("important_bns")}
-        >
-          Important sections introduced in BNS
-        </button>
-
-        <div className={`overflow-hidden transition-all duration-500 ${openSections.important_bns ? "opacity-100" : "max-h-0 opacity-0"}`}>
-          {ImportantAgainstBody(monthsInRange, duplicatedMonths)}
-        </div>
-        {/* 6 option */}
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
-          onClick={() => toggleSection("esakshya")}
-        >
-          eSakshya Details
-        </button>
-
-        <div className={`overflow-hidden transition-all duration-500 ${openSections.esakshya ? "opacity-100" : "max-h-0 opacity-0"}`}>
-          {esakshyaDetails(monthsInRange, duplicatedMonths)}
-        </div>
-        {/* 7 option */}
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
-          onClick={() => toggleSection("esakshya_app")}
-        >
-          Use of eSakshya App in cases with punishment of 7 yrs. or more
-        </button>
-
-        <div className={`overflow-hidden transition-all duration-500 ${openSections.esakshya_app ? "opacity-100" : "max-h-0 opacity-0"}`}>
-          {useOfEsakshyaDetails(monthsInRange, duplicatedMonths)}
-
-        </div>
-        {/* 8 option */}
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
-          onClick={() => toggleSection("zero_fir")}
-        >
-          Zero FIR's
-        </button>
-
-        <div className={`overflow-hidden transition-all duration-500 ${openSections.zero_fir ? "opacity-100" : "max-h-0 opacity-0"}`}>
-          {ZeroFIRDetails(monthsInRange, duplicatedMonths)}
-
-        </div>
-        {/* 9 option */}
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
-          onClick={() => toggleSection("eFIR")}
-        >
-          eFIR's
-        </button>
-
-        <div className={`overflow-hidden transition-all duration-500 ${openSections.eFIR ? "opacity-100" : "max-h-0 opacity-0"}`}>
-          {EFIRDetails(monthsInRange, duplicatedMonths)}
-
-        </div>
-        {/* 10 option */}
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
-          onClick={() => toggleSection("ITSSO")}
-        >
-          ITSSO Compilance Form
-        </button>
-
-        <div className={`overflow-hidden transition-all duration-500 ${openSections.ITSSO ? "opacity-100" : "max-h-0 opacity-0"}`}>
-          {ITSSOComplianceForm(monthsInRange, duplicatedMonths)}
-
-        </div>
-        {/* 11 option */}
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
-          onClick={() => toggleSection("stolen_recover")}
-        >
-          Stolen & Recovered Property
-        </button>
-
-        <div className={`overflow-hidden transition-all duration-500 ${openSections.stolen_recover ? "opacity-100" : "max-h-0 opacity-0"}`}>
-          {StolenRecoveredProperty(monthsInRange, duplicatedMonths)}
-
-        </div>
-        {/* 12 option */}
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
-          onClick={() => toggleSection("conviction_bns")}
-        >
-          Conviction Under BNS
-        </button>
-
-        <div className={`overflow-hidden transition-all duration-500 ${openSections.conviction_bns ? "opacity-100" : "max-h-0 opacity-0"}`}>
-          {ConvictionUnderBNS(monthsInRange, duplicatedMonths)}
-
-        </div>
-
-        {/* 12 option */}
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
-          onClick={() => toggleSection("forensic_visits")}
-        >
-          Forensic visists
-        </button>
-
-        <div className={`overflow-hidden transition-all duration-500 ${openSections.forensic_visits ? "opacity-100" : "max-h-0 opacity-0"}`}>
-          {VisitOfForensicTeams(monthsInRange, duplicatedMonths)}
-
-        </div>
-
-      </div>
     );
   };
 
@@ -3851,13 +3879,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
             </DialogContent>
           </Box>
         </Dialog>)
-
-
-
-
-
       }
-
 
     </>
   );

@@ -43,17 +43,19 @@
     position: absolute;
     display: flex;
     flex-direction: column !important;
-    // top: 100%;
+    top:50px;
     left: 1rem;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     z-index: 10;
-
+    width: 125px;
+    left: 130px;
     .dropdown-item {
       padding: 0.5rem;
       width: 200px;
       text-align: left;
+      width: 125px;
       cursor: pointer;
       &:hover {
         background-color: #edf2f7;
