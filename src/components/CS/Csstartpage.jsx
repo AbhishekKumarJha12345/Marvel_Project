@@ -112,10 +112,8 @@ if(sub_role == 'CP' || sub_role == 'SP'){
           params: { zone: zoneName, district: districtName, table: catogory, typeFilter: selectedForm, start_date:to_date, end_date:from_date }
         });
 
-      (district && district != 'null') || selectedZone ? setpercent(response.data.districts || 0) :  zone ? setpercent(response.data.zones || 0) : setpercent(0)
-       
-
-        (role == 'chief secretary' || role == 'ACS' || role == 'DGP') && !selectedZone ? setpercent(response.data.zones) : null
+      
+        (role == 'chief secretary' || role == 'ACS' || role == 'DGP') && !selectedZone ? setpercent(response.data.zones) : (district && district != 'null') || selectedZone ? setpercent(response.data.districts || 0) :  zone ? setpercent(response.data.zones || 0) : setpercent(0)
 
 
         setZonePercentages(response.data.zones);
