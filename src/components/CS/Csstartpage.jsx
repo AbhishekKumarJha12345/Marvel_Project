@@ -174,6 +174,19 @@ const MaharashtraMap = (catogoryBar) => {
           series: [data.total_pocso_bns_cases, data.charge_sheeted_within_60_days, data.percentage],
         });
       }
+      else if (data.type === "Use of eSakshya App in cases with punishment of 7 yrs. or more") {
+        // Separate inner and outer donut values
+        setPieData1({
+          labels: ["Cases eSakshya Used", "Cases eSakshya Not Used"], // Inner Circle
+          series: [data.cases_esakshya_used, data.cases_esakshya_not_used]
+        });
+
+        setPieData2({
+          labels: ["Cases Registered", "eSakshya Used Charge Sheeted", "eSakshya Not Used Investigation"], // Outer Circle
+          series: [data.cases_registered, data.esakshya_used_charge_sheeted, data.esakshya_not_used_invest]
+        });
+
+      }
       else if (data.type === "Stolen & Recovered Property") {
         setBarData1({
           categories: ["HBT", "Robbery", "Theft", "Dacoity"],
@@ -764,11 +777,9 @@ const MaharashtraMap = (catogoryBar) => {
     const fetchMLResponse = async () => {
       try {
         // Decide whether to send `type` or `districts`
-        const requestBody =
-        
-        !selectedZone
-            ? { type: "police_all_zone" } // Send only `type`
-            : { type : zoneMappingpayload[selectedZone] }; // Send only `districts`
+        const requestBody = !selectedZone
+          ? { type: "police_all_zone" } // Send only `type`
+          : { type: zoneMappingpayload[selectedZone] }; // Send zone-specific type
   
         const response = await axios.post(
           "https://mhmarvel.org/api2/llm_result",
@@ -777,7 +788,64 @@ const MaharashtraMap = (catogoryBar) => {
         );
   
         console.log("response.data:", response.data);
-        setMlResponse(response.data.formatted_llm_result);
+  
+        if (response.data && response.data.formatted_llm_result) {
+          const formattedHTML = response.data.formatted_llm_result;
+          
+          // Create a temporary container to manipulate the HTML
+          let container = document.createElement("div");
+          container.innerHTML = formattedHTML;
+  
+          // Modify the title
+          let title = container.querySelector("h2");
+          if (title) {
+            title.textContent = "AI Insights";
+          }
+  
+          // Break content into three separate blocks
+          let sections = {
+            "Zone Analysis": [],
+            "Commissionerate (CP) Analysis": [],
+            "Final Note": []
+          };
+  
+          let currentSection = null;
+          container.childNodes.forEach(node => {
+            if (node.tagName === "H3") {
+              currentSection = node.textContent.trim();
+            }
+            if (currentSection && sections[currentSection]) {
+              sections[currentSection].push(node.outerHTML);
+            }
+          });
+  
+          // Generate new structured HTML
+          let modifiedHTML = `
+            <h2>AI Insights</h2>
+  
+            <div class="block">
+                ${sections["Zone Analysis"].join("\n")}
+            </div>
+  
+            <div class="block">
+                ${sections["Commissionerate (CP) Analysis"].join("\n")}
+            </div>
+  
+            <div class="block">
+                ${sections["Final Note"].join("\n")}
+            </div>
+          `;
+  
+          // Set modified response
+          setMlResponse(modifiedHTML);
+          
+          // Store in localStorage only for all zones
+          if (!selectedZone) {
+            localStorage.setItem("MLReport", modifiedHTML);
+          }
+        } else {
+          setMlResponse("No data available");
+        }
       } catch (error) {
         console.error("Error fetching ML response:", error);
         setMlResponse("Failed to load response");
@@ -1537,6 +1605,118 @@ const MaharashtraMap = (catogoryBar) => {
 
                         </div>
                       ) :
+                      catogory === "FIR" && selectedForm === "Use of eSakshya App in cases with punishment of 7 yrs. or more" ? (
+                        <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center", textWrap: "wrap" }}>
+                          <h4 style={{
+                            textAlign: "center",
+                            marginTop: "10px",
+                            marginBottom: "0px",
+                            fontWeight: "bold",
+                            width: "100%",
+                          }}>
+                            Use of eSakshya App (7 yrs. or more)
+                          </h4>
+
+                          {/* Container for overlaying charts */}
+                          <div style={{ position: "relative", width: "400px", height: "400px" }}>
+                            {/* Outer Circle */}
+                            <ApexCharts
+                              options={{
+                                chart: { type: "donut" },
+                                labels: pieData2.labels,
+                                legend: { position: "bottom" },
+                                colors: ["#FFB366", "#66F0B3", "#FFA500"],
+
+                                plotOptions: {
+                                  pie: {
+                                    donut: {
+                                      size: "75%", // Keep the outer donut bigger
+                                      labels: {
+                                        show: true,
+                                        name: { show: true },
+                                        value: { show: true },
+                                      }
+                                    }
+                                  }
+                                }
+                              }}
+                              series={pieData2.series}
+                              type="donut"
+                              width="400"
+                            />
+
+                            {/* Inner Circle - Centered inside Outer Circle */}
+                            <div style={{
+                              position: "absolute",
+                              top: "40%",
+                              left: "50%",
+                              transform: "translate(-50%, -50%)",
+                              width: "250px", // Make inner donut smaller
+                              height: "250px",
+                            }}>
+                              <ApexCharts
+                                options={{
+                                  chart: { type: "donut" },
+                                  labels: pieData1.labels,
+                                  legend: { show: false },
+                                  colors: ["#FF6666", "#66B8FF"],
+                                  tooltip: { y: { formatter: (value) => value } },
+
+                                  plotOptions: {
+                                    pie: {
+                                      donut: {
+                                        size: "50%", // Smaller for inner circle
+                                        labels: {
+                                          show: true,
+                                          name: { show: true },
+                                          value: { show: true },
+                                        }
+                                      }
+                                    }
+                                  }
+                                }}
+                                series={pieData1.series}
+                                type="donut"
+                                width="250"
+                              />
+                            </div>
+                          </div>
+                          {/* Custom Legend for Outer and Inner Charts */}
+                          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "-70px" }}>
+                            {/* Outer Chart Legend */}
+                            <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", justifyContent: "center" }}>
+                              {pieData2.labels.map((label, index) => (
+                                <div key={index} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                                  <div style={{
+                                    width: "15px",
+                                    height: "15px",
+                                    backgroundColor: ["#FFB366", "#66F0B3", "#FFA500"][index], // Match colors
+                                    borderRadius: "50%",
+                                  }}></div>
+                                  <span style={{ fontSize: "14px", fontWeight: "bold" }}>{label}</span>
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Inner Chart Legend */}
+                            <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", justifyContent: "center", marginTop: "20px" }}>
+                              {pieData1.labels.map((label, index) => (
+                                <div key={index} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                                  <div style={{
+                                    width: "15px",
+                                    height: "15px",
+                                    backgroundColor: ["#FF6666", "#66B8FF"][index], // Match colors
+                                    borderRadius: "50%",
+                                  }}></div>
+                                  <span style={{ fontSize: "14px", fontWeight: "bold" }}>{label}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                      ) :
+
                         catogory === "FIR" && selectedForm === "Stolen & Recovered Property" ? (
                           <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center" }}>
 

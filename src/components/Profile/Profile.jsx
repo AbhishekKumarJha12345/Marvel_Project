@@ -16,173 +16,149 @@ import Select from "react-select";
 
 
 
- const downloadPDF = (newData) => {
-      console.log("newData:", newData);
-  
-      const doc = new jsPDF({ orientation: "landscape" });
-      let pageHeight = doc.internal.pageSize.height;
-      let pageWidth = doc.internal.pageSize.width;
-      let y = 15; // Start vertical position
-      let pageNumber = 1;
-  
-      const { timeStamp, submited_by, email, rang, district, sampleDataIN } = newData;
-     
-  
-      
-      // Function to add footer
-      const addFooter = () => {
-          doc.setFontSize(10);
-          doc.setTextColor(100);
-          doc.text(`Email: ${localStorage.getItem("email")}`, 14, pageHeight - 10);
-          doc.text(`Page ${pageNumber}`, pageWidth - 30, pageHeight - 10);
-      };
-  
-      // Add Header Logo
+const downloadPDF = (newData) => {
+    console.log("newData:", newData);
 
-      
-      doc.addImage(logo, "PNG", pageWidth / 2 - 15, y, 30, 30);
-      y += 40;
-  
-      // Title
-      doc.setFontSize(22);
-      doc.setTextColor(30, 30, 120);
-      doc.setFont("helvetica", "bold");
-      doc.text("MARVEL CONSOLIDATED REPORT", pageWidth / 2 - 55, y);
-      y += 12;
-  
-      // Divider Line
-      doc.setDrawColor(100, 100, 100);
-      doc.line(10, y, pageWidth - 10, y);
-      y += 8;
-  
-      // Report Metadata
-      doc.setFontSize(12);
-      doc.setTextColor(0, 0, 0);
-      doc.setFont("helvetica", "bold");
-      {timeStamp ? doc.text(`Submited On:`, 14, y) : null}
-      {submited_by ? doc.text(`Submited By:`, 14, y + 8) : null}
-      doc.text(`Downloaded By:`, 14, y + (timeStamp ? 16 : 0));
+    const doc = new jsPDF({ orientation: "landscape" });
+    let pageHeight = doc.internal.pageSize.height;
+    let pageWidth = doc.internal.pageSize.width;
+    let y = 15;
+    let pageNumber = 1;
 
+    const { timeStamp, submited_by, sampleDataIN } = newData;
 
-
-      // doc.setDrawColor(100, 100, 100);
-      // doc.line(10, y, pageWidth - 10, y);
-      // y += 8;
-  
-      doc.setFont("helvetica", "normal");
-
-      {timeStamp ? doc.text(timeStamp, 50, y) : null}
-      {submited_by ? doc.text(submited_by, 50, y + 8) : null}
-
-      doc.text(localStorage.getItem("email"), 50, y + (timeStamp ? 16 : 0));
-
-    //   doc.text(subrole, 50, y + 24);
-    //   doc.text(rang, 50, y + 32);
-    //   doc.text(district, 50, y + 40);
-  
-      y += 50;
-  
-      if (Object.keys(sampleDataIN).length === 0) {
-          doc.setTextColor(255, 0, 0);
-          doc.setFontSize(14);
-          doc.text("⚠ No data available for the assigned zone/district.", 14, y);
-          addFooter();
-          doc.save("Marvel_Consolidated_Report.pdf");
-          return;
-      }
-  
-      // // Iterate Over Zones
-      // Object.entries(filteredData).forEach(([zone, districts]) => {
-      //     doc.setFontSize(14);
-      //     doc.setTextColor(200, 0, 0);
-      //     doc.setFont("helvetica", "bold");
-      //     y += 8;
-      //     doc.setDrawColor(200, 0, 0);
-      //     doc.line(14, y, pageWidth - 14, y);
-      //     y += 6;
-  
-      //     Object.entries(districts).forEach(([district, forms]) => {
-      //         doc.setFontSize(12);
-      //         doc.setTextColor(0, 0, 255);
-      //         doc.setFont("helvetica", "bold");
-      //         y += 5;
-  
-      const formatColumnName = (str) => {
-        return str
-            .split('_')  // Split by underscore
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
-            .join(' '); // Join with space
-    };
-    
-    Object.entries(sampleDataIN).forEach(([formType, records]) => {
+    // Function to add footer
+    const addFooter = () => {
         doc.setFontSize(10);
-        doc.setTextColor(0, 0, 0);
-        doc.setFont("helvetica", "bold");
-    
-        // Format the form type title
+        doc.setTextColor(100);
+        doc.text(`Email: ${localStorage.getItem("email")}`, 14, pageHeight - 10);
+        doc.text(`Page ${pageNumber}`, pageWidth - 30, pageHeight - 10);
+    };
+
+    // Header - Logo and Title
+    doc.addImage(logo, "PNG", pageWidth / 2 - 15, y, 30, 30);
+    y += 40;
+
+    doc.setFontSize(22);
+    doc.setTextColor(30, 30, 120);
+    doc.setFont("helvetica", "bold");
+    doc.text("MARVEL CONSOLIDATED REPORT", pageWidth / 2 - 55, y);
+    y += 12;
+
+    doc.setDrawColor(100, 100, 100);
+    doc.line(10, y, pageWidth - 10, y); // Divider Line
+    y += 8;
+
+    // Report Metadata
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont("helvetica", "bold");
+
+    if (timeStamp) doc.text(`Submited On:`, 14, y);
+    if (submited_by) doc.text(`Submited By:`, 14, y + 8);
+    doc.text(`Downloaded By:`, 14, y + (timeStamp ? 16 : 0));
+
+    doc.setFont("helvetica", "normal");
+    if (timeStamp) doc.text(timeStamp, 50, y);
+    if (submited_by) doc.text(submited_by, 50, y + 8);
+    doc.text(localStorage.getItem("email"), 50, y + (timeStamp ? 16 : 0));
+
+    y += 30; // Space before adding content
+
+    // Retrieve MLReport content
+    const mlReportHTML = localStorage.getItem("MLReport");
+
+    // Function to format column names
+    const formatColumnName = (str) => {
+        return str.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    };
+
+    // Loop through all forms and display data
+    Object.entries(sampleDataIN).forEach(([formType, records]) => {
         const formattedFormType = formatColumnName(formType);
-        doc.text(`${formattedFormType}`, 10, y);  
-        y += 4;
-    
+
+        // Check for page overflow
+        if (y > pageHeight - 50) {
+            doc.addPage();
+            pageNumber++;
+            y = 15;
+            addFooter();
+        }
+
+        // Section Header
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(30, 30, 120);
+        doc.text(`${formattedFormType}`, 14, y);
+        y += 8;
+
+        // ML Report Handling for "Police Training"
+        if (formattedFormType === "Police Training" && mlReportHTML) {
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(0, 0, 150);
+            doc.text("AI Insights :", 14, y);
+            y += 5;
+
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(0, 0, 0);
+
+            const mlReportText = mlReportHTML.replace(/<[^>]*>/g, "");
+            const splitText = doc.splitTextToSize(mlReportText, pageWidth - 30);
+            doc.text(splitText, 14, y);
+            y += splitText.length * 5 + 10;
+        }
+
+        // For all other formTypes, display "No ML Data Generated"
+        if (formattedFormType !== "Police Training") {
+            doc.setFont("helvetica", "italic");
+            doc.setTextColor(255, 0, 0);
+            doc.text("No ML Data Generated", 14, y);
+            y += 10;
+        }
+
+        // If records exist, generate table; otherwise, display "No Data Available"
         if (records.length > 0) {
-            // Convert keys to formatted headers
             const tableColumn = Object.keys(records[0]).map(formatColumnName);
             const tableRows = records.map(row => Object.values(row));
-    
+
             doc.autoTable({
-                startY: y + 2,
+                startY: y,
                 head: [tableColumn],
                 body: tableRows,
                 theme: "grid",
                 margin: { left: 14, right: 14 },
-                styles: {
-                    fontSize: 9,
-                    cellPadding: 3,
-                    halign: "center",
-                    textColor: [50, 50, 50],
-                },
-                headStyles: {
-                    fillColor: [41, 128, 185],
-                    textColor: [255, 255, 255],
-                    fontSize: 10,
-                    fontStyle: "bold",
-                },
-                bodyStyles: {
-                    fillColor: (rowIndex) => (rowIndex % 2 === 0 ? [245, 245, 245] : [255, 255, 255]),
-                },
-                alternateRowStyles: {
-                    fillColor: [235, 235, 235],
-                },
-                didDrawPage: () => {
-                    addFooter();
-                },
+                styles: { fontSize: 9, cellPadding: 3, halign: "center", textColor: [50, 50, 50] },
+                headStyles: { fillColor: [41, 128, 185], textColor: [255, 255, 255], fontSize: 10, fontStyle: "bold" },
+                bodyStyles: { fillColor: (rowIndex) => (rowIndex % 2 === 0 ? [245, 245, 245] : [255, 255, 255]) },
+                alternateRowStyles: { fillColor: [235, 235, 235] },
+                didDrawPage: () => addFooter(),
             });
-    
+
             y = doc.autoTable.previous.finalY + 10;
-    
-            if (y > pageHeight - 20) {
-                doc.addPage();
-                pageNumber++;
-                y = 15;
-            }
         } else {
             doc.setFont("helvetica", "italic");
             doc.setTextColor(150, 0, 0);
             doc.text("No data available", 30, y);
-            y += 5;
+            y += 10;
+        }
+
+        // Page Break Handling
+        if (y > pageHeight - 50) {
+            doc.addPage();
+            pageNumber++;
+            y = 15;
+            addFooter();
         }
     });
-  
-      //         y += 8;
-      //     });
-  
-      //     y += 12;
-      // });
-  
-      addFooter();
-      doc.save("Marvel_Consolidated_Report.pdf");
-  };
-  
+
+    addFooter();
+    doc.save("Marvel_Consolidated_Report.pdf");
+};
+
+
+
+
 
 
 
@@ -266,9 +242,7 @@ function ReportModal({ onClose }) {
         label: district
     }));
 
-    useEffect(() => {
-        console.log("filtersoverall : ", filtersoverall);
-    }, [filtersoverall]);
+
 
     const handelOverAllReport = async () => {
         try {
