@@ -6,6 +6,8 @@ import { Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Scheduler from './scehdule' 
 
+// import Profile from './components/Profile/Profile.jsx'
+
 
 function App() {
   const ProtectedRoute = ({ element }) => {
@@ -16,12 +18,12 @@ function App() {
   return (
     <>
       {/* Define routes for LoginPage and Mainnavbar */}
-      {/* <Routes>
+      <Routes>
         <Route path="/" element={<LoginPage />} /> 
         <Route path="/mainnavbar"  element={<ProtectedRoute element={<Mainnavbar />} />} /> 
-      </Routes> */}
+      </Routes>
 
-      <Scheduler/>
+      {/* <Scheduler/> */}
     </>
   );
 }
