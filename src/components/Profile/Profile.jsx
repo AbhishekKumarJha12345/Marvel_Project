@@ -167,6 +167,7 @@ export default function ProfilePage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const role = localStorage.getItem("role")
+    const sub_role = localStorage.getItem("sub_role")
 
     return (
         <div className="max-w-[85vw] mx-auto mt-5 min-h-[82vh] p-6 bg-white rounded-lg shadow-lg flex flex-col">
@@ -195,7 +196,7 @@ export default function ProfilePage() {
             </div>
 
             {
-                activeTab != "profile" && (role == 'chief secretary' || role == 'ACS' || role == 'DGP') ?
+                activeTab != "profile" && (role == 'chief secretary' || role == 'ACS' || role == 'DGP' || sub_role == "IG/DIG") ?
             (<button
                 className="mt-4 px-4 py-2 bg-blue-500 w-fit ml-auto text-white rounded hover:bg-blue-700"
                 onClick={() => setIsModalOpen(true)}
@@ -597,7 +598,7 @@ function FormHistory() {
                 <h4 className="text-md font-semibold mb-2">Filters</h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
-                    {(role === "chief secretary" || role === "ACS" || role === "DGP") && !filters.city && (
+                    {(role === "chief secretary" || role === "ACS" || role === "DGP" || sub_role == "IG/DIG") && !filters.city && (
                         <div className="flex flex-col flex-grow min-w-[200px]">
                             <label className="text-gray-700 font-medium text-lg ">Zone</label>
                             <select
@@ -617,7 +618,7 @@ function FormHistory() {
 
                     {/* District */}
                     {filters.zone && (!filters.city || filters.city === "null") &&
-                        ((!filters.district || filters.district === "null") || sub_role !== "SP") && (
+                        ((!filters.district || filters.district === "null") || sub_role !== "SP" || sub_role == "IG/DIG") && (
                             <div className="flex flex-col flex-grow min-w-[200px]">
                                 <label className="text-gray-700 font-medium text-lg">District</label>
                                 <select
@@ -636,7 +637,7 @@ function FormHistory() {
                         )}
 
                     {/* City */}
-                    {(!filters.zone && sub_role !== "CP") && (
+                    {(!filters.zone && sub_role !== "CP" || sub_role == "IG/DIG") && (
                         <div className="flex flex-col flex-grow min-w-[200px]">
                             <label className="text-gray-700 font-medium text-lg">City</label>
                             <select

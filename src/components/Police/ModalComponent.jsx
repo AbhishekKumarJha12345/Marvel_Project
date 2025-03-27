@@ -1215,6 +1215,8 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
 
 
+      updatedForm.ageGroup = prev[month]?.ageGroup || (month.includes("below18") ? "18-" : "18+");
+
 
 
       // Perform calculations
@@ -1908,10 +1910,146 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
     );
   };
 
+  // const untraced = (monthsInRange, duplicatedMonths) => {
+  //   return (
+  //     <div className="overflow-x-auto d-flex justify-center">
+  //       <table className="w-full border border-gray-400 shadow-md">
+  //         <thead>
+  //           <tr className="bg-gray-200 text-left">
+  //             <th className="border px-4 py-2">Month-Year</th>
+  //             <th className="border px-4 py-2">Untraced Details Age Group</th>
+  //             <th className="border px-4 py-2">No of Untraced Persons</th>
+  //             <th className="border px-4 py-2">No of Missing Persons</th>
+  //             <th className="border px-4 py-2">Total Missing Persons</th>
+  //             <th className="border px-4 py-2">Traced</th>
+  //             <th className="border px-4 py-2">Untraced</th>
+  //             <th className="border px-4 py-2">Untraced %</th>
+
+
+
+
+  //             {/* <th className="border px-4 py-2">Total Trained %</th> */}
+  //           </tr>
+  //         </thead>
+  //         <tbody>
+  //           {[
+  //             ...monthsInRange.map((m) => ({ month: m, id: m })),
+  //             ...duplicatedMonths,
+  //           ].map(({ month, id }, index, arr) => {
+  //             const isPrevFormFilled =
+  //               index === 0 || isFormFilled(arr[index - 1]?.id);
+  //             const isDuplicate = duplicatedMonths.some(
+  //               (item) => item.id === id
+  //             );
+  //             const isLastRow = index === arr.length - 1; // Check if this is the last row
+
+
+
+
+  //             return (
+  //               <tr key={id}>
+  //                 <td className="border px-4 py-2">{month}</td>
+  //                 <td className="border px-4 py-2">
+  //                   <select
+  //                     className="w-full p-2 border rounded bg-white"
+  //                     value={formValues[id]?.ageGroup || ""}
+  //                     onChange={(e) =>
+  //                       handleInputChange(id, "ageGroup", e.target.value)
+  //                     }
+  //                   >
+  //                     <option value="">Select Age Group</option>
+  //                     <option value="18-">Below 18 years</option>
+  //                     <option value="18+">Above or Equal 18 years</option>
+  //                   </select>
+  //                 </td>
+  //                 <td className="border px-4 py-2">
+  //                   <input
+  //                     type="number"
+  //                     className="w-[40%] p-2 border rounded"
+  //                     value={formValues[id]?.untracedPersons || ""}
+  //                     onChange={(e) =>
+  //                       handleInputChange(id, "untracedPersons", e.target.value)
+  //                     }
+  //                   />
+  //                 </td>
+
+  //                 <td className="border px-4 py-2">
+  //                   <input
+  //                     type="number"
+  //                     className="w-[40%] p-2 border rounded"
+  //                     value={formValues[id]?.missingPersons || ""}
+  //                     onChange={(e) =>
+  //                       handleInputChange(id, "missingPersons", e.target.value)
+  //                     }
+  //                   />
+  //                 </td>
+
+
+  //                 <td className="border px-4 py-2">
+  //                   <input
+  //                     type="number"
+  //                     className="w-[40%] p-2 border rounded"
+  //                     value={formValues[id]?.totalMissing || ""}
+  //                     onChange={(e) =>
+  //                       handleInputChange(id, "totalMissing", e.target.value)
+  //                     }
+  //                   />
+  //                 </td>
+
+
+  //                 <td className="border px-4 py-2">
+  //                   <input
+  //                     type="number"
+  //                     className="w-[40%] p-2 border rounded"
+  //                     value={formValues[id]?.traced || ""}
+  //                     onChange={(e) =>
+  //                       handleInputChange(id, "traced", e.target.value)
+  //                     }
+  //                   />
+  //                 </td>
+
+
+  //                 <td className="border px-4 py-2">
+  //                   <input
+  //                     type="number"
+  //                     className="w-[40%] p-2 border rounded"
+  //                     value={formValues[id]?.untraced || ""}
+  //                     onChange={(e) =>
+  //                       handleInputChange(id, "untraced", e.target.value)
+  //                     }
+  //                   />
+  //                 </td>
+
+
+  //                 <td className="border px-4 py-2">
+  //                   <input
+  //                     type="number"
+  //                     className="w-[40%] p-2 border rounded"
+  //                     value={formValues[id]?.untracedPercentage || ""}
+  //                     onChange={(e) =>
+  //                       handleInputChange(id, "untracedPercentage", e.target.value)
+  //                     }
+  //                   />
+  //                 </td>
+
+
+
+  //               </tr>
+  //             );
+  //           })}
+  //         </tbody>
+  //       </table>
+  //     </div>
+  //   );
+  // };
+
+
+
+
   const untraced = (monthsInRange, duplicatedMonths) => {
     return (
-      <div className="overflow-x-auto d-flex justify-center">
-        <table className="w-full border border-gray-400 shadow-md">
+      <div className="overflow-x-auto overflow-y-auto max-h-[80vh] d-flex justify-center">
+        <table className="min-w-[25%] border border-gray-400 shadow-md">
           <thead>
             <tr className="bg-gray-200 text-left">
               <th className="border px-4 py-2">Month-Year</th>
@@ -1922,119 +2060,91 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
               <th className="border px-4 py-2">Traced</th>
               <th className="border px-4 py-2">Untraced</th>
               <th className="border px-4 py-2">Untraced %</th>
-
-
-
-
-              {/* <th className="border px-4 py-2">Total Trained %</th> */}
             </tr>
           </thead>
           <tbody>
-            {[
-              ...monthsInRange.map((m) => ({ month: m, id: m })),
-              ...duplicatedMonths,
-            ].map(({ month, id }, index, arr) => {
-              const isPrevFormFilled =
-                index === 0 || isFormFilled(arr[index - 1]?.id);
-              const isDuplicate = duplicatedMonths.some(
-                (item) => item.id === id
-              );
-              const isLastRow = index === arr.length - 1; // Check if this is the last row
-
-
-
-
-              return (
-                <tr key={id}>
-                  <td className="border px-4 py-2">{month}</td>
-                  <td className="border px-4 py-2">
-                    <select
-                      className="w-full p-2 border rounded bg-white"
-                      value={formValues[id]?.ageGroup || ""}
-                      onChange={(e) =>
-                        handleInputChange(id, "ageGroup", e.target.value)
-                      }
-                    >
-                      <option value="">Select Age Group</option>
-                      <option value="18-">Below 18 years</option>
-                      <option value="18+">Above or Equal 18 years</option>
-                    </select>
-                  </td>
-                  <td className="border px-4 py-2">
-                    <input
-                      type="number"
-                      className="w-[40%] p-2 border rounded"
-                      value={formValues[id]?.untracedPersons || ""}
-                      onChange={(e) =>
-                        handleInputChange(id, "untracedPersons", e.target.value)
-                      }
-                    />
-                  </td>
-
-                  <td className="border px-4 py-2">
-                    <input
-                      type="number"
-                      className="w-[40%] p-2 border rounded"
-                      value={formValues[id]?.missingPersons || ""}
-                      onChange={(e) =>
-                        handleInputChange(id, "missingPersons", e.target.value)
-                      }
-                    />
-                  </td>
-
-
-                  <td className="border px-4 py-2">
-                    <input
-                      type="number"
-                      className="w-[40%] p-2 border rounded"
-                      value={formValues[id]?.totalMissing || ""}
-                      onChange={(e) =>
-                        handleInputChange(id, "totalMissing", e.target.value)
-                      }
-                    />
-                  </td>
-
-
-                  <td className="border px-4 py-2">
-                    <input
-                      type="number"
-                      className="w-[40%] p-2 border rounded"
-                      value={formValues[id]?.traced || ""}
-                      onChange={(e) =>
-                        handleInputChange(id, "traced", e.target.value)
-                      }
-                    />
-                  </td>
-
-
-                  <td className="border px-4 py-2">
-                    <input
-                      type="number"
-                      className="w-[40%] p-2 border rounded"
-                      value={formValues[id]?.untraced || ""}
-                      onChange={(e) =>
-                        handleInputChange(id, "untraced", e.target.value)
-                      }
-                    />
-                  </td>
-
-
-                  <td className="border px-4 py-2">
-                    <input
-                      type="number"
-                      className="w-[40%] p-2 border rounded"
-                      value={formValues[id]?.untracedPercentage || ""}
-                      onChange={(e) =>
-                        handleInputChange(id, "untracedPercentage", e.target.value)
-                      }
-                    />
-                  </td>
-
-
-
-                </tr>
-              );
-            })}
+            {[...monthsInRange.flatMap((m) => [
+              { month: m, id: `${m}->below18`, ageGroup: "18+" },
+              { month: m, id: `${m}->above18`, ageGroup: "18-" },
+            ]),
+            ...duplicatedMonths,
+            ].map(({ month, id, ageGroup }) => (
+              <tr key={id}>
+            
+                <td className="border px-4 py-2">{month}</td>
+                <td className="border px-4 py-2">
+                  <input
+                    type="text"
+                    value={ageGroup}
+                    readOnly
+                    className="w-full p-2 border rounded bg-gray-100"
+                    onChange={(e) =>
+                      handleInputChange(id, "ageGroup", e.target.value)
+                    }
+                  />
+                </td>
+                <td className="border px-4 py-2">
+                  <input
+                    type="number"
+                    className="w-full p-2 border rounded"
+                    value={formValues[id]?.untracedPersons || ""}
+                    onChange={(e) =>
+                      handleInputChange(id, "untracedPersons", e.target.value)
+                    }
+                  />
+                </td>
+                <td className="border px-4 py-2">
+                  <input
+                    type="number"
+                    className="w-full p-2 border rounded"
+                    value={formValues[id]?.missingPersons || ""}
+                    onChange={(e) =>
+                      handleInputChange(id, "missingPersons", e.target.value)
+                    }
+                  />
+                </td>
+                <td className="border px-4 py-2">
+                  <input
+                    type="number"
+                    className="w-full p-2 border rounded"
+                    value={formValues[id]?.totalMissing || ""}
+                    onChange={(e) =>
+                      handleInputChange(id, "totalMissing", e.target.value)
+                    }
+                  />
+                </td>
+                <td className="border px-4 py-2">
+                  <input
+                    type="number"
+                    className="w-full p-2 border rounded"
+                    value={formValues[id]?.traced || ""}
+                    onChange={(e) =>
+                      handleInputChange(id, "traced", e.target.value)
+                    }
+                  />
+                </td>
+                <td className="border px-4 py-2">
+                  <input
+                    type="number"
+                    className="w-full p-2 border rounded"
+                    value={formValues[id]?.untraced || ""}
+                    onChange={(e) =>
+                      handleInputChange(id, "untraced", e.target.value)
+                    }
+                  />
+                </td>
+                <td className="border px-4 py-2">
+                  <input
+                    type="number"
+                    className="w-full p-2 border rounded"
+                    value={formValues[id]?.untracedPercentage || ""}
+                    onChange={(e) =>
+                      handleInputChange(id, "untracedPercentage", e.target.value)
+                    }
+                  />
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

@@ -42,6 +42,15 @@ const MaharashtraMap = (catogoryBar) => {
   const [totalCases, settotalCases] = useState({});
   const [disposedCases, setdisposedCases] = useState({});
 
+  const [startDate, setStartDate] = useState("2025-02");
+  const [endDate, setEndDate] = useState("2025-02");
+
+
+
+  const sub_role = localStorage.getItem("sub_role")
+  const role = localStorage.getItem("role")
+  const district = localStorage.getItem("district")
+  const zone = localStorage.getItem("zone")
 
   
   
@@ -58,30 +67,15 @@ const MaharashtraMap = (catogoryBar) => {
   const [barData2, setBarData2] = useState({ categories: [], series: [] });
   const [barData, setBarData] = useState({ categories: [], series: [] });
 
-  const [startDate, setStartDate] = useState("2025-02");
-  const [endDate, setEndDate] = useState("2025-02");
-
-
-
-
-
-  const zone = localStorage.getItem("zone")
-
-  const assignedCPCity = localStorage.getItem("city")
-
-  const district = localStorage.getItem("district")
-
-  const sub_role = localStorage.getItem("sub_role")
-  const role = localStorage.getItem("role")
-
 
   const fetchPieChartData = async (districtName, typeFilter, Catogory, zoneName) => {
     try {
+      setLoading(true);
       const response = await axiosInstance.post("/value_pie_chart", {
-        district: districtName || district,
+        district: districtName,
         typeFilter: typeFilter,
         Catogory: Catogory,
-        zoneName: zoneName || zone,
+        zoneName: zoneName,
       });
 
 
@@ -116,31 +110,21 @@ const MaharashtraMap = (catogoryBar) => {
         });
         setTotalMissingPersons(totalMissingPersons);
 
-      } else if (data.type === "Important sections introduced in BNS") {
-        // Pie charts for Pendency Cases
+      } else if (data && data.type === "Important sections introduced in BNS") {
+        console.log("Setting Pie Data for:", data.type);
+
         setPieData1({
-          labels: ["Registered_Mob", "Registered_Snatching", "Registered_Organised", "Registered_Petty", "Registered_Terrorist"],
+          labels: ["Registered_Mob", "Registered_Snatchr", "Registered_Organized", "Registered_Petty", "Registered_Terrorist"],
           series: [data.registeredCases_mob, data.registeredCases_snatch, data.registeredCases_organized, data.registeredCases_petty, data.registeredCases_terrorist],
         });
 
         setPieData2({
-          labels: ["Detected_Mob", "Detected_Snatching", "Detected_Organised", "Detected_Petty", "Detected_Terrorist"],
+          labels: ["Detected_Mob", "Detected_Snatch", "Detected_Organized", "Detected_Petty", "Detected_Terrorist"],
           series: [data.detectedCases_mob, data.detectedCases_snatch, data.detectedCases_organized, data.detectedCases_petty, data.detectedCases_terrorist],
         });
 
-      }else if (data.type === "Property offences under BNS") {
-        // Pie charts for Pendency Cases
-        setPieData1({
-          labels: ["Registered_Murder", "Registered_Att_to_Mur", "Registered_Rape", "Registered_Hurt", "Registered_Riots", "Registered_Molestation"],
-          series: [data.registeredCases_murder, data.registeredCases_Att, data.registeredCases_Rape, data.registeredCases_Hurt, data.registeredCases_Riots, data.registeredCases_Molestation],
-        });
-
-        setPieData2({
-          labels: ["Detected_Murder", "Detected_Att_to_Mur", "Detected_Rape", "Detected_Hurt", "Detected_Riots", "Detected_Molestation"],
-          series: [data.detectedCases_murder, data.detectedCases_Att, data.detectedCases_Rape, data.detectedCases_Hurt, data.detectedCases_Riots, data.detectedCases_Molestation],
-        });
-
-      } else if (data.type === "Offences against body under BNS") {
+      }
+      else if (data.type === "Offences against body under BNS") {
         // Pie charts for Pendency Cases
         setPieData1({
           labels: ["Registered_Murder", "Registered_Att_to_Mur", "Registered_Rape", "Registered_Hurt", "Registered_Riots", "Registered_Molestation"],
@@ -182,10 +166,9 @@ const MaharashtraMap = (catogoryBar) => {
         });
 
         setPieData2({
-          labels: ["Cases Registered", "eSakshya Used Charge Sheeted", "eSakshya Not Used Investigation"], // Outer Circle
-          series: [data.cases_registered, data.esakshya_used_charge_sheeted, data.esakshya_not_used_invest]
+          labels: ["eSakshya Used Charge Sheeted", "eSakshya Not Used Investigation"], // Outer Circle
+          series: [data.esakshya_used_charge_sheeted, data.esakshya_not_used_invest]
         });
-
       }
       else if (data.type === "Stolen & Recovered Property") {
         setBarData1({
@@ -258,8 +241,11 @@ const MaharashtraMap = (catogoryBar) => {
 
     } catch (error) {
       console.error("Error fetching pie chart data:", error);
+    } finally {
+      setLoading(false); // Stop loading after API call completion
     }
   };
+
 
   
   // ----------------------------------------------------------------
@@ -322,13 +308,13 @@ const MaharashtraMap = (catogoryBar) => {
 
 
 
-  if (sub_role == 'CP' || sub_role == 'SP') {
+  // if (sub_role == 'CP' || sub_role == 'SP') {
 
-    var from_date = localStorage.getItem("from_date")
-    var to_date = localStorage.getItem("to_date")
+  //   var from_date = localStorage.getItem("from_date")
+  //   var to_date = localStorage.getItem("to_date")
 
 
-  }
+  // }
 
 
   const userZones = sub_role == 'IG/DIG' || sub_role == 'CP' || sub_role == 'SP' ? zone : ""; // Example single zone
@@ -672,15 +658,24 @@ const MaharashtraMap = (catogoryBar) => {
         // Add the label as a marker to the map
         L.marker(center, { icon: label }).addTo(map);
 
+        let clickTimeout;
 
+        sub_role == 'SP' || sub_role == 'CP' ? fetchPieChartData(selectedZone ? districtName : null, selectedForm, catogory, zoneName) : null
         layer.on({
           click: (e) => {
-            setSelectedZone(zoneName);
+            if (clickTimeout) {
+              clearTimeout(clickTimeout);
+              clickTimeout = null;
+              setSelectedZone(zoneName); // Double click action
+            } else {
+              clickTimeout = setTimeout(() => {
+                fetchPieChartData(selectedZone ? districtName : null, selectedForm, catogory, zoneName);
+                clickTimeout = null;
+              }, 250); // Delay to detect double-click
+            }
           },
           mouseover: () => {
             layer.setStyle({ color: "#ffff", weight: 2 });
-            fetchPieChartData(selectedZone ? districtName : null, selectedForm, catogory, zoneName)
-            // fetchPieChartData(districtName, selectedForm, catogory, zoneName);
           },
           mouseout: () => {
             layer.setStyle({ color: "#ffff", fillOpacity: 0.7 });
@@ -875,7 +870,7 @@ const MaharashtraMap = (catogoryBar) => {
 
       <div style={{ display: "flex", height: "76vh", zIndex: "0", gap: "20px" }}>
         {/* Left Side - Map Section (75%) */}
-        <div style={{ display: "flex", height: "75vh", width: "80%", position: "relative" }}>
+        <div style={{ display: "flex", height: "71vh", width: "80%", position: "relative" }}>
 
           {/* ---------------------------myncode ----------------------------- */}
 
@@ -1064,7 +1059,7 @@ const MaharashtraMap = (catogoryBar) => {
         }}>
 
           {catogory === "FIR" ? (
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "30px" }}>
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "30px" }} className="flex-col">
               <h4
                 style={{
                   textAlign: "center",
@@ -1105,7 +1100,7 @@ const MaharashtraMap = (catogoryBar) => {
 
 
 
-          {catogory === "FIR" && selectedForm === "Pendency of cases under BNS" ? (
+{catogory === "FIR" && selectedForm === "Pendency of cases under BNS" ? (
             <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center" }}>
 
               <h3 style={{
@@ -1138,7 +1133,7 @@ const MaharashtraMap = (catogoryBar) => {
                   }}
                   series={pieData2.series}
                   type="pie"
-                  width="300"
+                  width="325"
                 />
               </div>
 
@@ -1178,7 +1173,7 @@ const MaharashtraMap = (catogoryBar) => {
                     }}
                     series={pieData1.series}
                     type="pie"
-                    width="300"
+                    width="320"
                   />
 
                 </div>
@@ -1202,7 +1197,7 @@ const MaharashtraMap = (catogoryBar) => {
                     }}
                     series={pieData2.series}
                     type="pie"
-                    width="300"
+                    width="323"
                   />
 
                 </div>
@@ -1240,7 +1235,7 @@ const MaharashtraMap = (catogoryBar) => {
                       }}
                       series={pieData1.series}
                       type="pie"
-                      width="300"
+                      width="320"
                     />
 
                   </div>
@@ -1264,69 +1259,7 @@ const MaharashtraMap = (catogoryBar) => {
                       }}
                       series={pieData2.series}
                       type="pie"
-                      width="300"
-                    />
-
-                  </div>
-                </div>
-              ) :
-              catogory === "FIR" && selectedForm === "Important sections introduced in BNS" ? (
-                <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center", textWrap: "wrap" }}>
-
-                  <h4
-                    style={{
-                      textAlign: "center",
-                      marginTop: "10px",
-                      marginBottom: "0px",
-                      fontWeight: "bold",
-                      width: "100%",
-                    }}
-                  >Important</h4>
-
-                  <div style={{ display: "flex" }}>
-                    <ApexCharts
-                      options={{
-                        labels: pieData1.labels,
-                        chart: { type: "pie" },
-                        legend: { position: "bottom" },
-                        colors: ["#FFB366", "#FF6666", "#66B8FF", "#66F0B3"],
-                        tooltip: {
-                          y: {
-                            formatter: (value) => value // Shows actual count in tooltip
-                          }
-                        },
-                        dataLabels: {
-                          enabled: true,
-                          formatter: (value, { seriesIndex, w }) => w.config.series[seriesIndex] // Show actual count on pie chart
-                        }
-                      }}
-                      series={pieData1.series}
-                      type="pie"
-                      width="300"
-                    />
-
-                  </div>
-
-                  <div>
-                    <ApexCharts
-                      options={{
-                        labels: pieData2.labels,
-                        chart: { type: "pie" },
-                        legend: { position: "bottom" },
-                        colors: ["#FFB366", "#FF6666", "#66B8FF", "#66F0B3"],
-                        tooltip: {
-                          y: {
-                            formatter: (value) => value // Shows actual count in tooltip
-                          }
-                        },
-                        dataLabels: {
-                          enabled: true,
-                          formatter: (value, { seriesIndex, w }) => w.config.series[seriesIndex] // Show actual count on pie chart
-                        }
-                      }}
-                      series={pieData2.series}
-                      type="pie"
-                      width="300"
+                      width="323"
                     />
 
                   </div>
@@ -1364,7 +1297,7 @@ const MaharashtraMap = (catogoryBar) => {
                         }}
                         series={pieData1.series}
                         type="pie"
-                        width="300"
+                        width="320"
                       />
 
                     </div>
@@ -1388,7 +1321,7 @@ const MaharashtraMap = (catogoryBar) => {
                         }}
                         series={pieData2.series}
                         type="pie"
-                        width="300"
+                        width="323"
                       />
 
                     </div>
@@ -1434,7 +1367,17 @@ const MaharashtraMap = (catogoryBar) => {
                     </div>
                   ) :
                     catogory === "FIR" && selectedForm === "Zero FIR's" ? (
-                      <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center", textWrap: "wrap" }}>
+                      // <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center", textWrap: "wrap" }}>
+                      <div className="flex-col" style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        gap: "30px",
+                        alignItems: "center",
+                        textWrap: "wrap",
+                        overflow: "auto",
+                        flexWrap: "wrap", // Ensures all charts fit in the available space
+                        width: "100%" // Ensures proper layout inside the container
+                      }}>
 
                         <h4
                           style={{
@@ -1493,6 +1436,7 @@ const MaharashtraMap = (catogoryBar) => {
                           />
 
                         </div>
+
                         {/* third pie chart */}
                         <div style={{ display: "flex" }}>
                           <ApexCharts
@@ -1535,7 +1479,7 @@ const MaharashtraMap = (catogoryBar) => {
                             }}
                             series={barData.series}
                             type="bar"
-                            width="300"
+                            width="500"
                             height="350"
                           />
                         </div>
@@ -1583,197 +1527,154 @@ const MaharashtraMap = (catogoryBar) => {
 
                         </div>
                       ) :
-                      catogory === "FIR" && selectedForm === "Use of eSakshya App in cases with punishment of 7 yrs. or more" ? (
-                        <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center", textWrap: "wrap" }}>
-                          <h4 style={{
-                            textAlign: "center",
-                            marginTop: "10px",
-                            marginBottom: "0px",
-                            fontWeight: "bold",
-                            width: "100%",
-                          }}>
-                            Use of eSakshya App (7 yrs. or more)
-                          </h4>
-
-                          {/* Container for overlaying charts */}
-                          <div style={{ position: "relative", width: "400px", height: "400px" }}>
-                            {/* Outer Circle */}
-                            <ApexCharts
-                              options={{
-                                chart: { type: "donut" },
-                                labels: pieData2.labels,
-                                legend: { position: "bottom" },
-                                colors: ["#FFB366", "#66F0B3", "#FFA500"],
-
-                                plotOptions: {
-                                  pie: {
-                                    donut: {
-                                      size: "75%", // Keep the outer donut bigger
-                                      labels: {
-                                        show: true,
-                                        name: { show: true },
-                                        value: { show: true },
-                                      }
-                                    }
-                                  }
-                                }
-                              }}
-                              series={pieData2.series}
-                              type="donut"
-                              width="400"
-                            />
-
-                            {/* Inner Circle - Centered inside Outer Circle */}
-                            <div style={{
-                              position: "absolute",
-                              top: "40%",
-                              left: "50%",
-                              transform: "translate(-50%, -50%)",
-                              width: "250px", // Make inner donut smaller
-                              height: "250px",
+                        catogory === "FIR" && selectedForm === "Use of eSakshya App in cases with punishment of 7 yrs. or more" ? (
+                          <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center", textWrap: "wrap" }}>
+                            <h4 style={{
+                              textAlign: "center",
+                              marginTop: "10px",
+                              marginBottom: "0px",
+                              fontWeight: "bold",
+                              width: "100%",
                             }}>
+                              Use of eSakshya App (7 yrs. or more)
+                            </h4>
+
+                            {/* Container for overlaying charts */}
+                            <div style={{ position: "relative", width: "400px", height: "400px" }}>
+                              {/* Outer Circle */}
                               <ApexCharts
                                 options={{
                                   chart: { type: "donut" },
-                                  labels: pieData1.labels,
-                                  legend: { show: false },
-                                  colors: ["#FF6666", "#66B8FF"],
-                                  tooltip: { y: { formatter: (value) => value } },
-
+                                  labels: pieData2.labels,
+                                  legend: { position: "bottom" },
+                                  colors: ["#FFB366", "#66F0B3", "#FFA500"],
                                   plotOptions: {
                                     pie: {
                                       donut: {
-                                        size: "50%", // Smaller for inner circle
+                                        size: "75%", // Keep the outer donut bigger
                                         labels: {
-                                          show: true,
-                                          name: { show: true },
-                                          value: { show: true },
+                                          show: false,
+                                          name: { show: false },
+                                          value: { show: false },
                                         }
                                       }
                                     }
                                   }
                                 }}
-                                series={pieData1.series}
+                                series={pieData2.series}
                                 type="donut"
-                                width="250"
+                                width="450"
                               />
-                            </div>
-                          </div>
-                          {/* Custom Legend for Outer and Inner Charts */}
-                          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "-70px" }}>
-                            {/* Outer Chart Legend */}
-                            <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", justifyContent: "center" }}>
-                              {pieData2.labels.map((label, index) => (
-                                <div key={index} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                                  <div style={{
-                                    width: "15px",
-                                    height: "15px",
-                                    backgroundColor: ["#FFB366", "#66F0B3", "#FFA500"][index], // Match colors
-                                    borderRadius: "50%",
-                                  }}></div>
-                                  <span style={{ fontSize: "14px", fontWeight: "bold" }}>{label}</span>
-                                </div>
-                              ))}
-                            </div>
 
-                            {/* Inner Chart Legend */}
-                            <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", justifyContent: "center", marginTop: "20px" }}>
-                              {pieData1.labels.map((label, index) => (
-                                <div key={index} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                                  <div style={{
-                                    width: "15px",
-                                    height: "15px",
-                                    backgroundColor: ["#FF6666", "#66B8FF"][index], // Match colors
-                                    borderRadius: "50%",
-                                  }}></div>
-                                  <span style={{ fontSize: "14px", fontWeight: "bold" }}>{label}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-
-                      ) :
-
-                        catogory === "FIR" && selectedForm === "Stolen & Recovered Property" ? (
-                          <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center" }}>
-
-                            <h4 style={{ textAlign: "center", fontWeight: "bold", width: "100%" }}>
-                              Stolen & Recovered Property
-                            </h4>
-
-                            {/* First Stacked Bar Graph */}
-                            <ApexCharts
-                              options={{
-                                chart: { type: "bar", stacked: true },
-                                xaxis: { categories: barData1.categories },
-                                legend: { position: "bottom" },
-                                colors: ["#FF6666", "#66B8FF"], // Colors for stacked bars
-                                tooltip: { y: { formatter: (value) => value } }
-                              }}
-                              series={barData1.series}
-                              type="bar"
-                              width="500"
-                              height="300"
-                            />
-
-                            {/* Second Stacked Bar Graph */}
-                            <ApexCharts
-                              options={{
-                                chart: { type: "bar", stacked: true },
-                                xaxis: { categories: barData2.categories },
-                                legend: { position: "bottom" },
-                                colors: ["#FFB366", "#66F0B3"], // Colors for stacked bars
-                                tooltip: { y: { formatter: (value) => value } }
-                              }}
-                              series={barData2.series}
-                              type="bar"
-                              width="500"
-                              height="300"
-                            />
-
-                          </div>
-                        ) :
-                          catogory === "FIR" && selectedForm === "eFIR" ? (
-                            <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center", textWrap: "wrap" }}>
-
-                              <h4
-                                style={{
-                                  textAlign: "center",
-                                  marginTop: "10px",
-                                  marginBottom: "0px",
-                                  fontWeight: "bold",
-                                  width: "100%",
-                                }}
-                              >eFIR</h4>
-
-                              <div style={{ display: "flex" }}>
+                              {/* Inner Circle - Centered inside Outer Circle */}
+                              <div style={{
+                                position: "absolute",
+                                top: "48%",
+                                left: "56%",
+                                transform: "translate(-50%, -50%)",
+                                width: "250px", // Make inner donut smaller
+                                height: "250px",
+                              }}>
                                 <ApexCharts
                                   options={{
+                                    chart: { type: "donut" },
                                     labels: pieData1.labels,
-                                    chart: { type: "pie" },
-                                    legend: { position: "bottom" },
-                                    colors: ["#FFB366", "#FF6666", "#66B8FF", "#66F0B3"],
-                                    tooltip: {
-                                      y: {
-                                        formatter: (value) => value // Shows actual count in tooltip
+                                    legend: { show: false },
+                                    colors: ["#FF6666", "#66B8FF"],
+                                    plotOptions: {
+                                      pie: {
+                                        donut: {
+                                          size: "50%", // Smaller for inner circle
+                                          labels: {
+                                            show: true,
+                                            name: { show: true },
+                                            value: { show: true },
+                                          }
+                                        }
                                       }
-                                    },
-                                    dataLabels: {
-                                      enabled: true,
-                                      formatter: (value, { seriesIndex, w }) => w.config.series[seriesIndex] // Show actual count on pie chart
                                     }
                                   }}
                                   series={pieData1.series}
-                                  type="pie"
-                                  width="300"
+                                  type="donut"
+                                  width="250"
                                 />
-
                               </div>
+                            </div>
+                            {/* Custom Legend for Outer and Inner Charts */}
+                            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "-70px" }}>
+                              {/* Outer Chart Legend */}
+                              <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", justifyContent: "center" }}>
+                                {pieData2.labels.map((label, index) => (
+                                  <div key={index} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                                    <div style={{
+                                      width: "15px",
+                                      height: "15px",
+                                      backgroundColor: ["#FFB366", "#66F0B3", "#FFA500"][index], // Match colors
+                                      borderRadius: "50%",
+                                    }}></div>
+                                    <span style={{ fontSize: "14px", fontWeight: "bold" }}>{label}</span>
+                                  </div>
+                                ))}
+                              </div>
+
+                              {/* Inner Chart Legend */}
+                              <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", justifyContent: "center", marginTop: "20px" }}>
+                                {pieData1.labels.map((label, index) => (
+                                  <div key={index} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                                    <div style={{
+                                      width: "15px",
+                                      height: "15px",
+                                      backgroundColor: ["#FF6666", "#66B8FF"][index], // Match colors
+                                      borderRadius: "50%",
+                                    }}></div>
+                                    <span style={{ fontSize: "14px", fontWeight: "bold" }}>{label}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+
+                        ) :
+                          catogory === "FIR" && selectedForm === "Stolen & Recovered Property" ? (
+                            <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center" }}>
+
+                              <h4 style={{ textAlign: "center", fontWeight: "bold", width: "100%" }}>
+                                Stolen & Recovered Property
+                              </h4>
+
+                              {/* First Stacked Bar Graph */}
+                              <ApexCharts
+                                options={{
+                                  chart: { type: "bar", stacked: true },
+                                  xaxis: { categories: barData1.categories },
+                                  legend: { position: "bottom" },
+                                  colors: ["#FF6666", "#66B8FF"], // Colors for stacked bars
+                                  tooltip: { y: { formatter: (value) => value } }
+                                }}
+                                series={barData1.series}
+                                type="bar"
+                                width="400"
+                                height="200"
+                              />
+
+                              {/* Second Stacked Bar Graph */}
+                              <ApexCharts
+                                options={{
+                                  chart: { type: "bar", stacked: true },
+                                  xaxis: { categories: barData2.categories },
+                                  legend: { position: "bottom" },
+                                  colors: ["#FFB366", "#66F0B3"], // Colors for stacked bars
+                                  tooltip: { y: { formatter: (value) => value } }
+                                }}
+                                series={barData2.series}
+                                type="bar"
+                                width="460"
+                                height="340"
+                              />
 
                             </div>
                           ) :
-                            catogory === "FORENSIC" ? (
+                            catogory === "FIR" && selectedForm === "eFIR" ? (
                               <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center", textWrap: "wrap" }}>
 
                                 <h4
@@ -1784,7 +1685,7 @@ const MaharashtraMap = (catogoryBar) => {
                                     fontWeight: "bold",
                                     width: "100%",
                                   }}
-                                >Forensic Visits</h4>
+                                >eFIR</h4>
 
                                 <div style={{ display: "flex" }}>
                                   <ApexCharts
@@ -1812,8 +1713,8 @@ const MaharashtraMap = (catogoryBar) => {
 
                               </div>
                             ) :
-                              catogory === "Training" ? (
-                                <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center" }}>
+                              catogory === "FORENSIC" ? (
+                                <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center", textWrap: "wrap" }}>
 
                                   <h4
                                     style={{
@@ -1823,44 +1724,97 @@ const MaharashtraMap = (catogoryBar) => {
                                       fontWeight: "bold",
                                       width: "100%",
                                     }}
-                                  >Training Data</h4>
+                                  >Forensic Team</h4>
+
                                   <div style={{ display: "flex" }}>
                                     <ApexCharts
                                       options={{
                                         labels: pieData1.labels,
                                         chart: { type: "pie" },
                                         legend: { position: "bottom" },
-                                        colors: ["#66B8FF", "#66F0B3"]
+                                        colors: ["#FFB366", "#FF6666", "#66B8FF", "#66F0B3"],
+                                        tooltip: {
+                                          y: {
+                                            formatter: (value) => value // Shows actual count in tooltip
+                                          }
+                                        },
+                                        dataLabels: {
+                                          enabled: true,
+                                          formatter: (value, { seriesIndex, w }) => w.config.series[seriesIndex] // Show actual count on pie chart
+                                        }
                                       }}
                                       series={pieData1.series}
                                       type="pie"
                                       width="300"
                                     />
-                                  </div>
-
-                                  <div>
-                                    <ApexCharts
-                                      options={{
-                                        labels: pieData2.labels,
-                                        chart: { type: "pie" },
-                                        legend: { position: "bottom" },
-                                        colors: ["#66B8FF", "#66F0B3"]
-                                      }}
-                                      series={pieData2.series}
-                                      type="pie"
-                                      width="300"
-                                    />
 
                                   </div>
-
-
 
                                 </div>
                               ) :
-                                (
-                                  <h1>Please Hover on the Map to view the graphs</h1>
-                                )}
+                                catogory === "Training" ? (
+                                  <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center" }}>
 
+                                    <h4
+                                      style={{
+                                        textAlign: "center",
+                                        marginTop: "10px",
+                                        marginBottom: "0px",
+                                        fontWeight: "bold",
+                                        width: "100%",
+                                      }}
+                                    >Trainig Data</h4>
+                                    <div style={{ display: "flex" }}>
+                                      <ApexCharts
+                                        options={{
+                                          labels: pieData1.labels,
+                                          chart: { type: "pie" },
+                                          legend: { position: "bottom" },
+                                          colors: ["#66B8FF", "#66F0B3"]
+                                        }}
+                                        series={pieData1.series}
+                                        type="pie"
+                                        width="300"
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <ApexCharts
+                                        options={{
+                                          labels: pieData2.labels,
+                                          chart: { type: "pie" },
+                                          legend: { position: "bottom" },
+                                          colors: ["#66B8FF", "#66F0B3"]
+                                        }}
+                                        series={pieData2.series}
+                                        type="pie"
+                                        width="300"
+                                      />
+
+                                    </div>
+
+
+
+                                  </div>
+                                ) :
+                                  (
+                                    <h1 style={{
+                                      textAlign: "center",
+                                      fontSize: "24px",
+                                      fontWeight: "bold",
+                                      color: "#ff4d4d",
+                                      backgroundColor: "#f8d7da",
+                                      padding: "15px 20px",
+                                      borderRadius: "8px",
+                                      border: "1px solid #f5c6cb",
+                                      boxShadow: "2px 2px 10px rgba(0, 0, 0, 0.1)",
+                                      display: "inline-block",
+                                      marginTop: "50%"
+                                    }}>
+                                      No data available
+                                    </h1>
+
+                                  )}
 
 
         </div>
