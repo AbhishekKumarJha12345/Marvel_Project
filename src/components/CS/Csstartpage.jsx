@@ -58,8 +58,8 @@ const MaharashtraMap = (catogoryBar) => {
   const [barData2, setBarData2] = useState({ categories: [], series: [] });
   const [barData, setBarData] = useState({ categories: [], series: [] });
 
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [startDate, setStartDate] = useState("2025-02");
+  const [endDate, setEndDate] = useState("2025-02");
 
 
 
