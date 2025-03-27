@@ -368,28 +368,103 @@ function ProfileSection() {
             </div>
 
             {/* Personal Info */}
-            <div className="mt-6 p-4 bg-gray-100 rounded-lg">
+            {/* <div className="mt-6 p-4 bg-gray-100 rounded-lg">
                 <h3 className="text-xl font-semibold">Personal Information</h3>
                 <div className="grid grid-cols-2 gap-4 mt-2">
-                    <p className="text-lg"><strong>First Name:</strong> {users.userName}</p>
-                    <p className="text-lg"><strong>Email:</strong> {users.email}</p>
-                    <p className="text-lg"><strong>Rank:</strong> {users.sub_role}</p>
-                    <p className="text-lg"><strong>Phone:</strong> {users.mobile_number}</p>
-                    <p className="text-lg"><strong>Officer Id:</strong> {users.emp_id}</p>
+                <p className="text-lg">
+  <strong style={{ fontSize: "18px" }}>First Name:</strong> 
+  <span style={{ fontSize: "14px", color: "black", fontWeight: "600", marginLeft: "5px" }}>
+    {users.userName}
+  </span>
+</p>
+
+
+                    <p className="text-lg"><strong style={{fontSize:"16px"}}>Email:</strong> {users.email}</p>
+                    <p className="text-lg"><strong style={{fontSize:"16px"}}>Rank:</strong> {users.sub_role}</p>
+                    <p className="text-lg"><strong style={{fontSize:"16px"}}>Phone:</strong> {users.mobile_number}</p>
+                    <p className="text-lg"><strong style={{fontSize:"16px"}}>Officer Id:</strong> {users.emp_id}</p>
                 </div>
-            </div>
+            </div> */}
+            <div className="mt-6 p-4 bg-gray-100 rounded-lg">
+  <h3 className="text-xl font-semibold mb-4">Personal Information</h3>
+  
+  <div className="grid grid-cols-2 gap-4">
+    <div className="flex flex-col">
+      <label className="text-lg font-semibold text-gray-700">First Name:</label>
+      <span className="text-md font-medium text-black">{users.userName}</span>
+    </div>
+
+    <div className="flex flex-col">
+      <label className="text-lg font-semibold text-gray-700">Email:</label>
+      <span className="text-md font-medium text-black">{users.email}</span>
+    </div>
+
+    <div className="flex flex-col">
+      <label className="text-lg font-semibold text-gray-700">Rank:</label>
+      <span className="text-md font-medium text-black">{users.sub_role}</span>
+    </div>
+
+    <div className="flex flex-col">
+      <label className="text-lg font-semibold text-gray-700">Phone:</label>
+      <span className="text-md font-medium text-black">{users.mobile_number}</span>
+    </div>
+
+    <div className="flex flex-col">
+      <label className="text-lg font-semibold text-gray-700">Officer ID:</label>
+      <span className="text-md font-medium text-black">{users.emp_id}</span>
+    </div>
+  </div>
+</div>
+
 
             {/* Address */}
-            <div className="mt-4 p-4 bg-gray-100 rounded-lg">
+            {/* <div className="mt-4 p-4 bg-gray-100 rounded-lg">
                 <h3 className="text-xl font-semibold">Officer Location</h3>
                 <div className="grid grid-cols-2 gap-4 mt-2">
                     {users.city ? <p className="text-lg"><strong>City:</strong> {users.city}</p> : null}
                     {users.district ? <p className="text-lg"><strong>District:</strong> {users.district}</p> : null}
                     {users.zone ? <p className="text-lg"><strong>Range:</strong> {users.zone}</p> : null}
-                    <p className="text-lg"><strong>State:</strong> Maharashtra</p>
-                    <p className="text-lg"><strong>Country:</strong> INDIA</p>
+                    <p className="text-lg"><strong style={{fontSize:"16px"}}>State:</strong> Maharashtra</p>
+                    <p className="text-lg"><strong style={{fontSize:"16px"}}>Country:</strong> INDIA</p>
                 </div>
-            </div>
+            </div> */}
+            <div className="mt-4 p-4 bg-gray-100 rounded-lg">
+  <h3 className="text-xl font-semibold mb-4">Officer Location</h3>
+
+  <div className="grid grid-cols-2 gap-4">
+    {users.city && (
+      <div className="flex flex-col">
+        <label className="text-lg font-semibold text-gray-700">City:</label>
+        <span className="text-md font-medium text-black">{users.city}</span>
+      </div>
+    )}
+
+    {users.district && (
+      <div className="flex flex-col">
+        <label className="text-lg font-semibold text-gray-700">District:</label>
+        <span className="text-md font-medium text-black">{users.district}</span>
+      </div>
+    )}
+
+    {users.zone && (
+      <div className="flex flex-col">
+        <label className="text-lg font-semibold text-gray-700">Range:</label>
+        <span className="text-md font-medium text-black">{users.zone}</span>
+      </div>
+    )}
+
+    <div className="flex flex-col">
+      <label className="text-lg font-semibold text-gray-700">State:</label>
+      <span className="text-md font-medium text-black">Maharashtra</span>
+    </div>
+
+    <div className="flex flex-col">
+      <label className="text-lg font-semibold text-gray-700">Country:</label>
+      <span className="text-md font-medium text-black">INDIA</span>
+    </div>
+  </div>
+</div>
+
         </div>
 
     );
@@ -524,7 +599,7 @@ function FormHistory() {
 
                     {(role === "chief secretary" || role === "ACS" || role === "DGP") && !filters.city && (
                         <div className="flex flex-col flex-grow min-w-[200px]">
-                            <label className="text-gray-700 font-medium mb-1">Zone</label>
+                            <label className="text-gray-700 font-medium text-lg ">Zone</label>
                             <select
                                 className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                                 value={filters.zone}
@@ -544,7 +619,7 @@ function FormHistory() {
                     {filters.zone && (!filters.city || filters.city === "null") &&
                         ((!filters.district || filters.district === "null") || sub_role !== "SP") && (
                             <div className="flex flex-col flex-grow min-w-[200px]">
-                                <label className="text-gray-700 font-medium mb-1">District</label>
+                                <label className="text-gray-700 font-medium text-lg">District</label>
                                 <select
                                     className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                                     value={filters.district}
@@ -563,7 +638,7 @@ function FormHistory() {
                     {/* City */}
                     {(!filters.zone && sub_role !== "CP") && (
                         <div className="flex flex-col flex-grow min-w-[200px]">
-                            <label className="text-gray-700 font-medium mb-1">City</label>
+                            <label className="text-gray-700 font-medium text-lg">City</label>
                             <select
                                 className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                                 value={filters.city}
@@ -588,7 +663,7 @@ function FormHistory() {
                     {/* Date Pickers */}
 
                     <div className="flex flex-col flex-grow min-w-[200px]">
-                            <label className="text-gray-700 font-medium mb-1">From Date:</label>
+                            <label className="text-gray-700 font-medium text-lg">From Date:</label>
                     <input
                         type="date"
                         className="p-3 border rounded"
@@ -598,7 +673,7 @@ function FormHistory() {
                     </div>
 
                     <div className="flex flex-col flex-grow min-w-[200px]">
-                            <label className="text-gray-700 font-medium mb-1">To Date:</label>
+                            <label className="text-gray-700 font-medium text-lg">To Date:</label>
                     <input
                         type="date"
                         className="p-3 border rounded"
@@ -676,25 +751,25 @@ function FormHistory() {
                 <div className="overflow-x-auto">
                     <table className="min-w-full bg-white border rounded-lg">
                         <thead>
-                            <tr className="bg-blue-500 text-white">
-                                <th className="p-3 text-left">Uploaded By</th>
-                                <th className="p-3 text-left">Zone</th>
-                                <th className="p-3 text-left">District</th>
-                                <th className="p-3 text-left">City</th>
-                                <th className="p-3 text-left">Submitted On</th>
-                                <th className="p-3 text-left">Action</th>
+                            <tr className="bg-blue-500 text-white text-lg">
+                                <th className="p-3 text-left text-lg">Uploaded By</th>
+                                <th className="p-3 text-left text-lg">Zone</th>
+                                <th className="p-3 text-left text-lg">District</th>
+                                <th className="p-3 text-left text-lg">City</th>
+                                <th className="p-3 text-left text-lg">Submitted On</th>
+                                <th className="p-3 text-left text-lg">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {summaryData.length > 0 ? (
                                 summaryData.map((form, index) => (
                                     <tr key={index} className="border-b hover:bg-gray-100">
-                                        <td className="p-3">{form.uploaded_by}</td>
-                                        <td className="p-3">{form.zone}</td>
-                                        <td className="p-3">{form.district}</td>
-                                        <td className="p-3">{form.city}</td>
-                                        <td className="p-3">{form.submitted_on}</td>
-                                        <td className="p-3">
+                                        <td className="p-3 text-lg">{form.uploaded_by}</td>
+                                        <td className="p-3 text-lg">{form.zone}</td>
+                                        <td className="p-3 text-lg">{form.district}</td>
+                                        <td className="p-3 text-lg">{form.city}</td>
+                                        <td className="p-3 text-lg">{form.submitted_on}</td>
+                                        <td className="p-3 text-lg">
                                             <button
                                                 className="px-3 py-1 bg-blue-500 text-white rounded"
                                                 onClick={() => fetchDetailedData(form)}
@@ -714,6 +789,8 @@ function FormHistory() {
                         </tbody>
                     </table>
                 </div>
+             
+
             )}
         </div>
     );

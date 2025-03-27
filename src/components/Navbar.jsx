@@ -529,7 +529,7 @@ export default function Dashboard({ users }) {
   const contentMap = {
     "training": (
     <div className="content">
-      <h1 className="heading" style={{ textAlign: "center" }}>Training</h1>
+      <h1 className="heading" style={{ textAlign: "center" }}>New Criminal Laws Training</h1>
       <GenerateReportButton />
       <MaharashtraPoliceMap catogoryBar="Training" />
     </div>

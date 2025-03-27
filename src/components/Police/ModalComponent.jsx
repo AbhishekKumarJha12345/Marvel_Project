@@ -885,19 +885,32 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
       };
 
-      const reportData = {
-        'Police Training': Object.keys(formValues).map((month) => ({
-          'Month-Year': month,
-          "Total Constabulary": formValues[month].total_personnel || 0,
-          'Constabulary Trained': formValues[month].total_officers || 0,
-          '% Constabulary Trained': formValues[month].personnel_trained || 0,
-          'Total Officers': formValues[month].officers_trained || 0,
-          'Officers Trained': formValues[month].percent_personnel_trained || 0,
-          '% Officers Trained': formValues[month].percent_officers_trained || 0,
-          'Overall Cumulative': formValues[month].overall_cumulative || 0,
-          'Total Trained': formValues[month].total_trained || 0,
-          'Total Trained %': formValues[month].total_trained_percentage || 0,
-        })),
+      // const reportData = {
+      //   'Police Training': Object.keys(formValues).map((month) => ({
+      //     'Month-Year': month,
+      //     "Total Constabulary": formValues[month].total_personnel || 0,
+      //     'Constabulary Trained': formValues[month].total_officers || 0,
+      //     '% Constabulary Trained': formValues[month].personnel_trained || 0,
+      //     'Total Officers': formValues[month].officers_trained || 0,
+      //     'Officers Trained': formValues[month].percent_personnel_trained || 0,
+      //     '% Officers Trained': formValues[month].percent_officers_trained || 0,
+      //     // 'Overall Cumulative': formValues[month].overall_cumulative || 0,
+      //     'Total Trained': formValues[month].total_trained || 0,
+      //     'Total Trained %': formValues[month].total_trained_percentage || 0,
+      //   })),
+        const reportData = {
+          'Police Training': Object.keys(formValues).map((month) => ({
+            'Month-Year': month,
+            "Total Constabulary": formValues[month].total_personnel || 0,
+            'Constabulary Trained': formValues[month].total_officers || 0,
+            '% Constabulary Trained': formValues[month].personnel_trained || 0,
+            'Total Officers': formValues[month].officers_trained || 0,
+            'Officers Trained': formValues[month].percent_personnel_trained || 0,
+            '% Officers Trained': formValues[month].percent_officers_trained || 0,
+            // 'Overall Cumulative': formValues[month].overall_cumulative || 0,
+            'Total Trained': formValues[month].total_trained || 0,
+            'Total Trained %': formValues[month].total_trained_percentage || 0,
+          })),
 
         'Pendency of cases under BNS': Object.keys(formValues).map((month) => ({
           'Month-Year': month,
@@ -953,8 +966,8 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
         'Use of eSakshya App. in cases with punishment of 7 yrs. or more': Object.keys(formValues).map((month) => ({
             'Month-Year': month, 
-            "Totak IO's eSaklshya Registered": formValues[month].totalIOsNagapur || 0,
-            "Totak IO's eSakshya Downloaded": formValues[month].totalIOsEsakshya || 0,
+            "Total IO's eSaklshya Registered": formValues[month].totalIOsNagapur || 0,
+            "Total IO's eSakshya Downloaded": formValues[month].totalIOsEsakshya || 0,
             "eSakshya Wage": formValues[month].esakshyaWage || 0,
         })),
 
@@ -962,7 +975,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           'Month-Year': month,
           'Total No. Zero FIRs Transferred Outside Maharashtra': formValues[month].total_no_zero_fir_transferred_outside_mh || 0,
           "Total No. Zero FIRs Transferred Outer State to Maharashtra": formValues[month].total_no_zero_fir_transferred_outer_state_to_mh || 0,
-          "Totak Zero FIRs": formValues[month].total_zero_firs || 0,
+          "Total Zero FIRs": formValues[month].total_zero_firs || 0,
           "Pending To Transfer Outside Maharashtra": formValues[month].pending_to_transfer_outside_mh || 0,
           "Total FIRs Registered": formValues[month].total_firs_registered || 0,
           "Re-Register FIRs": formValues[month].re_reg_firs || 0,

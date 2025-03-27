@@ -784,6 +784,7 @@ const MaharashtraMap = (catogoryBar) => {
   useEffect(() => {
     const fetchMLResponse = async () => {
       try {
+<<<<<<< Updated upstream
 
         console.log("catogory : ",catogory);
         
@@ -824,14 +825,117 @@ const MaharashtraMap = (catogoryBar) => {
           // Store in localStorage only for all zones
             localStorage.setItem("MLReport", modifiedHTML);
           
+=======
+        // Decide request body based on `selectedZone`
+        const requestBody = !selectedZone
+          ? { type: "police_all_zone" } // Send `type` when `selectedZone` is not selected
+          : { type: zoneMappingpayload[selectedZone] }; // Send `type` mapped from payload
+
+        const response = await axios.post(
+          "https://mhmarvel.org/api2/llm_result",
+          requestBody,
+          { headers: { "Content-Type": "application/json", Accept: "application/json" } }
+        );
+
+        console.log("response.data:", response.data);
+
+        let updatedMlResponse = response.data.formatted_llm_result;
+
+        // Array of text replacements (Avoids duplicate variables)
+        const replacements = [
+          {
+            target: "Maharashtra State Police Training Report - February 2025",
+            replacement:
+              '<span style="font-size: 20px; font-weight: bold; text-align:center;">AI Generated Insights Feb2025</span>',
+          },
+          {
+            target:
+              "This report analyzes Maharashtra State Police training data for February 2025, focusing on zone and commissionerate (CP) performance",
+            replacement: `<span style="font-size: 16px;">$&</span>`,
+          },
+          {
+            target: "Zone Analysis",
+            replacement:
+              '<span style="font-size: 20px; font-weight: bold;">Insights from zone</span>',
+          },
+          {
+            target: "Commissionerate (CP) Analysis",
+            replacement:
+              '<span style="font-size: 20px; font-weight: bold;">Insights from Commissionerate (CP)</span>',
+          },
+          {
+            target: "1. Descriptive Analysis:",
+            replacement:
+              '<span style="font-size: 18px; font-weight:bold;">Current Status</span>',
+          },
+          {
+            target: "2. Prescriptive Insights:",
+            replacement:
+              '<span style="font-size: 18px; font-weight: bold;"></span>',
+          },
+          {
+            target: "3. Actionable Predictions:",
+            replacement:
+              '<span style="font-size: 18px; font-weight: bold;">Recommendations</span>',
+          },
+          // {
+          //   target: "High Performing Zones:",
+          //   replacement:
+          //     '<span style="font-size: 18px; font-weight: bold; color:red;>$&</span>',
+          // },
+          {
+            target:
+              "Data is limited for individual CP areas. However, Pune City stands out with a significant number of personnel and officers trained.",
+            replacement: `<span style="font-size: 14px;">Data is limited for individual CP areas. However, Pune City stands out with a significant number of personnel and officers trained</span>`,
+          },
+          {
+            target: "1. Descriptive Analysis:",
+            replacement:
+              '<span style="font-size: 18px;">Current Status</span>',
+          },
+          {
+            target: "2. Success & Needs Attention:",
+            replacement:
+              '<span style="font-size: 20px; font-weight: bold;"></span>',
+          },
+          {
+            target: "3. Recommendations:",
+            replacement:
+              '<span style="font-size: 18px; font-weight: bold;">Recommendations</span>',
+          },
+          {
+            target: "Note",
+            replacement:
+              '<span style="font-size: 16px; font-weight: bold;">$&</span>',
+          },
+          {
+            target: "This report provides a preliminary analysis based on limited data. Further investigation and detailed data collection are necessary for a comprehensive understanding of Maharashtra State Police training performance.",
+            replacement:
+              '<span style="font-size: 16px;">$&</span>',
+          },
+        ];
+
+        // Apply all replacements sequentially
+        replacements.forEach(({ target, replacement }) => {
+          updatedMlResponse = updatedMlResponse.replace(target, replacement);
+        });
+
+        // Update state
+        setMlResponse(updatedMlResponse);
+>>>>>>> Stashed changes
       } catch (error) {
         console.error("Error fetching ML response:", error);
         setMlResponse("Failed to load response");
       }
     };
-  
+
     fetchMLResponse();
+<<<<<<< Updated upstream
   }, [role, selectedZone, catogory]);
+=======
+  }, [role, selectedZone]); // Ensure correct dependencies
+
+>>>>>>> Stashed changes
   
    // Runs only once when the component mounts
 
