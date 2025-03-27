@@ -500,39 +500,47 @@ export default function Dashboard({ users }) {
 
 
 
+  const GenerateReportButton = () => (
+    users === "chief secretary" || users === "ACS" || users === "DGP" ? (
+      // <div style={{ display: "flex", justifyContent: "flex-end",position:"relative",top:"-45px" }}>
+      //   <button
+      //     onClick={() => handleReport()}
+      //     style={{
+      //       padding: "10px 20px",
+      //       fontSize: "16px",
+      //       fontWeight: "bold",
+      //       backgroundColor: "#007BFF",
+      //       color: "#fff",
+      //       border: "none",
+      //       borderRadius: "5px",
+      //       cursor: "pointer",
+      //       transition: "background 0.3s ease"
+      //     }}
+      //     onMouseOver={(e) => e.target.style.backgroundColor = "#0056b3"}
+      //     onMouseOut={(e) => e.target.style.backgroundColor = "#007BFF"}
+      //   >
+      //     Generate Report
+      //   </button>
+      // </div>
+      null
+    ) : null
+  );
+
   const contentMap = {
-    "Home": <div className="content"><Csdashboard/></div>,
-    "training":
-      <div className="content">
-        <h1 className="heading" style={{ marginLeft: "40rem" }}>Police - Training</h1>
-
-
-        {users === "chief secretary" || users === 'ACS' || users == 'DGP' ?
-        (<div style={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem" }}>
-          <button 
-            onClick={() => handleReport()} 
-            style={{
-              padding: "10px 20px",
-              fontSize: "16px",
-              fontWeight: "bold",
-              backgroundColor: "#007BFF",
-              color: "#fff",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-              transition: "background 0.3s ease"
-            }}
-            onMouseOver={(e) => e.target.style.backgroundColor = "#0056b3"}
-            onMouseOut={(e) => e.target.style.backgroundColor = "#007BFF"}
-          >
-            Generate Report
-          </button>
-        </div>) : null}
-
-        <MaharashtraPoliceMap catogoryBar="Training" />
-      </div>,
-
-    "forensic/visits": <div className="content"><h1 className="heading">Police - Forensic Visits</h1><MaharashtraPoliceMap catogoryBar="FORENSIC" /></div>,
+    "training": (
+    <div className="content">
+      <h1 className="heading" style={{ textAlign: "center" }}>Training</h1>
+      <GenerateReportButton />
+      <MaharashtraPoliceMap catogoryBar="Training" />
+    </div>
+  ),
+  "forensic/visits": (
+    <div className="content">
+      <h1 className="heading" style={{ textAlign: "center" }}>Forensic Visits</h1>
+      <GenerateReportButton />
+      <MaharashtraPoliceMap catogoryBar="FORENSIC" />
+    </div>
+  ),
     "court": <div className="content"><h1 className="heading">Court Visits</h1><Dashboard2 /></div>,
     "science": <div className="content"><h1 className="heading">Forensic Science Department</h1><Dashboard1 /></div>,
     "prosecution": <div className="content"><h1 className="heading">Prosecution Visits</h1><CriminalPages /></div>,
@@ -541,11 +549,15 @@ export default function Dashboard({ users }) {
     "chargesheet": <div className="content"><Firchargesheets /></div>,
     "zerofir": <div className="content"><FirZero /></div>,
     "efir": <div className="content"><Efir /></div>,
-    "FIR": <div className="content">
-      <h1 className="heading" style={{ marginLeft: "40rem" }}>Police - FIR</h1>
-
-      <MaharashtraPoliceMap catogoryBar="FIR" /></div>,
+    "FIR": (
+      <div className="content">
+        <h1 className="heading" style={{ textAlign: "center" }}>FIR</h1>
+        <GenerateReportButton />
+        <MaharashtraPoliceMap catogoryBar="FIR" />
+      </div>
+    ),
     "admin": <div className="content"><Adminviewe /> </div>,
+
   };
   const [openmodal, setOpenmodal] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -609,13 +621,13 @@ const handleDateSelection = () => {
 
             (users === "chief secretary" || users === 'ACS' || users == 'DGP') ? (
               <div className="nav_main flex" ref={dropdownRef}>
-                <button
+                {/* <button
                   className={`nav-link ${activeSection?.section === "Home" ? "active" : "" }`}
                   onClick={() => handleSectionClick("Home")}
 
                 >
                   <BiCube size={25} /> Home
-                </button>
+                </button> */}
 
                 <button
                   className={`nav-link ${activeSection?.section === "training" || activeSection?.section === "FIR" || activeSection?.section === "forensic/visits" ? "active" : ""}`}
@@ -794,11 +806,11 @@ const handleDateSelection = () => {
       {
         contentMap[activeSection?.section] ||
         (users === "chief secretary"
-          ? contentMap["Home"]:
+          ? contentMap["training"]:
           users === "ACS"
-          ? contentMap["Home"] :
+          ? contentMap["training"] :
           users === "DGP"
-          ? contentMap["Home"]
+          ? contentMap["training"]
           : users === "police"
             ? contentMap["training"] && setActiveSection({ section: "training" })
             : users === "Court"

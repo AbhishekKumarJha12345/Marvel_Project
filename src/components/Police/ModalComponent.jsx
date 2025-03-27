@@ -190,6 +190,11 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       registeredCases_1: "",
       actAndSection_1: "",
       detectedCasesPercentage_1: '',
+     
+      detectedCases_2: "",
+      registeredCases_2: "",
+      actAndSection_2: "",
+      detectedCasesPercentage_2: '',
 
       esakshyaWage_1: "",
 
@@ -727,6 +732,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
     try {
 
       const token = localStorage.getItem("token");
+
+      let apiRoute = selectedTab === "upload" ? "/submit_details" : "/fir_form";
+
       // Extract form values based on types
       const transformedData = {
         police_training: Object.keys(formValues).map((month) => ({
@@ -787,10 +795,10 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         property_offenses: Object.keys(formValues).map((month) => ({
           month_year: month,
           type: 'property_offenses',
-          actAndSection: formValues[month].actAndSection || "",
-          registeredCases: formValues[month].registeredCases || "",
-          detectedCases: formValues[month].detectedCases || "",
-          detectedCasesPercentage: formValues[month].detectedCasesPercentage || "",
+          actAndSection_2: formValues[month].actAndSection_2 || "",
+          registeredCases_2: formValues[month].registeredCases_2 || "",
+          detectedCases_2: formValues[month].detectedCases_2 || "",
+          detectedCasesPercentage_2: formValues[month].detectedCasesPercentage_2 || "",
         })),
 
         esakshya_units: Object.keys(formValues).map((month) => ({
@@ -804,9 +812,14 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         esakshya_7_more: Object.keys(formValues).map((month) => ({
           month_year: month,
           type: "esakshya_7_more",
-          totalIOsNagapur: formValues[month].totalIOsNagapur || "",
-          totalIOsEsakshya: formValues[month].totalIOsEsakshya || "",
-          esakshyaWage: formValues[month].esakshyaWage || "",
+          cases_registered: formValues[month].cases_registered || "",
+          cases_esakshya_used: formValues[month].cases_esakshya_used || "",
+          cases_esakshya_not_used: formValues[month].cases_esakshya_not_used || "",
+          esakshya_usage_percent: formValues[month].esakshya_usage_percent || "",
+          esakshya_used_charge_sheeted: formValues[month].esakshya_used_charge_sheeted || "",
+          esakshya_not_used_invest: formValues[month].esakshya_not_used_invest || "",
+
+
         })),
 
         fir_and_zero_firs: Object.keys(formValues).map((month) => ({
@@ -1001,28 +1014,40 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
         })),
       };
 
-
-
-      // Full request body in JSON format
-      const requestBody = {
-        data: transformedData,
-        username: localStorage.getItem("userName") || "",
-        email: localStorage.getItem("email") || "",
-        emp_id: localStorage.getItem("emp_id") || "",
-        city: localStorage.getItem("city") || "",
-        zone: localStorage.getItem("zone") || "",
-        unit: localStorage.getItem("zone") || "",
-        district: localStorage.getItem("district") || "",
-        police_station: localStorage.getItem("police_station") || "",
-        // month: month,
-      };
-
+      let requestBody = {}
+      if (selectedTab === "upload") {
+        requestBody = {
+          data: formValues,  // Sending previewed CSV data
+          selectedTab: selectedTab,
+          username: localStorage.getItem("userName") || "",
+          email: localStorage.getItem("email") || "",
+          emp_id: localStorage.getItem("emp_id") || "",
+          city: localStorage.getItem("city") || "",
+          zone: localStorage.getItem("zone") || "",
+          unit: localStorage.getItem("zone") || "",
+          district: localStorage.getItem("district") || "",
+          police_station: localStorage.getItem("police_station") || "",
+        };
+      } else {
+        // Full request body in JSON format
+        requestBody = {
+          data: transformedData,
+          selectedTab: selectedTab,
+          username: localStorage.getItem("userName") || "",
+          email: localStorage.getItem("email") || "",
+          emp_id: localStorage.getItem("emp_id") || "",
+          city: localStorage.getItem("city") || "",
+          zone: localStorage.getItem("zone") || "",
+          unit: localStorage.getItem("zone") || "",
+          district: localStorage.getItem("district") || "",
+          police_station: localStorage.getItem("police_station") || "",
+          // month: month,
+        };
+      }
 
       console.log(requestBody, "..........pavan.........");
-
-
       // Make the API request with axios
-      const response = await axiosInstance.post("/fir_form", requestBody, {
+      const response = await axiosInstance.post(apiRoute, requestBody, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `${token}`, // Include token
@@ -2003,6 +2028,110 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
     );
   };
 
+
+  // const untraced = (monthsInRange, duplicatedMonths) => {
+  //   return (
+  //     <div className="overflow-x-auto overflow-y-auto max-h-[80vh] d-flex justify-center">
+  //       <table className="min-w-[25%] border border-gray-400 shadow-md">
+  //         <thead>
+  //           <tr className="bg-gray-200 text-left">
+  //             <th className="border px-4 py-2">Month-Year</th>
+  //             <th className="border px-4 py-2">Untraced Details Age Group</th>
+  //             <th className="border px-4 py-2">No of Untraced Persons</th>
+  //             <th className="border px-4 py-2">No of Missing Persons</th>
+  //             <th className="border px-4 py-2">Total Missing Persons</th>
+  //             <th className="border px-4 py-2">Traced</th>
+  //             <th className="border px-4 py-2">Untraced</th>
+  //             <th className="border px-4 py-2">Untraced %</th>
+  //           </tr>
+  //         </thead>
+  //         <tbody>
+  //           {[...monthsInRange.flatMap((m) => [
+  //             { month: m, id: `${m}-below18`, ageGroup: "<18" },
+  //             { month: m, id: `${m}-above18`, ageGroup: ">18" },
+  //           ]),
+  //           ...duplicatedMonths,
+  //           ].map(({ month, id, ageGroup }) => (
+  //             <tr key={id}>
+  //               <td className="border px-4 py-2">{month}</td>
+  //               <td className="border px-4 py-2">
+  //                 <input
+  //                   type="text"
+  //                   value={ageGroup}
+  //                   readOnly
+  //                   className="w-full p-2 border rounded bg-gray-100"
+  //                 />
+  //               </td>
+  //               <td className="border px-4 py-2">
+  //                 <input
+  //                   type="number"
+  //                   className="w-full p-2 border rounded"
+  //                   value={formValues[id]?.untracedPersons || ""}
+  //                   onChange={(e) =>
+  //                     handleInputChange(id, "untracedPersons", e.target.value)
+  //                   }
+  //                 />
+  //               </td>
+  //               <td className="border px-4 py-2">
+  //                 <input
+  //                   type="number"
+  //                   className="w-full p-2 border rounded"
+  //                   value={formValues[id]?.missingPersons || ""}
+  //                   onChange={(e) =>
+  //                     handleInputChange(id, "missingPersons", e.target.value)
+  //                   }
+  //                 />
+  //               </td>
+  //               <td className="border px-4 py-2">
+  //                 <input
+  //                   type="number"
+  //                   className="w-full p-2 border rounded"
+  //                   value={formValues[id]?.totalMissing || ""}
+  //                   onChange={(e) =>
+  //                     handleInputChange(id, "totalMissing", e.target.value)
+  //                   }
+  //                 />
+  //               </td>
+  //               <td className="border px-4 py-2">
+  //                 <input
+  //                   type="number"
+  //                   className="w-full p-2 border rounded"
+  //                   value={formValues[id]?.traced || ""}
+  //                   onChange={(e) =>
+  //                     handleInputChange(id, "traced", e.target.value)
+  //                   }
+  //                 />
+  //               </td>
+  //               <td className="border px-4 py-2">
+  //                 <input
+  //                   type="number"
+  //                   className="w-full p-2 border rounded"
+  //                   value={formValues[id]?.untraced || ""}
+  //                   onChange={(e) =>
+  //                     handleInputChange(id, "untraced", e.target.value)
+  //                   }
+  //                 />
+  //               </td>
+  //               <td className="border px-4 py-2">
+  //                 <input
+  //                   type="number"
+  //                   className="w-full p-2 border rounded"
+  //                   value={formValues[id]?.untracedPercentage || ""}
+  //                   onChange={(e) =>
+  //                     handleInputChange(id, "untracedPercentage", e.target.value)
+  //                   }
+  //                 />
+  //               </td>
+  //             </tr>
+  //           ))}
+  //         </tbody>
+  //       </table>
+  //     </div>
+  //   );
+  // };
+
+
+
   const offencesAgainstBody = (monthsInRange, duplicatedMonths) => {
     return (
       <div className="overflow-x-auto d-flex justify-center">
@@ -2114,6 +2243,88 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   };
 
 
+
+  // const offencesAgainstBody = (monthsInRange, duplicatedMonths) => {
+  //   const offences = [
+  //     { label: "Murder", value: "Murder (BNS Sec. 103(1))" },
+  //     { label: "Att. To Murder", value: "Att. To Murder (BNS Sec. 109)" },
+  //     { label: "Rape", value: "Rape (BNS Sec. 64 to 71)" },
+  //     { label: "Hurt", value: "Hurt (BNS Sec. 117 to 125)" },
+  //     { label: "Riots", value: "Riots (BNS Sec. 191 to 193)" },
+  //     { label: "Molestation", value: "Molestation (BNS Sec. 74 to 79)" },
+  //   ];
+  
+  //   return (
+  //     <div className="overflow-x-auto overflow-y-auto max-h-[80vh] d-flex justify-center">
+  //       <table className="min-w-[25%] border border-gray-400 shadow-md">
+  //         <thead>
+  //           <tr className="bg-gray-200 text-left">
+  //             <th className="border px-4 py-2">Month-Year</th>
+  //             <th className="border px-4 py-2">Act and Section</th>
+  //             <th className="border px-4 py-2">Registered Cases</th>
+  //             <th className="border px-4 py-2">Detected Cases</th>
+  //             <th className="border px-4 py-2">Detected Cases %</th>
+  //           </tr>
+  //         </thead>
+  //         <tbody>
+  //           {[...monthsInRange.flatMap((m) => 
+  //             offences.map((o) => ({ month: m, id: `${m}-${o.label}`, offence: o.value }))
+  //           ), ...duplicatedMonths].map(({ month, id, offence }) => (
+  //             <tr key={id}>
+  //               <td className="border px-4 py-2">{month}</td>
+  //               <td className="border px-4 py-2">
+  //                 <input
+  //                   type="text"
+  //                   value={offence}
+  //                   readOnly
+  //                   className="w-full p-2 border rounded"
+  //                 />
+  //               </td>
+  //               <td className="border px-4 py-2">
+  //                 <input
+  //                   type="number"
+  //                   className="w-[40%] p-2 border rounded"
+  //                   value={formValues[id]?.registeredCases || ""}
+  //                   onChange={(e) =>
+  //                     handleInputChange(id, "registeredCases", e.target.value)
+  //                   }
+  //                 />
+  //               </td>
+  //               <td className="border px-4 py-2">
+  //                 <input
+  //                   type="number"
+  //                   className="w-[40%] p-2 border rounded"
+  //                   value={formValues[id]?.detectedCases || ""}
+  //                   onChange={(e) =>
+  //                     handleInputChange(id, "detectedCases", e.target.value)
+  //                   }
+  //                 />
+  //                 {parseInt(formValues[id]?.detectedCases) > parseInt(formValues[id]?.registeredCases) && (
+  //                   <p className="text-red-500 text-sm mt-1">
+  //                     Detected Cases cannot exceed Reg'd Cases.
+  //                   </p>
+  //                 )}
+  //               </td>
+  //               <td className="border px-4 py-2">
+  //                 <input
+  //                   type="number"
+  //                   className="w-[40%] p-2 border rounded"
+  //                   value={formValues[id]?.detectedCasesPercentage || ""}
+  //                   readOnly
+  //                 />
+  //               </td>
+  //             </tr>
+  //           ))}
+  //         </tbody>
+  //       </table>
+  //     </div>
+  //   );
+  // };
+
+
+
+
+
   const ImportantAgainstBody = (monthsInRange, duplicatedMonths) => {
     return (
       <div className="overflow-x-auto d-flex justify-center">
@@ -2197,19 +2408,16 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                         handleInputChange(id, "detectedCases_1", e.target.value)
                       }
                     />
-                    {parseInt(formValues[id]?.detectedCases_1) >
-                      parseInt(formValues[id]?.registeredCases_1) && (
-                        <p className="text-red-500 text-sm mt-1">
-                          Detected Cases cannot exceed Reg'd Cases.
-                        </p>
-                      )}
+                    
                   </td>
                   <td className="border px-4 py-2">
                     <input
                       type="number"
                       className="w-[40%] p-2 border rounded"
                       value={formValues[id]?.detectedCasesPercentage_1 || ""}
-
+                      onChange={(e) =>
+                        handleInputChange(id, "detectedCasesPercentage_1", e.target.value)
+                      }
                     />
                   </td>
                 </tr>
@@ -2220,6 +2428,87 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       </div>
     );
   };
+
+
+
+  // const ImportantAgainstBody = (monthsInRange) => {
+  //   const offences = [
+  //     "Mob Lynching (Section 103 (2) BNS)",
+  //     "Snatching (Section 304 BNS)",
+  //     "Organized crime (Section 111 BNS)",
+  //     "Petty Organized crime (Section 112 BNS)",
+  //     "Terrorist act (Section 113 BNS)"
+  //   ];
+  
+  //   return (
+  //     <div className="overflow-x-auto overflow-y-auto max-h-[80vh] d-flex justify-center">
+  //       <table className="min-w-[25%] border border-gray-400 shadow-md">
+  //         <thead>
+  //           <tr className="bg-gray-200 text-left">
+  //             <th className="border px-4 py-2">Month-Year</th>
+  //             <th className="border px-4 py-2">Act and Section</th>
+  //             <th className="border px-4 py-2">Registered Cases</th>
+  //             <th className="border px-4 py-2">Detected Cases</th>
+  //             <th className="border px-4 py-2">Detected Cases %</th>
+  //           </tr>
+  //         </thead>
+  //         <tbody>
+  //           {monthsInRange.flatMap((month) => 
+  //             offences.map((offence) => {
+  //               const id = `${month}-${offence}`;
+  //               return (
+  //                 <tr key={id}>
+  //                   <td className="border px-4 py-2">{month}</td>
+  //                   <td className="border px-4 py-2"><input
+  //                   type="text"
+  //                   value={offence}
+  //                   readOnly
+  //                   className="w-full p-2 border rounded"
+  //                 /></td>
+  //                   <td className="border px-4 py-2">
+  //                     <input
+  //                       type="number"
+  //                       className="w-[40%] p-2 border rounded"
+  //                       value={formValues[id]?.registeredCases_1 || ""}
+  //                       onChange={(e) =>
+  //                         handleInputChange(id, "registeredCases_1", e.target.value)
+  //                       }
+  //                     />
+  //                   </td>
+  //                   <td className="border px-4 py-2">
+  //                     <input
+  //                       type="number"
+  //                       className="w-[40%] p-2 border rounded"
+  //                       value={formValues[id]?.detectedCases_1 || ""}
+  //                       onChange={(e) =>
+  //                         handleInputChange(id, "detectedCases_1", e.target.value)
+  //                       }
+  //                     />
+  //                     {parseInt(formValues[id]?.detectedCases_1) >
+  //                       parseInt(formValues[id]?.registeredCases_1) && (
+  //                       <p className="text-red-500 text-sm mt-1">
+  //                         Detected Cases cannot exceed Reg'd Cases.
+  //                       </p>
+  //                     )}
+  //                   </td>
+  //                   <td className="border px-4 py-2">
+  //                     <input
+  //                       type="number"
+  //                       className="w-[40%] p-2 border rounded"
+  //                       value={formValues[id]?.detectedCasesPercentage_1 || ""}
+  //                     />
+  //                   </td>
+  //                 </tr>
+  //               );
+  //             })
+  //           )}
+  //         </tbody>
+  //       </table>
+  //     </div>
+  //   );
+  // };
+
+
 
   const PropertyAgainstBody = (monthsInRange, duplicatedMonths) => {
    
@@ -2255,9 +2544,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                   <td className="border px-4 py-2">
                     <select
                       className="w-full p-2 border rounded"
-                      value={formValues[id]?.actAndSection || ""}
+                      value={formValues[id]?.actAndSection_2 || ""}
                       onChange={(e) =>
-                        handleInputChange(id, "actAndSection", e.target.value)
+                        handleInputChange(id, "actAndSection_2", e.target.value)
                       }
                     >
                       <option value="" disabled>
@@ -2284,9 +2573,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <input
                       type="number"
                       className="w-[40%] p-2 border rounded"
-                      value={formValues[id]?.registeredCases || ""}
+                      value={formValues[id]?.registeredCases_2 || ""}
                       onChange={(e) =>
-                        handleInputChange(id, "registeredCases", e.target.value)
+                        handleInputChange(id, "registeredCases_2", e.target.value)
                       }
                     />
                   </td>
@@ -2294,24 +2583,21 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <input
                       type="number"
                       className="w-[40%] p-2 border rounded"
-                      value={formValues[id]?.detectedCases || ""}
+                      value={formValues[id]?.detectedCases_2 || ""}
                       onChange={(e) =>
-                        handleInputChange(id, "detectedCases", e.target.value)
+                        handleInputChange(id, "detectedCases_2", e.target.value)
                       }
                     />
-                    {parseInt(formValues[id]?.detectedCases) >
-                      parseInt(formValues[id]?.registeredCases) && (
-                        <p className="text-red-500 text-sm mt-1">
-                          Detected Cases cannot exceed Reg'd Cases.
-                        </p>
-                      )}
+                   
                   </td>
                   <td className="border px-4 py-2">
                     <input
                       type="number"
                       className="w-[40%] p-2 border rounded"
-                      value={formValues[id]?.detectedCasesPercentage || ""}
-
+                      value={formValues[id]?.detectedCasesPercentage_2 || ""}
+                      onChange={(e) =>
+                        handleInputChange(id, "detectedCasesPercentage_2", e.target.value)
+                      }
                     />
                   </td>
                 </tr>
@@ -2323,6 +2609,82 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
     );
   };
 
+
+  // const PropertyAgainstBody = (monthsInRange) => {
+  //   const offences = [
+  //     "Dacoity (BNS Sec. 310)",
+  //     "Robbery (BNS Sec. 309)",
+  //     "HBT (BNS Sec. 331 to 334)",
+  //     "Theft (BNS Sec. 303 & 305)"
+  //   ];
+  
+  //   return (
+  //     <div className="overflow-x-auto overflow-y-auto max-h-[80vh] d-flex justify-center">
+  //       <table className="min-w-[25%] border border-gray-400 shadow-md">
+  //         <thead>
+  //           <tr className="bg-gray-200 text-left">
+  //             <th className="border px-4 py-2">Month-Year</th>
+  //             <th className="border px-4 py-2">Act and Section</th>
+  //             <th className="border px-4 py-2">Registered Cases</th>
+  //             <th className="border px-4 py-2">Detected Cases</th>
+  //             <th className="border px-4 py-2">Detected Cases %</th>
+  //           </tr>
+  //         </thead>
+  //         <tbody>
+  //           {monthsInRange.flatMap((month) =>
+  //             offences.map((offence) => {
+  //               const id = `${month}-${offence}`;
+  //               return (
+  //                 <tr key={id}>
+  //                   <td className="border px-4 py-2">{month}</td>
+  //                   <td className="border px-4 py-2"><input
+  //                   type="text"
+  //                   value={offence}
+  //                   readOnly
+  //                   className="w-full p-2 border rounded"
+  //                 /></td>
+  //                   <td className="border px-4 py-2">
+  //                     <input
+  //                       type="number"
+  //                       className="w-[40%] p-2 border rounded"
+  //                       value={formValues[id]?.registeredCases_2 || ""}
+  //                       onChange={(e) =>
+  //                         handleInputChange(id, "registeredCases_2", e.target.value)
+  //                       }
+  //                     />
+  //                   </td>
+  //                   <td className="border px-4 py-2">
+  //                     <input
+  //                       type="number"
+  //                       className="w-[40%] p-2 border rounded"
+  //                       value={formValues[id]?.detectedCases_2 || ""}
+  //                       onChange={(e) =>
+  //                         handleInputChange(id, "detectedCases_2", e.target.value)
+  //                       }
+  //                     />
+  //                     {parseInt(formValues[id]?.detectedCases_2) >
+  //                       parseInt(formValues[id]?.registeredCases_2) && (
+  //                       <p className="text-red-500 text-sm mt-1">
+  //                         Detected Cases cannot exceed Reg'd Cases.
+  //                       </p>
+  //                     )}
+  //                   </td>
+  //                   <td className="border px-4 py-2">
+  //                     <input
+  //                       type="number"
+  //                       className="w-[40%] p-2 border rounded"
+  //                       value={formValues[id]?.detectedCasesPercentage_2 || ""}
+  //                     />
+  //                   </td>
+  //                 </tr>
+  //               );
+  //             })
+  //           )}
+  //         </tbody>
+  //       </table>
+  //     </div>
+  //   );
+  // };
 
   const esakshyaDetails = (monthsInRange, duplicatedMonths) => {
     return (
@@ -2403,11 +2765,13 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
           <thead>
             <tr className="bg-gray-200 text-left">
               <th className="border px-4 py-2">Month-Year</th>
-              <th className="border px-4 py-2">No of IO's Registered</th>
-              <th className="border px-4 py-2">eSakshya downloads by IOs</th>
+              <th className="border px-4 py-2">No of Cases Registered</th>
+              <th className="border px-4 py-2">No of cases eSakshya was used</th>
+              <th className="border px-4 py-2">No of cases eSakshya was not used</th>
               <th className="border px-4 py-2">eSakshya Usage %</th>
+              <th className="border px-4 py-2">Total Offences eSakshya used and Charge Sheeted</th>
+              <th className="border px-4 py-2">Total Offences eSakshya Not used and Under Investigation</th>
 
-              {/* <th className="border px-4 py-2">Total Trained %</th> */}
             </tr>
           </thead>
           <tbody>
@@ -2429,9 +2793,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <input
                       type="number"
                       className="w-[40%] p-2 border rounded"
-                      value={formValues[id]?.totalIOsNagapur || ""}
+                      value={formValues[id]?.cases_registered || ""}
                       onChange={(e) =>
-                        handleInputChange(id, "totalIOsNagapur", e.target.value)
+                        handleInputChange(id, "cases_registered", e.target.value)
                       }
                     />
                   </td>
@@ -2439,23 +2803,50 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <input
                       type="number"
                       className="w-[40%] p-2 border rounded"
-                      value={formValues[id]?.totalIOsEsakshya || ""}
+                      value={formValues[id]?.cases_esakshya_used || ""}
                       onChange={(e) =>
-                        handleInputChange(
-                          id,
-                          "totalIOsEsakshya",
-                          e.target.value
-                        )
+                        handleInputChange(id, "cases_esakshya_used", e.target.value)
                       }
                     />
-
                   </td>
                   <td className="border px-4 py-2">
                     <input
                       type="number"
                       className="w-[40%] p-2 border rounded"
-                      value={formValues[id]?.esakshyaWage || ""}
-
+                      value={formValues[id]?.cases_esakshya_not_used || ""}
+                      onChange={(e) =>
+                        handleInputChange(id, "cases_esakshya_not_used", e.target.value)
+                      }
+                    />
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      className="w-[40%] p-2 border rounded"
+                      value={formValues[id]?.esakshya_usage_percent || ""}
+                      onChange={(e) =>
+                        handleInputChange(id, "esakshya_usage_percent", e.target.value)
+                      }
+                    />
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      className="w-[40%] p-2 border rounded"
+                      value={formValues[id]?.esakshya_used_charge_sheeted || ""}
+                      onChange={(e) =>
+                        handleInputChange(id, "esakshya_used_charge_sheeted", e.target.value)
+                      }
+                    />
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      className="w-[40%] p-2 border rounded"
+                      value={formValues[id]?.esakshya_not_used_invest || ""}
+                      onChange={(e) =>
+                        handleInputChange(id, "esakshya_not_used_invest", e.target.value)
+                      }
                     />
                   </td>
 
@@ -2937,6 +3328,87 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
   };
 
 
+  // const StolenRecoveredProperty = (monthsInRange, duplicatedMonths) => {
+  //   const offences = ["Dacoity", "Robbery", "HBT", "Theft"];
+  
+  //   return (
+  //     <div className="overflow-x-auto overflow-y-auto max-h-[80vh] d-flex justify-center">
+  //       <table className="w-full border border-gray-400 shadow-md">
+  //         <thead>
+  //           <tr className="bg-gray-200 text-left">
+  //             <th className="border px-4 py-2">Month-Year</th>
+  //             <th className="border px-4 py-2">Offence Type</th>
+  //             <th className="border px-4 py-2">Offences Registered</th>
+  //             <th className="border px-4 py-2">Value of Stolen Property</th>
+  //             <th className="border px-4 py-2">Detected Registered</th>
+  //             <th className="border px-4 py-2">Value of Recovered Property</th>
+  //             <th className="border px-4 py-2">Recovery %</th>
+  //           </tr>
+  //         </thead>
+  //         <tbody>
+  //           {[...monthsInRange, ...duplicatedMonths.map((d) => d.month)].flatMap((month) =>
+  //             offences.map((offence) => {
+  //               const id = `${month}-${offence}`;
+  //               return (
+  //                 <tr key={id}>
+  //                   <td className="border px-4 py-2">{month}</td>
+  //                   <td className="border px-4 py-2"><input
+  //                   type="text"
+  //                   value={offence}
+  //                   readOnly
+  //                   className="w-full p-2 border rounded"
+  //                 /></td>
+  //                   <td className="border px-4 py-2">
+  //                     <input
+  //                       className="w-full p-2 border rounded"
+  //                       type="number"
+  //                       value={formValues[id]?.offences_registered || ""}
+  //                       onChange={(e) => handleInputChange(id, "offences_registered", e.target.value)}
+  //                     />
+  //                   </td>
+  //                   <td className="border px-4 py-2">
+  //                     <input
+  //                       className="w-full p-2 border rounded"
+  //                       type="number"
+  //                       value={formValues[id]?.value_stolen_property || ""}
+  //                       onChange={(e) => handleInputChange(id, "value_stolen_property", e.target.value)}
+  //                     />
+  //                   </td>
+  //                   <td className="border px-4 py-2">
+  //                     <input
+  //                       className="w-full p-2 border rounded"
+  //                       type="number"
+  //                       value={formValues[id]?.detected_cases || ""}
+  //                       onChange={(e) => handleInputChange(id, "detected_cases", e.target.value)}
+  //                     />
+  //                   </td>
+  //                   <td className="border px-4 py-2">
+  //                     <input
+  //                       className="w-full p-2 border rounded"
+  //                       type="number"
+  //                       value={formValues[id]?.value_recovered_property || ""}
+  //                       onChange={(e) => handleInputChange(id, "value_recovered_property", e.target.value)}
+  //                       style={{
+  //                         border:
+  //                           Number(formValues[id]?.value_recovered_property) > Number(formValues[id]?.value_stolen_property)
+  //                             ? "2px solid #ff8e8e"
+  //                             : "1px solid #0000004b",
+  //                       }}
+  //                     />
+  //                   </td>
+  //                   <td className="border px-4 py-2">
+  //                     <input className="w-full p-2 border rounded" type="number" value={formValues[id]?.recovery_percentage || ""} />
+  //                   </td>
+  //                 </tr>
+  //               );
+  //             })
+  //           )}
+  //         </tbody>
+  //       </table>
+  //     </div>
+  //   );
+  // };
+
   const convictionDataOption = {
 
     '285': '285',
@@ -3110,6 +3582,128 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
     );
   };
 
+  
+  
+  
+//   const ConvictionUnderBNS = (monthsInRange, duplicatedMonths) => {
+//     const courtTypes = ["Session", "JMFC"];
+
+//     const handleDuplicateRow = (id) => {
+//         // Create a copy of the form values for the row to be duplicated
+//         const newRow = { ...formValues[id] };
+//         const newId = `${newRow.courtType} - ${newRow.month} - copy`; // Create a new ID for the duplicated row
+//         setFormValues((prevValues) => ({
+//             ...prevValues,
+//             [newId]: newRow, // Add the new row to the form values
+//         }));
+//     };
+
+//     return (
+//         <div className="overflow-x-auto d-flex justify-center">
+//             <table className="w-full border border-gray-400 shadow-md">
+//                 <thead>
+//                     <tr className="bg-gray-200 text-left">
+//                         <th className="border px-4 py-2">Month-Year</th>
+//                         <th className="border px-4 py-2">Court Type</th>
+//                         <th className="border px-4 py-2">BNS Sections</th>
+//                         <th className="border px-4 py-2">Cases Decided</th>
+//                         <th className="border px-4 py-2">Convicted Cases</th>
+//                         <th className="border px-4 py-2">Conviction Rate %</th>
+//                         <th className="border px-4 py-2">Total Cases Convicted</th>
+//                         <th className="border px-4 py-2">Total Cases Decided</th>
+//                         <th className="border px-4 py-2">Action</th> {/* New column for action */}
+//                     </tr>
+//                 </thead>
+//                 <tbody>
+//                     {[...monthsInRange, ...duplicatedMonths].flatMap((month) =>
+//                         courtTypes.map((court) => {
+//                             const id = `${court} - ${month}`;
+
+//                             return (
+//                                 <tr key={id}>
+//                                     <td className="border px-4 py-2">{month}</td>
+//                                     <td className="border px-4 py-2">
+//                                         <input
+//                                             type="text"
+//                                             value={court}
+//                                             readOnly
+//                                             className="w-full p-2 border rounded"
+//                                         />
+//                                     </td>
+//                                     <td className="border px-4 py-2">
+//                                         <select
+//                                             className="w-[80%] p-2 border rounded"
+//                                             value={formValues[id]?.bns_sections || ""}
+//                                             onChange={(e) => handleInputChange(id, "bns_sections", e.target.value)}
+//                                         >
+//                                             <option value="">Select</option>
+//                                             {Object.entries(convictionDataOption).map(([key, value]) => (
+//                                                 <option key={key} value={key}>
+//                                                     {value}
+//                                                 </option>
+//                                             ))}
+//                                         </select>
+//                                     </td>
+//                                     <td className="border px-4 py-2">
+//                                         <input
+//                                             type="number"
+//                                             className="w-[50%] p-1"
+//                                             value={formValues[id]?.cases_decided || ""}
+//                                             onChange={(e) => handleInputChange(id, "cases_decided", e.target.value)}
+//                                         />
+//                                     </td>
+//                                     <td className="border px-4 py-2">
+//                                         <input
+//                                             type="number"
+//                                             className="w-[80%] p-2 border rounded"
+//                                             value={formValues[id]?.convicted_cases || ""}
+//                                             onChange={(e) => handleInputChange(id, "convicted_cases", e.target.value)}
+//                                             style={{
+//                                                 border:
+//                                                     Number(formValues[id]?.convicted_cases) > Number(formValues[id]?.cases_decided)
+//                                                         ? "2px solid #ff8e8e"
+//                                                         : "1px solid #0000004b",
+//                                             }}
+//                                         />
+//                                     </td>
+//                                     <td className="border px-4 py-2">
+//                                         <input
+//                                             type="number"
+//                                             className="w-[80%] p-2 border rounded"
+//                                             value={formValues[id]?.conviction_rate || ""}
+//                                         />
+//                                     </td>
+//                                     <td className="border px-4 py-2">
+//                                         <input
+//                                             type="number"
+//                                             className="w-[80%] p-2 border rounded"
+//                                             value={formValues[id]?.total_cases_convicted || "0"}
+//                                         />
+//                                     </td>
+//                                     <td className="border px-4 py-2">
+//                                         <input
+//                                             type="number"
+//                                             className="w-[80%] p-2 border rounded"
+//                                             value={formValues[id]?.total_cases_decided || "0"}
+//                                         />
+//                                     </td>
+//                                     <td className="border px-4 py-2">
+//                                         <button
+//                                             onClick={() => handleDuplicateRow(id)}
+//                                             className="text-blue-500 hover:underline"
+//                                         >
+//                                             +
+//                                         </button>
+//                                     </td>
+//                                 </tr>
+//                             );
+//                         })
+//                     )}
+//                 </tbody>
+//             </table>
+//         </div>
+//     );
+// };
 
   const VisitOfForensicTeams = (monthsInRange, duplicatedMonths) => {
 
@@ -3842,7 +4436,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
               {/* {showPreview && <TrainingDataTable     data={Object.entries(formValues).map(([month, values]) => ({ month_year: month, ...values }))}
   onSubmit={handleSubmit} onEdit={handleEdit} />} */}
 
-              {formValues != {} && (<TrainingDataTable
+              {/* {formValues != {} && (<TrainingDataTable
                 open={dialogOpen}
                 onClose={() => {
                   window.location.reload();
@@ -3851,7 +4445,22 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                 data={formValues}
                 onSubmit={handleSubmit}
                 onEdit={handleEdit}
-              />)}
+              />)} */}
+
+              {Object.keys(formValues).length > 0 && (
+                <TrainingDataTable
+                  open={dialogOpen}
+                  onClose={() => {
+                    window.location.reload();
+                    setDialogOpen(false);
+                  }}
+                  data={formValues} // Now sending formValues, whether from form input or uploaded file
+                  onSubmit={handleSubmit}
+                  onEdit={handleEdit}
+                  selectTab={selectedTab}
+                  csvData={csvData}
+                />
+              )}
 
 
               <Box sx={{ padding: 2, borderTop: "1px solid #ddd", backgroundColor: "#f9f9f9", display: 'flex', justifyContent: "center" }}>

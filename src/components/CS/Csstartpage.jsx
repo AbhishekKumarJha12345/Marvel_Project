@@ -5,7 +5,7 @@ import "leaflet.heat";
 import maharashtraBoundary from "./maharashtraBoundary.json";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axiosInstance from "@/utils/axiosInstance";
-
+import axios from "axios";
 import maharashtraZonals from "./maharashtraZonals.json";
 import { FormControl, InputLabel, Select, MenuItem, CircularProgress } from "@mui/material";
 
@@ -14,6 +14,9 @@ import policeLatLong from './police_stations.json'
 
 import policeCP from './maharashtraCP.json'
 import { Category } from "@mui/icons-material";
+
+import ApexCharts from "react-apexcharts";
+import { use } from "react";
 
 
 const policeStationIcon = new L.Icon({
@@ -35,6 +38,219 @@ const MaharashtraMap = (catogoryBar) => {
   const [zonePercentages, setZonePercentages] = useState({});
   const [districtPercentages, setDistrictPercentages] = useState({});
   const [cityPercentages, setcityPercentages] = useState({});
+  // -------------------------------------------
+  const [totalCases, settotalCases] = useState({});
+  const [disposedCases, setdisposedCases] = useState({});
+
+
+  
+  
+  // -------------------------------------------
+
+
+  // ------------------added by me /value_pie_chart --------------------------------
+  const [pieData1, setPieData1] = useState({ labels: [], series: [] });
+  const [pieData2, setPieData2] = useState({ labels: [], series: [] });
+  const [pieData3, setPieData3] = useState({ labels: [], series: [] });
+  const [totalMissingPersons, setTotalMissingPersons] = useState(0);
+
+  const [barData1, setBarData1] = useState({ categories: [], series: [] });
+  const [barData2, setBarData2] = useState({ categories: [], series: [] });
+  const [barData, setBarData] = useState({ categories: [], series: [] });
+
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
+
+
+
+
+  const zone = localStorage.getItem("zone")
+
+  const assignedCPCity = localStorage.getItem("city")
+
+  const district = localStorage.getItem("district")
+
+  const sub_role = localStorage.getItem("sub_role")
+  const role = localStorage.getItem("role")
+
+
+  const fetchPieChartData = async (districtName, typeFilter, Catogory, zoneName) => {
+    try {
+      const response = await axiosInstance.post("/value_pie_chart", {
+        district: districtName || district,
+        typeFilter: typeFilter,
+        Catogory: Catogory,
+        zoneName: zoneName || zone,
+      });
+
+
+      const data = response.data;
+
+      if (data.type === "Pendency of cases under BNS") {
+        // Pie charts for Pendency Cases
+        setPieData1({
+          labels: ["Disposed Cases", "Total Cases"],
+          series: [data.disposedCases, data.totalCases],
+        });
+
+        setPieData2({
+          labels: ["Punishment < 7 years", "Punishment > 7 years"],
+          series: [data.punishmentLessThan7, data.punishmentMoreThan7],
+        });
+
+      } else if (data.type === "Untraced Missing") {
+
+        const totalMissingPersons = (data["missingPersons_18+"] || 0) + (data["missingPersons_18-"] || 0);
+        // Pie charts for Untraced Missing
+        setPieData1({
+          labels: ["MissingPersons 18+", "MissingPersons 18-", "Untraced 18+", "Untraced 18-"],
+          series: [
+            data["missingPersons_18+"], data["missingPersons_18-"], data["untraced_18+"], data["untraced_18-"]],
+        });
+
+        setPieData2({
+          labels: ["Traced 18+", "Traced 18-", "Untraced 18+", "Untraced 18-"],
+          series: [
+            data["traced_18+"], data["traced_18-"], data["untraced_18+"], data["untraced_18-"]],
+        });
+        setTotalMissingPersons(totalMissingPersons);
+
+      } else if (data.type === "Important sections introduced in BNS") {
+        // Pie charts for Pendency Cases
+        setPieData1({
+          labels: ["Registered_Mob", "Registered_Snatching", "Registered_Organised", "Registered_Petty", "Registered_Terrorist"],
+          series: [data.registeredCases_mob, data.registeredCases_snatch, data.registeredCases_organized, data.registeredCases_petty, data.registeredCases_terrorist],
+        });
+
+        setPieData2({
+          labels: ["Detected_Mob", "Detected_Snatching", "Detected_Organised", "Detected_Petty", "Detected_Terrorist"],
+          series: [data.detectedCases_mob, data.detectedCases_snatch, data.detectedCases_organized, data.detectedCases_petty, data.detectedCases_terrorist],
+        });
+
+      }else if (data.type === "Property offences under BNS") {
+        // Pie charts for Pendency Cases
+        setPieData1({
+          labels: ["Registered_Murder", "Registered_Att_to_Mur", "Registered_Rape", "Registered_Hurt", "Registered_Riots", "Registered_Molestation"],
+          series: [data.registeredCases_murder, data.registeredCases_Att, data.registeredCases_Rape, data.registeredCases_Hurt, data.registeredCases_Riots, data.registeredCases_Molestation],
+        });
+
+        setPieData2({
+          labels: ["Detected_Murder", "Detected_Att_to_Mur", "Detected_Rape", "Detected_Hurt", "Detected_Riots", "Detected_Molestation"],
+          series: [data.detectedCases_murder, data.detectedCases_Att, data.detectedCases_Rape, data.detectedCases_Hurt, data.detectedCases_Riots, data.detectedCases_Molestation],
+        });
+
+      } else if (data.type === "Offences against body under BNS") {
+        // Pie charts for Pendency Cases
+        setPieData1({
+          labels: ["Registered_Murder", "Registered_Att_to_Mur", "Registered_Rape", "Registered_Hurt", "Registered_Riots", "Registered_Molestation"],
+          series: [data.registeredCases_murder, data.registeredCases_Att, data.registeredCases_Rape, data.registeredCases_Hurt, data.registeredCases_Riots, data.registeredCases_Molestation],
+        });
+
+        setPieData2({
+          labels: ["Detected_Murder", "Detected_Att_to_Mur", "Detected_Rape", "Detected_Hurt", "Detected_Riots", "Detected_Molestation"],
+          series: [data.detectedCases_murder, data.detectedCases_Att, data.detectedCases_Rape, data.detectedCases_Hurt, data.detectedCases_Riots, data.detectedCases_Molestation],
+        });
+
+      }
+      else if (data.type === "eSakshya Details") {
+        // Pie charts for Pendency Cases
+        setPieData1({
+          labels: ["Total IO's eSakshya Registered", "Total IO's eSakshaya Download"],
+          series: [data.totalIOsEsakshyaRegistered, data.totalIOsEsakshyaDownload],
+        });
+      }
+      else if (data.type === "eFIR") {
+        // Pie charts for Pendency Cases
+        setPieData1({
+          labels: ["Total EComplaints Received", "Total Complaints Converted"],
+          series: [data.totalEComplaintsReceived, data.totalComplaintsConverted],
+        });
+      }
+      else if (data.type === "ITSSO Compliance Form") {
+        // Pie charts for Pendency Cases
+        setPieData1({
+          labels: ["Total Registered Cases", "Cases Chargesheet", "Compilance Rate"],
+          series: [data.total_pocso_bns_cases, data.charge_sheeted_within_60_days, data.percentage],
+        });
+      }
+      else if (data.type === "Stolen & Recovered Property") {
+        setBarData1({
+          categories: ["HBT", "Robbery", "Theft", "Dacoity"],
+          series: [
+            { name: "Offences Registered", data: [data.offences_registered_HBT, data.offences_registered_Robbery, data.offences_registered_Theft, data.offences_registered_Dacoity] },
+            { name: "Detected Cases", data: [data.detected_cases_HBT, data.detected_cases_Robbery, data.detected_cases_Theft, data.detected_cases_Dacoity] },
+          ]
+        });
+        // Second Bar Graph: Stolen Property vs Recovered Property
+        setBarData2({
+          categories: ["HBT", "Robbery", "Theft", "Dacoity"],
+          series: [
+            { name: "Value Stolen", data: [data.value_stolen_property_HBT, data.value_stolen_property_Robbery, data.value_stolen_property_Theft, data.value_stolen_property_Dacoity] },
+            { name: "Value Recovered", data: [data.value_recovered_property_HBT, data.value_recovered_property_Robbery, data.value_recovered_property_Theft, data.value_recovered_property_Dacoity] }
+          ]
+        });
+
+      }
+      else if (data.type === "FORENSIC") {
+        // Pie charts for Pendency Cases
+        setPieData1({
+          labels: ["Total Cases Greater Than 7 Yrs", "Cases Forensic Team Visited"],
+          series: [data.total_cases_gt_7_years, data.cases_forensic_team_visited],
+        });
+      }
+      else if (data.type === "Zero FIR's") {
+        // Pie charts for Pendency Cases
+        setPieData1({
+          labels: ["Total No Zero FIR Transferred Outside MH", "Total No Zero FIR Transferred Outer State to MH"],
+          series: [data.total_no_zero_fir_transferred_outside_mh, data.total_no_zero_fir_transferred_outer_state_to_mh],
+        });
+        setPieData2({
+          labels: ["Total No Zero FIR Transferred Outside MH", "Total No Zero FIR Transferred Outer State to MH"],
+          series: [data.total_transferred_zero_firs_in_mh, data.pending_to_transfer_outside_mh],
+        });
+        setPieData3({
+          labels: ["Re-registered FIR's", "Pending for Re-registration"],
+          series: [data.re_reg_firs, data.pending_for_re_registration],
+        });
+        // Bar chart data for Zero FIRs
+        setBarData({
+          categories: ["Total Zero FIRs", "Pending to Transfer", "Total FIRs Registered", "Re-registered FIRs"],
+          series: [
+            {
+              name: "Count",
+              data: [
+                data.total_zero_firs,
+                data.pending_to_transfer_outside_mh,
+                data.total_firs_registered,
+                data.re_reg_firs,
+              ],
+            },
+          ],
+        });
+      }
+      else if (data.type === "Training Data") {
+        // Pie charts for Pendency Cases
+        setPieData1({
+          labels: ["Constables Trained", "Total Registered Constables"],
+          series: [data.personnel_trained, data.total_personnel],
+        });
+
+        setPieData2({
+          labels: ["Officers Trained", "Total Registered Officers"],
+          series: [data.officers_trained, data.total_officers],
+        });
+
+      }
+
+    } catch (error) {
+      console.error("Error fetching pie chart data:", error);
+    }
+  };
+
+  
+  // ----------------------------------------------------------------
+
   const [percent, setpercent] = useState(0);
 
   const [loading, setLoading] = useState(false); // Loader state
@@ -55,7 +271,7 @@ const MaharashtraMap = (catogoryBar) => {
     "Stolen & Recovered Property",
     "Conviction under BNS",
 
-    ];
+  ];
 
 
 
@@ -67,7 +283,7 @@ const MaharashtraMap = (catogoryBar) => {
 
 
 
-  const [selectedForm, setSelectedForm] = useState( options[0]);
+  const [selectedForm, setSelectedForm] = useState(options[0]);
 
 
   const handleChange = (event) => {
@@ -76,25 +292,30 @@ const MaharashtraMap = (catogoryBar) => {
 
 
 
-
-  const zone = localStorage.getItem("zone")
-
-  const assignedCPCity = localStorage.getItem("city")
-
-  const district = localStorage.getItem("district")
-
-  const sub_role = localStorage.getItem("sub_role")
-  const role = localStorage.getItem("role")
+  useEffect(()=>{
+    setPieData1({ labels: [], series: [] })
+    setPieData2({ labels: [], series: [] })
+    setPieData3({ labels: [], series: [] })
+    setBarData1({ categories: [], series: [] })
+    setBarData2({ categories: [], series: [] })
+    setBarData({ categories: [], series: [] })
 
 
 
-if(sub_role == 'CP' || sub_role == 'SP'){
-
-  var from_date = localStorage.getItem("from_date")
-  var to_date = localStorage.getItem("to_date")
+  },[catogory,selectedForm])
 
 
-}
+ 
+
+
+
+  if (sub_role == 'CP' || sub_role == 'SP') {
+
+    var from_date = localStorage.getItem("from_date")
+    var to_date = localStorage.getItem("to_date")
+
+
+  }
 
 
   const userZones = sub_role == 'IG/DIG' || sub_role == 'CP' || sub_role == 'SP' ? zone : ""; // Example single zone
@@ -109,11 +330,11 @@ if(sub_role == 'CP' || sub_role == 'SP'){
 
       try {
         const response = await axiosInstance.get("/maharashtra-police-data", {
-          params: { zone: zoneName, district: districtName, table: catogory, typeFilter: selectedForm, start_date:to_date, end_date:from_date }
+          params: { zone: zoneName, district: districtName, table: catogory, typeFilter: selectedForm, start_date: startDate, end_date: endDate }
         });
 
-      
-        (role == 'chief secretary' || role == 'ACS' || role == 'DGP') && !selectedZone ? setpercent(response.data.zones) : (district && district != 'null') || selectedZone ? setpercent(response.data.districts || 0) :  zone ? setpercent(response.data.zones || 0) : setpercent(0)
+
+        (role == 'chief secretary' || role == 'ACS' || role == 'DGP') && !selectedZone ? setpercent(response.data.zones) : (district && district != 'null') || selectedZone ? setpercent(response.data.districts || 0) : zone ? setpercent(response.data.zones || 0) : setpercent(0)
 
 
         setZonePercentages(response.data.zones);
@@ -126,15 +347,16 @@ if(sub_role == 'CP' || sub_role == 'SP'){
     }
 
     fetchData(userZones, userDistricts); // Fetch all data initially
-    
 
-  }, [catogory, selectedForm,selectedZone]);
+
+  }, [catogory, selectedForm, selectedZone, startDate, endDate]);
+
 
 
 
   useEffect(() => {
     if (mapRef.current) return;
-    
+
 
     const map = L.map("map", {
       center: [19.7515, 75.7139],
@@ -155,7 +377,7 @@ if(sub_role == 'CP' || sub_role == 'SP'){
       map.remove();
       mapRef.current = null;
     };
-  }, [zonePercentages,districtPercentages,cityPercentages]);
+  }, [zonePercentages, districtPercentages, cityPercentages]);
 
 
   const zoneMapping = {
@@ -246,19 +468,19 @@ if(sub_role == 'CP' || sub_role == 'SP'){
           ? Object.keys(zoneMapping).find(zone => zoneMapping[zone].includes(districtName))
           : Object.keys(zoneMapping);
 
-          
-          
-          // Get the percentage for the district or zone
-          percentageDisplay = selectedZone
+
+
+        // Get the percentage for the district or zone
+        percentageDisplay = selectedZone
           ? zonePercentages[districtName] || districtPercentages[districtName] || 0
           : zonePercentages[zoneName] || districtPercentages[zoneName] || 0;
-          
-          
+
+
 
 
         if ((selectedZone == 'Nagpur' && districtName == "Nagpur Rural") || (district == "Nagpur Rural")) {
-          
-  
+
+
 
 
           const nagpurDistricts = ["Nagpur Rural", "Nagpur"];
@@ -366,34 +588,96 @@ if(sub_role == 'CP' || sub_role == 'SP'){
           weight: 1.5,
         };
       },
+      // onEachFeature: (feature, layer) => {
+      //   const districtName = selectedZone ? feature.properties.dtname : feature.properties.division;
+      //   const zoneName = getZoneForDistrict(districtName);
+
+      //   // if (sub_role != 'CP' && !assignedCPCity) {  
+      //   layer.on({
+      //     click: (e) => {
+      //       setSelectedZone(zoneName);
+
+      //     },
+      //     mouseover: (e) => {
+      //       layer.setStyle({ color: "#ffff", weight: 2 });
+      //       console.log("selectedZone : ", selectedZone);
+      //       console.log("percent : ", percent);
+
+      //       L.popup()
+      //         .setLatLng(e.latlng)
+      //         .setContent(`<b>${selectedZone ? districtName : zoneName || district}</b><br>Percentage: ${selectedZone ? percent[districtName] || 0 : percent[zoneName] || 0 || percent[district] || 0}%`)
+      //         .openOn(map);
+      //     },
+      //     mouseout: () => {
+      //       layer.setStyle({ color: "#ffff", fillOpacity: 0.7 });
+      //       map.closePopup();
+      //     },
+      //   });
+      //   // }
+
+      // },
+      // --------------------------------added by me --------------------------------------------------------------
+
+
       onEachFeature: (feature, layer) => {
         const districtName = selectedZone ? feature.properties.dtname : feature.properties.division;
         const zoneName = getZoneForDistrict(districtName);
+        const displayName = selectedZone ? districtName : zoneName || district;
+        const displayPercent = selectedZone
+          ? percent[districtName] || 0
+          : percent[zoneName] || 0 || percent[district] || 0;
 
-        // if (sub_role != 'CP' && !assignedCPCity) {  
+        // Bind tooltip to show percentage on the map
+        // Get the center of the polygon for label placement
+        const center = layer.getBounds().getCenter();
+
+        // Create a custom label using Leaflet's DivIcon
+        const label = L.divIcon({
+          className: "map-label",
+          html: (() => {
+            if (selectedZone) {
+              // Check if the districtName belongs to the selected zone
+              if (zoneMapping[selectedZone]?.includes(districtName)) {
+                return `<div class="flex flex-col justify-center text-center">
+                          <b>${districtName}</b>
+                          <b>${percent[districtName] || 0}%</b>
+                        </div>`;
+              } else {
+                return ""; // Hide the label if the district does not belong to the selected zone
+              }
+            } else {
+              return `<div class="flex flex-col justify-center text-center">
+                        <b>${zoneName || district}</b>
+                        <b>${percent[zoneName] || percent[district] || 0}%</b>
+                      </div>`;
+            }
+          })(),
+          iconSize: [100, 30],
+        });
+
+
+        // Add the label as a marker to the map
+        L.marker(center, { icon: label }).addTo(map);
+
+
         layer.on({
           click: (e) => {
             setSelectedZone(zoneName);
-           
           },
-          mouseover: (e) => {
+          mouseover: () => {
             layer.setStyle({ color: "#ffff", weight: 2 });
-            console.log("selectedZone : ",selectedZone);
-            console.log("percent : ",percent);
-            
-            L.popup()
-              .setLatLng(e.latlng)
-              .setContent(`<b>${selectedZone ? districtName : zoneName || district}</b><br>Percentage: ${selectedZone ? percent[districtName] || 0 : percent[zoneName] || 0 || percent[district] || 0}%`)
-              .openOn(map);
+            fetchPieChartData(selectedZone ? districtName : null, selectedForm, catogory, zoneName)
+            // fetchPieChartData(districtName, selectedForm, catogory, zoneName);
           },
           mouseout: () => {
             layer.setStyle({ color: "#ffff", fillOpacity: 0.7 });
-            map.closePopup();
-          },
+          }
         });
-        // }
-
       },
+
+
+      // ----------------------------added by me --------------------------------------------------------------------------
+
     }).addTo(map);
 
 
@@ -456,154 +740,976 @@ if(sub_role == 'CP' || sub_role == 'SP'){
 
   }, [selectedZone, zonePercentages, selectedForm]);
 
+
+
+
+  
+
+
+  // -------------------i am adding useEffect ------------------------------------------
+  const [mlResponse, setMlResponse] = useState(""); // State to store ML response
+  const [isModalOpen, setIsModalOpen] = useState(false); // Controls popup visibility
+
+
+  const zoneMappingpayload = {
+    "Amravati": "amravati_district",
+    "Chhatrapati Sambhajinagar": "Chhatrapati_Sambhajinagar_district",
+    "Konkan": "Konkan_district",
+    "Nagpur": "Nagpur_district",
+    "Pune": "Pune_district",
+    "Nashik": "Nashik_district"
+  };
+  
+  useEffect(() => {
+    const fetchMLResponse = async () => {
+      try {
+        // Decide whether to send `type` or `districts`
+        const requestBody =
+        
+        !selectedZone
+            ? { type: "police_all_zone" } // Send only `type`
+            : { type : zoneMappingpayload[selectedZone] }; // Send only `districts`
+  
+        const response = await axios.post(
+          "https://mhmarvel.org/api2/llm_result",
+          requestBody,
+          { headers: { "Content-Type": "application/json", "Accept": "application/json" } }
+        );
+  
+        console.log("response.data:", response.data);
+        setMlResponse(response.data.formatted_llm_result);
+      } catch (error) {
+        console.error("Error fetching ML response:", error);
+        setMlResponse("Failed to load response");
+      }
+    };
+  
+    fetchMLResponse();
+  }, [role, selectedZone]);
+  
+   // Runs only once when the component mounts
+
+  // Function to format text: Converts bold text into <h3> tags
+
+  // -------------------------------
+
+
+
+  
+
   return (
-    <div style={{ display: "flex", height: "80vh", width: "100%", zIndex: "0" }}>
-      <div style={{ display: "flex", height: "80vh", width: "100%", position: "relative" }}>
-        {loading && (
+    <div>
+      { (role === 'chief secretary' || role == 'ACS' || role == 'DGP') &&
+      <div
+        style={{
+          padding: "10px",
+          borderRadius: "5px",
+          height: "fit-content", // Auto-adjust height
+          // width: "fit-content", // Auto-adjust width
+          display: "flex",
+          alignItems: "center",
+          borderRadius: "10px",
+          background: "#fff",
+          right: "0",
+          marginBottom: "10px",
+        }}
+      >
+        {/* Text Content (Acts like an Input) */}
+        <div
+          style={{
+            flex: 1,
+            textOverflow: "ellipsis",
+            padding: "5px",
+          }}
+        >
+          <div dangerouslySetInnerHTML={{ __html: mlResponse || "<p>Loading...</p>" }} />
+        </div>
+      </div>
+      }
+
+      <div style={{ display: "flex", height: "76vh", zIndex: "0", gap: "20px" }}>
+        {/* Left Side - Map Section (75%) */}
+        <div style={{ display: "flex", height: "75vh", width: "80%", position: "relative" }}>
+
+          {/* ---------------------------myncode ----------------------------- */}
+
+          {/* ------------------------------------------------------------------ */}
+
           <div
             style={{
               position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              background: "rgba(255, 255, 255, 0.6)", // Semi-transparent white
-              backdropFilter: "blur(5px)", // Blur effect
+              bottom: "20px",
+              left: "10%",
+              transform: "translateX(-50%)",
+              background: "#fff",
+              padding: "12px",
+              borderRadius: "8px",
+              boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
               display: "flex",
+              flexDirection: "column",
               alignItems: "center",
-              justifyContent: "center",
-              zIndex: 1000,
+              zIndex: 1001,
+              //  width:"350px"
             }}
           >
-            <CircularProgress />
-          </div>
-        )}
+            {/* Heading */}
+            <h6 style={{ margin: "0 0 8px 0", fontSize: "14px", fontWeight: "bold", textAlign: "center" }}>
+              Select Date Range
+            </h6>
 
-        {selectedZone && (
+            {/* Date Picker Inputs */}
+            <div style={{ gap: "10px", alignItems: "center", }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <label style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "4px" }}>From Month</label>
+                <input
+                  type="month"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="p-2 border rounded-md"
+                />
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <label style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "4px" }}>To Month</label>
+                <input
+                  type="month"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  min={startDate}
+                  className="p-2 border rounded-md"
+                />
+              </div>
+            </div>
+
+          </div>
+
+
+
+
+          {/* Loading Overlay */}
+          {loading && (
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                background: "rgba(255, 255, 255, 0.6)",
+                backdropFilter: "blur(5px)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 1000,
+              }}
+            >
+              <CircularProgress />
+            </div>
+          )}
+
+          {/* Back Button (if selectedZone is true) */}
+          {selectedZone && (
+            <div
+              style={{
+                position: "absolute",
+                left: 60,
+                top: "10%",
+                transform: "translateY(-50%)",
+                padding: "10px",
+                background: "#fff",
+                boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
+                borderRadius: "8px",
+                fontSize: "10px",
+                fontWeight: "bold",
+                textAlign: "center",
+                zIndex: "999",
+                cursor: "pointer",
+              }}
+              onClick={() => setSelectedZone(null)}
+            >
+              <ArrowBackIcon />
+            </div>
+          )}
+
+          {/* Map */}
+          <div id="map" style={{ flex: 1, borderRadius: "8px" }}></div>
+
+          {/* Legend */}
           <div
             style={{
               position: "absolute",
-              left: 60,
-              top: "10%",
+              right: 5,
+              bottom: "-16%",
               transform: "translateY(-50%)",
-              padding: "10px",
+              padding: "6px",  // Reduced padding
               background: "#fff",
-              boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
-              borderRadius: "8px",
-              fontSize: "10px",
+              boxShadow: "0px 3px 5px rgba(0,0,0,0.1)",
+              borderRadius: "5px",  // Reduced border radius
+              fontSize: "12px",  // Smaller font size
               fontWeight: "bold",
               textAlign: "center",
               zIndex: "999",
               cursor: "pointer",
+              width: "13vw",  // Reduced width
+              minHeight: "auto",
+              display: "flex",
+              flexDirection: "column",
+              gap: "5px",  // Reduced gap
             }}
-            onClick={() => setSelectedZone(null)}
           >
-            <ArrowBackIcon />
+            <div style={{ textAlign: "center", marginBottom: "5px", fontWeight: "bold", padding: "10px", width: "200px" }}>
+              Legend
+            </div>
+            {(sub_role === "IG/DIG" || role === "chief secretary") && (
+              <>
+
+
+                {/* changes */}
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span>Submit Zone / Total Zones</span>
+                  <span> {Object.keys(zonePercentages).length} / 6</span> {/* Change 50 to your total districts count */}
+                </div>
+                
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span>Sumited-Dist / Total-Dist</span>
+                  <span> {Object.keys(districtPercentages).length} / 36</span> {/* Change 50 to your total districts count */}
+                </div>
+                {/* changes */}
+
+
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span>Submited CP/Total CP</span> <span> {Object.keys(cityPercentages).length}/12</span>
+                </div>
+              </>
+            )}
+            <hr style={{ margin: "5px 0", borderColor: "#ccc" }} />
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
+              <span>80% or Above </span>
+              <div style={{ width: "30px", height: "10px", background: "#37C503", borderRadius: "2px" }}></div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
+              <span>60% - 80%</span>
+              <div style={{ width: "30px", height: "10px", background: "#9AD911", borderRadius: "2px" }}></div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
+              <span>40% - 60%</span>
+              <div style={{ width: "30px", height: "10px", background: "#FF8585", borderRadius: "2px" }}></div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
+              <span>Less than 40%</span>
+              <div style={{ width: "30px", height: "10px", background: "#F45546", borderRadius: "2px" }}></div>
+            </div>
           </div>
-        )}
+        </div>
 
-{catogory === "FIR" && (
-  <div
-    style={{
-      position: "absolute",
-      right: 0,
-      top: "10%",
-      transform: "translateY(-50%)",
-      padding: "0",
-      background: "#fff",
-      boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
-      borderRadius: "8px",
-      fontSize: "10px",
-      fontWeight: "bold",
-      textAlign: "center",
-      zIndex: 999,
-      cursor: "pointer",
-      width: "20vw",
-      display: "flex",
-      flexDirection: "column",
-      gap: "5px",
-    }}
-  >
-    <h6>Type of Data</h6>
-    <Select
-      className="h-[40px]"
-      labelId="form-type-label"
-      id="form-type"
-      value={selectedForm}
-      onChange={handleChange}
-    >
-      {options.map((form) => (
-        <MenuItem key={form} value={form}>
-          {form}
-        </MenuItem>
-      ))}
-    </Select>
-  </div>
-)}
 
-        <div id="map" style={{ flex: 1, borderRadius: "8px" }}></div>
-        <div
-          style={{
-            position: "absolute",
-            right: 60,
-            bottom: '-10%',
-            transform: "translateY(-50%)",
-            padding: "10px",
-            background: "#fff",
-            boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
-            borderRadius: "8px",
-            fontSize: "15px",
-            fontWeight: "bold",
-            textAlign: "center",
-            zIndex: "999",
-            cursor: "pointer",
-            width: "15vw",
-            minHeight: "auto", // Auto-adjust height
-            // height: (sub_role == 'IG/DIG' || role == 'chief secretary') ? "51vh" : '32vh',
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px"
-          }}
-        >
 
-          <div style={{ textAlign: "center", marginBottom: "5px", fontWeight: "bold", adding: "10px", width: "200px" }}>Legend</div>
-          <div style={{ textAlign: "center", marginBottom: "5px", fontWeight: "normal", padding: "px", width: "200px", fontSize:"15px" }}>{catogory == 'Training' ? 'Overall Training Percentage Range' : catogory == 'FORENSIC' ? "Overall Forinsic Team vist Percentage Range" : `${selectedForm} Percentage Ranges` }</div>
-          {(sub_role == 'IG/DIG' || role == 'chief secretary' || role == 'ACS' || role == 'DGP' ) ? (
-            <>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span>Population</span> <span>12.73 Crore</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span>Districts</span> <span>36</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span>Commissionerates</span> <span>12</span>
-              </div>
-            </>
+        <div style={{
+          height: "75vh",
+          width: "25%",
+          background: "white",
+          borderRadius: "10px",
+          padding: "20px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",  // Centers content horizontally
+          marginTop: "2px",
+          overflow:"scroll"
+        }}>
+
+          {catogory === "FIR" ? (
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "30px" }}>
+              <h4
+                style={{
+                  textAlign: "center",
+                  marginBottom: "0px",
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                  width: "100%",
+                }}
+              >
+                Type of Data
+              </h4>
+
+              <Select
+                className="h-[40px]"
+                labelId="form-type-label"
+                id="form-type"
+                value={selectedForm}
+                onChange={handleChange}
+                style={{ width: "80%" }} // Keeps dropdown width balanced
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: "200px",
+                      overflowY: "auto",
+                      width: "200px",
+                    },
+                  },
+                }}
+              >
+                {options.map((form) => (
+                  <MenuItem key={form} value={form}>
+                    {form}
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
           ) : null}
 
-          <hr style={{ margin: "5px 0", borderColor: "#ccc" }} />
 
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
-            <span>80%</span>
-            <div style={{ width: "30px", height: "10px", background: "#37C5037A", borderRadius: "2px" }}></div>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
-            <span>60% - 80%</span>
-            <div style={{ width: "30px", height: "10px", background: "#9AD91180", borderRadius: "2px" }}></div>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
-            <span>40% - 60%</span>
-            <div style={{ width: "30px", height: "10px", background: "#FF85855C", borderRadius: "2px" }}></div>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
-            <span>less than 40 %</span>
-            <div style={{ width: "30px", height: "10px", background: "#F455466B", borderRadius: "2px" }}></div>
-          </div>
+
+          {catogory === "FIR" && selectedForm === "Pendency of cases under BNS" ? (
+            <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center" }}>
+
+              <h3 style={{
+                textAlign: "center",
+                marginTop: "10px",
+                marginBottom: "0px",
+                fontWeight: "bold",
+                width: "100%",
+              }} >Registered Cases</h3>
+              <div style={{ display: "flex" }}>
+                <ApexCharts
+                  options={{
+                    labels: pieData1.labels,
+                    chart: { type: "pie" },
+                    legend: { position: "bottom" },
+                    colors: ["#66B8FF", "#66F0B3"]
+                  }}
+                  series={pieData1.series}
+                  type="pie"
+                  width="300"
+                />
+              </div>
+              <div>
+                <ApexCharts
+                  options={{
+                    labels: pieData2.labels,
+                    chart: { type: "pie" },
+                    legend: { position: "bottom" },
+                    colors: ["#66B8FF", "#66F0B3"]
+                  }}
+                  series={pieData2.series}
+                  type="pie"
+                  width="300"
+                />
+              </div>
+
+
+
+            </div>
+          ) :
+            catogory === "FIR" && selectedForm === "Untraced Missing" ? (
+              <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center", textWrap: "wrap" }}>
+
+                <h4
+                  style={{
+                    textAlign: "center",
+                    marginTop: "10px",
+                    marginBottom: "0px",
+                    fontWeight: "bold",
+                    width: "100%",
+                  }}
+                >Total of Missing Persons - {totalMissingPersons}</h4>
+
+                <div style={{ display: "flex" }}>
+                  <ApexCharts
+                    options={{
+                      labels: pieData1.labels,
+                      chart: { type: "pie" },
+                      legend: { position: "bottom" },
+                      colors: ["#FFB366", "#FF6666", "#66B8FF", "#66F0B3"],
+                      tooltip: {
+                        y: {
+                          formatter: (value) => value // Shows actual count in tooltip
+                        }
+                      },
+                      dataLabels: {
+                        enabled: true,
+                        formatter: (value, { seriesIndex, w }) => w.config.series[seriesIndex] // Show actual count on pie chart
+                      }
+                    }}
+                    series={pieData1.series}
+                    type="pie"
+                    width="300"
+                  />
+
+                </div>
+
+                <div>
+                  <ApexCharts
+                    options={{
+                      labels: pieData2.labels,
+                      chart: { type: "pie" },
+                      legend: { position: "bottom" },
+                      colors: ["#FFB366", "#FF6666", "#66B8FF", "#66F0B3"],
+                      tooltip: {
+                        y: {
+                          formatter: (value) => value // Shows actual count in tooltip
+                        }
+                      },
+                      dataLabels: {
+                        enabled: true,
+                        formatter: (value, { seriesIndex, w }) => w.config.series[seriesIndex] // Show actual count on pie chart
+                      }
+                    }}
+                    series={pieData2.series}
+                    type="pie"
+                    width="300"
+                  />
+
+                </div>
+              </div>
+            ) :
+              catogory === "FIR" && selectedForm === "Important sections introduced in BNS" ? (
+                <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center", textWrap: "wrap" }}>
+
+                  <h4
+                    style={{
+                      textAlign: "center",
+                      marginTop: "10px",
+                      marginBottom: "0px",
+                      fontWeight: "bold",
+                      width: "100%",
+                    }}
+                  >Important</h4>
+
+                  <div style={{ display: "flex" }}>
+                    <ApexCharts
+                      options={{
+                        labels: pieData1.labels,
+                        chart: { type: "pie" },
+                        legend: { position: "bottom" },
+                        colors: ["#FFB366", "#FF6666", "#66B8FF", "#66F0B3"],
+                        tooltip: {
+                          y: {
+                            formatter: (value) => value // Shows actual count in tooltip
+                          }
+                        },
+                        dataLabels: {
+                          enabled: true,
+                          formatter: (value, { seriesIndex, w }) => w.config.series[seriesIndex] // Show actual count on pie chart
+                        }
+                      }}
+                      series={pieData1.series}
+                      type="pie"
+                      width="300"
+                    />
+
+                  </div>
+
+                  <div>
+                    <ApexCharts
+                      options={{
+                        labels: pieData2.labels,
+                        chart: { type: "pie" },
+                        legend: { position: "bottom" },
+                        colors: ["#FFB366", "#FF6666", "#66B8FF", "#66F0B3"],
+                        tooltip: {
+                          y: {
+                            formatter: (value) => value // Shows actual count in tooltip
+                          }
+                        },
+                        dataLabels: {
+                          enabled: true,
+                          formatter: (value, { seriesIndex, w }) => w.config.series[seriesIndex] // Show actual count on pie chart
+                        }
+                      }}
+                      series={pieData2.series}
+                      type="pie"
+                      width="300"
+                    />
+
+                  </div>
+                </div>
+              ) :
+              catogory === "FIR" && selectedForm === "Important sections introduced in BNS" ? (
+                <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center", textWrap: "wrap" }}>
+
+                  <h4
+                    style={{
+                      textAlign: "center",
+                      marginTop: "10px",
+                      marginBottom: "0px",
+                      fontWeight: "bold",
+                      width: "100%",
+                    }}
+                  >Important</h4>
+
+                  <div style={{ display: "flex" }}>
+                    <ApexCharts
+                      options={{
+                        labels: pieData1.labels,
+                        chart: { type: "pie" },
+                        legend: { position: "bottom" },
+                        colors: ["#FFB366", "#FF6666", "#66B8FF", "#66F0B3"],
+                        tooltip: {
+                          y: {
+                            formatter: (value) => value // Shows actual count in tooltip
+                          }
+                        },
+                        dataLabels: {
+                          enabled: true,
+                          formatter: (value, { seriesIndex, w }) => w.config.series[seriesIndex] // Show actual count on pie chart
+                        }
+                      }}
+                      series={pieData1.series}
+                      type="pie"
+                      width="300"
+                    />
+
+                  </div>
+
+                  <div>
+                    <ApexCharts
+                      options={{
+                        labels: pieData2.labels,
+                        chart: { type: "pie" },
+                        legend: { position: "bottom" },
+                        colors: ["#FFB366", "#FF6666", "#66B8FF", "#66F0B3"],
+                        tooltip: {
+                          y: {
+                            formatter: (value) => value // Shows actual count in tooltip
+                          }
+                        },
+                        dataLabels: {
+                          enabled: true,
+                          formatter: (value, { seriesIndex, w }) => w.config.series[seriesIndex] // Show actual count on pie chart
+                        }
+                      }}
+                      series={pieData2.series}
+                      type="pie"
+                      width="300"
+                    />
+
+                  </div>
+                </div>
+              ) :
+                catogory === "FIR" && selectedForm === "Offences against body under BNS" ? (
+                  <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center", textWrap: "wrap" }}>
+
+                    <h4
+                      style={{
+                        textAlign: "center",
+                        marginTop: "10px",
+                        marginBottom: "0px",
+                        fontWeight: "bold",
+                        width: "100%",
+                      }}
+                    >Offences</h4>
+
+                    <div style={{ display: "flex" }}>
+                      <ApexCharts
+                        options={{
+                          labels: pieData1.labels,
+                          chart: { type: "pie" },
+                          legend: { position: "bottom" },
+                          colors: ["#FFB366", "#FF6666", "#66B8FF", "#66F0B3"],
+                          tooltip: {
+                            y: {
+                              formatter: (value) => value // Shows actual count in tooltip
+                            }
+                          },
+                          dataLabels: {
+                            enabled: true,
+                            formatter: (value, { seriesIndex, w }) => w.config.series[seriesIndex] // Show actual count on pie chart
+                          }
+                        }}
+                        series={pieData1.series}
+                        type="pie"
+                        width="300"
+                      />
+
+                    </div>
+
+                    <div>
+                      <ApexCharts
+                        options={{
+                          labels: pieData2.labels,
+                          chart: { type: "pie" },
+                          legend: { position: "bottom" },
+                          colors: ["#FFB366", "#FF6666", "#66B8FF", "#66F0B3"],
+                          tooltip: {
+                            y: {
+                              formatter: (value) => value // Shows actual count in tooltip
+                            }
+                          },
+                          dataLabels: {
+                            enabled: true,
+                            formatter: (value, { seriesIndex, w }) => w.config.series[seriesIndex] // Show actual count on pie chart
+                          }
+                        }}
+                        series={pieData2.series}
+                        type="pie"
+                        width="300"
+                      />
+
+                    </div>
+                  </div>
+                ) :
+                  catogory === "FIR" && selectedForm === "eSakshya Details" ? (
+                    <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center", textWrap: "wrap" }}>
+
+                      <h4
+                        style={{
+                          textAlign: "center",
+                          marginTop: "10px",
+                          marginBottom: "0px",
+                          fontWeight: "bold",
+                          width: "100%",
+                        }}
+                      >esakshay details</h4>
+
+                      <div style={{ display: "flex" }}>
+                        <ApexCharts
+                          options={{
+                            labels: pieData1.labels,
+                            chart: { type: "pie" },
+                            legend: { position: "bottom" },
+                            colors: ["#FFB366", "#FF6666", "#66B8FF", "#66F0B3"],
+                            tooltip: {
+                              y: {
+                                formatter: (value) => value // Shows actual count in tooltip
+                              }
+                            },
+                            dataLabels: {
+                              enabled: true,
+                              formatter: (value, { seriesIndex, w }) => w.config.series[seriesIndex] // Show actual count on pie chart
+                            }
+                          }}
+                          series={pieData1.series}
+                          type="pie"
+                          width="300"
+                        />
+
+                      </div>
+
+                    </div>
+                  ) :
+                    catogory === "FIR" && selectedForm === "Zero FIR's" ? (
+                      <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center", textWrap: "wrap" }}>
+
+                        <h4
+                          style={{
+                            textAlign: "center",
+                            marginTop: "10px",
+                            marginBottom: "0px",
+                            fontWeight: "bold",
+                            width: "100%",
+                          }}
+                        >Zero FIR's</h4>
+                        {/* first pie chart */}
+                        <div style={{ display: "flex" }}>
+                          <ApexCharts
+                            options={{
+                              labels: pieData1.labels,
+                              chart: { type: "pie" },
+                              legend: { position: "bottom" },
+                              colors: ["#FFB366", "#FF6666", "#66B8FF", "#66F0B3"],
+                              tooltip: {
+                                y: {
+                                  formatter: (value) => value // Shows actual count in tooltip
+                                }
+                              },
+                              dataLabels: {
+                                enabled: true,
+                                formatter: (value, { seriesIndex, w }) => w.config.series[seriesIndex] // Show actual count on pie chart
+                              }
+                            }}
+                            series={pieData1.series}
+                            type="pie"
+                            width="300"
+                          />
+
+                        </div>
+                        {/* second pie chart */}
+                        <div style={{ display: "flex" }}>
+                          <ApexCharts
+                            options={{
+                              labels: pieData2.labels,
+                              chart: { type: "pie" },
+                              legend: { position: "bottom" },
+                              colors: ["#FFB366", "#FF6666", "#66B8FF", "#66F0B3"],
+                              tooltip: {
+                                y: {
+                                  formatter: (value) => value // Shows actual count in tooltip
+                                }
+                              },
+                              dataLabels: {
+                                enabled: true,
+                                formatter: (value, { seriesIndex, w }) => w.config.series[seriesIndex] // Show actual count on pie chart
+                              }
+                            }}
+                            series={pieData2.series}
+                            type="pie"
+                            width="300"
+                          />
+
+                        </div>
+                        {/* third pie chart */}
+                        <div style={{ display: "flex" }}>
+                          <ApexCharts
+                            options={{
+                              labels: pieData3.labels,
+                              chart: { type: "pie" },
+                              legend: { position: "bottom" },
+                              colors: ["#FFB366", "#FF6666", "#66B8FF", "#66F0B3"],
+                              tooltip: {
+                                y: {
+                                  formatter: (value) => value // Shows actual count in tooltip
+                                }
+                              },
+                              dataLabels: {
+                                enabled: true,
+                                formatter: (value, { seriesIndex, w }) => w.config.series[seriesIndex] // Show actual count on pie chart
+                              }
+                            }}
+                            series={pieData3.series}
+                            type="pie"
+                            width="300"
+                          />
+
+                        </div>
+
+                        {/* Bar Chart for Zero FIRs */}
+                        <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+                          <ApexCharts
+                            options={{
+                              chart: { type: "bar", stacked: true },
+                              xaxis: { categories: barData.categories },
+                              legend: { position: "bottom" },
+                              plotOptions: {
+                                bar: {
+                                  horizontal: false,
+                                  dataLabels: { position: "top" },
+                                },
+                              },
+                              tooltip: { y: { formatter: (value) => value } },
+                            }}
+                            series={barData.series}
+                            type="bar"
+                            width="300"
+                            height="350"
+                          />
+                        </div>
+
+
+
+                      </div>
+                    ) :
+                      catogory === "FIR" && selectedForm === "ITSSO Compliance Form" ? (
+                        <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center", textWrap: "wrap" }}>
+
+                          <h4
+                            style={{
+                              textAlign: "center",
+                              marginTop: "10px",
+                              marginBottom: "0px",
+                              fontWeight: "bold",
+                              width: "100%",
+                            }}
+                          >ITSSO Compliance Form</h4>
+
+                          <div style={{ display: "flex" }}>
+                            <ApexCharts
+                              options={{
+                                labels: pieData1.labels,
+                                chart: { type: "pie" },
+                                legend: { position: "bottom" },
+                                colors: ["#FFB366", "#FF6666", "#66B8FF", "#66F0B3"],
+                                tooltip: {
+                                  y: {
+                                    formatter: (value) => value // Shows actual count in tooltip
+                                  }
+                                },
+                                dataLabels: {
+                                  enabled: true,
+                                  formatter: (value, { seriesIndex, w }) => w.config.series[seriesIndex] // Show actual count on pie chart
+                                }
+                              }}
+                              series={pieData1.series}
+                              type="pie"
+                              width="300"
+                            />
+
+                          </div>
+
+                        </div>
+                      ) :
+                        catogory === "FIR" && selectedForm === "Stolen & Recovered Property" ? (
+                          <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center" }}>
+
+                            <h4 style={{ textAlign: "center", fontWeight: "bold", width: "100%" }}>
+                              Stolen & Recovered Property
+                            </h4>
+
+                            {/* First Stacked Bar Graph */}
+                            <ApexCharts
+                              options={{
+                                chart: { type: "bar", stacked: true },
+                                xaxis: { categories: barData1.categories },
+                                legend: { position: "bottom" },
+                                colors: ["#FF6666", "#66B8FF"], // Colors for stacked bars
+                                tooltip: { y: { formatter: (value) => value } }
+                              }}
+                              series={barData1.series}
+                              type="bar"
+                              width="500"
+                              height="300"
+                            />
+
+                            {/* Second Stacked Bar Graph */}
+                            <ApexCharts
+                              options={{
+                                chart: { type: "bar", stacked: true },
+                                xaxis: { categories: barData2.categories },
+                                legend: { position: "bottom" },
+                                colors: ["#FFB366", "#66F0B3"], // Colors for stacked bars
+                                tooltip: { y: { formatter: (value) => value } }
+                              }}
+                              series={barData2.series}
+                              type="bar"
+                              width="500"
+                              height="300"
+                            />
+
+                          </div>
+                        ) :
+                          catogory === "FIR" && selectedForm === "eFIR" ? (
+                            <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center", textWrap: "wrap" }}>
+
+                              <h4
+                                style={{
+                                  textAlign: "center",
+                                  marginTop: "10px",
+                                  marginBottom: "0px",
+                                  fontWeight: "bold",
+                                  width: "100%",
+                                }}
+                              >eFIR</h4>
+
+                              <div style={{ display: "flex" }}>
+                                <ApexCharts
+                                  options={{
+                                    labels: pieData1.labels,
+                                    chart: { type: "pie" },
+                                    legend: { position: "bottom" },
+                                    colors: ["#FFB366", "#FF6666", "#66B8FF", "#66F0B3"],
+                                    tooltip: {
+                                      y: {
+                                        formatter: (value) => value // Shows actual count in tooltip
+                                      }
+                                    },
+                                    dataLabels: {
+                                      enabled: true,
+                                      formatter: (value, { seriesIndex, w }) => w.config.series[seriesIndex] // Show actual count on pie chart
+                                    }
+                                  }}
+                                  series={pieData1.series}
+                                  type="pie"
+                                  width="300"
+                                />
+
+                              </div>
+
+                            </div>
+                          ) :
+                            catogory === "FORENSIC" ? (
+                              <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center", textWrap: "wrap" }}>
+
+                                <h4
+                                  style={{
+                                    textAlign: "center",
+                                    marginTop: "10px",
+                                    marginBottom: "0px",
+                                    fontWeight: "bold",
+                                    width: "100%",
+                                  }}
+                                >Forensic Visits</h4>
+
+                                <div style={{ display: "flex" }}>
+                                  <ApexCharts
+                                    options={{
+                                      labels: pieData1.labels,
+                                      chart: { type: "pie" },
+                                      legend: { position: "bottom" },
+                                      colors: ["#FFB366", "#FF6666", "#66B8FF", "#66F0B3"],
+                                      tooltip: {
+                                        y: {
+                                          formatter: (value) => value // Shows actual count in tooltip
+                                        }
+                                      },
+                                      dataLabels: {
+                                        enabled: true,
+                                        formatter: (value, { seriesIndex, w }) => w.config.series[seriesIndex] // Show actual count on pie chart
+                                      }
+                                    }}
+                                    series={pieData1.series}
+                                    type="pie"
+                                    width="300"
+                                  />
+
+                                </div>
+
+                              </div>
+                            ) :
+                              catogory === "Training" ? (
+                                <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center" }}>
+
+                                  <h4
+                                    style={{
+                                      textAlign: "center",
+                                      marginTop: "10px",
+                                      marginBottom: "0px",
+                                      fontWeight: "bold",
+                                      width: "100%",
+                                    }}
+                                  >Training Data</h4>
+                                  <div style={{ display: "flex" }}>
+                                    <ApexCharts
+                                      options={{
+                                        labels: pieData1.labels,
+                                        chart: { type: "pie" },
+                                        legend: { position: "bottom" },
+                                        colors: ["#66B8FF", "#66F0B3"]
+                                      }}
+                                      series={pieData1.series}
+                                      type="pie"
+                                      width="300"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <ApexCharts
+                                      options={{
+                                        labels: pieData2.labels,
+                                        chart: { type: "pie" },
+                                        legend: { position: "bottom" },
+                                        colors: ["#66B8FF", "#66F0B3"]
+                                      }}
+                                      series={pieData2.series}
+                                      type="pie"
+                                      width="300"
+                                    />
+
+                                  </div>
+
+
+
+                                </div>
+                              ) :
+                                (
+                                  <h1>Please Hover on the Map to view the graphs</h1>
+                                )}
+
+
 
         </div>
+
       </div>
     </div>
+
   );
 };
 
