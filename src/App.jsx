@@ -4,7 +4,8 @@ import LoginPage from './components/Loginpage.jsx';
 import Mainnavbar from './components/Mainnavbar.jsx';
 import { Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import ScheduledUpdateNotice from "../src/scehdule.jsx"
+import { Schedule } from '@mui/icons-material';
 function App() {
   const ProtectedRoute = ({ element }) => {
     const token = localStorage.getItem("token");
@@ -12,13 +13,15 @@ function App() {
   };
 
   return (
-    <>
-      {/* Define routes for LoginPage and Mainnavbar */}
-      <Routes>
-        <Route path="/" element={<LoginPage />} /> {/* Login page route */}
-        <Route path="/mainnavbar"  element={<ProtectedRoute element={<Mainnavbar />} />} /> 
-      </Routes>
-    </>
+    // <>
+     
+    //   <Routes>
+    //     <Route path="/" element={<LoginPage />} /> {/* Login page route */}
+    //     <Route path="/mainnavbar"  element={<ProtectedRoute element={<Mainnavbar />} />} /> 
+    //   </Routes>
+
+    // </>
+    <ScheduledUpdateNotice/>
   );
 }
 
