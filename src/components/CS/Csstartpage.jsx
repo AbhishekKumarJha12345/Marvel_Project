@@ -18,6 +18,10 @@ import { Category } from "@mui/icons-material";
 import ApexCharts from "react-apexcharts";
 import { use } from "react";
 
+import Highcharts from 'highcharts/highstock';
+import HighchartsReact from 'highcharts-react-official';
+import Sunburst from 'highcharts/modules/sunburst';
+
 
 const policeStationIcon = new L.Icon({
   iconUrl: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
@@ -52,8 +56,8 @@ const MaharashtraMap = (catogoryBar) => {
   const district = localStorage.getItem("district")
   const zone = localStorage.getItem("zone")
 
-  
-  
+
+
   // -------------------------------------------
 
 
@@ -66,6 +70,8 @@ const MaharashtraMap = (catogoryBar) => {
   const [barData1, setBarData1] = useState({ categories: [], series: [] });
   const [barData2, setBarData2] = useState({ categories: [], series: [] });
   const [barData, setBarData] = useState({ categories: [], series: [] });
+
+  const [sunburstData, setSunburstData] = useState([]); // Initialize sunburstData state
 
 
   const fetchPieChartData = async (districtName, typeFilter, Catogory, zoneName) => {
@@ -160,15 +166,15 @@ const MaharashtraMap = (catogoryBar) => {
       }
       else if (data.type === "Use of eSakshya App in cases with punishment of 7 yrs. or more") {
         // Separate inner and outer donut values
-        setPieData1({
-          labels: ["Cases eSakshya Used", "Cases eSakshya Not Used"], // Inner Circle
-          series: [data.cases_esakshya_used, data.cases_esakshya_not_used]
-        });
+        const sunburstData = [
+          { id: '0.0', parent: '', name: 'Use of eSakshya App', value: 1 },
+          { id: '1.1', parent: '0.0', name: 'Cases eSakshya Used', value: data.cases_esakshya_used },
+          { id: '1.2', parent: '0.0', name: 'Cases eSakshya Not Used', value: data.cases_esakshya_not_used },
+          { id: '2.1', parent: '1.1', name: 'eSakshya Used Charge Sheeted', value: data.esakshya_used_charge_sheeted },
+          { id: '2.2', parent: '1.2', name: 'eSakshya Not Used Investigation', value: data.esakshya_not_used_invest },
+        ];
 
-        setPieData2({
-          labels: ["eSakshya Used Charge Sheeted", "eSakshya Not Used Investigation"], // Outer Circle
-          series: [data.esakshya_used_charge_sheeted, data.esakshya_not_used_invest]
-        });
+        setSunburstData(sunburstData);
       }
       else if (data.type === "Stolen & Recovered Property") {
         setBarData1({
@@ -247,7 +253,7 @@ const MaharashtraMap = (catogoryBar) => {
   };
 
 
-  
+
   // ----------------------------------------------------------------
 
   const [percent, setpercent] = useState(0);
@@ -291,7 +297,7 @@ const MaharashtraMap = (catogoryBar) => {
 
 
 
-  useEffect(()=>{
+  useEffect(() => {
     setPieData1({ labels: [], series: [] })
     setPieData2({ labels: [], series: [] })
     setPieData3({ labels: [], series: [] })
@@ -301,10 +307,10 @@ const MaharashtraMap = (catogoryBar) => {
 
 
 
-  },[catogory,selectedForm])
+  }, [catogory, selectedForm])
 
 
- 
+
 
 
 
@@ -659,8 +665,10 @@ const MaharashtraMap = (catogoryBar) => {
         L.marker(center, { icon: label }).addTo(map);
 
         let clickTimeout;
-
-        sub_role == 'SP' || sub_role == 'CP' ? fetchPieChartData(selectedZone ? districtName : null, selectedForm, catogory, zoneName) : null
+        let district_sp_cp = localStorage.getItem("district")
+        let zone_sp_cp = localStorage.getItem("zone")
+        sub_role == 'SP' || sub_role == 'CP' ? fetchPieChartData(district_sp_cp, selectedForm, catogory, zone_sp_cp) : null
+        console.log("districtName", zone_sp_cp, "..................test............");
         layer.on({
           click: (e) => {
             if (clickTimeout) {
@@ -669,7 +677,11 @@ const MaharashtraMap = (catogoryBar) => {
               setSelectedZone(zoneName); // Double click action
             } else {
               clickTimeout = setTimeout(() => {
-                fetchPieChartData(selectedZone ? districtName : null, selectedForm, catogory, zoneName);
+                if (sub_role === 'SP' || sub_role === 'CP') {
+                  fetchPieChartData(district_sp_cp, selectedForm, catogory, zone_sp_cp);
+                } else {
+                  fetchPieChartData(selectedZone ? districtName : null, selectedForm, catogory, zoneName);
+                }
                 clickTimeout = null;
               }, 250); // Delay to detect double-click
             }
@@ -751,7 +763,7 @@ const MaharashtraMap = (catogoryBar) => {
 
 
 
-  
+
 
 
   // -------------------i am adding useEffect ------------------------------------------
@@ -775,50 +787,50 @@ const MaharashtraMap = (catogoryBar) => {
     "Pune": "pune_fir",
     "Nashik": "Nashik_fir"
   };
-  
+
   useEffect(() => {
     const fetchMLResponse = async () => {
       try {
 
-        console.log("catogory : ",catogory);
-        
-        // Decide whether to send `type` or `districts`
-        const requestBody = 
-                !selectedZone 
-                  ? (catogory === "Training" 
-                      ? { type: "police_all_zone" } 
-                      : catogory === "FIR" 
-                        ? { type: "fir_zone_cp" } 
-                        : {})
-                  : (catogory === "Training" 
-                      ? { type: zoneMappingpayload[selectedZone] } 
-                      : { type: zoneMappingpayloadFIR[selectedZone] });
-                  console.log("requestBody : ",requestBody)
-          let response;
-          if (catogory === "Training") {
-            response = await axios.post(
-              "https://mhmarvel.org/api2/llm_result",
-              requestBody,
-              { headers: { "Content-Type": "application/json", "Accept": "application/json" } }
-            );
-          } else if (catogory === "FIR") {
-            response = await axios.post(
-              "https://mhmarvel.org/api2/offences",
-              requestBody,
-              { headers: { "Content-Type": "application/json", "Accept": "application/json" } }
-            );
-          }
+        console.log("catogory : ", catogory);
 
-  
+        // Decide whether to send `type` or `districts`
+        const requestBody =
+          !selectedZone
+            ? (catogory === "Training"
+              ? { type: "police_all_zone" }
+              : catogory === "FIR"
+                ? { type: "fir_zone_cp" }
+                : {})
+            : (catogory === "Training"
+              ? { type: zoneMappingpayload[selectedZone] }
+              : { type: zoneMappingpayloadFIR[selectedZone] });
+        console.log("requestBody : ", requestBody)
+        let response;
+        if (catogory === "Training") {
+          response = await axios.post(
+            "https://mhmarvel.org/api2/llm_result",
+            requestBody,
+            { headers: { "Content-Type": "application/json", "Accept": "application/json" } }
+          );
+        } else if (catogory === "FIR") {
+          response = await axios.post(
+            "https://mhmarvel.org/api2/offences",
+            requestBody,
+            { headers: { "Content-Type": "application/json", "Accept": "application/json" } }
+          );
+        }
+
+
         console.log("response.data:", response.data.formatted_llm_result);
-        
+
         const modifiedHTML = response.data.formatted_llm_result
-  
+
         setMlResponse(modifiedHTML);
-          
-          // Store in localStorage only for all zones
-            localStorage.setItem("MLReport", modifiedHTML);
-          
+
+        // Store in localStorage only for all zones
+        localStorage.setItem("MLReport", modifiedHTML);
+
       } catch (error) {
         console.error("Error fetching ML response:", error);
         setMlResponse("Failed to load response");
@@ -827,8 +839,8 @@ const MaharashtraMap = (catogoryBar) => {
 
     fetchMLResponse();
   }, [role, selectedZone, catogory]);
-  
-   // Runs only once when the component mounts
+
+  // Runs only once when the component mounts
 
   // Function to format text: Converts bold text into <h3> tags
 
@@ -836,36 +848,36 @@ const MaharashtraMap = (catogoryBar) => {
 
 
 
-  
+
 
   return (
     <div>
-      { (role === 'chief secretary' || role == 'ACS' || role == 'DGP') &&
-      <div
-        style={{
-          padding: "10px",
-          borderRadius: "5px",
-          height: "fit-content", // Auto-adjust height
-          // width: "fit-content", // Auto-adjust width
-          display: "flex",
-          alignItems: "center",
-          borderRadius: "10px",
-          background: "#fff",
-          right: "0",
-          marginBottom: "10px",
-        }}
-      >
-        {/* Text Content (Acts like an Input) */}
+      {(role === 'chief secretary' || role == 'ACS' || role == 'DGP') &&
         <div
           style={{
-            flex: 1,
-            textOverflow: "ellipsis",
-            padding: "5px",
+            padding: "10px",
+            borderRadius: "5px",
+            height: "fit-content", // Auto-adjust height
+            // width: "fit-content", // Auto-adjust width
+            display: "flex",
+            alignItems: "center",
+            borderRadius: "10px",
+            background: "#fff",
+            right: "0",
+            marginBottom: "10px",
           }}
         >
-          <div dangerouslySetInnerHTML={{ __html: mlResponse || "<p>Loading...</p>" }} />
+          {/* Text Content (Acts like an Input) */}
+          <div
+            style={{
+              flex: 1,
+              textOverflow: "ellipsis",
+              padding: "5px",
+            }}
+          >
+            <div dangerouslySetInnerHTML={{ __html: mlResponse || "<p>Loading...</p>" }} />
+          </div>
         </div>
-      </div>
       }
 
       <div style={{ display: "flex", height: "76vh", zIndex: "0", gap: "20px" }}>
@@ -1010,7 +1022,7 @@ const MaharashtraMap = (catogoryBar) => {
                   <span>Submit Zone / Total Zones</span>
                   <span> {Object.keys(zonePercentages).length} / 6</span> {/* Change 50 to your total districts count */}
                 </div>
-                
+
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                   <span>Sumited-Dist / Total-Dist</span>
                   <span> {Object.keys(districtPercentages).length} / 36</span> {/* Change 50 to your total districts count */}
@@ -1055,7 +1067,7 @@ const MaharashtraMap = (catogoryBar) => {
           flexDirection: "column",
           alignItems: "center",  // Centers content horizontally
           marginTop: "2px",
-          overflow:"scroll"
+          overflow: "scroll"
         }}>
 
           {catogory === "FIR" ? (
@@ -1100,7 +1112,7 @@ const MaharashtraMap = (catogoryBar) => {
 
 
 
-{catogory === "FIR" && selectedForm === "Pendency of cases under BNS" ? (
+          {catogory === "FIR" && selectedForm === "Pendency of cases under BNS" ? (
             <div className="flex-col" style={{ display: "flex", justifyContent: "center", gap: "30px", alignItems: "center" }}>
 
               <h3 style={{
@@ -1539,98 +1551,49 @@ const MaharashtraMap = (catogoryBar) => {
                               Use of eSakshya App (7 yrs. or more)
                             </h4>
 
-                            {/* Container for overlaying charts */}
-                            <div style={{ position: "relative", width: "400px", height: "400px" }}>
-                              {/* Outer Circle */}
-                              <ApexCharts
+                            {/* Sunburst Chart */}
+                            <div style={{ width: "400px", height: "400px" }}>
+                              <HighchartsReact
+                                highcharts={Highcharts}
                                 options={{
-                                  chart: { type: "donut" },
-                                  labels: pieData2.labels,
-                                  legend: { position: "bottom" },
-                                  colors: ["#FFB366", "#66F0B3", "#FFA500"],
-                                  plotOptions: {
-                                    pie: {
-                                      donut: {
-                                        size: "75%", // Keep the outer donut bigger
-                                        labels: {
-                                          show: false,
-                                          name: { show: false },
-                                          value: { show: false },
-                                        }
-                                      }
-                                    }
-                                  }
+                                  chart: {
+                                    type: 'sunburst',
+                                    height: '100%',
+                                  },
+                                  title: {
+                                    text: 'Sunburst Chart for eSakshya Usage',
+                                  },
+                                  series: [{
+                                    type: 'sunburst',
+                                    data: sunburstData, // Dynamically set data
+                                    allowDrillToNode: true,
+                                    cursor: 'pointer',
+                                    dataLabels: {
+                                      format: '{point.name}',
+                                    },
+                                    levels: [
+                                      {
+                                        level: 1,
+                                        levelIsConstant: false,
+                                        dataLabels: {
+                                          filter: {
+                                            property: 'innerArcLength',
+                                            operator: '>',
+                                            value: 16,
+                                          },
+                                        },
+                                      },
+                                      {
+                                        level: 2,
+                                        colorByPoint: true,
+                                      },
+                                    ],
+                                  }],
+                                  tooltip: {
+                                    pointFormat: '{point.name}: <b>{point.value}</b>',
+                                  },
                                 }}
-                                series={pieData2.series}
-                                type="donut"
-                                width="450"
                               />
-
-                              {/* Inner Circle - Centered inside Outer Circle */}
-                              <div style={{
-                                position: "absolute",
-                                top: "48%",
-                                left: "56%",
-                                transform: "translate(-50%, -50%)",
-                                width: "250px", // Make inner donut smaller
-                                height: "250px",
-                              }}>
-                                <ApexCharts
-                                  options={{
-                                    chart: { type: "donut" },
-                                    labels: pieData1.labels,
-                                    legend: { show: false },
-                                    colors: ["#FF6666", "#66B8FF"],
-                                    plotOptions: {
-                                      pie: {
-                                        donut: {
-                                          size: "50%", // Smaller for inner circle
-                                          labels: {
-                                            show: true,
-                                            name: { show: true },
-                                            value: { show: true },
-                                          }
-                                        }
-                                      }
-                                    }
-                                  }}
-                                  series={pieData1.series}
-                                  type="donut"
-                                  width="250"
-                                />
-                              </div>
-                            </div>
-                            {/* Custom Legend for Outer and Inner Charts */}
-                            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "-70px" }}>
-                              {/* Outer Chart Legend */}
-                              <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", justifyContent: "center" }}>
-                                {pieData2.labels.map((label, index) => (
-                                  <div key={index} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                                    <div style={{
-                                      width: "15px",
-                                      height: "15px",
-                                      backgroundColor: ["#FFB366", "#66F0B3", "#FFA500"][index], // Match colors
-                                      borderRadius: "50%",
-                                    }}></div>
-                                    <span style={{ fontSize: "14px", fontWeight: "bold" }}>{label}</span>
-                                  </div>
-                                ))}
-                              </div>
-
-                              {/* Inner Chart Legend */}
-                              <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", justifyContent: "center", marginTop: "20px" }}>
-                                {pieData1.labels.map((label, index) => (
-                                  <div key={index} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                                    <div style={{
-                                      width: "15px",
-                                      height: "15px",
-                                      backgroundColor: ["#FF6666", "#66B8FF"][index], // Match colors
-                                      borderRadius: "50%",
-                                    }}></div>
-                                    <span style={{ fontSize: "14px", fontWeight: "bold" }}>{label}</span>
-                                  </div>
-                                ))}
-                              </div>
                             </div>
                           </div>
 
@@ -1763,14 +1726,24 @@ const MaharashtraMap = (catogoryBar) => {
                                         fontWeight: "bold",
                                         width: "100%",
                                       }}
-                                    >Trainig Data</h4>
+                                    >Training Data</h4>
                                     <div style={{ display: "flex" }}>
                                       <ApexCharts
                                         options={{
                                           labels: pieData1.labels,
                                           chart: { type: "pie" },
                                           legend: { position: "bottom" },
-                                          colors: ["#66B8FF", "#66F0B3"]
+                                          colors: ["#66B8FF", "#66F0B3"],
+                                          tooltip: {
+                                            y: {
+                                              formatter: (val) => `${val} cases`, // Format the tooltip value as case count
+                                            },
+                                          },
+                                          dataLabels: {
+                                            formatter: (val, { seriesIndex, w }) => {
+                                              return `${w.config.series[seriesIndex]}`; // Show raw values inside slices
+                                            },
+                                          },
                                         }}
                                         series={pieData1.series}
                                         type="pie"
@@ -1784,14 +1757,24 @@ const MaharashtraMap = (catogoryBar) => {
                                           labels: pieData2.labels,
                                           chart: { type: "pie" },
                                           legend: { position: "bottom" },
-                                          colors: ["#66B8FF", "#66F0B3"]
+                                          colors: ["#66B8FF", "#66F0B3"],
+                                          tooltip: {
+                                            y: {
+                                              formatter: (val) => `${val} cases`, // Format the tooltip value as case count
+                                            },
+                                          },
+                                          dataLabels: {
+                                            formatter: (val, { seriesIndex, w }) => {
+                                              return `${w.config.series[seriesIndex]}`; // Show raw values inside slices
+                                            },
+                                          },
                                         }}
                                         series={pieData2.series}
                                         type="pie"
                                         width="300"
                                       />
-
                                     </div>
+
 
 
 

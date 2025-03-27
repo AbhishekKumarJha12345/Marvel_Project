@@ -36,6 +36,8 @@
     "file-saver": "^2.0.5",
     "flatpickr": "^4.6.13",
     "font-awesome": "^4.7.0",
+    "highcharts": "^12.1.2",
+    "highcharts-react-official": "^3.2.1",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4",
