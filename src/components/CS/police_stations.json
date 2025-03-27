@@ -1,8 +1,8 @@
 [
     {
-        "Police Station": "Sadar Police Station",
+        "PoliceStation": "Sadar Police Station",
         "Sub Division": "Nagpur",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 7,
         "Officers": 2,
@@ -12,9 +12,9 @@
         "Longitude": 79.0714362
     },
     {
-        "Police Station": "Sitabuldi Police Station",
+        "PoliceStation": "Sitabuldi Police Station",
         "Sub Division": "Nagpur",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 10,
         "Officers": 5,
@@ -24,9 +24,9 @@
         "Longitude": 79.0806267
     },
     {
-        "Police Station": "Sonegaon Police Station",
+        "PoliceStation": "Sonegaon Police Station",
         "Sub Division": "Nagpur",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 12,
         "Officers": 4,
@@ -36,9 +36,9 @@
         "Longitude": 79.0642392
     },
     {
-        "Police Station": "Ajni Police Station",
+        "PoliceStation": "Ajni Police Station",
         "Sub Division": "Ajni",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 13,
         "Officers": 5,
@@ -48,9 +48,9 @@
         "Longitude": 79.08471700000001
     },
     {
-        "Police Station": "MIDC Police Station",
+        "PoliceStation": "MIDC Police Station",
         "Sub Division": "Nagpur",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 10,
         "Officers": 2,
@@ -60,9 +60,9 @@
         "Longitude": 79.0082508
     },
     {
-        "Police Station": "Kanhan Police Station",
+        "PoliceStation": "Kanhan Police Station",
         "Sub Division": "Kanhan",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 7,
         "Officers": 3,
@@ -72,9 +72,9 @@
         "Longitude": 79.2340236
     },
     {
-        "Police Station": "Khaparkheda Police Station",
+        "PoliceStation": "Khaparkheda Police Station",
         "Sub Division": "Kanhan",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 9,
         "Officers": 4,
@@ -84,9 +84,9 @@
         "Longitude": 79.1191269
     },
     {
-        "Police Station": "Mouda Police Station",
+        "PoliceStation": "Mouda Police Station",
         "Sub Division": "Kanhan",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 5,
         "Officers": 4,
@@ -96,9 +96,9 @@
         "Longitude": 79.3972663
     },
     {
-        "Police Station": "Ramtek Police Station",
+        "PoliceStation": "Ramtek Police Station",
         "Sub Division": "Ramtek",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 8,
         "Officers": 2,
@@ -108,9 +108,9 @@
         "Longitude": 79.3241446
     },
     {
-        "Police Station": "Deolapar Police Station",
+        "PoliceStation": "Deolapar Police Station",
         "Sub Division": "Ramtek",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 12,
         "Officers": 3,
@@ -120,9 +120,9 @@
         "Longitude": 79.36990879999999
     },
     {
-        "Police Station": "Aroli Police Station",
+        "PoliceStation": "Aroli Police Station",
         "Sub Division": "Ramtek",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 12,
         "Officers": 4,
@@ -132,9 +132,9 @@
         "Longitude": 79.0881546
     },
     {
-        "Police Station": "Parshivni Police Station",
+        "PoliceStation": "Parshivni Police Station",
         "Sub Division": "Ramtek",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 7,
         "Officers": 3,
@@ -144,9 +144,9 @@
         "Longitude": 79.0881546
     },
     {
-        "Police Station": "Saoner Police Station",
+        "PoliceStation": "Saoner Police Station",
         "Sub Division": "Saoner",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 7,
         "Officers": 2,
@@ -156,9 +156,9 @@
         "Longitude": 78.9218925
     },
     {
-        "Police Station": "Kalmeshwar Police Station",
+        "PoliceStation": "Kalmeshwar Police Station",
         "Sub Division": "Saoner",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 12,
         "Officers": 6,
@@ -168,9 +168,9 @@
         "Longitude": 78.9114805
     },
     {
-        "Police Station": "Khapa Police Station",
+        "PoliceStation": "Khapa Police Station",
         "Sub Division": "Saoner",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 6,
         "Officers": 3,
@@ -180,9 +180,9 @@
         "Longitude": 78.98621709999999
     },
     {
-        "Police Station": "Kelwad Police Station",
+        "PoliceStation": "Kelwad Police Station",
         "Sub Division": "Saoner",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 8,
         "Officers": 4,
@@ -192,9 +192,9 @@
         "Longitude": 78.8806286
     },
     {
-        "Police Station": "Narkhed Police Station",
+        "PoliceStation": "Narkhed Police Station",
         "Sub Division": "Katol",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 13,
         "Officers": 5,
@@ -204,9 +204,9 @@
         "Longitude": 79.0881546
     },
     {
-        "Police Station": "Kondhali Police Station",
+        "PoliceStation": "Kondhali Police Station",
         "Sub Division": "Katol",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 8,
         "Officers": 6,
@@ -216,9 +216,9 @@
         "Longitude": 78.63765269999999
     },
     {
-        "Police Station": "Jalalkheda Police Station",
+        "PoliceStation": "Jalalkheda Police Station",
         "Sub Division": "Katol",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 9,
         "Officers": 5,
@@ -228,9 +228,9 @@
         "Longitude": 79.0881546
     },
     {
-        "Police Station": "Katol Police Station",
+        "PoliceStation": "Katol Police Station",
         "Sub Division": "Katol",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 8,
         "Officers": 4,
@@ -240,9 +240,9 @@
         "Longitude": 78.5859566
     },
     {
-        "Police Station": "Kuhi Police Station",
+        "PoliceStation": "Kuhi Police Station",
         "Sub Division": "Umred",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 12,
         "Officers": 3,
@@ -252,9 +252,9 @@
         "Longitude": 79.3637157
     },
     {
-        "Police Station": "Veltur Police Station",
+        "PoliceStation": "Veltur Police Station",
         "Sub Division": "Umred",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 9,
         "Officers": 8,
@@ -264,9 +264,9 @@
         "Longitude": 79.32469309999999
     },
     {
-        "Police Station": "Umred Police Station",
+        "PoliceStation": "Umred Police Station",
         "Sub Division": "Umred",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 7,
         "Officers": 3,
@@ -276,9 +276,9 @@
         "Longitude": 79.32175649999999
     },
     {
-        "Police Station": "Bhiwapur Police Station",
+        "PoliceStation": "Bhiwapur Police Station",
         "Sub Division": "Umred",
-        "District": "Nagpur",
+        "District": "Nagpur Rural",
         "Range": "Nagpur",
         "Constables": 9,
         "Officers": 2,

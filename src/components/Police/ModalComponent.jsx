@@ -15,116 +15,177 @@ import axios from "axios";
 import axiosInstance from "../../utils/axiosInstance";
 import * as XLSX from "xlsx";
 import Papa from "papaparse";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { toDate } from "date-fns";
+
+import TrainingDataTable from './DataTable'
+
+import MaharashtraPoliceMap from '../CS/Csstartpage'
+
+import './form.css'
 
 
-const ModalComponent = ({ open, type, onClose }) => {
+
+
+import CloseIcon from "@mui/icons-material/Close";
+
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+
+import logo from "../../../dist/assets/logo22-DGid_2oD.png";
+
+
+
+
+
+
+const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => {
   const [selectedOption, setSelectedOption] = useState("");
-  const [selectedForm, setSelectedForm] = useState("Pendency of cases under BNS");
+  const [selectedForm, setSelectedForm] = useState("");
+
+
+   // ------------------for table purpose---------------------------
+   const [openSections, setOpenSections] = useState({});
+
+   const toggleSection = (section) => {
+     setOpenSections((prev) => ({
+       ...prev,
+       [section]: !prev[section],
+     }));
+   };
+
+   // ----------------------------------------------------------------
+
+
+  const [openModal, setOpenModal] = useState(false); // State for modal visibility
+
+
+  const [historyData, setHistoryData] = useState([]); // Store response as an array
+  const excludedFields = ["city", "file_path", "district", "id", "unit", "uploaded_by", "police_station"];
+
+
+
+  const [monthsInRange, setMonthsInRange] = useState([]);
+  const [expandedMonth, setExpandedMonth] = useState(null);
+  const [formValues, setFormValues] = useState({});
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+
 
   const handleFormChange = (event) => {
     setSelectedForm(event.target.value);
   };
 
 
-  const [formData, setFormData] = useState({
-    formType: "Pendency of cases under BNS",
-    month_year: "",
-    zone: localStorage.getItem("zone") || "",       // Get from localStorage
-    district: localStorage.getItem("district") || "", // Get from localStorage
-    sections: "",
-    totalCases: "",
-    detectedCases: "",
-    overallPercentage: "",
-    uploadedFile: null,
+  // Get the current date in YYYY-MM format
+  const currentDate = new Date().toISOString().slice(0, 7);
 
-    // Form-B specific fields
-    unit: localStorage.getItem("zone") || "",
-    disposedCases: "",
-    pendingCases: "",
-    pendingPercentage: "",
-    punishmentLessThan7: "",
-    punishmentMoreThan7: "",
-    // month_year: "",
+  function getInitialFormData() {
+    return {
+      formType: "",
+      month_year: "",
+      zone: localStorage.getItem("zone") || "",
+      district: localStorage.getItem("district") || "",
+      sections: "",
+      totalCases: "",
+      detectedCases: "",
+      overallPercentage: "",
+      uploadedFile: null,
+      unit: localStorage.getItem("zone") || "",
+      disposedCases: "",
+      pendingCases: "",
+      pendingPercentage: "",
+      punishmentLessThan7: "",
+      punishmentMoreThan7: "",
+      crimeHead: "",
+      regdCases: "",
+      detectedCasesFormC: "",
+      detectionPercentage: "",
+      policeStationD: "",
+      ageGroup: "",
+      untracedPersons: "",
+      missingPersons: "",
+      totalMissing: "",
+      traced: "",
+      untraced: "",
+      untracedPercentage: "",
+      policeStation: "",
+      actAndSection: "",
+      registeredCases: "",
+      detectedCasesPercentage: "",
+      totalIOsNagapur: "",
+      totalIOsEsakshya: "",
+      esakshyaWage: "",
+      totalOffencesUsed: "",
+      totalOffencesNotUsed: "",
+      offencesUsedChargeCheet: "",
+      offencesNotUsedUnderInvestigation: "",
+      percentageOfUsingEsakshya: "",
+      totalZeroFIRsReceived: "",
+      totalFIRsRegistered: "",
+      pendingFIRs: "",
+      totalTransferredZeroFIRs: "",
+      formIMonthYear: "",
+      totalEComplaintsReceived: "",
+      totalComplaintsConverted: "",
+      disposedEComplaints: "",
+      formJMonthYear: "",
+      total_cases: "",
+      value_stolen_property: "",
+      value_recovered_property: "",
+      recovery_percentage: "",
+      total_cases_gt_7_years: "",
+      forensic_team_deployment_percentage: "",
+      cases_forensic_team_visited: "",
+      total_pocso: "",
+      bns_cases: "",
+      charge_sheeted_within_60_days: "",
+      pending_cases: "",
+      reasons_for_pending: "",
+      percentage: "",
+      fromDate: "",
+      toDate: "",
+      type_of_court: "",
+      bns_sections: "",
+      cases_decided: "",
+      convicted_cases: "",
+      conviction_rate: "",
+      overall_cumulative: "",
+      total_persons_trained: "",
 
-    // Offences against body under BNS specific fields
-    crimeHead: "",
-    // formCUnit: "",
-    policeStation: "",
-    regdCases: "",
-    detectedCasesFormC: "",
-    detectionPercentage: "",
-    // month_year: "",
+      bns_sections: "",
+      total_cases_convicted: "waiting for backend value",
+      total_cases_decided: "waiting for backend value",
+      detected_cases: "",
+      offences_registerd: "",
 
-    // Form-D Fields
-    // formDUnit: "",
-    policeStationD: "",
-    ageGroup: "",
-    untracedPersons: "",
-    missingPersons: "",
-    totalMissing: "",
-    traced: "",
-    untraced: "",
-    untracedPercentage: "",
-    // month_year: "",
+      total_zero_firs: "",
+      total_no_zero_fir_transferred_outer_state_to_mh: "",
+      pending_for_re_registration: "",
+      re_reg_firs: "",
+      total_transferred_zero_firs_in_mh: "",
+      pending_for_transfer_within_mh: "",
+      total_firs_registered: "",
+      total_no_zero_fir_transferred_outside_mh: "",
+      pending_to_transfer_outside_mh: "",
 
-    //form-E or form-F
-    policeStation: "",
-    actAndSection: "",
-    registeredCases: "",
-    detectedCasesPercentage: "",
+      detectedCases_1: "",
+      registeredCases_1: "",
+      actAndSection_1: "",
+      detectedCasesPercentage_1: '',
 
-    // Esakshya Wrt Unit
-    totalIOsNagapur: "",
-    totalIOsEsakshya: "",
-    esakshyaWage: "",
+      esakshyaWage_1: "",
+    };
+  }
+  const [convictionData, setConvictionData] = useState([]);
+  const [formData, setFormData] = useState(getInitialFormData());
+  // const [formData, setFormData] = useState(getInitialFormData(), { toDate: currentDate });
 
-    // form-h
-    totalCases: "",
-    totalOffencesUsed: "",
-    totalOffencesNotUsed: "",
-    offencesUsedChargeCheet: "",
-    offencesNotUsedUnderInvestigation: "",
-    percentageOfUsingEsakshya: "",
-    // form-i
-
-    totalZeroFIRsReceived: "",
-    totalFIRsRegistered: "",
-    pendingFIRs: "",
-    totalTransferredZeroFIRs: "",
-    formIMonthYear: "",
-
-    // eFIR specific fields
-    totalEComplaintsReceived: "",
-    totalComplaintsConverted: "",
-    disposedEComplaints: "",
-    formJMonthYear: "",
-
-    // Stolen & Recovered Property Form specific fields
-    total_cases: "",
-    value_stolen_property: "",
-    value_recovered_property: "",
-    recovery_percentage: "",
-    month_year: "",
-
-    // Forensic Team Deployment Form specific fields
-    total_cases_gt_7_years: "",
-    forensic_team_deployment_percentage: "",
-    cases_forensic_team_visited: "",
-    month_year: "",
-
-    // ITSSO Compliance Form specific fields
-    total_pocso: "",
-    bns_cases: "",
-    charge_sheeted_within_60_days: "",
-    pending_cases: "",
-    reasons_for_pending: "",
-    percentage: "",
-    month_year: "",
-
-  });
 
   const [selectedTab, setSelectedTab] = useState("form");
   const [fileInfo, setFileInfo] = useState(null);
+  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     if (open) setSelectedTab("form");
@@ -138,7 +199,7 @@ const ModalComponent = ({ open, type, onClose }) => {
 
 
   // if (!formData.date || !formData.zone || !formData.district || !formData.totalCases) {
-  //     alert("Please fill in all required fields.");
+  //     alert("Please fill in all  fields.");
   //     return;
   // }
 
@@ -150,27 +211,26 @@ const ModalComponent = ({ open, type, onClose }) => {
   const [checkingCsv, setCheckingCsv] = useState(false);
 
   const expectedHeaders = {
-    
-    "Pendency of cases under BNS": [
-      "unit",
+
+    "pendency_in_bns": [
       "total_cases_registered",
       "cases_disposed",
       "cases_pending_investigation",
       "percent_pendency",
       "cases_punishment_less_than_7_years",
       "cases_punishment_7_years_or_more",
-      "month_year"
-    ],
-    "Offences against body under BNS": [
+      
+          ],
+    "Offences_against_body_under_BNS": [
       "unit",
       "police_station",
       "act_and_section",
       "registered_cases",
       "detected_cases",
       "percent_detection",
-      "month_year"
-    ],
-    "Untraced Missing": [
+      
+          ],
+    "untraced_missing": [
       "district",
       "unit",
       "police_station",
@@ -181,9 +241,9 @@ const ModalComponent = ({ open, type, onClose }) => {
       "traced",
       "untraced",
       "percent_untraced",
-      "month_year"
-    ],
-    "Important sections introduced in BNS": [
+      
+          ],
+    "Important_sections_introduced_in_BNS": [
       "district",
       "unit",
       "police_station",
@@ -191,254 +251,308 @@ const ModalComponent = ({ open, type, onClose }) => {
       "registered_cases",
       "detected_cases",
       "percent_detection",
-      "month_year"
-    ],
-    "Property offences under BNS": [
+      
+          ],
+    "Property_offences_under_BNS": [
       "unit",
       "police_station",
       "act_and_section",
       "registered_cases",
       "detected_cases",
       "percent_detection",
-      "month_year"
-    ],
-    "Esakshya Wrt Unit": [
+      
+          ],
+    "esakshya_unit": [
       "unit",
       "total_ios_nagpur_rural",
       "registered_ios_on_esakshya",
       "esakshya_usage_percentage",
-      "month_year"
-    ],
+      
+          ],
 
-    "Esakshya wrt 7yrs or more": [
-      "unit",
+    "esakshya_7_more": [
       "total_cases",
       "total_offences_with_esakshya",
-      "total_offences_without_esakshya",
       "total_charge_sheeted_with_esakshya",
       "total_under_investigation_without_esakshya",
-      "percentage_usage"
-    ],
+      
+          ],
 
-    "FIR's and Zero FIR's": [
+    "fir_and_zero_firs": [
       "unit",
       "section",
       "total_zero_firs_received",
       "total_firs_registered",
       "pending",
       "total_transferred_zero_firs",
-      "month_year"
-    ],
+      
+          ],
 
-    "eFIR": [
+    "e_fir": [
       "unit",
       "police_station",
       "total_ecomplaints_received",
       "total_ecomplaints_converted_to_firs",
       "disposed_of_ecomplaints",
-      "month_year"
-    ],
-    "Special Cases & High-Profile Investigations Form": [
-      "unit",
-      "police_station",
-      "act_and_section",
-      "registered_cases",
-      "detected_cases",
-      "percent_detection",
-      "month_year"
-    ],
-    "ITSSO Compliance Form": [
-      "total_pocso",
-      "bns_cases",
+      
+          ],
+    "itsso_compliance": [
+   
       "charge_sheeted_within_60_days",
-      "pending_cases",
+      "total_pocso_bns_cases",
       "reasons_for_pending",
       "percentage",
-      "month_year"
-    ],
-    "Stolen & Recovered Property Form": [
+      
+          ],
+    "stolen_recovered_property": [
       "total_cases",
       "value_stolen_property",
       "value_recovered_property",
       "recovery_percentage",
-      "month_year"
-    ],
-    "Forensic Team Deployment Form": [
+      "detected_cases",
+      "offences_registerd",
+      
+          ],
+    "forensic_team_deployment": [
       "total_cases_gt_7_years",
       "forensic_team_deployment_percentage",
       "cases_forensic_team_visited",
-      "month_year"
-    ]
+      
+          ],
 
+    "police_training": [  "total_personnel", "personnel_trained", "total_officers", "officers_trained"],
+
+    "conviction_rate_in_bns": [
+      "type_of_court",
+      "bns_sections",
+      "cases_decided",
+      "cases_convicted",
+      "conviction_rate"
+    ]
   };
 
 
 
+  const headerMappings = {
+    "Pendency of cases under BNS": {
+      "cases_disposed": "Disposed Cases",
+      "cases_pending_investigation": "Pending Cases",
+      "cases_punishment_less_than_7_years": "No. of Cases with Punishment < 7 Yrs. out of Reg. Cases",
+      "cases_punishment_7_years_or_more": "No. of Cases with Punishment ≥ 7 Yrs. out of Reg. Cases",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "Offences against body under BNS": {
+      "act_and_section": "Act and Section",
+      "registered_cases": "Registered Cases",
+      "detected_cases": "Detected Cases",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "Untraced Missing": {
+      "age_group": "Age Group",
+      "no_of_untraced_persons": "No of Untraced Persons",
+      "no_of_missing_persons": "No of Missing Persons",
+      "traced": "Traced",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "Important sections introduced in BNS": {
+      "act_and_section": "Act and Section",
+      "registered_cases": "Registered Cases",
+      "detected_cases": "Detected Cases",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "Property offences under BNS": {
+      "act_and_section": "Act and Section",
+      "registered_cases": "Registered Cases",
+      "detected_cases": "Detected Cases",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "eSakshya Details": {
+      "total_ios": "Total No of IO's Registered",
+      "registered_ios_on_esakshya": "No of IO's Registered on eSakshya",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "Use of eSakshya App in cases with punishment of 7 yrs. or more": {
+      "total_cases": "Total No of Cases",
+      "total_offences_with_esakshya": "Total Offences in which eSakshya has been Used",
+      "total_charge_sheeted_with_esakshya": "Total Offences in Which eSakshya has been Used and Charge Sheeted",
+      "total_under_investigation_without_esakshya": "Total Offences in which eSakshya has not been used and are Under Investigation",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+
+    // "columns": {
+    //     "total_zero_firs",
+    //     "total_no_zero_fir_transferred_outer_state_to_mh",
+    //     "pending_for_re_registration",
+    //     "re_reg_firs",
+    //     "total_transferred_zero_firs_in_mh",
+    //     "pending_for_transfer_within_mh",
+    //     "total_firs_registered",
+    //     "total_no_zero_fir_transferred_outside_mh",
+    //     "pending_to_transfer_outside_mh"
+    // },
+
+    "Zero FIR's": {
+      "total_no_zero_fir_transferred_outside_mh": "No. of Zero FIRs transferred outside Maharashtra",
+      "total_no_zero_fir_transferred_outer_state_to_mh": "No. of Zero FIRs transferred from other State to Maharashtra",
+      "total_zero_firs": "Total No of Zero FIRs",
+      "total_firs_registered": "Zero FIR's in Maharashtra",
+      "pending_to_transfer_outside_mh": "Pending for Transfer outside Maharashtra",
+      "re_reg_firs": "Re-Registered FIRs in Maharashtra",
+      "total_transferred_zero_firs_in_mh": "No of Zero FIR's Transferred Within Maharashtra",
+      "pending_for_transfer_within_mh": "Pending for Transfer within Maharashtra",
+      "pending_for_re_registration": "Pending for Re-registration",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "eFIR": {
+      "total_ecomplaints_received": "Total eComplaints Received on Citizen Portal",
+      "total_ecomplaints_converted_to_firs": "Total eComplaints Converted to Regular FIR's",
+      "disposed_of_ecomplaints": "Disposed of eComplaints",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "ITSSO Compliance Form": {
+      "total_pocso_bns_cases": "Total No. of registered POCSO + BNS cases",
+      "charge_sheeted_within_60_days": "No. of cases (POCSO + BNS) chargesheet within 60 days",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "Stolen & Recovered Property": {
+      "total_cases": "Total Cases",
+      "value_stolen_property": "Value of Stolen Property",
+      "value_recovered_property": "Value of Recovered Property",
+      "detected_cases": "Detected Cases",
+      "offences_registerd": "Offences Registered",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "Visit of Forensic Teams": {
+      "total_cases_gt_7_years": "No. of cases registered in which punishment is 7 years or more",
+      "cases_forensic_team_visited": "Cases in which Forensic Teams Visited",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date"
+    },
+    "Training Data": {
+      "month_year_from": "From Date",
+      "month_year_to": "To Date",
+      "total_personnel": "Total Constabulary",
+      "personnel_trained": "Constabulary Trained",
+      "total_officers": "Total Officers",
+      "officers_trained": "Officers Trained"
+    },
+    "Conviction under BNS": {
+      "type_of_court": "Type of Court",
+      "bns_sections": "BNS Section",
+      "cases_decided": "Cases Decided",
+      "cases_convicted": "Cases Convictied",
+      "month_year_from": "From Date",
+      "month_year_to": "To Date",
+      // "conviction_rate": "Conviction Rate (%)"
+    }
+  };
+
   const generateCSV = () => {
     const sampleFiles = {
-      
+
       "Pendency of cases under BNS": [
-        "unit,total_cases_registered,cases_disposed,cases_pending_investigation,percent_pendency,cases_punishment_less_than_7_years,cases_punishment_7_years_or_more,month_year",
-        "Unit-1,100,60,40,40,15,25,05-2024",
+        "cases_disposed,cases_pending_investigation,cases_punishment_less_than_7_years,cases_punishment_7_years_or_more,month_year_from,month_year_to",
+        "20,10,15,14,02-03-2025,13-03-2025",
       ],
       "Offences against body under BNS": [
-        "unit,police_station,act_and_section,registered_cases,detected_cases,percent_detection,month_year",
-        "Unit-2,Station-5,IPC 302,50,30,60,Mar-24",
+        "act_and_section,registered_cases,detected_cases,month_year_from,month_year_to",
+        "text,22,3,02-03-2025,13-03-2025",
       ],
       "Untraced Missing": [
-        "district,unit,police_station,age_group,no_of_untraced_persons,no_of_missing_persons,total_missing_persons,traced,untraced,percent_untraced,month_year",
-        "Pune,Unit-3,Station-8,18-25,15,50,65,50,15,23.1,Feb-24",
+        "age_group,no_of_untraced_persons,no_of_missing_persons,traced,month_year_from,month_year_to",
+        "below-18,22,13,4,02-03-2025,13-03-2025",
       ],
       "Important sections introduced in BNS": [
-        "district,unit,police_station,act_and_section,registered_cases,detected_cases,percent_detection,month_year",
-        "Mumbai,Unit-4,Station-12,IPC 420,30,20,66.7,Jan-24",
+        "act_and_section,registered_cases,detected_cases,month_year_from,month_year_to",
+        "text,22,3,02-03-2025,13-03-2025",
       ],
       "Property offences under BNS": [
-        "unit,police_station,act_and_section,registered_cases,detected_cases,percent_detection,month_year",
-        "Unit-5,Station-15,IPC 376,40,35,87.5,Apr-24",
+        "act_and_section,registered_cases,detected_cases,month_year_from,month_year_to",
+        "text,22,3,02-03-2025,13-03-2025",
       ],
-      "Esakshya Wrt Unit": [
-        "unit,total_ios_nagpur_rural,registered_ios_on_esakshya,esakshya_usage_percentage,month_year",
-        "Unit-G1,15,10,5000,Mar-24"
+      "eSakshya Details": [
+        "total_ios,registered_ios_on_esakshya,month_year_from,month_year_to",
+        "12,3,02-03-2024,13-02-2025"
+      ],
+      "Use of eSakshya App in cases with punishment of 7 yrs. or more": [
+        "total_cases,total_offences_with_esakshya,total_charge_sheeted_with_esakshya,total_under_investigation_without_esakshya,month_year_from,month_year_to",
+        "13,12,1,2,02-03-2025,13-03-2025"
       ],
 
-      "Esakshya wrt 7yrs or more": [
-        "unit,total_cases,total_offences_with_esakshya,total_offences_without_esakshya,total_charge_sheeted_with_esakshya,total_under_investigation_without_esakshya,percentage_usage",
-        "Unit-H1,100,60,40,55,35,75.5"
-      ],
-
-      "FIR's and Zero FIR's": [
-        "unit,section,total_zero_firs_received,total_firs_registered,pending,total_transferred_zero_firs,month_year",
-        "Unit-I1,Below 18,0,5,Mar-24"
+      "Zero FIR's": [
+        "total_no_zero_fir_transferred_outside_mh,total_no_zero_fir_transferred_outer_state_to_mh,total_zero_firs,total_firs_registered,pending_to_transfer_outside_mh,re_reg_firs,total_transferred_zero_firs_in_mh,pending_for_transfer_within_mh,pending_for_re_registration,month_year_from,month_year_to",
+        "23,25,12,23,23,23,23,23,23,02-03-2025,13-03-2025"
       ],
       "eFIR": [
-        "unit,police_station,total_ecomplaints_received,total_ecomplaints_converted_to_firs,disposed_of_ecomplaints,month_year",
-        "Unit-J1,Station-J1,10,8,Mar-24"
-      ],
-      "Special Cases & High-Profile Investigations Form": [
-        "unit,police_station,act_and_section,registered_cases,detected_cases,percent_detection,month_year",
-        "Unit-2,Station-5,IPC 302,50,30,60,Mar-24",
+        "total_ecomplaints_received,total_ecomplaints_converted_to_firs,disposed_of_ecomplaints,month_year_from,month_year_to",
+        "23,12,3,02-03-2025,13-03-2025"
       ],
       "ITSSO Compliance Form": [
-        "total_pocso,bns_cases,charge_sheeted_within_60_days,pending_cases,reasons_for_pending,percentage,month_year",
-        "20,15,10,5,Investigation Delay,80,Mar-24"
+        "total_pocso_bns_cases,charge_sheeted_within_60_days,month_year_from,month_year_to",
+        "12,23,02-03-2025,13-03-2025"
       ],
-      "Stolen & Recovered Property Form": [
-        "total_cases,value_stolen_property,value_recovered_property,recovery_percentage,month_year",
-        "100,500000,300000,60,Mar-24"
+      "Stolen & Recovered Property": [
+        "total_cases,value_stolen_property,value_recovered_property,detected_cases,Offences_registerd,month_year_from,month_year_to",
+        "10,4,2,20,40,02-03-2025,13-03-2025"
       ],
-      "Forensic Team Deployment Form": [
-        "total_cases_gt_7_years,forensic_team_deployment_percentage,cases_forensic_team_visited,month_year",
-        "50,70,35,Mar-24"
-      ]
+      "Visit of Forensic Teams": [
+        "total_cases_gt_7_years,cases_forensic_team_visited,month_year_from,month_year_to",
+        "23,23,02-03-2025,13-03-2025"
+      ],
+      "Training Data": [
+        "month_year_from,month_year_to,total_personnel,personnel_trained,total_officers,officers_trained",
+        "02-03-2025,13-03-2025,20,10,20,10"
+      ],
+      "Conviction under BNS": [
+        "type_of_court,bns_sections,cases_decided,cases_convicted,month_year_from,month_year_to",
+        "session,285,88,72,02-03-2025,13-03-2025"
+      ],
     };
 
-    const csvContent = sampleFiles[selectedForm]?.join("\n") || "No data available";
-    const blob = new Blob([csvContent], { type: "text/csv" });
+
+
+    if (!sampleFiles[selectedForm]) {
+      alert("No data available");
+      return;
+    }
+
+    const selectedData = sampleFiles[selectedForm].map(row => row.split(",")); // Convert strings to arrays
+
+    // Get the corresponding header mapping
+    const formHeaders = headerMappings[selectedForm] || {};
+
+    // Convert lowercase headers to uppercase using the mapping
+    const updatedHeaders = selectedData[0].map(col => formHeaders[col] || col);
+
+    // Construct the CSV content
+    const csvData = [updatedHeaders, ...selectedData.slice(1)]
+      .map(row => row.join(","))
+      .join("\n");
+
+    // Create a CSV file and trigger download
+    const blob = new Blob([csvData], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${selectedForm.toLowerCase()}_sample.csv`;
+    a.download = `${selectedForm.toLowerCase().replace(/\s+/g, "_")}_sample.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
   };
 
-
-  // --------------------------------old---------------------------------
-  // const handleFileUpload = (e) => {
-  //   const file = e.target.files[0];
-
-  //   if (file && file.type === "text/csv") {
-  //     setFileInfo({ name: file.name, size: (file.size / 1024).toFixed(2) + " KB" });
-  //     setCheckingCsv(true);
-
-  //     Papa.parse(file, {
-  //       complete: (result) => {
-  //         const headers = result.data[0]; // Extract headers from the uploaded CSV
-  //         const selectedHeaders = expectedHeaders[selectedForm]; // Get expected headers for the selected form type
-
-  //         if (!selectedHeaders) {
-  //           setCsvValidationMessage({ text: "Invalid form type selected", color: "red" });
-  //           setCheckingCsv(false);
-  //           return;
-  //         }
-
-  //         if (JSON.stringify(headers) === JSON.stringify(selectedHeaders)) {
-  //           setCsvValidationMessage({ text: "CSV Matched", color: "green" });
-  //         } else {
-  //           setCsvValidationMessage({ text: "Headers Not Matching", color: "red" });
-  //         }
-
-  //         setCsvData(result.data);
-  //         setCheckingCsv(false);
-  //       },
-  //     });
-  //   } else {
-  //     alert("Only CSV files are allowed");
-  //   }
-  // };
-
-  // ---------------------------------new------------------------------------------
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
   
-    if (!file) return;
-  
-    const fileType = file.name.split(".").pop().toLowerCase();
-  
-    if (["csv", "xls", "xlsx"].includes(fileType)) {
-      setFileInfo({ name: file.name, size: (file.size / 1024).toFixed(2) + " KB" });
-      setCheckingCsv(true);
-      setFormData((prev) => ({ ...prev, uploadedFile: file.name })); // Store only filename
-  
-      if (fileType === "csv") {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const csvText = event.target.result;
-          processFileData(csvText.split("\n").map(row => row.split(","))); // Convert CSV to array
-        };
-        reader.readAsText(file);
-      } else {
-        // Handle Excel Parsing
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const data = new Uint8Array(event.target.result);
-          const workbook = XLSX.read(data, { type: "array" });
-          const sheetName = workbook.SheetNames[0];
-          const worksheet = workbook.Sheets[sheetName];
-          const excelData = XLSX.utils.sheet_to_csv(worksheet); // Convert Excel to CSV
-          processFileData(excelData.split("\n").map(row => row.split(","))); // Convert CSV to array
-        };
-        reader.readAsArrayBuffer(file);
-      }
-    } else {
-      alert("Only CSV, XLS, or XLSX files are allowed");
-    }
-  };
-
-  const processFileData = (data) => {
-    const headers = data[0]; // Extract headers from the uploaded file
-    const selectedHeaders = expectedHeaders[selectedForm]; // Expected headers for selected form
-
-    if (!selectedHeaders) {
-      setCsvValidationMessage({ text: "Invalid form type selected", color: "red" });
-      setCheckingCsv(false);
-      return;
-    }
-
-    if (JSON.stringify(headers) === JSON.stringify(selectedHeaders)) {
-      setCsvValidationMessage({ text: "Headers Matched", color: "green" });
-    } else {
-      setCsvValidationMessage({ text: "Headers Not Matching", color: "red" });
-    }
-
-    setCsvData(data);
-    setCheckingCsv(false);
-  };
-
-
   // =====================================================handlesubmit============================================
   // ------mapping -- for upload file ----------------
   const formTypeMapping = {
@@ -447,1174 +561,3543 @@ const ModalComponent = ({ open, type, onClose }) => {
     "Untraced Missing": "untraced_missing",
     "Important sections introduced in BNS": "sections_in_bns",
     "Property offences under BNS": "property_offenses",
-    "Esakshya Wrt Unit": "esakshya_units",
-    "Esakshya wrt 7yrs or more": "esakshya_7_more",
-    "FIR's and Zero FIR's": "fir_and_zero_firs",
-    "eFIR": "e_fir"
+    "eSakshya Details": "esakshya_units",
+    "Use of eSakshya App in cases with punishment of 7 yrs. or more": "esakshya_7_more",
+    "Zero FIR's": "fir_and_zero_firs",
+    "eFIR": "e_fir",
+    "ITSSO Compliance Form": "itsso_compliance",
+    "Stolen & Recovered Property": "stolen_recovered_property",
+    "Visit of Forensic Teams": "forensic_team_deployment",
+    "Training Data": "police_training",
+    "Conviction under BNS": "conviction_rate_in_bns",
   };
-  const selectedType = formTypeMapping[selectedForm] || "fir";
+  const selectedType = formTypeMapping[selectedForm];
 
+
+  const subrole = localStorage.getItem("sub_role",null)
+
+  const zoneMapping = {
+    Amravati: ["Akola", "Amravati Rural", "Buldana", "Washim", "Yavatmal"],
+    'Chhatrapati Sambhajinagar': ["Chhatrapati Sambhajinagar", "Beed", "Hingoli", "Jalna", "Latur", "Nanded", "Osmanabad", "Parbhani"],
+    Konkan: ["Mumbai", "Mumbai Suburban", "Palghar", "Raigad", "Ratnagiri", "Sindhudurg", "Thane Rural"],
+    Nagpur: ["Bhandara", "Chandrapur", "Gadchiroli", "Gondia", "Nagpur Rural", "Wardha"],
+    Nashik: ["Ahmednagar", "Dhule", "Jalgaon", "Nandurbar", "Nashik"],
+    Pune: ["Kolhapur", "Pune Rural", "Sangli", "Satara", "Solapur Rural"],
+  };
+
+  
+  const downloadPDF = (newData, subrole) => {
+    console.log("Generating PDF for subrole:", subrole);
+    console.log("newData:", newData);
+
+    const doc = new jsPDF({ orientation: "landscape" });
+    let pageHeight = doc.internal.pageSize.height;
+    let pageWidth = doc.internal.pageSize.width;
+    let y = 15; // Start vertical position
+    let pageNumber = 1;
+
+    const { timeStamp, submited_by, email, rang, district, sampleDataIN } = newData;
+    const assignedZone = localStorage.getItem("zone");
+    const assignedDistrict = localStorage.getItem("district");
+
+    const getFilteredData = () => {
+        if (subrole === "CS" || subrole === "ACS" ) {
+            return sampleDataIN;
+        } else if (subrole === "IG/DIG" || subrole === "DIG") {
+            return assignedZone ? { [assignedZone]: sampleDataIN[assignedZone] } : {};
+        } else if (subrole === "CP" || subrole === "SP") {
+            for (const [zone, districts] of Object.entries(zoneMapping)) {
+                if (districts.includes(assignedDistrict)) {
+                    return sampleDataIN[zone] && sampleDataIN[zone][assignedDistrict]
+                        ? { [zone]: { [assignedDistrict]: sampleDataIN[zone][assignedDistrict] } }
+                        : {};
+                }
+            }
+            return {};
+        }
+    };
+
+    const filteredData = getFilteredData();
+    console.log("Filtered Data:", filteredData);
+
+    // Function to add footer
+    const addFooter = () => {
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(`Email: ${email}`, 14, pageHeight - 10);
+        doc.text(`Page ${pageNumber}`, pageWidth - 30, pageHeight - 10);
+    };
+
+    // Add Header Logo
+    
+    // const logo = "public/images/logo22.png";
+
+    
+    doc.addImage(logo, "PNG", pageWidth / 2 - 15, y, 30, 30);
+    y += 40;
+
+    // Title
+    doc.setFontSize(22);
+    doc.setTextColor(30, 30, 120);
+    doc.setFont("helvetica", "bold");
+    doc.text("MARVEL DATA REPORT", pageWidth / 2 - 50, y);
+    y += 12;
+
+    // Divider Line
+    doc.setDrawColor(100, 100, 100);
+    doc.line(10, y, pageWidth - 10, y);
+    y += 8;
+
+    // Report Metadata
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont("helvetica", "bold");
+    doc.text(`Submitted On:`, 14, y);
+    doc.text(`Submitted by:`, 14, y + 8);
+    doc.text(`Email:`, 14, y + 16);
+    doc.text(`Rank:`, 14, y + 24);
+    doc.text(`Range:`, 14, y + 32);
+    doc.text(`District:`, 14, y + 40);
+
+    doc.setFont("helvetica", "normal");
+    doc.text(timeStamp, 50, y);
+    doc.text(submited_by, 50, y + 8);
+    doc.text(email, 50, y + 16);
+    doc.text(subrole, 50, y + 24);
+    doc.text(rang, 50, y + 32);
+    doc.text(district, 50, y + 40);
+
+    y += 50;
+
+    if (Object.keys(filteredData).length === 0) {
+        doc.setTextColor(255, 0, 0);
+        doc.setFontSize(14);
+        doc.text("⚠ No data available for the assigned zone/district.", 14, y);
+        addFooter();
+        doc.save("user_Report.pdf");
+        return;
+    }
+
+    // Iterate Over Zones
+    Object.entries(filteredData).forEach(([zone, districts]) => {
+        doc.setFontSize(14);
+        doc.setTextColor(200, 0, 0);
+        doc.setFont("helvetica", "bold");
+        y += 8;
+        doc.setDrawColor(200, 0, 0);
+        doc.line(14, y, pageWidth - 14, y);
+        y += 6;
+
+        Object.entries(districts).forEach(([district, forms]) => {
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 255);
+            doc.setFont("helvetica", "bold");
+            y += 5;
+
+            Object.entries(forms).forEach(([formType, records]) => {
+                doc.setFontSize(10);
+                doc.setTextColor(0, 0, 0);
+                doc.setFont("helvetica", "bold");
+                doc.text(`${formType}`, 10, y);
+                y += 4;
+
+                if (records.length > 0) {
+                    const tableColumn = Object.keys(records[0]);
+                    const tableRows = records.map((row) => Object.values(row));
+
+                    doc.autoTable({
+                        startY: y + 2,
+                        head: [tableColumn],
+                        body: tableRows,
+                        theme: "grid",
+                        margin: { left: 14, right: 14 },
+                        styles: {
+                            fontSize: 9,
+                            cellPadding: 3,
+                            halign: "center",
+                            textColor: [50, 50, 50],
+                        },
+                        headStyles: {
+                            fillColor: [41, 128, 185],
+                            textColor: [255, 255, 255],
+                            fontSize: 10,
+                            fontStyle: "bold",
+                        },
+                        bodyStyles: {
+                            fillColor: (rowIndex) => (rowIndex % 2 === 0 ? [245, 245, 245] : [255, 255, 255]),
+                        },
+                        alternateRowStyles: {
+                            fillColor: [235, 235, 235],
+                        },
+                        didDrawPage: () => {
+                            addFooter();
+                        },
+                    });
+
+                    y = doc.autoTable.previous.finalY + 10;
+
+                    if (y > pageHeight - 20) {
+                        doc.addPage();
+                        pageNumber++;
+                        y = 15;
+                    }
+                } else {
+                    doc.setFont("helvetica", "italic");
+                    doc.setTextColor(150, 0, 0);
+                    doc.text("No data available", 30, y);
+                    y += 5;
+                }
+            });
+
+            y += 8;
+        });
+
+        y += 12;
+    });
+
+    addFooter();
+    doc.save("Filtered_Report.pdf");
+};
+
+  
+  
+  
+  // const sampleData = {
+  //   Nagpur: {
+  //     'Nagpur Rural': {
+  //       "Crime Report": [
+  //         { month_year: "January 2025", caseID: "CR001", description: "Robbery", status: "Pending" },
+  //         { month_year: "February 2025", caseID: "CR002", description: "Burglary", status: "Closed" },
+  //       ],
+  //       "Traffic Violations": [
+  //         { month_year: "January 2025", violationID: "TV001", vehicle: "MH12AB1234", fine: "$50" },
+  //       ],
+  //     },
+  //     "Amravati Rural": {
+  //       "Crime Report": [
+  //         { month_year: "March 2025", caseID: "CR003", description: "Theft", status: "Ongoing" },
+  //       ],
+  //     },
+  //   },
+  //   Aurangabad: {
+  //     Aurangabad: {
+  //       "Accident Report": [
+  //         { month_year: "January 2025", reportID: "AR001", location: "City Center", severity: "High" },
+  //       ],
+  //     },
+  //     Beed: {
+  //       "Crime Report": [
+  //         { month_year: "February 2025", caseID: "CR004", description: "Murder", status: "Investigation" },
+  //       ],
+  //       "Missing Persons": [
+  //         { month_year: "March 2025", personID: "MP001", name: "John Doe", age: 35 },
+  //       ],
+  //     },
+  //   },
+   
+  // };
+  
+
+
+
+
+  
   const handleSubmit = async () => {
     try {
-      const formDataToSend = new FormData();
-      const token = localStorage.getItem("token"); // Get token from localStorage
+      
+      
+      
+      
+      const token = localStorage.getItem("token");
+      // Extract form values based on types
+      const transformedData = {
+        police_training: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "police_training",
+          total_personnel: formValues[month].total_personnel || "",
+          total_officers: formValues[month].total_officers || "",
+          personnel_trained: formValues[month].personnel_trained || "",
+          officers_trained: formValues[month].officers_trained || "",
+          percent_personnel_trained: formValues[month].percent_personnel_trained || "",
+          percent_officers_trained: formValues[month].percent_officers_trained || "",
+          overall_cumulative: formValues[month].overall_cumulative || "",
+        })),
 
-      console.log("Selected Form Before Sending:", selectedForm); // Debugging
-      console.log("Selected Form Before Sending:", formData.uploadedFile); // Debugging
-      console.log("formtype",formData);
-      if (formData.uploadedFile) {
-        console.log("Inside this upload file");
-        formDataToSend.append("type", selectedType);
-        formDataToSend.append("file", formData.uploadedFile);
-        formDataToSend.append("unit", localStorage.getItem("zone") || "");
-        formDataToSend.append("district", localStorage.getItem("district") || "");
-        formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-      }
-      else {
+        pendency: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "pendency_in_bns",
+          totalCases: formValues[month].totalCases || "",
+          disposedCases: formValues[month].disposedCases || "",
+          pendingCases: formValues[month].pendingCases || "",
+          pendingPercentage: formValues[month].pendingPercentage || "",
+          punishmentLessThan7: formValues[month].punishmentLessThan7 || "",
+          punishmentMoreThan7: formValues[month].punishmentMoreThan7 || "",
+        })),
+        
+        offences_against_body: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "offences_against_body",
+          actAndSection: formValues[month].actAndSection || "",
+          registeredCases: formValues[month].registeredCases || "",
+          detectedCases: formValues[month].detectedCases || "",
+          detectedCasesPercentage: formValues[month].detectedCasesPercentage || "",
+        })),
+        
+        untraced_missing: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "untraced_missing",
+          ageGroup: formValues[month].ageGroup || "",
+          untracedPersons: formValues[month].untracedPersons || "",
+        })),
+        
+        sections_in_bns: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "sections_in_bns",
+          actAndSection: formValues[month].actAndSection || "",
+          registeredCases: formValues[month].registeredCases || "",
+          detectedCases: formValues[month].detectedCases || "",
+          detectedCasesPercentage: formValues[month].detectedCasesPercentage || "",
+        })),
+        
+        property_offenses: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: 'property_offenses',
+          actAndSection: formValues[month].actAndSection || "",
+          registeredCases: formValues[month].registeredCases || "",
+          detectedCases: formValues[month].detectedCases || "",
+          detectedCasesPercentage: formValues[month].detectedCasesPercentage || "",
+        })),
+        
+        esakshya_units: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "esakshya_units",
+          totalIOsEsakshyaRegistered: formValues[month].totalIOsEsakshyaRegistered || "",
+          totalIOsEsakshyaDownload: formValues[month].totalIOsEsakshyaDownload || "",
+          esakshyaWage_1: formValues[month].esakshyaWage_1 || "",
+        })),
+        
+        esakshya_7_more: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "esakshya_7_more",
+          totalIOsNagapur: formValues[month].totalIOsNagapur || "",
+          totalIOsEsakshya: formValues[month].totalIOsEsakshya || "",
+          esakshyaWage: formValues[month].esakshyaWage || "",
+        })),
+        
+        fir_and_zero_firs: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "fir_and_zero_firs",
+          total_no_zero_fir_transferred_outside_mh: formValues[month].total_no_zero_fir_transferred_outside_mh || "",
+          total_no_zero_fir_transferred_outer_state_to_mh: formValues[month].total_no_zero_fir_transferred_outer_state_to_mh || "",
+          total_zero_firs: formValues[month].total_zero_firs || "",
+          pending_to_transfer_outside_mh: formValues[month].pending_to_transfer_outside_mh || "",
+          total_firs_registered: formValues[month].total_firs_registered || "",
+          re_reg_firs: formValues[month].re_reg_firs || "",
+          total_transferred_zero_firs_in_mh: formValues[month].total_transferred_zero_firs_in_mh || "",
+          pending_for_transfer_within_mh: formValues[month].pending_for_transfer_within_mh || "",
+          pending_for_re_registration: formValues[month].pending_for_re_registration || "",
+        })),
+        
+        e_fir: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "e_fir",
+          totalEComplaintsReceived: formValues[month].totalEComplaintsReceived || "",
+          totalComplaintsConverted: formValues[month].totalComplaintsConverted || "",
+          disposedEComplaints: formValues[month].disposedEComplaints || "",
+        })),
+        
+        itsso_compliance: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "itsso_compliance",
+          total_pocso_bns_cases: formValues[month].total_pocso_bns_cases || "",
+          charge_sheeted_within_60_days: formValues[month].charge_sheeted_within_60_days || "",
+          percentage: formValues[month].percentage || "",
+        })),
+        
+        stolen_recovered_property: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "stolen_recovered_property",
+          total_cases: formValues[month].total_cases || "",
+          offences_registered: formValues[month].offences_registered || "",
+          value_stolen_property: formValues[month].value_stolen_property || "",
+          detected_cases: formValues[month].detected_cases || "",
+          value_recovered_property: formValues[month].value_recovered_property || "",
+          recovery_percentage: formValues[month].recovery_percentage || "",
+        })),
+        
+        conviction_rate_in_bns: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "conviction_rate_in_bns",
+          type_of_court: formValues[month].type_of_court || "",
+          bns_sections: formValues[month].bns_sections || "",
+          cases_decided: formValues[month].cases_decided || "",
+          convicted_cases: formValues[month].convicted_cases || "",
+          conviction_rate: formValues[month].conviction_rate || "",
+          total_cases_convicted: formValues[month].total_cases_convicted || "",
+          total_cases_decided: formValues[month].total_cases_decided || "",
+        })),
 
-        if (formData.formType === "Pendency of cases under BNS") {   // Tested
-          formDataToSend.append("type", "pendency_in_bns");
-          formDataToSend.append("district", localStorage.getItem("district") || "");
-          formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-          formDataToSend.append("unit", formData.unit);
-          formDataToSend.append("total_cases_registered", formData.totalCases);
-          formDataToSend.append("cases_disposed", formData.disposedCases);
-          formDataToSend.append("cases_pending_investigation", formData.pendingCases);
-          formDataToSend.append("percent_pendency", formData.pendingPercentage);
-          formDataToSend.append("cases_punishment_less_than_7_years", formData.punishmentLessThan7);
-          formDataToSend.append("cases_punishment_7_years_or_more", formData.punishmentMoreThan7);
-          formDataToSend.append("month_year", formData.month_year);
-        }
-        if (formData.formType === "Offences against body under BNS") {  //Tested
-          formDataToSend.append("type", "offences_against_body");
-          formDataToSend.append("district", localStorage.getItem("district") || "");
-          formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-          formDataToSend.append("unit", formData.unit);
-          formDataToSend.append("police_station", formData.policeStation);
-          formDataToSend.append("act_and_section", formData.actAndSection);
-          formDataToSend.append("registered_cases", formData.registeredCases);
-          formDataToSend.append("detected_cases", formData.detectedCases);
-          formDataToSend.append("percent_detection", formData.detectedCasesPercentage);
-          formDataToSend.append("month_year", formData.month_year);
-        }
-        if (formData.formType === "Untraced Missing") {      //Tested
-          formDataToSend.append("type", "untraced_missing");
-          formDataToSend.append("district", localStorage.getItem("district") || "");
-          formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-          formDataToSend.append("unit", formData.unit);
-          formDataToSend.append("police_station", formData.policeStationD);
-          formDataToSend.append("age_group", formData.ageGroup);
-          formDataToSend.append("no_of_untraced_persons", formData.untracedPersons);
-          formDataToSend.append("no_of_missing_persons", formData.missingPersons);
-          formDataToSend.append("total_missing_persons", formData.totalMissing);
-          formDataToSend.append("traced", formData.traced);
-          formDataToSend.append("untraced", formData.untraced);
-          formDataToSend.append("percent_untraced", formData.untracedPercentage);
-          formDataToSend.append("month_year", formData.month_year);
-        }
-        if (formData.formType === "Important sections introduced in BNS") {    //Tested
-          formDataToSend.append("type", "sections_in_bns");
-          formDataToSend.append("district", localStorage.getItem("district") || "");
-          formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-          formDataToSend.append("unit", formData.unit);
-          formDataToSend.append("police_station", formData.policeStation);
-          formDataToSend.append("act_and_section", formData.actAndSection);
-          formDataToSend.append("registered_cases", formData.registeredCases);
-          formDataToSend.append("detected_cases", formData.detectedCases);
-          formDataToSend.append("percent_detection", formData.detectedCasesPercentage);
-          formDataToSend.append("month_year", formData.month_year);
-        }
-        if (formData.formType === "Property offences under BNS") {   //Tested
-          formDataToSend.append("type", "property_offenses");
-          formDataToSend.append("district", localStorage.getItem("district") || "");
-          formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-          formDataToSend.append("unit", formData.unit);
-          formDataToSend.append("police_station", formData.policeStation);
-          formDataToSend.append("act_and_section", formData.actAndSection);
-          formDataToSend.append("registered_cases", formData.registeredCases);
-          formDataToSend.append("detected_cases", formData.detectedCases);
-          formDataToSend.append("percent_detection", formData.detectedCasesPercentage);
-          formDataToSend.append("month_year", formData.month_year);
-        }
-        if (formData.formType === "Esakshya Wrt Unit") {   //Tested
-          formDataToSend.append("type", "esakshya_units");
-          formDataToSend.append("district", localStorage.getItem("district") || "");
-          formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-          formDataToSend.append("unit", formData.unit);
-          formDataToSend.append("total_ios_nagpur_rural", formData.totalIOsNagapur);
-          formDataToSend.append("registered_ios_on_esakshya", formData.totalIOsEsakshya);
-          formDataToSend.append("esakshya_usage_percentage", formData.esakshyaWage);
-          formDataToSend.append("month_year", formData.month_year);
-        }
-        if (formData.formType === "Esakshya wrt 7yrs or more") {   //Tested
-          formDataToSend.append("type", "esakshya_7_more");
-          formDataToSend.append("district", localStorage.getItem("district") || "");
-          formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-          formDataToSend.append("unit", formData.unit);
-          formDataToSend.append("total_cases", formData.totalCases);
-          formDataToSend.append("total_offences_with_esakshya", formData.totalOffencesUsed);
-          formDataToSend.append("total_offences_without_esakshya", formData.totalOffencesNotUsed);
-          formDataToSend.append("total_charge_sheeted_with_esakshya", formData.offencesUsedChargeCheet);
-          formDataToSend.append("total_under_investigation_without_esakshya", formData.offencesNotUsedUnderInvestigation);
-          formDataToSend.append("percentage_usage", formData.percentageOfUsingEsakshya);
-        }
-        if (formData.formType === "FIR's and Zero FIR's") {  //Tested
-          formDataToSend.append("type", "fir_and_zero_firs");
-          formDataToSend.append("district", localStorage.getItem("district") || "");
-          formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-          formDataToSend.append("unit", formData.unit);
-          formDataToSend.append("section", formData.sections);
-          formDataToSend.append("total_zero_firs_received", formData.totalZeroFIRsReceived);
-          formDataToSend.append("total_firs_registered", formData.totalFIRsRegistered);
-          formDataToSend.append("pending", formData.pending);
-          formDataToSend.append("total_transferred_zero_firs", formData.totalTransferredZeroFIRs);
-          formDataToSend.append("month_year", formData.month_year);
-        }
-        if (formData.formType === "eFIR") {   //Tested
-          formDataToSend.append("type", "e_fir");
-          formDataToSend.append("district", localStorage.getItem("district") || "");
-          formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-          formDataToSend.append("unit", formData.unit);
-          formDataToSend.append("police_station", formData.policeStation);
-          formDataToSend.append("total_ecomplaints_received", formData.totalEComplaintsReceived);
-          formDataToSend.append("total_ecomplaints_converted_to_firs", formData.totalComplaintsConverted);
-          formDataToSend.append("disposed_of_ecomplaints", formData.disposedEComplaints);
-          formDataToSend.append("month_year", formData.month_year);
-        }
+        forensic_visits: Object.keys(formValues).map((month) => ({
+          month_year: month, 
+          type: "forensic_visits",
+          total_cases_gt_7_years: formValues[month].total_cases_gt_7_years || "",
+          cases_forensic_team_visited: formValues[month].cases_forensic_team_visited || "",
+          forensic_team_deployment_percentage: formValues[month].forensic_team_deployment_percentage || "",
+        })),
+        
+      };
 
-        if (formData.formType === "Special Cases & High-Profile Investigations Form") {  //Tested
-          formDataToSend.append("type", "special_cases_high_profile_investigations");
-          formDataToSend.append("district", localStorage.getItem("district") || "");
-          formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-          formDataToSend.append("unit", formData.unit);
-          formDataToSend.append("police_station", formData.policeStation);
-          formDataToSend.append("act_and_section", formData.actAndSection);
-          formDataToSend.append("registered_cases", formData.registeredCases);
-          formDataToSend.append("detected_cases", formData.detectedCases);
-          formDataToSend.append("percent_detection", formData.detectedCasesPercentage);
-          formDataToSend.append("month_year", formData.month_year);
-        }
-        if (formData.formType === "ITSSO Compliance Form") {   //Tested
-          formDataToSend.append("type", "itsso_compliance");
-          formDataToSend.append("district", localStorage.getItem("district") || "");
-          formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-          formDataToSend.append("total_pocso", formData.total_pocso || "");
-          formDataToSend.append("bns_cases", formData.bns_cases || "");
-          formDataToSend.append("charge_sheeted_within_60_days", formData.charge_sheeted_within_60_days || "");
-          formDataToSend.append("pending_cases", formData.pending_cases || "");
-          formDataToSend.append("reasons_for_pending", formData.reasons_for_pending || "");
-          formDataToSend.append("percentage", formData.percentage || "");
-          formDataToSend.append("month_year", formData.month_year || "");
-        }
-        if (formData.formType === "Stolen & Recovered Property Form") {   //Tested
-          formDataToSend.append("type", "stolen_recovered_property");
-          formDataToSend.append("district", localStorage.getItem("district") || "");
-          formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-          formDataToSend.append("total_cases", formData.total_cases || "");
-          formDataToSend.append("value_stolen_property", formData.value_stolen_property || "");
-          formDataToSend.append("value_recovered_property", formData.value_recovered_property || "");
-          formDataToSend.append("recovery_percentage", formData.recovery_percentage || "");
-          formDataToSend.append("month_year", formData.month_year || "");
-        }
-        if (formData.formType === "Forensic Team Deployment Form") {  //Tested
-          formDataToSend.append("type", "forensic_team_deployment");
-          formDataToSend.append("district", localStorage.getItem("district") || "");
-          formDataToSend.append("police_station", localStorage.getItem("police_station") || "NAGPUR");
-          formDataToSend.append("total_cases_gt_7_years", formData.total_cases_gt_7_years || "");
-          formDataToSend.append("forensic_team_deployment_percentage", formData.forensic_team_deployment_percentage || "");
-          formDataToSend.append("cases_forensic_team_visited", formData.cases_forensic_team_visited || "");
-          formDataToSend.append("month_year", formData.month_year || "");
-        }
-      }
 
-      const response = await axiosInstance.post("/fir_form", formDataToSend, {
-          headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `${token}`, // Include token
-          },
+
+
+      const reportData = {
+        'Police Training': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Total Constabulary": formValues[month].total_personnel || 0,
+            'Constabulary Trained': formValues[month].total_officers || 0,
+            '% Constabulary Trained': formValues[month].personnel_trained || 0,
+            'Total Officers': formValues[month].officers_trained || 0,
+            'Officers Trained': formValues[month].percent_personnel_trained || 0,
+            '% Officers Trained': formValues[month].percent_officers_trained || 0,
+            'Overall Cumulative': formValues[month].overall_cumulative || 0,
+        })),
+    
+        'Pendency of cases under BNS': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Total Cases": formValues[month].totalCases || 0,
+            "Disposed Cases": formValues[month].disposedCases || 0,
+            "Pending Cases": formValues[month].pendingCases || 0,
+            "Pending Percentage": formValues[month].pendingPercentage || 0,
+            "Punishment Less Than 7 yrs.": formValues[month].punishmentLessThan7 || 0,
+            "Punishment More Than 7 yrs.": formValues[month].punishmentMoreThan7 || 0,
+        })),
+        
+        'Offences Against Body under BNS': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Act and Section": formValues[month].actAndSection || 0,
+            "Registered Cases": formValues[month].registeredCases || 0,
+            "Detected Cases": formValues[month].detectedCases || 0,
+            "Detected Cases %": formValues[month].detectedCasesPercentage || 0,
+        })),
+        
+        'Untraced Missing': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Age Group": formValues[month].ageGroup || 0,
+            "Untraced Persons": formValues[month].untracedPersons || 0,
+        })),
+        
+        'Sections Under BNS': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Act and Section": formValues[month].actAndSection || 0,
+            "Registered Cases": formValues[month].registeredCases || 0,
+            "Detected Cases": formValues[month].detectedCases || 0,
+            "Detected Cases %": formValues[month].detectedCasesPercentage || 0,
+        })),
+        
+        'Property Offences under BNS': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Act and Section": formValues[month].actAndSection || 0,
+            "Registered Cases": formValues[month].registeredCases || 0,
+            "Detected Cases": formValues[month].detectedCases || 0,
+            "Detected Cases %": formValues[month].detectedCasesPercentage || 0,
+        })),
+        
+        'eSakshya Details': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Total IO's eSaklshya Registered": formValues[month].totalIOsEsakshyaRegistered || 0,
+            "Total IO's eSakshya Downloaded": formValues[month].totalIOsEsakshyaDownload || 0,
+            "eSakshya Wage": formValues[month].esakshyaWage_1 || 0,
+        })),
+        
+        'Use of eSakshya App. in cases with punishment of 7 yrs. or more': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Totak IO's Nagpur": formValues[month].totalIOsNagapur || 0,
+            "Totak IO's eSakshya": formValues[month].totalIOsEsakshya || 0,
+            "eSakshya Wage": formValues[month].esakshyaWage || 0,
+        })),
+        
+        "Zero FIR's": Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            'Total No. Zero FIRs Transferred Outside Maharashtra': formValues[month].total_no_zero_fir_transferred_outside_mh || 0,
+            "Total No. Zero FIRs Transferred Outer State to Maharashtra": formValues[month].total_no_zero_fir_transferred_outer_state_to_mh || 0,
+            "Totak Zero FIRs": formValues[month].total_zero_firs || 0,
+            "Pending To Transfer Outside Maharashtra": formValues[month].pending_to_transfer_outside_mh || 0,
+            "Total FIRs Registered": formValues[month].total_firs_registered || 0,
+            "Re-Register FIRs": formValues[month].re_reg_firs || 0,
+            "Total Transferred Zero FIRs in Maharashtra": formValues[month].total_transferred_zero_firs_in_mh || 0,
+            "Pending For Transfer Within Maharashtra": formValues[month].pending_for_transfer_within_mh || 0,
+            "Pending For Re-Registration": formValues[month].pending_for_re_registration || 0,
+        })),
+        
+        'eFIR': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Total EComplaints Received": formValues[month].totalEComplaintsReceived || 0,
+            "Total Complaints Converted": formValues[month].totalComplaintsConverted || 0,
+            'Disposed EComplaints': formValues[month].disposedEComplaints || 0,
+        })),
+        
+        'ITSSO (Investigation Tracking System for Sexual offences)': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Total Pocso BNS Cases": formValues[month].total_pocso_bns_cases || 0,
+            "No. Charge Sheet Within 60 Days": formValues[month].charge_sheeted_within_60_days || 0,
+            "Percentage": formValues[month].percentage || 0,
+        })),
+        
+        'Stolen / Recovered Property': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Total Cases": formValues[month].total_cases || 0,
+            "Offences Registered": formValues[month].offences_registered || 0,
+            "Value Stolen Property": formValues[month].value_stolen_property || 0,
+            "Detected Cases": formValues[month].detected_cases || 0,
+            "Value Recovered Property": formValues[month].value_recovered_property || 0,
+            "Recovery %": formValues[month].recovery_percentage || 0,
+        })),
+        
+        'Conviction under BNS': Object.keys(formValues).map((month) => ({
+            'Month-Year': month, 
+            "Type of Court": formValues[month].type_of_court || 0,
+            "BNS Section": formValues[month].bns_sections || 0,
+            "Cases Decided": formValues[month].cases_decided || 0,
+            "Convicted Cases": formValues[month].convicted_cases || 0,
+            "Convicted Rate": formValues[month].conviction_rate || 0,
+            "Total Cases Convicted": formValues[month].total_cases_convicted || 0,
+            "Total Cases Decided": formValues[month].total_cases_decided || 0,
+        })),
+
+        'Visit of Forensic Teams': Object.keys(formValues).map((month) => ({
+          'Month-year': month, 
+          "Total Cases Greater Than 7 yrs.": formValues[month].total_cases_gt_7_years || 0,
+          "Cases Forensic Team Visited": formValues[month].cases_forensic_team_visited || 0,
+          "Forensic Team Deployment %": formValues[month].forensic_team_deployment_percentage || 0,
+        })),
+    };
+      
+
+
+      // Full request body in JSON format
+      const requestBody = {
+        data: transformedData,
+        username: localStorage.getItem("userName") || "",
+        email: localStorage.getItem("email") || "",
+        emp_id: localStorage.getItem("emp_id") || "",
+        city: localStorage.getItem("city") || "",
+        zone: localStorage.getItem("zone") || "",
+        unit: localStorage.getItem("zone") || "",
+        district: localStorage.getItem("district") || "",
+        police_station: localStorage.getItem("police_station") || "",
+        // month: month,
+      };
+      
+
+      console.log(requestBody, "..........pavan.........");
+
+
+      // Make the API request with axios
+      const response = await axiosInstance.post("/fir_form", requestBody, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`, // Include token
+        },
       });
-      // const response = await axios.post("http://192.168.1.33:5555/api/fir_form", formDataToSend, {
-      //   headers: {
-      //     "Content-Type": "multipart/form-data",
-      //     Authorization: `${token}`, // Ensure token is valid
-      //   },
-      // });
 
       if (response.status === 201) {
         alert("Data inserted successfully");
-        setFormData({ type: "fir", formType: "Form-A", date: "", zone: "", district: "", sections: "", totalCases: "", detectedCases: "", overallPercentage: "", uploadedFile: null, });
+        setFormData(getInitialFormData());
         setFileInfo(null);
-        window.location.reload();
+        setReload(true);
+
+
+        const zone  = localStorage.getItem('zone') || ""
+        const district  = localStorage.getItem('district') || ""
+
+        console.log("transformedData['data'] : ",transformedData);
+        
+
+
+        const newData = {
+          timeStamp: (() => {
+            const date = new Date();
+            const day = String(date.getDate()).padStart(2, '0'); // Add leading zero for single digits
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+            const year = date.getFullYear();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+          })(),
+          submited_by: localStorage.getItem('userName') || "",
+          email: localStorage.getItem('email') || "",
+          rang: localStorage.getItem('zone') || "",
+          district: localStorage.getItem('district') || "",
+          sampleDataIN:{
+            [zone]:{
+              [district]:reportData
+            }
+            
+            }
+        };
+        
+        downloadPDF(newData,subrole);
       } else {
-        throw new Error(`Unexpected response: ${response.status}`);
+        alert("Data inserted successfully");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("Error submitting form. Check console for details.");
+      alert("Failed to insert data.");
     }
   };
 
+  
+  
+  useEffect(() => {
+    const fetchConvictionData = async () => {
+      try {
+        const response = await axios.get("http://192.168.1.33:5555/api/conviction");
+        setConvictionData(response.data);
+      } catch (error) {
+        console.error("Error fetching conviction data:", error);
+      }
+    };
+
+    fetchConvictionData();
+  }, []);
+
+  // Handle BNS Section selection
+  const handleBnsSectionChange = (e) => {
+    const selectedSection = e.target.value;
+
+    // Find matching data
+    const matchedData = convictionData.find((item) => item.bns_section === selectedSection);
+
+    setFormData((prev) => ({
+      ...prev, // Preserve other form data
+      bns_sections: selectedSection,
+      total_cases_convicted: matchedData ? matchedData.total_cases_convicted : "0",
+      total_cases_decided: matchedData ? matchedData.total_cases_decided : "0",
+    }));
+  };
+
+  useEffect(() => {
+    console.log(formData.total_cases_convicted, formData.total_cases_decided, formData.bns_sections, "...................tpaoca.........");
+  }, [formData]); // Runs whenever formData changes
+
+
   // ================================================================================================================
+  // ========================kiran_kumar====================================
+
+  // ---------------------------------------------------------------------
+
+
+
+  useEffect(() => {
+    if (formData.fromDate && formData.toDate) {
+      setFormValues({})
+      generateMonthsInRange(formData.fromDate, formData.toDate);
+    }
+  }, [formData.fromDate, formData.toDate]);
+
+  const generateMonthsInRange = (from, to) => {
+    let start = new Date(from);
+    let end = new Date(to);
+    let months = [];
+
+    while (start <= end) {
+      let year = start.getFullYear();
+      let month = start.toLocaleString("default", { month: "long" });
+      let monthKey = `${month}-${year}`;
+      months.push(monthKey);
+
+      setFormValues((prev) => ({
+        ...prev,
+        [monthKey]: {
+          total_personnel: "",
+          total_officers: "",
+          personnel_trained: "",
+          officers_trained: "",
+          percent_personnel_trained: "",
+          percent_officers_trained: "",
+          overall_cumulative: "",
+          total_persons_trained: "",
+        }
+      }));
+
+      start.setMonth(start.getMonth() + 1);
+    }
+
+    setMonthsInRange(months);
+  };
+
+  const handleExpand = (month) => {
+    setExpandedMonth(expandedMonth === month ? null : month);
+  };
+
+
+  const [verified, setVerified] = useState(false);
+
+
+
+  const handleInputChange = (month, field, value) => {
+    console.log("month : ",month);
+    console.log("field : ",field);
+    console.log("value : ",value);
+    
+    setFormValues((prev) => {
+      const updatedForm = { ...prev[month], [field]: value };
+
+
+
+
+
+        // Perform calculations
+        const totalPersonal = Number(updatedForm.total_personnel) || 0;
+        const totalOfficers = Number(updatedForm.total_officers) || 0;
+        const trainedPersonal = Number(updatedForm.personnel_trained) || 0;
+        const trainedOfficers = Number(updatedForm.officers_trained) || 0;
+
+        updatedForm.percent_personnel_trained =
+          totalPersonal > 0 ? ((trainedPersonal / totalPersonal) * 100).toFixed(2) : "0.00";
+
+        updatedForm.percent_officers_trained =
+          totalOfficers > 0 ? ((trainedOfficers / totalOfficers) * 100).toFixed(2) : "0.00";
+
+        updatedForm.overall_cumulative = (
+          (Number(updatedForm.percent_personnel_trained) + Number(updatedForm.percent_officers_trained)) / 2
+        ).toFixed(2);
+
+        updatedForm.total_persons_trained = (trainedPersonal + trainedOfficers).toString();
+
+
+     
+
+        // if (formData.formType === 'Pendency of cases under BNS') {
+          // Pendency calculations
+          const totalCasesUnderBns = Number(updatedForm.totalCases) || 0;
+          const disposedCases = Number(updatedForm.disposedCases) || 0;
+
+
+          updatedForm.pendingCases =
+          totalCasesUnderBns > 0 ? `${(totalCasesUnderBns - disposedCases)}` : "0";
+
+          updatedForm.pendingPercentage =
+            (totalCasesUnderBns > 0 && totalCasesUnderBns > disposedCases) ? ((disposedCases / totalCasesUnderBns) * 100).toFixed(2) : "0.00";
+
+        // } else if (formData.formType === 'Untraced Missing') {
+
+          const untracedPersons = Number(updatedForm.untracedPersons) || 0;
+          const missingPersons = Number(updatedForm.missingPersons) || 0;
+          const traced = Number(updatedForm.traced) || 0;
+
+          updatedForm.totalMissing =
+            untracedPersons > 0 ? `${(untracedPersons + missingPersons)}` : "0";
+
+
+          updatedForm.untraced =
+            untracedPersons > 0 ? `${(updatedForm.totalMissing - traced)}` : "0";
+
+
+          updatedForm.untracedPercentage =
+            (updatedForm.untraced > 0) ? ((updatedForm.untraced / updatedForm.totalMissing) * 100).toFixed(2) : "0.00";
+
+
+        // } else if (formData.formType === 'Offences against body under BNS' || formData.formType === 'Important sections introduced in BNS' || formData.formType === 'Property offences under BNS') {
+
+          const registeredCases = Number(updatedForm.registeredCases) || 0;
+          const detectedCases = Number(updatedForm.detectedCases) || 0;
+
+          updatedForm.detectedCasesPercentage =
+            (registeredCases > 0) ? ((detectedCases / registeredCases) * 100).toFixed(2) : "0.00";
+        // --- added by me pavan kalyan important sections in bns ---
+          const registeredCases_1 = Number(updatedForm.registeredCases_1) || 0;
+          const detectedCases_1 = Number(updatedForm.detectedCases_1) || 0;
+
+          updatedForm.detectedCasesPercentage_1 =
+            (registeredCases_1 > 0) ? ((detectedCases_1 / registeredCases_1) * 100).toFixed(2) : "0.00";
+          
+        // } else if (formData.formType === 'eSakshya Details') {
+
+          const totalIOsEsakshya = Number(updatedForm.totalIOsEsakshya) || 0;
+          const totalIOsNagapur = Number(updatedForm.totalIOsNagapur) || 0;
+
+          updatedForm.esakshyaWage =
+            (totalIOsNagapur > 0) ? ((totalIOsEsakshya / totalIOsNagapur) * 100).toFixed(2) : "0.00";
+
+        // -----pavan -- esakshaya details ----
+        const totalIOsEsakshyaRegistered = Number(updatedForm.totalIOsEsakshyaRegistered) || 0;
+        const totalIOsEsakshyaDownload = Number(updatedForm.totalIOsEsakshyaDownload) || 0;
+
+        updatedForm.esakshyaWage_1 =
+          (totalIOsEsakshyaDownload > 0) ? ((totalIOsEsakshyaDownload / totalIOsEsakshyaRegistered) * 100).toFixed(2) : "0.00";
+        // } else if (formData.formType === 'Use of eSakshya App in cases with punishment of 7 yrs. or more') {
+          const totalCaseseSK = Number(updatedForm.totalCases) || 0;
+          const totalOffencesUsedeSK = Number(updatedForm.totalOffencesUsed) || 0;
+          updatedForm.percentageOfUsingEsakshya =
+            (totalCaseseSK > 0) ? ((totalOffencesUsedeSK / totalCaseseSK) * 100).toFixed(2) : "0.00";
+
+          updatedForm.totalOffencesNotUsed = totalCaseseSK - totalOffencesUsedeSK;
+
+        // } else if (formData.formType === 'Use of eSakshya App in cases with punishment of 7 yrs. or more') {
+          const totalCases = Number(updatedForm.totalCases) || 0;
+          const totalOffencesUsed = Number(updatedForm.totalOffencesUsed) || 0;
+          updatedForm.percentageOfUsingEsakshya =
+            (totalCases > 0) ? ((totalOffencesUsed / totalCases) * 100).toFixed(2) : "0.00";
+
+          updatedForm.totalOffencesNotUsed = totalCases - totalOffencesUsed;
+
+        // } else if (formData.formType === "eFIR") {
+          // const totalEComplaintsReceived = Number(updatedForm.totalEComplaintsReceived) || 0;
+          // const totalComplaintsConverted = Number(updatedForm.totalComplaintsConverted) || 0;
+
+          // // Calculate Disposed of eComplaints
+          // updatedForm.disposedEComplaints = totalComplaintsConverted; // Assuming all converted complaints are disposed
+
+          // // Validation for Total Complaints Converted
+          // if (totalComplaintsConverted > totalEComplaintsReceived) {
+          //   // Handle the error case as needed
+          //   console.error("Total eComplaints Converted to Regular FIRs cannot exceed Total eComplaints Received on Citizen Portal.");
+          // }
+        // } else if (formData.formType === "Zero FIR's") {
+          const total_no_zero_fir_transferred_outside_mh = Number(updatedForm.total_no_zero_fir_transferred_outside_mh) || 0;
+          const total_no_zero_fir_transferred_outer_state_to_mh = Number(updatedForm.total_no_zero_fir_transferred_outer_state_to_mh) || 0;
+          const re_reg_firs = Number(updatedForm.re_reg_firs) || 0;
+          const total_transferred_zero_firs_in_mh = Number(updatedForm.total_transferred_zero_firs_in_mh) || 0;
+
+          updatedForm.total_zero_firs =
+            total_no_zero_fir_transferred_outside_mh + total_no_zero_fir_transferred_outer_state_to_mh;
+
+          updatedForm.pending_to_transfer_outside_mh =
+            Math.max(0, updatedForm.total_zero_firs - total_no_zero_fir_transferred_outside_mh);
+
+          updatedForm.pending_for_transfer_within_mh =
+            Math.max(0, re_reg_firs - total_transferred_zero_firs_in_mh);
+
+          updatedForm.pending_for_re_registration =
+            Math.max(0, total_no_zero_fir_transferred_outer_state_to_mh - re_reg_firs);
+
+
+
+
+        // } else if (formData.formType === "ITSSO Compliance Form") {
+          const charge_sheeted_within_60_days = Number(updatedForm.charge_sheeted_within_60_days) || 0;
+          const total_pocso_bns_cases = Number(updatedForm.total_pocso_bns_cases) || 0;
+
+          updatedForm.percentage =
+            (total_pocso_bns_cases > 0) ? ((charge_sheeted_within_60_days / total_pocso_bns_cases) * 100).toFixed(2) : "0.00";
+
+        // } else if (formData.formType === "Stolen & Recovered Property") {
+          const value_recovered_property = Number(updatedForm.value_recovered_property) || 0;
+          const value_stolen_property = Number(updatedForm.value_stolen_property) || 0;
+
+          updatedForm.recovery_percentage =
+            (value_stolen_property > 0) ? ((value_recovered_property / value_stolen_property) * 100).toFixed(2) : "0.00";
+
+        // } else if (formData.formType === "Conviction under BNS") {
+          const convicted_cases = Number(updatedForm.convicted_cases) || 0;
+          const cases_decided = Number(updatedForm.cases_decided) || 0;
+
+          updatedForm.conviction_rate =
+            (cases_decided > 0) ? ((convicted_cases / cases_decided) * 100).toFixed(2) : "0.00";
+
+
+      //   }
+
+      // } else {
+
+        const cases_forensic_team_visited = Number(updatedForm.cases_forensic_team_visited) || 0;
+        const total_cases_gt_7_years = Number(updatedForm.total_cases_gt_7_years) || 0;
+
+        updatedForm.forensic_team_deployment_percentage =
+          (total_cases_gt_7_years > 0) ? ((cases_forensic_team_visited / total_cases_gt_7_years) * 100).toFixed(2) : "0.00";
+
+
+      // }
+
+
+
+      const newFormValues = { ...prev, [month]: updatedForm };
+
+      console.log("newFormValues : ", newFormValues);
+
+      // Check form completion and update verified state
+      setVerified(isFormFilled(month));
+
+      return newFormValues;
+    });
+  };
+
+
+
+
+
+  const isFormFilled = (id) => {
+    const values = formValues[id];
+
+
+    return values && Object.values(values).every(value => value !== undefined && value !== "");
+  };
+
+
+
+
+
+
+  const handleEdit = (monthYear) => {
+    setExpandedMonth(monthYear); // Expand the corresponding month dropdown
+    // Scroll into view if necessary
+    document.getElementById(monthYear)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const [duplicatedMonths, setDuplicatedMonths] = useState([]);
+  const [monthCount, setMonthCount] = useState({}); // Store counts in state
+
+  const getUniqueMonthId = (month) => {
+    setMonthCount((prev) => {
+      const newCount = (prev[month] || 0) + 1;
+      return { ...prev, [month]: newCount };
+    });
+
+    return `${month} - ${(monthCount[month] || 0) + 1}`; // Hidden unique ID
+  };
+
+  // Function to add a duplicate month with fresh data
+  const handleDuplicate = (month) => {
+    console.log("month: ", month);
+
+    const newId = getUniqueMonthId(month);
+
+    setDuplicatedMonths((prev) => [...prev, { month, id: newId }]);
+
+    // Ensure each duplicate has a separate form entry
+    setFormValues((prev) => ({
+      ...prev,
+      [newId]: { personnel_trained: "", total_personnel: "", officers_trained: "", total_officers: "" }
+    }));
+  };
+
+  // Function to remove a duplicated month
+  const handleRemoveDuplicate = (id) => {
+    setMonthsInRange((prev) => prev.filter((item) => item !== id)); // Remove from original months list
+    setDuplicatedMonths((prev) => prev.filter((item) => item.id !== id));
+    setFormValues((prev) => {
+      const updatedValues = { ...prev };
+      delete updatedValues[id]; // Remove the form entry for this duplicate
+      return updatedValues;
+    });
+  };
+
+
+  // Upload Functionality
+
+  const [uploadData, setuploadData] = useState({})
+
+
+
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    if (!selectedFile) {
+      alert("No file selected!");
+      return;
+    }
+
+    const fileType = selectedFile.name.split('.').pop().toLowerCase();
+    if (fileType !== "csv" && fileType !== "xlsx") {
+      alert("Please upload a valid CSV or XLSX file.");
+      return;
+    }
+
+    const Columns = [
+      "mm/yyyy",
+      "Total No. of Constabulary",
+      "No. of Constabulary Trained",
+      "Total No. of Officers",
+      "No. of Officers Trained"
+    ];
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const data = new Uint8Array(event.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+      if (jsonData.length === 0) {
+        alert("The file is empty or incorrectly formatted.");
+        return;
+      }
+
+      const fileColumns = Object.keys(jsonData[0]);
+      const missingColumns = Columns.filter(col => !fileColumns.includes(col));
+
+      if (missingColumns.length > 0) {
+        alert(`Missing columns: ${missingColumns.join(", ")}`);
+        return;
+      }
+
+      // **Store duplicates by using an array instead of an object**
+      const formattedData = jsonData.map(row => {
+        let monthYear = row["mm/yyyy"];
+        monthYear = excelDateToJSDate(monthYear); // Convert to readable format
+
+        return {
+          monthYear,
+          total_personnel: row["Total No. of Constabulary"] || 0,
+          personnel_trained: row["No. of Constabulary Trained"] || 0,
+          total_officers: row["Total No. of Officers"] || 0,
+          officers_trained: row["No. of Officers Trained"] || 0,
+        }
+      });
+
+      setuploadData(formattedData); // Store array instead of object
+      console.log("Formatted Upload Data with Duplicates: ", formattedData);
+      setSelectedTab('form');
+    };
+
+    reader.readAsArrayBuffer(selectedFile);
+    setVerified(true);
+  };
+
+
+  const [uploadDate, setuploadDate] = useState({})
+
+  const excelDateToJSDate = (dateString) => {
+    // Ensure date is in "MM/YYYY" format
+    const parts = dateString.split("/");
+    if (parts.length !== 2) return "Invalid Date";
+
+    const month = parseInt(parts[0], 10) - 1; // Convert to zero-based month index
+    const year = parseInt(parts[1], 10);
+
+    if (isNaN(month) || isNaN(year) || month < 0 || month > 11) return "Invalid Date";
+
+    const date = new Date(year, month);
+    return date.toLocaleDateString("en-US", { year: "numeric", month: "long" });
+  };
+
+  useEffect(() => {
+    if (uploadData) {
+      const months = []; // Store monthYear values including duplicates
+      const newFormValues = {};
+      const monthCount = {}; // Object to keep track of monthYear occurrences
+
+      // Ensure uploadData is an array before processing
+      const dataArray = Array.isArray(uploadData) ? uploadData : [uploadData];
+
+      // Collect monthYear values (allowing duplicates)
+      dataArray.forEach((data) => {
+        if (data.monthYear) {
+          // Check if monthYear already exists in monthCount
+          if (!monthCount[data.monthYear]) {
+            monthCount[data.monthYear] = 1; // Initialize count
+          } else {
+            monthCount[data.monthYear] += 1; // Increment the count for duplicates
+            data.monthYear = `${data.monthYear} - ${monthCount[data.monthYear]}`; // Modify duplicate from the start
+          }
+
+          months.push(data.monthYear);
+        }
+      });
+
+      const parseMonthYear = (monthYear) => {
+        const baseMonthYear = monthYear.split(" - ")[0]; // Extract the original monthYear (before any numbering)
+        const [month, year] = baseMonthYear.split(" ");
+        return new Date(`${month} 1, ${year}`); // Using day 1 for sorting
+      };
+
+      const sortedMonths = months.sort((a, b) => parseMonthYear(a) - parseMonthYear(b));
+
+      console.log("sortedMonths:", sortedMonths);
+
+      setMonthsInRange(sortedMonths); // Set all monthYear values including duplicates
+
+      // Define date range
+      const dateRange = {
+        fromDate: sortedMonths.length > 0 ? sortedMonths[0] : null, // Earliest date
+        toDate: sortedMonths.length > 0 ? sortedMonths[sortedMonths.length - 1] : null, // Latest date
+      };
+
+      setuploadDate(dateRange);
+
+      console.log("dateRange : ", dateRange);
+
+      // Process data entries as they are (keeping duplicates)
+      dataArray.forEach((data) => {
+
+
+        // Create an object with monthYear as key and remaining values as the value
+        newFormValues[data.monthYear] = {
+          total_personnel: data.total_personnel || "",
+          personnel_trained: data.personnel_trained || "",
+          total_officers: data.total_officers || "",
+          officers_trained: data.officers_trained || "",
+          percent_personnel_trained:
+            data.total_personnel > 0
+              ? ((data.personnel_trained / data.total_personnel) * 100).toFixed(2)
+              : 0,
+          percent_officers_trained:
+            data.total_officers > 0
+              ? ((data.officers_trained / data.total_officers) * 100).toFixed(2)
+              : 0,
+          total_persons_trained: (data.total_personnel + data.total_officers) || '',
+          overall_cumulative: (((parseFloat((data.personnel_trained / data.total_personnel) * 100)) +
+            parseFloat((data.officers_trained / data.total_officers) * 100)) / 2).toFixed(2) || 0
+
+        };
+      });
+
+      console.log("newFormValues as object:", newFormValues);
+
+      setFormValues(newFormValues);
+    }
+  }, [uploadData]);
+
+
+
+
+
+
+  // Training Form
+
+  const TrainingForm = (monthsInRange, duplicatedMonths) => {
+
+    return (
+      <div className="overflow-x-auto d-flex justify-center">
+        <table className="min-w-[25%] border border-gray-400 shadow-md">
+          <thead>
+            <tr className="bg-gray-200 text-left">
+              <th className="border px-4 py-2">Month-Year</th>
+              <th className="border px-4 py-2">Total Constab</th>
+              <th className="border px-4 py-2">Trained (Constab.)</th>
+              <th className="border px-4 py-2">% Trained (Constab.)</th>
+              <th className="border px-4 py-2">Total Officers</th>
+              <th className="border px-4 py-2">Trained (Officers.)</th>
+              <th className="border px-4 py-2">% Trained (Officers.)</th>
+              <th className="border px-4 py-2">Total Trained</th>
+              <th className="border px-4 py-2">Total Trained %</th>
+              {/* <th className="border p-1 ">Actions</th> */}
+            </tr>
+          </thead>
+          <tbody>
+            {[...monthsInRange.map(m => ({ month: m, id: m })), ...duplicatedMonths].map(({ month, id }, index, arr) => {
+              const isPrevFormFilled = index === 0 || isFormFilled(arr[index - 1]?.id);
+              const isDuplicate = duplicatedMonths.some((item) => item.id === id);
+              const isLastRow = index === arr.length - 1; // Check if this is the last row
+
+
+              return (
+                <tr key={id}>
+                  <td className="border px-4 py-2">{month}</td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      className="w-[50%] p-2"
+                      
+                      value={formValues[id]?.total_personnel || ""}
+                      
+                      onChange={(e) => handleInputChange(id, "total_personnel", e.target.value)}
+                    />
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      
+                      className="w-[50%] p-1"
+                      value={formValues[id]?.personnel_trained || ""}
+                      
+                      onChange={(e) => handleInputChange(id, "personnel_trained", e.target.value)}
+                      style={{
+                        border:
+                          Number(formValues[id]?.personnel_trained) > Number(formValues[id]?.total_personnel)
+                            ? "2px solid #ff8e8e"
+                            : "1px solid #0000004b"
+                      }}
+                    />
+
+                  </td>
+                  <td className="border px-4 py-2">
+
+                    <input type="number"  className="w-[50%] p-2" value={formValues[id]?.percent_personnel_trained || ""}  />
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      
+                      className="w-[50%] p-1"
+                      value={formValues[id]?.total_officers || ""}
+                      
+                      onChange={(e) => handleInputChange(id, "total_officers", e.target.value)}
+                    />
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      className="w-[50%] p-1"
+                      
+                      value={formValues[id]?.officers_trained || ""}
+                      
+                      onChange={(e) => handleInputChange(id, "officers_trained", e.target.value)}
+                      style={{
+                        border:
+                          Number(formValues[id]?.officers_trained) > Number(formValues[id]?.total_officers)
+                            ? "2px solid #ff8e8e"
+                            : "1px solid #0000004b"
+                      }}
+                    />
+
+                  </td>
+                  <td className="border px-4 py-2">
+
+                    <input type="number"  className="w-[50%] p-2" value={formValues[id]?.percent_officers_trained || ""}  />
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      className="w-[50%] p-2"
+                      value={(
+                        (Number(formValues[id]?.personnel_trained) || 0) +
+                        (Number(formValues[id]?.officers_trained) || 0)
+                      )}
+                      
+                    />
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      className="w-[50%] p-2"
+                      value={(
+                        ((Number(formValues[id]?.percent_personnel_trained) || 0) +
+                          (Number(formValues[id]?.percent_officers_trained) || 0)) / 2
+                      ).toFixed(2)}
+                      
+                    />
+
+                  </td>
+
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+
+  // FIR Tab Form Start's from Here
+
+  // Drop Down to select the kind of the Form for Filling in the FIR Tab
+  
+    const firDropdown = () => {
+        return (
+          <>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel id="form-type-label">Form Type</InputLabel>
+              <Select
+                labelId="form-type-label"
+                id="form-type"
+                value={formData.formType}
+                onChange={(e) =>
+                  setFormData({ ...formData, formType: e.target.value })
+                }
+                label="Form Type"
+              >
+                {(() => {
+                  let formOptions = [];
+    
+                  if (training_active?.section === "FIR") {
+                    formOptions = [
+                      "Pendency of cases under BNS",
+                      "Untraced Missing",
+                      "Offences against body under BNS",
+                      "Important sections introduced in BNS",
+                      "Property offences under BNS",
+                      "eSakshya Details",
+                      "Use of eSakshya App in cases with punishment of 7 yrs. or more",
+                      "Zero FIR's",
+                      "eFIR",
+                      "ITSSO Compliance Form",
+                      "Stolen & Recovered Property",
+                      "Conviction under BNS",
+                    ];
+                  }
+    
+                  return formOptions.map((form) => (
+                    <MenuItem key={form} value={form}>
+                      {form}
+                    </MenuItem>
+                  ));
+                })()}
+              </Select>
+            </FormControl>
+          </>
+        );
+      };
+    
+      const pendencyForm = (monthsInRange, duplicatedMonths) => {
+        return (
+          <div className="overflow-x-auto d-flex justify-center">
+            <table className="min-w-[25%] border border-gray-400 shadow-md">
+              <thead>
+                <tr className="bg-gray-200 text-left">
+                  <th className="border px-4 py-2">Month-Year</th>
+                  <th className="border px-4 py-2">Total Cases Registered</th>
+                  <th className="border px-4 py-2">No. of Cases Disposed</th>
+                  <th className="border px-4 py-2">Total Pending Cases</th>
+                  <th className="border px-4 py-2">Pendency Percentage</th>
+                  <th className="border px-4 py-2">
+                    Less than 7 yrs Punishment cases out of Reg.Cases
+                  </th>
+                  <th className="border px-4 py-2">
+                    More than 7 yrs punishment cases out of Reg.Cases
+                  </th>
+                  {/* <th className="border px-4 py-2">Total Trained %</th> */}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ...monthsInRange.map((m) => ({ month: m, id: m })),
+                  ...duplicatedMonths,
+                ].map(({ month, id }, index, arr) => {
+                  const isPrevFormFilled =
+                    index === 0 || isFormFilled(arr[index - 1]?.id);
+                  const isDuplicate = duplicatedMonths.some(
+                    (item) => item.id === id
+                  );
+                  const isLastRow = index === arr.length - 1; // Check if this is the last row
+    
+                  return (
+                    <tr key={id}>
+                      <td className="border px-4 py-2">{month}</td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.totalCases || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "totalCases", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.disposedCases || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "disposedCases", e.target.value)
+                          }
+                        />
+                        
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.pendingCases || ""}
+                          
+                        />
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.pendingPercentage || ""}
+                          onChange={(e) =>
+                            handleInputChange(
+                              id,
+                              "pendingPercentage",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.punishmentLessThan7 || ""}
+                          onChange={(e) =>
+                            handleInputChange(
+                              id,
+                              "punishmentLessThan7",
+                              e.target.value
+                            )
+                          }
+                        />
+                        
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.punishmentMoreThan7 || ""}
+                          onChange={(e) =>
+                            handleInputChange(
+                              id,
+                              "punishmentMoreThan7",
+                              e.target.value
+                            )
+                          }
+                        />
+                        
+                      </td>
+                    
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        );
+      };
+    
+      const untraced = (monthsInRange, duplicatedMonths) => {
+        return (
+          <div className="overflow-x-auto d-flex justify-center">
+            <table className="min-w-[25%] border border-gray-400 shadow-md">
+              <thead>
+                <tr className="bg-gray-200 text-left">
+                  <th className="border px-4 py-2">Month-Year</th>
+                  <th className="border px-4 py-2">Untraced Details Age Group</th>
+                  <th className="border px-4 py-2">No of Untraced Persons</th>
+                  <th className="border px-4 py-2">No of Missing Persons</th>
+                  <th className="border px-4 py-2">Total Missing Persons</th>
+                  <th className="border px-4 py-2">Traced</th>
+                  <th className="border px-4 py-2">Untraced</th>
+                  <th className="border px-4 py-2">Untraced %</th>
+    
+    
+                  
+    
+                  {/* <th className="border px-4 py-2">Total Trained %</th> */}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ...monthsInRange.map((m) => ({ month: m, id: m })),
+                  ...duplicatedMonths,
+                ].map(({ month, id }, index, arr) => {
+                  const isPrevFormFilled =
+                    index === 0 || isFormFilled(arr[index - 1]?.id);
+                  const isDuplicate = duplicatedMonths.some(
+                    (item) => item.id === id
+                  );
+                  const isLastRow = index === arr.length - 1; // Check if this is the last row
+    
+    
+    
+    
+                  return (
+                    <tr key={id}>
+                      <td className="border px-4 py-2">{month}</td>
+                      <td className="border px-4 py-2">
+                        <select
+                          className="w-full p-2 border rounded bg-white"
+                          value={formValues[id]?.ageGroup || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "ageGroup", e.target.value)
+                          }
+                        >
+                          <option value="">Select Age Group</option>
+                          <option value="18-">Below 18 years</option>
+                          <option value="18+">Above or Equal 18 years</option>
+                        </select>
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.untracedPersons || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "untracedPersons", e.target.value)
+                          }
+                        />
+                      </td>
+    
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.missingPersons || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "missingPersons", e.target.value)
+                          }
+                        />
+                      </td>
+    
+    
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.totalMissing || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "totalMissing", e.target.value)
+                          }
+                        />
+                      </td>
+    
+    
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.traced || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "traced", e.target.value)
+                          }
+                        />
+                      </td>
+    
+    
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.untraced || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "untraced", e.target.value)
+                          }
+                        />
+                      </td>
+    
+    
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.untracedPercentage || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "untracedPercentage", e.target.value)
+                          }
+                        />
+                      </td>
+    
+    
+    
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        );
+      };
+    
+      const offencesAgainstBody = (monthsInRange, duplicatedMonths) => {
+        return (
+          <div className="overflow-x-auto d-flex justify-center">
+            <table className="min-w-[25%] border border-gray-400 shadow-md">
+              <thead>
+                <tr className="bg-gray-200 text-left">
+                  <th className="border px-4 py-2">Month-Year</th>
+                  <th className="border px-4 py-2">Act and Section</th>
+                  <th className="border px-4 py-2">Registered Cases</th>
+                  <th className="border px-4 py-2">Detected Cases</th>
+                  <th className="border px-4 py-2">Detected Cases %</th>
+    
+                  {/* <th className="border px-4 py-2">Total Trained %</th> */}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ...monthsInRange.map((m) => ({ month: m, id: m })),
+                  ...duplicatedMonths,
+                ].map(({ month, id }, index, arr) => {
+                  const isPrevFormFilled =
+                    index === 0 || isFormFilled(arr[index - 1]?.id);
+                  const isDuplicate = duplicatedMonths.some(
+                    (item) => item.id === id
+                  );
+                  const isLastRow = index === arr.length - 1; // Check if this is the last row
+    
+                  return (
+                    <tr key={id}>
+                      <td className="border px-4 py-2">{month}</td>
+                      <td className="border px-4 py-2">
+                        <select
+                          className="w-full p-2 border rounded"
+                          value={formValues[id]?.actAndSection || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "actAndSection", e.target.value)
+                          }
+                        >
+                          <option value="" disabled>
+                            Select an Act and Section
+                          </option>
+    
+                          
+    
+                      
+                              <option value="Murder (BNS Sec. 103(1))">
+                                Murder (BNS Sec. 103(1))
+                              </option>
+                              <option value="Att. To Murder (BNS Sec. 109)">
+                                Att. To Murder (BNS Sec. 109)
+                              </option>
+                              <option value="Rape (BNS Sec. 64 to 71)">
+                                Rape (BNS Sec. 64 to 71)
+                              </option>
+                              <option value="Hurt (BNS Sec. 117 to 125)">
+                                Hurt (BNS Sec. 117 to 125)
+                              </option>
+                              <option value="Riots (BNS Sec. 191 to 193)">
+                                Riots (BNS Sec. 191 to 193)
+                              </option>
+                              <option value="Molestation (BNS Sec. 74 to 79)">
+                                Molestation (BNS Sec. 74 to 79)
+                              </option>
+                          
+    
+                        </select>
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.registeredCases || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "registeredCases", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.detectedCases || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "detectedCases", e.target.value)
+                          }
+                        />
+                        {parseInt(formValues[id]?.detectedCases) >
+                          parseInt(formValues[id]?.registeredCases) && (
+                          <p className="text-red-500 text-sm mt-1">
+                            Detected Cases cannot exceed Reg'd Cases.
+                          </p>
+                        )}
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.detectedCasesPercentage || ""}
+                          
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        );
+      };
+
+
+      const ImportantAgainstBody = (monthsInRange, duplicatedMonths) => {
+        return (
+          <div className="overflow-x-auto d-flex justify-center">
+            <table className="min-w-[25%] border border-gray-400 shadow-md">
+              <thead>
+                <tr className="bg-gray-200 text-left">
+                  <th className="border px-4 py-2">Month-Year</th>
+                  <th className="border px-4 py-2">Act and Section</th>
+                  <th className="border px-4 py-2">Registered Cases</th>
+                  <th className="border px-4 py-2">Detected Cases</th>
+                  <th className="border px-4 py-2">Detected Cases %</th>
+    
+                  {/* <th className="border px-4 py-2">Total Trained %</th> */}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ...monthsInRange.map((m) => ({ month: m, id: m })),
+                  ...duplicatedMonths,
+                ].map(({ month, id }, index, arr) => {
+                  const isPrevFormFilled =
+                    index === 0 || isFormFilled(arr[index - 1]?.id);
+                  const isDuplicate = duplicatedMonths.some(
+                    (item) => item.id === id
+                  );
+                  const isLastRow = index === arr.length - 1; // Check if this is the last row
+    
+                  return (
+                    <tr key={id}>
+                      <td className="border px-4 py-2">{month}</td>
+                      <td className="border px-4 py-2">
+                        <select
+                          className="w-full p-2 border rounded"
+                          value={formValues[id]?.actAndSection_1 || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "actAndSection_1", e.target.value)
+                          }
+                        >
+                          <option value="" disabled>
+                            Select an Act and Section
+                          </option>
+    
+                       
+                              <option value="Mob Lynching (Section 103 (2) BNS)">
+                                Mob Lynching (Section 103 (2) BNS)
+                              </option>
+                              <option value="Snatching (Section 304 BNS)">
+                                Snatching (Section 304 BNS)
+                              </option>
+                              <option value="Organized crime (Section 111 BNS)">
+                                Organized crime (Section 111 BNS)
+                              </option>
+                              <option value="Petty Organized crime (Section 112 BNS)">
+                                Petty Organized crime (Section 112 BNS)
+                              </option>
+                              <option value="Terrorist act (Section 113 BNS)">
+                                Terrorist act (Section 113 BNS)
+                              </option>
+    
+                   
+    
+                        
+                        </select>
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.registeredCases_1 || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "registeredCases_1", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.detectedCases_1 || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "detectedCases_1", e.target.value)
+                          }
+                        />
+                        {parseInt(formValues[id]?.detectedCases_1) >
+                          parseInt(formValues[id]?.registeredCases_1) && (
+                          <p className="text-red-500 text-sm mt-1">
+                            Detected Cases cannot exceed Reg'd Cases.
+                          </p>
+                        )}
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.detectedCasesPercentage_1 || ""}
+                          
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        );
+      };
+      const PropertyAgainstBody = (monthsInRange, duplicatedMonths) => {
+        return (
+          <div className="overflow-x-auto d-flex justify-center">
+            <table className="min-w-[25%] border border-gray-400 shadow-md">
+              <thead>
+                <tr className="bg-gray-200 text-left">
+                  <th className="border px-4 py-2">Month-Year</th>
+                  <th className="border px-4 py-2">Act and Section</th>
+                  <th className="border px-4 py-2">Registered Cases</th>
+                  <th className="border px-4 py-2">Detected Cases</th>
+                  <th className="border px-4 py-2">Detected Cases %</th>
+    
+                  {/* <th className="border px-4 py-2">Total Trained %</th> */}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ...monthsInRange.map((m) => ({ month: m, id: m })),
+                  ...duplicatedMonths,
+                ].map(({ month, id }, index, arr) => {
+                  const isPrevFormFilled =
+                    index === 0 || isFormFilled(arr[index - 1]?.id);
+                  const isDuplicate = duplicatedMonths.some(
+                    (item) => item.id === id
+                  );
+                  const isLastRow = index === arr.length - 1; // Check if this is the last row
+    
+                  return (
+                    <tr key={id}>
+                      <td className="border px-4 py-2">{month}</td>
+                      <td className="border px-4 py-2">
+                        <select
+                          className="w-full p-2 border rounded"
+                          value={formValues[id]?.actAndSection || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "actAndSection", e.target.value)
+                          }
+                        >
+                          <option value="" disabled>
+                            Select an Act and Section
+                          </option>
+    
+                         
+                              <option value="Dacoity (BNS Sec. 310)">
+                                Dacoity (BNS Sec. 310)
+                              </option>
+                              <option value="Robbery (BNS Sec. 309)">
+                                Robbery (BNS Sec. 309)
+                              </option>
+                              <option value="HBT (BNS Sec. 331 to 334)">
+                                HBT (BNS Sec. 331 to 334)
+                              </option>
+                              <option value="Theft (BNS Sec. 303 & 305)">
+                                Theft (BNS Sec. 303 & 305)
+                              </option>
+                            
+                        </select>
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.registeredCases || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "registeredCases", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.detectedCases || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "detectedCases", e.target.value)
+                          }
+                        />
+                        {parseInt(formValues[id]?.detectedCases) >
+                          parseInt(formValues[id]?.registeredCases) && (
+                          <p className="text-red-500 text-sm mt-1">
+                            Detected Cases cannot exceed Reg'd Cases.
+                          </p>
+                        )}
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.detectedCasesPercentage || ""}
+                          
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        );
+      };
+    
+    
+      const esakshyaDetails = (monthsInRange, duplicatedMonths) => {
+        return (
+          <div className="overflow-x-auto d-flex justify-center">
+            <table className="min-w-[25%] border border-gray-400 shadow-md">
+              <thead>
+                <tr className="bg-gray-200 text-left">
+                  <th className="border px-4 py-2">Month-Year</th>
+                  <th className="border px-4 py-2">No of IO's Registered</th>
+                  <th className="border px-4 py-2">eSakshya downloads by IOs</th>
+                  <th className="border px-4 py-2">eSakshya Usage %</th>
+    
+                  {/* <th className="border px-4 py-2">Total Trained %</th> */}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ...monthsInRange.map((m) => ({ month: m, id: m })),
+                  ...duplicatedMonths,
+                ].map(({ month, id }, index, arr) => {
+                  const isPrevFormFilled =
+                    index === 0 || isFormFilled(arr[index - 1]?.id);
+                  const isDuplicate = duplicatedMonths.some(
+                    (item) => item.id === id
+                  );
+                  const isLastRow = index === arr.length - 1; // Check if this is the last row
+    
+                  return (
+                    <tr key={id}>
+                      <td className="border px-4 py-2">{month}</td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.totalIOsEsakshyaRegistered || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "totalIOsEsakshyaRegistered", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.totalIOsEsakshyaDownload || ""}
+                          onChange={(e) =>
+                            handleInputChange(
+                              id,
+                              "totalIOsEsakshyaDownload",
+                              e.target.value
+                            )
+                          }
+                        />
+    
+                        
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.esakshyaWage_1 || ""}
+                          
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        );
+      };
+    
+      const useOfEsakshyaDetails = (monthsInRange, duplicatedMonths) => {
+        return (
+          <div className="overflow-x-auto d-flex justify-center">
+            <table className="min-w-[25%] border border-gray-400 shadow-md">
+              <thead>
+                <tr className="bg-gray-200 text-left">
+                  <th className="border px-4 py-2">Month-Year</th>
+                  <th className="border px-4 py-2">No of IO's Registered</th>
+                  <th className="border px-4 py-2">eSakshya downloads by IOs</th>
+                  <th className="border px-4 py-2">eSakshya Usage %</th>
+    
+                  {/* <th className="border px-4 py-2">Total Trained %</th> */}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ...monthsInRange.map((m) => ({ month: m, id: m })),
+                  ...duplicatedMonths,
+                ].map(({ month, id }, index, arr) => {
+                  const isPrevFormFilled =
+                    index === 0 || isFormFilled(arr[index - 1]?.id);
+                  const isDuplicate = duplicatedMonths.some(
+                    (item) => item.id === id
+                  );
+                  const isLastRow = index === arr.length - 1; // Check if this is the last row
+    
+                  return (
+                    <tr key={id}>
+                      <td className="border px-4 py-2">{month}</td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.totalIOsNagapur || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "totalIOsNagapur", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.totalIOsEsakshya || ""}
+                          onChange={(e) =>
+                            handleInputChange(
+                              id,
+                              "totalIOsEsakshya",
+                              e.target.value
+                            )
+                          }
+                        />
+    
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-[40%] p-2 border rounded"
+                          value={formValues[id]?.esakshyaWage || ""}
+                          
+                        />
+                      </td>
+    
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        );
+      };
+    
+      const ZeroFIRDetails = (monthsInRange, duplicatedMonths) => {
+        return (
+          <div className="overflow-x-auto d-flex">
+            <table className="min-w-[20%] border border-gray-400 shadow-md">
+              <thead>
+                <tr className="bg-gray-200 text-left">
+                  <th className="border px-4 py-2">Month-Year</th>
+                  <th className="border px-4 py-2">
+                    No. of Zero FIRs transferred outside Maharashtra
+                  </th>
+                  <th className="border px-4 py-2">
+                    No. of Zero FIRs transferred from other State to Maharashtra
+                  </th>
+                  <th className="border px-4 py-2">Total No of Zero FIRs</th>
+                  <th className="border px-4 py-2">
+                    Pending for Transfer outside Maharashtra
+                  </th>
+                  <th className="border px-4 py-2">Zero FIR's in Maharashtra</th>
+                  <th className="border px-4 py-2">
+                    Re-Registered FIRs in Maharashtra
+                  </th>
+                  <th className="border px-4 py-2">
+                    No of Zero FIR's Transferred Within Maharashtra
+                  </th>
+                  <th className="border px-4 py-2">
+                    Pending for Transfer within Maharashtra
+                  </th>
+                  <th className="border px-4 py-2">Pending for Re-registration</th>
+    
+                  {/* <th className="border px-4 py-2">Total Trained %</th> */}
+                  {/*  */}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ...monthsInRange.map((m) => ({ month: m, id: m })),
+                  ...duplicatedMonths,
+                ].map(({ month, id }, index, arr) => {
+                  const isPrevFormFilled =
+                    index === 0 || isFormFilled(arr[index - 1]?.id);
+                  const isDuplicate = duplicatedMonths.some(
+                    (item) => item.id === id
+                  );
+                  const isLastRow = index === arr.length - 1; // Check if this is the last row
+    
+                  return (
+                    <tr key={id}>
+                      <td className="border px-4 py-2">{month}</td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={
+                            formValues[id]
+                              ?.total_no_zero_fir_transferred_outside_mh || ""
+                          }
+                          onChange={(e) =>
+                            handleInputChange(
+                              id,
+                              "total_no_zero_fir_transferred_outside_mh",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={
+                            formValues[id]
+                              ?.total_no_zero_fir_transferred_outer_state_to_mh ||
+                            ""
+                          }
+                          onChange={(e) =>
+                            handleInputChange(
+                              id,
+                              "total_no_zero_fir_transferred_outer_state_to_mh",
+                              e.target.value
+                            )
+                          }
+                        />
+    
+                        
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formValues[id]?.total_zero_firs || 0}
+                          
+                        />
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={
+                            formValues[id]?.pending_to_transfer_outside_mh || 0
+                          }
+                          
+                        />
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formValues[id]?.total_firs_registered || ""}
+                          onChange={(e) =>
+                            handleInputChange(
+                              id,
+                              "total_firs_registered",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formValues[id]?.re_reg_firs || ""}
+                          onChange={(e) =>
+                            handleInputChange(id, "re_reg_firs", e.target.value)
+                          }
+                        />
+                       
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={
+                            formValues[id]?.total_transferred_zero_firs_in_mh || ""
+                          }
+                          onChange={(e) =>
+                            handleInputChange(
+                              id,
+                              "total_transferred_zero_firs_in_mh",
+                              e.target.value
+                            )
+                          }
+                        />
+                       
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={
+                            formValues[id]?.pending_for_transfer_within_mh || 0
+                          }
+                          
+                        />
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="number"
+                          className="w-full p-2 border rounded"
+                          value={formValues[id]?.pending_for_re_registration || 0}
+                          
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        );
+      };
+   
+
+//  pavan 
+
+
+  // const EFIRDetails = (month) => {
+  //   return (
+  //     <>
+  //       <h3 className="font-semibold text-lg">{month} - {formData.formType}</h3>
+
+  //       <legend className="text-sm font-medium p-2 border border-gray-400 rounded-lg w-fit m-0">
+  //         {formData.formType}
+  //       </legend>
+  //       <fieldset className="border border-gray-400 bg-white shadow-md p-4 rounded-lg mb-4">
+
+  //         <div className="grid grid-cols-2 gap-4 mt-2">
+
+  //           {/* Total eComplaints Received on Citizen Portal */}
+  //           <div>
+  //             <label className="block text-sm font-medium">Total eComplaints Received on Citizen Portal</label>
+  //             <input
+  //               type="number"
+  //               className="w-full p-2 border rounded"
+  //               value={formValues[month]?.totalEComplaintsReceived || ""}
+  //               onChange={(e) => handleInputChange(month, "totalEComplaintsReceived", e.target.value)}
+  //             />
+  //           </div>
+
+  //           {/* Total eComplaints Converted to Regular FIRs */}
+  //           <div>
+  //             <label className="block text-sm font-medium">Total eComplaints Converted to Regular FIRs</label>
+  //             <input
+  //               type="number"
+  //               className="w-full p-2 border rounded"
+  //               value={formValues[month]?.totalComplaintsConverted || ""}
+  //               onChange={(e) => handleInputChange(month, "totalComplaintsConverted", e.target.value)}
+  //             />
+  //             {parseInt(formValues[month]?.totalComplaintsConverted) > parseInt(formValues[month]?.totalEComplaintsReceived) && (
+  //               <p className="text-red-500 text-sm mt-1">Total eComplaints Converted to Regular FIRs cannot exceed Total eComplaints Received on Citizen Portal.</p>
+  //             )}
+  //           </div>
+
+  //           {/* Disposed of eComplaints */}
+  //           <div>
+  //             <label className="block text-sm font-medium">Disposed of eComplaints</label>
+  //             <input
+  //               type="number"
+  //               className="w-full p-2 border rounded"
+  //               value={formValues[month]?.disposedEComplaints || ""}
+  //               onChange={(e) => handleInputChange(month, "disposedEComplaints", e.target.value)}
+  //             />
+  //             {parseInt(formValues[month]?.disposedEComplaints) > parseInt(formValues[month]?.totalEComplaintsReceived) && (
+  //               <p className="text-red-500 text-sm mt-1">Disposed of eComplaints cannot exceed Total eComplaints Received on Citizen Portal.</p>
+  //             )}
+  //           </div>
+
+  //         </div>
+  //       </fieldset>
+  //     </>
+  //   );
+  // };
+
+
+
+    
+  const EFIRDetails = (monthsInRange, duplicatedMonths) => {
+
+
+
+    return (
+      <div className="overflow-x-auto d-flex justify-center">
+        <table className="min-w-[100%] border border-gray-400 shadow-md">
+          <thead>
+            <tr className="bg-gray-200 text-left">
+              <th className="border px-4 py-2">Month-Year</th>
+              <th className="border px-4 py-2">Total eComplaints Received on Citizen Portal</th>
+              <th className="border px-4 py-2">Total eComplaints Converted to Regular FIRs</th>
+              <th className="border px-4 py-2">Disposed of eComplaints</th>
+              {/* <th className="border p-1 ">Actions</th> */}
+            </tr>
+          </thead>
+          <tbody>
+            {[...monthsInRange.map(m => ({ month: m, id: m })), ...duplicatedMonths].map(({ month, id }, index, arr) => {
+              const isPrevFormFilled = index === 0 || isFormFilled(arr[index - 1]?.id);
+              const isDuplicate = duplicatedMonths.some((item) => item.id === id);
+              const isLastRow = index === arr.length - 1; // Check if this is the last row
+
+
+              return (
+                <tr key={id}>
+                  <td className="border px-4 py-2">{month}</td>
+                  <td className="border px-4 py-2">
+
+                    <input
+                      className="w-[60%] p-2"
+                      
+                      type="number"
+                      value={formValues[id]?.totalEComplaintsReceived || ""}
+                      onChange={(e) => handleInputChange(id, "totalEComplaintsReceived", e.target.value)}
+                    />
+
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      
+                      className="w-[60%] p-1"
+                      value={formValues[id]?.totalComplaintsConverted || ""}
+                      onChange={(e) => handleInputChange(id, "totalComplaintsConverted", e.target.value)}
+                      
+                    />
+
+
+
+                  </td>
+                  <td className="border px-4 py-2">
+
+
+                  <input
+                      type="number"
+                      
+                      className="w-[60%] p-1"
+                      
+                      value={formValues[id]?.disposedEComplaints || ""}
+                      onChange={(e) => handleInputChange(id, "disposedEComplaints", e.target.value)}
+                     
+                    />
+
+                  </td>
+
+
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  
+  const ITSSOComplianceForm = (monthsInRange, duplicatedMonths) => {
+
+
+
+    return (
+      <div className="overflow-x-auto d-flex justify-center">
+        <table className="min-w-[100%] border border-gray-400 shadow-md">
+          <thead>
+            <tr className="bg-gray-200 text-left">
+              <th className="border px-4 py-2">Month-Year</th>
+              <th className="border px-4 py-2">Total registered cases</th>
+              <th className="border px-4 py-2">cases chargesheet (60 days)</th>
+              <th className="border px-4 py-2">Compliance Rate</th>
+              {/* <th className="border p-1 ">Actions</th> */}
+            </tr>
+          </thead>
+          <tbody>
+            {[...monthsInRange.map(m => ({ month: m, id: m })), ...duplicatedMonths].map(({ month, id }, index, arr) => {
+              const isPrevFormFilled = index === 0 || isFormFilled(arr[index - 1]?.id);
+              const isDuplicate = duplicatedMonths.some((item) => item.id === id);
+              const isLastRow = index === arr.length - 1; // Check if this is the last row
+
+
+              return (
+                <tr key={id}>
+                  <td className="border px-4 py-2">{month}</td>
+                  <td className="border px-4 py-2">
+                    
+                    <input
+                      className="w-[60%] p-2"
+                      
+                      type="number"
+                      value={formValues[id]?.total_pocso_bns_cases || ""}
+                      onChange={(e) => handleInputChange(id, "total_pocso_bns_cases", e.target.value)}
+                    />
+
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      
+                      className="w-[60%] p-1"
+                      
+                      value={formValues[id]?.charge_sheeted_within_60_days || ""}
+                      onChange={(e) => handleInputChange(id, "charge_sheeted_within_60_days", e.target.value)}
+                      style={{
+                        border:
+                          Number(formValues[id]?.charge_sheeted_within_60_days) > Number(formValues[id]?.total_pocso_bns_cases)
+                            ? "2px solid #ff8e8e"
+                            : "1px solid #0000004b"
+                      }}
+                    />
+
+
+                  </td>
+                  <td className="border px-4 py-2">
+
+                    <input type="number"  className="w-[60%] p-2" value={formValues[id]?.percentage || ""}  />
+                  </td>
+
+
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+
+  const StolenRecoveredProperty = (monthsInRange, duplicatedMonths) => {
+
+
+    return (
+      <div className="overflow-x-auto d-flex justify-center">
+        <table className="min-w-[100%] border border-gray-400 shadow-md">
+          <thead>
+            <tr className="bg-gray-200 text-left">
+              <th className="border px-4 py-2">Month-Year</th>
+              <th className="border px-4 py-2">Total Cases</th>
+              <th className="border px-4 py-2">Offences Registered</th>
+              <th className="border px-4 py-2">Value of Stolen Property</th>
+              <th className="border px-4 py-2">Detected Registered</th>
+              <th className="border px-4 py-2">Value of Recovered Property</th>
+              <th className="border px-4 py-2">Recovery %</th>
+
+              {/* <th className="border p-1 ">Actions</th> */}
+            </tr>
+          </thead>
+          <tbody>
+            {[...monthsInRange.map(m => ({ month: m, id: m })), ...duplicatedMonths].map(({ month, id }, index, arr) => {
+              const isPrevFormFilled = index === 0 || isFormFilled(arr[index - 1]?.id);
+              const isDuplicate = duplicatedMonths.some((item) => item.id === id);
+              const isLastRow = index === arr.length - 1; // Check if this is the last row
+
+
+              return (
+                <tr key={id}>
+                  <td className="border px-4 py-2">{month}</td>
+                  <td className="border px-4 py-2">
+
+
+                    <select
+                      className="w-[100%] p-2 border rounded"
+                      
+                      
+
+                      value={formValues[id]?.total_cases || ""}
+                      onChange={(e) => handleInputChange(id, "total_cases", e.target.value)}
+                    >
+                      <option value="" disabled>Select Total Cases</option>
+                      <option value="Dacoity">Dacoity</option>
+                      <option value="Robbery">Robbery</option>
+                      <option value="HBT">HBT</option>
+                      <option value="Theft">Theft</option>
+                    </select>
+                  </td>
+                  <td className="border px-4 py-2">
+
+                    <input
+                      className="w-[100%] p-2 border rounded"
+                      
+                      
+                      type="number"
+                      value={formValues[id]?.offences_registered || ""}
+                      onChange={(e) => handleInputChange(id, "offences_registered", e.target.value)}
+                    />
+
+                  </td>
+
+
+
+                  <td className="border px-4 py-2">
+
+
+                    <input
+                      className="w-[80%] p-2 border rounded"
+                      
+                      
+                      type="number"
+                      value={formValues[id]?.value_stolen_property || ""}
+                      onChange={(e) => handleInputChange(id, "value_stolen_property", e.target.value)}
+                    />
+
+                  </td>
+                  <td className="border px-4 py-2">
+
+
+                    <input
+                      className="w-[80%] p-2 border rounded"
+                      
+                      
+                      type="number"
+                      value={formValues[id]?.detected_cases || ""}
+                      onChange={(e) => handleInputChange(id, "detected_cases", e.target.value)}
+                    />
+
+                  </td>
+                  <td className="border px-4 py-2">
+
+
+
+
+                    <input
+                      className="w-[80%] p-2 border rounded"
+                      
+                      
+                      type="number"
+                      value={formValues[id]?.value_recovered_property || ""}
+                      onChange={(e) => handleInputChange(id, "value_recovered_property", e.target.value)}
+                      style={{
+                        border:
+                          Number(formValues[id]?.value_recovered_property) > Number(formValues[id]?.value_stolen_property)
+                            ? "2px solid #ff8e8e"
+                            : "1px solid #0000004b"
+                      }}
+                    />
+
+                  </td>
+                  <td className="border px-4 py-2">
+
+
+
+
+                    <input
+                      className="w-[80%] p-2 border rounded"
+                      
+                      
+                      type="number"
+                      value={formValues[id]?.recovery_percentage || ""}
+                      
+                    />
+
+
+
+                  </td>
+
+
+
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+
+  const convictionDataOption = {
+
+    '285': '285',
+    '281': '281',
+    '287': '287',
+    '303(2)': '303(2)',
+    '125': '125',
+    '305': '305',
+    '223': '223',
+    '293': '293',
+    '289': '289'
+  }
+
+
+  // const ConvictionUnderBNS = (month) => {
+  //   return (
+  //     <>
+  //       <h3 className="font-semibold text-lg">{month} - {formData.formType}</h3>
+
+  //       <legend className="text-sm font-medium p-2 border border-gray-400 rounded-lg w-fit m-0">
+  //         {formData.formType}
+  //       </legend>
+  //       <fieldset className="border border-gray-400 bg-white shadow-md p-4 rounded-lg mb-4">
+
+  //         <div className="grid grid-cols-2 gap-4">
+
+  //           {/* Type of Court Dropdown */}
+  //           <div>
+  //             <label className="block text-sm font-medium">Type of Court</label>
+  //             <select
+  //               className="w-full p-2 border rounded"
+  //               value={formValues[month]?.type_of_court || ""}
+  //               onChange={(e) => handleInputChange(month, "type_of_court", e.target.value)}
+  //             >
+  //               <option value="">Select</option>
+  //               <option value="Session">Session</option>
+  //               <option value="JMFC">JMFC</option>
+  //             </select>
+  //           </div>
+
+  //           {/* BNS Sections Dropdown */}
+  //           <div>
+  //             <label className="block text-sm font-medium">BNS Sections</label>
+  //             <select
+  //               className="w-full p-2 border rounded"
+  //               value={formValues[month]?.bns_sections || ""}
+  //               onChange={(e) => handleInputChange(month, "bns_sections", e.target.value)}
+  //             >
+  //               <option value="">Select</option>
+  //               {Object.entries(convictionDataOption).map(([key, value]) => (
+  //                 <option key={key} value={key}>
+  //                   {value}
+  //                 </option>
+  //               ))}
+
+
+  //               {/* <option value="Other">Other BNS Sections</option> */}
+  //             </select>
+  //           </div>
+
+  //           {/* Other BNS Section (Only show if 'Other' is selected) */}
+  //           {formValues[month]?.bns_sections === "Other" && (
+  //             <div>
+  //               <label className="block text-sm font-medium">Other BNS Section</label>
+  //               <input
+  //                 type="text"
+  //                 className="w-full p-2 border rounded"
+  //                 value={formValues[month]?.other_bns_section || ""}
+  //                 onChange={(e) => handleInputChange(month, "other_bns_section", e.target.value)}
+  //               />
+  //             </div>
+  //           )}
+
+  //           {/* Cases Decided */}
+  //           <div>
+  //             <label className="block text-sm font-medium">Cases Decided</label>
+  //             <input
+  //               type="number"
+  //               className="w-full p-2 border rounded"
+  //               value={formValues[month]?.cases_decided || ""}
+  //               onChange={(e) => handleInputChange(month, "cases_decided", e.target.value)}
+  //             />
+  //           </div>
+
+  //           {/* Convicted Cases */}
+  //           <div>
+  //             <label className="block text-sm font-medium">Convicted Cases</label>
+  //             <input
+  //               type="number"
+  //               className="w-full p-2 border rounded"
+  //               value={formValues[month]?.convicted_cases || ""}
+  //               onChange={(e) => handleInputChange(month, "convicted_cases", e.target.value)}
+  //             />
+  //             {parseInt(formValues[month]?.convicted_cases) > parseInt(formValues[month]?.cases_decided) && (
+  //               <p className="text-red-500 text-sm mt-1">Convicted Cases cannot exceed Cases Decided.</p>
+  //             )}
+  //           </div>
+
+  //           {/* Conviction Rate (Auto-calculated) */}
+  //           <div>
+  //             <label className="block text-sm font-medium">Conviction Rate %</label>
+  //             <input
+  //               type="number"
+  //               className="w-full p-2 border rounded"
+  //               value={formValues[month]?.conviction_rate || ""}
+  //               
+  //             />
+  //           </div>
+
+  //           <div>
+  //             <label className="block text-sm font-medium">Total Cases Convicted</label>
+  //             <input
+  //               type="number"
+  //               className="w-full p-2 border rounded"
+  //               value={formValues[month]?.total_cases_convicted || ""}
+  //               
+  //             />
+  //           </div>
+
+  //           <div>
+  //             <label className="block text-sm font-medium">Total Cases Decided</label>
+  //             <input
+  //               type="number"
+  //               className="w-full p-2 border rounded"
+  //               value={formValues[month]?.total_cases_decided || ""}
+  //               
+  //             />
+  //           </div>
+
+  //         </div>
+  //       </fieldset>
+  //     </>
+  //   );
+  // };
+
+
+
+
+  const ConvictionUnderBNS = (monthsInRange, duplicatedMonths) => {
+
+    return (
+      <div className="overflow-x-auto d-flex justify-center">
+        <table className="min-w-[100%] border border-gray-400 shadow-md">
+          <thead>
+            <tr className="bg-gray-200 text-left">
+              <th className="border px-4 py-2">Month-Year</th>
+              <th className="border px-4 py-2">Type of Court</th>
+              <th className="border px-4 py-2">BNS Sections</th>
+              {/* {formValues[id]?.bns_sections === "Other" && (
+
+                <th className="border px-4 py-2">Other BNS Section</th>
+              )} */}
+              <th className="border px-4 py-2">Cases Decided</th>
+              <th className="border px-4 py-2">Convicted Cases</th>
+              <th className="border px-4 py-2">Conviction Rate %</th>
+              <th className="border px-4 py-2">Total Cases Convicted</th>
+              <th className="border px-4 py-2">Total Cases Decided</th>
+
+              {/* <th className="border p-1 ">Actions</th> */}
+            </tr>
+          </thead>
+          <tbody>
+            {[...monthsInRange.map(m => ({ month: m, id: m })), ...duplicatedMonths].map(({ month, id }, index, arr) => {
+              const isPrevFormFilled = index === 0 || isFormFilled(arr[index - 1]?.id);
+              const isDuplicate = duplicatedMonths.some((item) => item.id === id);
+              const isLastRow = index === arr.length - 1; // Check if this is the last row
+
+
+              return (
+                <tr key={id}>
+                  <td className="border px-4 py-2">{month}</td>
+                  <td className="border px-4 py-2">
+                    <select
+                      className="w-[100%] p-2 border rounded"
+                      
+                      
+
+                      value={formValues[id]?.type_of_court || ""}
+                      onChange={(e) => handleInputChange(id, "type_of_court", e.target.value)}
+                    >
+                      <option value="">Select</option>
+                      <option value="Session">Session</option>
+                      <option value="JMFC">JMFC</option>
+                    </select>
+                  </td>
+                  <td className="border px-4 py-2">
+
+                    <select
+                      className="w-[80%] p-2 border rounded"
+                      
+                      
+                      value={formValues[id]?.bns_sections || ""}
+                      onChange={(e) => handleInputChange(id, "bns_sections", e.target.value)}
+                    >
+                      <option value="">Select</option>
+                      {Object.entries(convictionDataOption).map(([key, value]) => (
+                        <option key={key} value={key}>
+                          {value}
+                        </option>
+                      ))}
+
+
+                      {/* <option value="Other">Other BNS Sections</option> */}
+                    </select>
+
+                  </td>
+
+                  {/* {formValues[id]?.bns_sections === "Other" && (
+                    <td className="border px-4 py-2">
+
+                      <input
+                        className="w-[80%] p-2 border rounded"
+                        
+                        
+                        type="text"
+                        value={formValues[id]?.other_bns_section || ""}
+                        onChange={(e) => handleInputChange(id, "other_bns_section", e.target.value)}
+                      />
+                    </td>
+                  )} */}
+
+                  <td className="border px-4 py-2">
+
+
+                    <input
+                      type="number"
+                      
+                      className="w-[50%] p-1"
+                      value={formValues[id]?.cases_decided || ""}
+                      onChange={(e) => handleInputChange(id, "cases_decided", e.target.value)}
+                    />
+
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      className="w-[80%] p-2 border rounded"
+                      
+                      
+                      value={formValues[month]?.convicted_cases || ""}
+                      onChange={(e) => handleInputChange(month, "convicted_cases", e.target.value)}
+                      style={{
+                        border:
+                          Number(formValues[id]?.convicted_cases) > Number(formValues[id]?.cases_decided)
+                            ? "2px solid #ff8e8e"
+                            : "1px solid #0000004b"
+                      }}
+                    />
+
+                  </td>
+                  <td className="border px-4 py-2">
+
+                    <input
+                      className="w-[80%] p-2 border rounded"
+                      
+                      
+                      type="number"
+                      value={formValues[id]?.conviction_rate || ""}
+                      
+                    />
+
+                  </td>
+                  <td className="border px-4 py-2">
+
+
+                    <input
+                      className="w-[80%] p-2 border rounded"
+                      
+                      
+                      type="number"
+                      value={formValues[month]?.total_cases_convicted || "0"}
+                      
+                    />
+
+
+
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      className="w-[80%] p-2 border rounded"
+                      
+                      
+                      type="number"
+                      value={formValues[month]?.total_cases_decided || "0"}
+                      
+                    />
+                  </td>
+
+
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+
+
+  // Forisic Visits
+
+
+  // const VisitOfForensicTeams = (month) => {
+  //   return (
+  //     <>
+  //       <h3 className="font-semibold text-lg">{month} - {formData.formType}</h3>
+
+  //       <legend className="text-sm font-medium p-2 border border-gray-400 rounded-lg w-fit m-0">
+  //         {formData.formType}
+  //       </legend>
+  //       <fieldset className="border border-gray-400 bg-white shadow-md p-4 rounded-lg mb-4">
+
+  //         <div className="grid grid-cols-2 gap-4">
+
+  //           {/* No. of cases registered in which punishment is 7 years or more */}
+  //           <div>
+  //             <label className="block text-sm font-medium">No. of cases registered in which punishment is 7 years or more</label>
+  //             <input
+  //               type="number"
+  //               className="w-full p-2 border rounded"
+  //               value={formValues[month]?.total_cases_gt_7_years || ""}
+  //               onChange={(e) => handleInputChange(month, "total_cases_gt_7_years", e.target.value)}
+  //             />
+  //           </div>
+
+  //           {/* Cases in which Forensic Teams Visited */}
+  //           <div>
+  //             <label className="block text-sm font-medium">Cases in which Forensic Teams Visited</label>
+  //             <input
+  //               type="number"
+  //               className="w-full p-2 border rounded mt-3"
+  //               value={formValues[month]?.cases_forensic_team_visited || ""}
+  //               onChange={(e) => handleInputChange(month, "cases_forensic_team_visited", e.target.value)}
+  //             />
+  //             {parseInt(formValues[month]?.cases_forensic_team_visited) > parseInt(formValues[month]?.total_cases_gt_7_years) && (
+  //               <p className="text-red-500 text-sm mt-1">Cases in which Forensic Teams Visited cannot exceed No. of cases registered in which punishment is 7 years or more.</p>
+  //             )}
+  //           </div>
+
+  //           {/* Percentage */}
+  //           <div>
+  //             <label className="block text-sm font-medium">Percentage</label>
+  //             <input
+  //               type="number"
+  //               className="w-full p-2 border rounded"
+  //               value={formValues[month]?.forensic_team_deployment_percentage || ""}
+  //               
+  //             />
+  //           </div>
+
+  //         </div>
+  //       </fieldset>
+  //     </>
+  //   );
+  // };
+
+
+  const VisitOfForensicTeams = (monthsInRange, duplicatedMonths) => {
+
+
+
+    return (
+      <div className="overflow-x-auto d-flex justify-center">
+        <table className="min-w-[100%] border border-gray-400 shadow-md">
+          <thead>
+            <tr className="bg-gray-200 text-left">
+              <th className="border px-4 py-2">Month-Year</th>
+              <th className="border px-4 py-2">Cases registered with punishment 7 years or more</th>
+              <th className="border px-4 py-2">Cases Forensic Teams Visited</th>
+              <th className="border px-4 py-2">Overall Percentage</th>
+              {/* <th className="border p-1 ">Actions</th> */}
+            </tr>
+          </thead>
+          <tbody>
+            {[...monthsInRange.map(m => ({ month: m, id: m })), ...duplicatedMonths].map(({ month, id }, index, arr) => {
+              const isPrevFormFilled = index === 0 || isFormFilled(arr[index - 1]?.id);
+              const isDuplicate = duplicatedMonths.some((item) => item.id === id);
+              const isLastRow = index === arr.length - 1; // Check if this is the last row
+
+
+              return (
+                <tr key={id}>
+                  <td className="border px-4 py-2">{month}</td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      className="w-[60%] p-2"
+                      
+                      
+                      value={formValues[id]?.total_cases_gt_7_years || ""}
+                      onChange={(e) => handleInputChange(id, "total_cases_gt_7_years", e.target.value)}
+                    />
+
+
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      
+                      className="w-[60%] p-1"
+                      
+                      value={formValues[id]?.cases_forensic_team_visited || ""}
+                      onChange={(e) => handleInputChange(id, "cases_forensic_team_visited", e.target.value)}
+                      style={{
+                        border:
+                          Number(formValues[id]?.cases_forensic_team_visited) > Number(formValues[id]?.total_cases_gt_7_years)
+                            ? "2px solid #ff8e8e"
+                            : "1px solid #0000004b"
+                      }}
+                    />
+
+
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input type="number"  className="w-[60%] p-2" value={formValues[id]?.forensic_team_deployment_percentage || ""}  />
+                  </td>
+
+
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+
+
+
+  const formSelecter = (monthsInRange, duplicatedMonths) => {
+    return {
+      "Pendency of cases under BNS": pendencyForm(monthsInRange, duplicatedMonths),
+      "Untraced Missing": untraced(monthsInRange, duplicatedMonths),
+      "Offences against body under BNS": offencesAgainstBody(monthsInRange, duplicatedMonths),
+      "Important sections introduced in BNS": offencesAgainstBody(monthsInRange, duplicatedMonths),
+      "Property offences under BNS": offencesAgainstBody(monthsInRange, duplicatedMonths),
+      "eSakshya Details": esakshyaDetails(monthsInRange, duplicatedMonths),
+      "Use of eSakshya App in cases with punishment of 7 yrs. or more": useOfEsakshyaDetails(monthsInRange, duplicatedMonths),
+      "Zero FIR's": ZeroFIRDetails(monthsInRange, duplicatedMonths),
+      "eFIR": EFIRDetails(monthsInRange, duplicatedMonths),
+      "ITSSO Compliance Form": ITSSOComplianceForm(monthsInRange, duplicatedMonths),
+      "Stolen & Recovered Property": StolenRecoveredProperty(monthsInRange, duplicatedMonths),
+      "Conviction under BNS": ConvictionUnderBNS(monthsInRange, duplicatedMonths),
+    };
+  };
+
+
+
+  const fetchHistory = async () => {
+    // if (!formData.formType) {
+    //   alert("Please select a Form Type before fetching history.");
+    //   return;
+    // }
+
+    const token = localStorage.getItem("token"); // Retrieve token from localStorage
+
+    const payload = {
+      fromDate: localStorage.getItem("from_date") || "N/A",
+      toDate: localStorage.getItem("to_date") || "N/A",
+      table_name: "training",
+    };
+
+    try {
+      const response = await axiosInstance.post("/history", payload, {
+        headers: {
+          Authorization: `${token}`, // Include token
+        },
+      });
+
+      console.log("History Response:", response.data);
+      setHistoryData(response.data); // Store the response data
+      setOpenModal(true); // Open the modal after fetching data
+    } catch (error) {
+      console.error("Error fetching history:", error);
+    }
+  };
+
+
+
+
+
+
+
+  const Modified = (monthsInRange, duplicatedMonths) => {
+
+    return (
+      // <div className="overflow-x-auto d-flex justify-center">
+      <div className="p-4 border rounded-lg shadow-md">
+        <button
+          className="px-4 py-2 bg-grey-500 text-black rounded w-full text-center"
+          onClick={() => toggleSection("training")}
+        >
+          Training Data
+        </button>
+
+        <div className={`overflow-hidden transition-all duration-500 ${openSections.training ? "opacity-100" : "max-h-0 opacity-0"}`}>
+
+
+       { TrainingForm(monthsInRange, duplicatedMonths)}
+          
+        </div>
+        {/* 2 option */}
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+          onClick={() => toggleSection("pendency")}
+        // onClick={() => setIsPendencyOpen(!isPendencyOpen)}
+        >
+          Pendency of cases under BNS
+        </button>
+
+        <div className={`overflow-hidden transition-all duration-500 ${openSections.pendency ? "opacity-100 max-h-screen" : "max-h-0 opacity-0"}`}>
+          
+          { pendencyForm(monthsInRange, duplicatedMonths)}
+
+
+        </div>
+        {/* 3 option */}
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+          onClick={() => toggleSection("untraced")}
+        >
+          Untraced Missing
+        </button>
+
+        <div className={`overflow-hidden transition-all duration-500 ${openSections.untraced ? "opacity-100" : "max-h-0 opacity-0"}`}>
+        { untraced(monthsInRange, duplicatedMonths)}
+         
+        </div>
+        {/* 4 option */}
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+          onClick={() => toggleSection("offences_against")}
+        >
+          Offences against body under BNS
+        </button>
+
+        <div className={`overflow-hidden transition-all duration-500 ${openSections.offences_against ? "opacity-100" : "max-h-0 opacity-0"}`}>
+          { offencesAgainstBody(monthsInRange, duplicatedMonths)}
+
+        </div>
+        {/* 5 option */}
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+          onClick={() => toggleSection("important_bns")}
+        >
+          Important sections introduced in BNS
+        </button>
+
+        <div className={`overflow-hidden transition-all duration-500 ${openSections.important_bns ? "opacity-100" : "max-h-0 opacity-0"}`}>
+          { ImportantAgainstBody(monthsInRange, duplicatedMonths)}
+        </div>
+        {/* 6 option */}
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+          onClick={() => toggleSection("esakshya")}
+        >
+          eSakshya Details
+        </button>
+
+        <div className={`overflow-hidden transition-all duration-500 ${openSections.esakshya ? "opacity-100" : "max-h-0 opacity-0"}`}>
+        { esakshyaDetails(monthsInRange, duplicatedMonths)}
+        </div>
+        {/* 7 option */}
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+          onClick={() => toggleSection("esakshya_app")}
+        >
+          Use of eSakshya App in cases with punishment of 7 yrs. or more
+        </button>
+
+        <div className={`overflow-hidden transition-all duration-500 ${openSections.esakshya_app ? "opacity-100" : "max-h-0 opacity-0"}`}>
+        { useOfEsakshyaDetails(monthsInRange, duplicatedMonths)}
+
+        </div>
+        {/* 8 option */}
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+          onClick={() => toggleSection("zero_fir")}
+        >
+          Zero FIR's
+        </button>
+
+        <div className={`overflow-hidden transition-all duration-500 ${openSections.zero_fir ? "opacity-100" : "max-h-0 opacity-0"}`}>
+        { ZeroFIRDetails(monthsInRange, duplicatedMonths)}
+
+        </div>
+        {/* 9 option */}
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+          onClick={() => toggleSection("eFIR")}
+        >
+          eFIR's
+        </button>
+
+        <div className={`overflow-hidden transition-all duration-500 ${openSections.eFIR ? "opacity-100" : "max-h-0 opacity-0"}`}>
+        { EFIRDetails(monthsInRange, duplicatedMonths)}
+
+        </div>
+        {/* 10 option */}
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+          onClick={() => toggleSection("ITSSO")}
+        >
+          ITSSO Compilance Form
+        </button>
+
+        <div className={`overflow-hidden transition-all duration-500 ${openSections.ITSSO ? "opacity-100" : "max-h-0 opacity-0"}`}>
+        { ITSSOComplianceForm(monthsInRange, duplicatedMonths)}
+          
+        </div>
+        {/* 11 option */}
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+          onClick={() => toggleSection("stolen_recover")}
+        >
+          Stolen & Recovered Property
+        </button>
+
+        <div className={`overflow-hidden transition-all duration-500 ${openSections.stolen_recover ? "opacity-100" : "max-h-0 opacity-0"}`}>
+        { StolenRecoveredProperty(monthsInRange, duplicatedMonths)}
+
+        </div>
+        {/* 12 option */}
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+          onClick={() => toggleSection("conviction_bns")}
+        >
+          Conviction Under BNS
+        </button>
+
+        <div className={`overflow-hidden transition-all duration-500 ${openSections.conviction_bns ? "opacity-100" : "max-h-0 opacity-0"}`}>
+          { ConvictionUnderBNS(monthsInRange, duplicatedMonths)}
+
+        </div>
+        
+        {/* 12 option */}
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded w-full text-center"
+          onClick={() => toggleSection("forensic_visits")}
+        >
+          Forensic visists
+        </button>
+
+        <div className={`overflow-hidden transition-all duration-500 ${openSections.forensic_visits ? "opacity-100" : "max-h-0 opacity-0"}`}>
+          { VisitOfForensicTeams(monthsInRange, duplicatedMonths)}
+
+        </div>
+
+      </div>
+    );
+  };
+
+
+
+
+
+
 
 
   return (
     <>
 
-      <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ backgroundColor: "#2d3748", color: "white" }}>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
-            <Typography variant="h6"><strong>Form Details</strong></Typography>
-            <IconButton onClick={onClose}>
-              <Close style={{ color: "white" }} />
-            </IconButton>
-          </Box>
-        </DialogTitle>
-        <Box display="flex" flexDirection="column" minHeight="80vh">
-          <DialogContent sx={{ height: "70vh", overflowY: "auto" }}>
-            <Box display="flex" justifyContent="center" mb={2}>
-              <Button
-                variant={selectedTab === "form" ? "contained" : "outlined"}
-                onClick={() => setSelectedTab("form")}
-                sx={{ mr: 2, backgroundColor: selectedTab === "form" ? "#2d3748" : "transparent", color: selectedTab === "form" ? "white" : "inherit" }}
-              >
-                Form
-              </Button>
-              <Button
-                variant={selectedTab === "upload" ? "contained" : "outlined"}
-                onClick={() => setSelectedTab("upload")}
-                sx={{ backgroundColor: selectedTab === "upload" ? "#2d3748" : "transparent", color: selectedTab === "upload" ? "white" : "inherit" }}
-              >
-                Upload
-              </Button>
+      {
+
+
+        (<Dialog
+          open={open}
+          onClose={onClose}
+          fullWidth
+          maxWidth={false} // Disables default maxWidth limitations
+          PaperProps={{
+            sx: { width: "70vw", maxWidth: "none", margin: "auto" }
+          }}
+        >
+
+          <DialogTitle sx={{ backgroundColor: "#2d3748", color: "white" }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+              <Typography variant="h6"><strong>Form Details</strong></Typography>
+              <IconButton onClick={onClose}>
+                <Close style={{ color: "white" }} />
+              </IconButton>
             </Box>
-            {selectedTab === "form" && (
-              <Box display="flex" flexDirection="column" gap={2} minHeight="60vh">
-                {/* Form Type Selection Dropdown */}
-                <FormControl fullWidth variant="outlined">
-                  <InputLabel id="form-type-label">Form Type</InputLabel>
-                  <Select
-                    labelId="form-type-label"
-                    id="form-type"
-                    value={formData.formType}
-                    onChange={(e) => setFormData({ ...formData, formType: e.target.value })}
-                    label="Form Type" // Add this line to associate the label correctly
-                  >
-                    {[
-                      "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Esakshya Wrt Unit",
-                      "Esakshya wrt 7yrs or more", "FIR's and Zero FIR's", "eFIR", "Special Cases & High-Profile Investigations Form", "ITSSO Compliance Form", "Stolen & Recovered Property Form", "Forensic Team Deployment Form"
-                    ].map((form) => (
-                      <MenuItem key={form} value={form}>
-                        {form}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                {/* Show form only if Form Type is selected */}
-             
-                {formData.formType === "Pendency of cases under BNS" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium">Unit</label>
-                        <input type="text" className="w-full p-2 border rounded" value={formData.unit || ""} onChange={(e) => setFormData({ ...formData, unit: e.target.value })} readOnly />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Total Cases</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.totalCases || ""}
-                          onChange={(e) => setFormData({ ...formData, totalCases: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Disposed Cases</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.disposedCases || ""}
-                          onChange={(e) => setFormData({ ...formData, disposedCases: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Pending Cases</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.pendingCases || ""}
-                          onChange={(e) => setFormData({ ...formData, pendingCases: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Pending Percentage</label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          className="w-full p-2 border rounded"
-                          value={formData.pendingPercentage || ""}
-                          onChange={(e) => setFormData({ ...formData, pendingPercentage: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Punishment Less Than 7 Years</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.punishmentLessThan7 || ""}
-                          onChange={(e) => setFormData({ ...formData, punishmentLessThan7: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-small">Cases Punishment MoreThan 7 Years</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.punishmentMoreThan7 || ""}
-                          onChange={(e) => setFormData({ ...formData, punishmentMoreThan7: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium mb-3">Month-Year</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.month_year || ""}
-                          onChange={(e) => setFormData({ ...formData, month_year: e.target.value })}
-                        />
-                      </div>
-
-
-                    </div>
-                  </div>
-                )}
-
-                {formData.formType === "Untraced Missing" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium">Unit</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded"
-                          value={formData.unit || ""}
-                          onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                          readOnly
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Police Station</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded"
-                          value={formData.policeStationD || ""}
-                          onChange={(e) => setFormData({ ...formData, policeStationD: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Age Group</label>
-                        <select
-                          className="w-full p-2 border rounded bg-white"
-                          value={formData.ageGroup || ""}
-                          onChange={(e) => setFormData({ ...formData, ageGroup: e.target.value })}
-                        >
-                          <option value="">Select Age Group</option>
-                          <option value="below18">Below 18 years</option>
-                          <option value="above18">Above 18 years</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">No of Untraced Persons</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.untracedPersons || ""}
-                          onChange={(e) => setFormData({ ...formData, untracedPersons: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">No of Missing Persons</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.missingPersons || ""}
-                          onChange={(e) => setFormData({ ...formData, missingPersons: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Total Missing Persons (Untraced People)</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.totalMissing || ""}
-                          onChange={(e) => setFormData({ ...formData, totalMissing: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Traced</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.traced || ""}
-                          onChange={(e) => setFormData({ ...formData, traced: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Untraced</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.untraced || ""}
-                          onChange={(e) => setFormData({ ...formData, untraced: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Percentage of Untraced Persons</label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          className="w-full p-2 border rounded"
-                          value={formData.untracedPercentage || ""}
-                          onChange={(e) => setFormData({ ...formData, untracedPercentage: e.target.value })}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Month-Year </label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.month_year || ""}
-                          onChange={(e) => setFormData({ ...formData, month_year: e.target.value })}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {(formData.formType === "Offences against body under BNS" || formData.formType === "Important sections introduced in BNS" || formData.formType === "Property offences under BNS" || formData.formType === "Special Cases & High-Profile Investigations Form") && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium">Unit</label>
-                        <input type="text" className="w-full p-2 border rounded" value={formData.unit || ""} onChange={(e) => setFormData({ ...formData, unit: e.target.value })} readOnly />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Police Station</label>
-                        <input type="text" className="w-full p-2 border rounded" value={formData.policeStation || ""} onChange={(e) => setFormData({ ...formData, policeStation: e.target.value })} />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Act and Section</label>
-                        <input type="text" className="w-full p-2 border rounded" value={formData.actAndSection || ""} onChange={(e) => setFormData({ ...formData, actAndSection: e.target.value })} />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Reg'd Cases</label>
-                        <input type="number" className="w-full p-2 border rounded" value={formData.registeredCases || ""} onChange={(e) => setFormData({ ...formData, registeredCases: e.target.value })} />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Detected Cases</label>
-                        <input type="number" className="w-full p-2 border rounded" value={formData.detectedCases || ""} onChange={(e) => setFormData({ ...formData, detectedCases: e.target.value })} />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Percentage of Detected Cases</label>
-                        <input type="number" step="0.01" className="w-full p-2 border rounded" value={formData.detectedCasesPercentage || ""} onChange={(e) => setFormData({ ...formData, detectedCasesPercentage: e.target.value })} />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium ">Month-Year</label>
-                        <input type="month" className="w-full p-2 border rounded" value={formData.month_year || ""} onChange={(e) => setFormData({ ...formData, month_year: e.target.value })} />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {formData.formType === "Esakshya Wrt Unit" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium">Unit</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded"
-                          value={formData.unit}
-                          onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                          readOnly
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Total No of IO's Registered in Nagapur</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.totalIOsNagapur}
-                          onChange={(e) => setFormData({ ...formData, totalIOsNagapur: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">No of IO's Registered in Esakshya</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.totalIOsEsakshya}
-                          onChange={(e) => setFormData({ ...formData, totalIOsEsakshya: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Esakshya Wage</label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          className="w-full p-2 border rounded"
-                          value={formData.esakshyaWage}
-                          onChange={(e) => setFormData({ ...formData, esakshyaWage: e.target.value })}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Month-Year</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.month_year}
-                          onChange={(e) => setFormData({ ...formData, month_year: e.target.value })}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {formData.formType === "Esakshya wrt 7yrs or more" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium">Unit</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded"
-                          value={formData.unit}
-                          onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Total No of Cases</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.totalCases}
-                          onChange={(e) => setFormData({ ...formData, totalCases: e.target.value })}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Total Offences Used</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.totalOffencesUsed}
-                          onChange={(e) => setFormData({ ...formData, totalOffencesUsed: e.target.value })}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Total Offences Not Used</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.totalOffencesNotUsed}
-                          onChange={(e) => setFormData({ ...formData, totalOffencesNotUsed: e.target.value })}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Offences Used Charge Cheet</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.offencesUsedChargeCheet}
-                          onChange={(e) => setFormData({ ...formData, offencesUsedChargeCheet: e.target.value })}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Offences Not Used Under Investigation</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.offencesNotUsedUnderInvestigation}
-                          onChange={(e) => setFormData({ ...formData, offencesNotUsedUnderInvestigation: e.target.value })}
-                        />
-                      </div>
-                      <div className="col-span-2">
-                        <label className="block text-sm font-medium">Percentage of Using Esakshya</label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          className="w-full p-2 border rounded"
-                          value={formData.percentageOfUsingEsakshya}
-                          onChange={(e) => setFormData({ ...formData, percentageOfUsingEsakshya: e.target.value })}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {formData.formType === "FIR's and Zero FIR's" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium">Unit</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded"
-                          value={formData.unit || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, unit: e.target.value })
-                          }
-                          readOnly
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Section</label>
-                        <select
-                          className="w-full p-2 border rounded bg-white"
-                          value={formData.sections || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, sections: e.target.value })
-                          }
-                          name="formISection"
-                        >
-                          <option value="">Select Section</option>
-                          <option value="Murder (BNS Sec. 103(1))">Murder (BNS Sec. 103(1))</option>
-                          <option value="Att. To Murder (BNS Sec. 109)">Att. To Murder (BNS Sec. 109)</option>
-                          <option value="Esakshya BNSS 105">Esakshya BNSS 105</option>
-                          <option value="Esakshya BNSS 173">Esakshya BNSS 173</option>
-                          <option value="Esakshya BNSS 176">Esakshya BNSS 176</option>
-                          <option value="Esakshya BNSS 180">Esakshya BNSS 180</option>
-                          <option value="Esakshya BNSS 247">Esakshya BNSS 247</option>
-                          <option value="Esakshya Rape (BNS Sec. 64 to 71)">Esakshya Rape (BNS Sec. 64 to 71)</option>
-                          <option value="Hurt (BNS Sec. 117 to 125)">Hurt (BNS Sec. 117 to 125)</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">
-                          Total Zero FIRs Received
-                        </label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.totalZeroFIRsReceived || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, totalZeroFIRsReceived: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">
-                          Total FIRs Registered
-                        </label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.totalFIRsRegistered || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, totalFIRsRegistered: e.target.value })
-                          }
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">
-                          Pending
-                        </label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.pending || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, pending: e.target.value })
-                          }
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">
-                          Total Transfered Zero FIR's
-                        </label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.totalTransferredZeroFIRs || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, totalTransferredZeroFIRs: e.target.value })
-                          }
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium">Month and Year</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.month_year || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, month_year: e.target.value })
-                          }
-                          name="month_year"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {formData.formType === "eFIR" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium">Unit</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded"
-                          value={formData.unit || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, unit: e.target.value })
-                          }
-                          readOnly
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Police Station</label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded"
-                          value={formData.policeStation || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, policeStation: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">
-                          Total EComplaints Received
-                        </label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.totalEComplaintsReceived || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, totalEComplaintsReceived: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">
-                          Total Complaints Converted
-                        </label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.totalComplaintsConverted || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, totalComplaintsConverted: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">
-                          Disposed of EComplaints
-                        </label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.disposedEComplaints || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, disposedEComplaints: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Month and Year</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.month_year || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, month_year: e.target.value })
-                          }
-                          name="month_year"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {formData.formType === "ITSSO Compliance Form" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium">Total POCSO Cases</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.total_pocso || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, total_pocso: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">BNS Cases</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.bns_cases || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, bns_cases: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">
-                          Charge Sheeted Within 60 Days
-                        </label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.charge_sheeted_within_60_days || ""}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              charge_sheeted_within_60_days: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Pending Cases</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.pending_cases || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, pending_cases: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Reasons for Pending</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.reasons_for_pending || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, reasons_for_pending: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Percentage</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.percentage || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, percentage: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Month and Year</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.month_year || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, month_year: e.target.value })
-                          }
-                          name="month_year"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {formData.formType === "Stolen & Recovered Property Form" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium">Total Cases</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.total_cases || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, total_cases: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Value of Stolen Property</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.value_stolen_property || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, value_stolen_property: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Value of Recovered Property</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.value_recovered_property || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, value_recovered_property: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Recovery Percentage</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.recovery_percentage || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, recovery_percentage: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Month and Year</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.month_year || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, month_year: e.target.value })
-                          }
-                          name="month_year"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {formData.formType === "Forensic Team Deployment Form" && (
-                  <div className="mt-4 border p-4 rounded-lg bg-gray-100 h-[450px] overflow-y-auto">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium">Total Cases Greater than 7 Years</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.total_cases_gt_7_years || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, total_cases_gt_7_years: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Forensic Team Deployment Percentage</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.forensic_team_deployment_percentage || ""}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              forensic_team_deployment_percentage: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Cases Forensic Team Visited</label>
-                        <input
-                          type="number"
-                          className="w-full p-2 border rounded"
-                          value={formData.cases_forensic_team_visited || ""}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              cases_forensic_team_visited: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium">Month and Year</label>
-                        <input
-                          type="month"
-                          className="w-full p-2 border rounded"
-                          value={formData.month_year || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, month_year: e.target.value })
-                          }
-                          name="month_year"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-
-
+          </DialogTitle>
+          <Box display="flex" flexDirection="column" minHeight="80vh">
+            <DialogContent sx={{ height: "70vh", overflowY: "auto" }}>
+              <Box display="flex" justifyContent="center" mb={2}>
+                <Button
+                  variant={selectedTab === "form" ? "contained" : "outlined"}
+                  onClick={() => setSelectedTab("form")}
+                  sx={{ mr: 2, backgroundColor: selectedTab === "form" ? "#2d3748" : "transparent", color: selectedTab === "form" ? "white" : "inherit" }}
+                >
+                  Form
+                </Button>
+                {/* <Button
+                  variant={selectedTab === "upload" ? "contained" : "outlined"}
+                  onClick={() => setSelectedTab("upload")}
+                  sx={{ backgroundColor: selectedTab === "upload" ? "#2d3748" : "transparent", color: selectedTab === "upload" ? "white" : "inherit" }}
+                >
+                  Upload
+                </Button> */}
               </Box>
-            )}
-            {selectedTab === "upload" && (
-              <Box display="flex" flexDirection="column" gap={2} minHeight="60vh">
-                {/* Form Type Selection Dropdown */}
-                <FormControl fullWidth>
-                  <InputLabel id="form-type-label" shrink>Form Type</InputLabel>
-                  <Select
-                    labelId="form-type-label"
-                    id="form-type"
-                    label="form-type"
-                    value={selectedForm}
-                    onChange={handleFormChange}
-                    displayEmpty
+              {selectedTab === "form" && (
+                <Box display="flex" flexDirection="column" gap={2} minHeight="60vh">
+
+                  {training_active?.section === "FIR" ? firDropdown() : null}
+
+
+                  <Box display="flex" gap={2} width="100%">
+                    {/* From Date Field */}
+                    <FormControl fullWidth>
+                      <label className="block text-sm font-medium">From Month</label>
+
+                      {
+                        uploadDate.fromDate ?
+
+                          (
+                            <input type="text" className="w-full p-2 border rounded" value={uploadDate.fromDate}  />
+                          )
+
+                          : (<input
+                            type="month"
+                            disabled={(training_active?.section != "FIR") ? false : (!training_active?.section === "FIR" || !formData.formType) ? true : false}
+                            className="w-full p-2 border rounded"
+                            value={formData.fromDate || dateRange.fromDate}
+                            onChange={(e) => {
+                              const newFromDate = e.target.value;
+                              // handleDateChange(e, "fromDate")
+                              if (!formData.toDate || newFromDate <= formData.toDate) {
+                                setFormData({ ...formData, fromDate: newFromDate });
+                              }
+                            }}
+                          />)
+
+                      }
+
+                    </FormControl>
+
+                    <FormControl fullWidth>
+                      <label className="block text-sm font-medium">To Month</label>
+                      {
+                        uploadDate.toDate ?
+
+                          (
+                            <input type="text" className="w-full p-2 border rounded" value={uploadDate.toDate}  />
+                          )
+
+                          : (<input
+                            type="month"
+                            className="w-full p-2 border rounded"
+                            disabled={(training_active?.section != "FIR") ? false : (!training_active?.section === "FIR" || !formData.formType) ? true : false}
+                            value={formData.toDate || dateRange.toDate}
+                            onChange={(e) => {
+                              const newToDate = e.target.value;
+                              // handleDateChange(e, "toDate")
+                              if (!formData.fromDate || newToDate >= formData.fromDate) {
+                                setFormData({ ...formData, toDate: newToDate });
+                              }
+                            }}
+                          />)
+
+                      }
+
+                      {formData.fromDate && formData.toDate < formData.fromDate && (
+                        <p className="text-red-500 text-sm mt-1">
+                          To Month Should not be Exceded From Month.
+                        </p>
+                      )}
+                    </FormControl>
+
+
+
+                  </Box>
+
+                  {/* History Button */}
+                  {/* <Button variant="contained" color="primary" onClick={fetchHistory} className="mt-4">
+                    Download
+                  </Button> */}
+
+                  <Dialog
+                    open={openModal}
+                    onClose={() => setOpenModal(false)}
+                    fullWidth
+                    maxWidth="md"
+                    sx={{ color: "white", borderRadius: "10px" }} // White text for contrast
                   >
-                    {[
-                      "Pendency of cases under BNS", "Offences against body under BNS", "Untraced Missing", "Important sections introduced in BNS", "Property offences under BNS", "Esakshya Wrt Unit",
-                      "Esakshya wrt 7yrs or more", "FIR's and Zero FIR's", "eFIR", "Special Cases & High-Profile Investigations Form", "ITSSO Compliance Form", "Stolen & Recovered Property Form", "Forensic Team Deployment Form"
-                    ].map((form) => (
-                      <MenuItem key={form} value={form}>
-                        {form}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <Box>
+                    <DialogTitle sx={{ fontWeight: "bold" }}>
+                      History Data
+                      <IconButton
+                        aria-label="close"
+                        onClick={() => setOpenModal(false)}
+                        sx={{ position: "absolute", right: 10, top: 10, color: "black" }}
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    </DialogTitle>
 
-                  <Button variant="contained" component="label" startIcon={<CloudUpload />}>
-                    Upload File
-                    <input type="file" hidden accept=".csv,.xls,.xlsx" onChange={handleFileUpload} />
-                  </Button>
+                    <DialogContent>
+                      {historyData?.data && Array.isArray(historyData.data) && historyData.data.length > 0 ? (
+                        <table className="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden">
+                          <thead>
+                            <tr className="bg-gray-700 text-white"> {/* Header Background Only */}
+                              {Object.keys(historyData.data[0])
+                                .filter((key) => !excludedFields.includes(key)) // Remove unwanted fields
+                                .map((key) => (
+                                  <th key={key} className="border border-gray-300 p-3 text-left">
+                                    {key.replace(/_/g, " ").toUpperCase()}
+                                  </th>
+                                ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {historyData.data.map((row, index) => (
+                              <tr key={index} className="hover:bg-gray-100"> {/* Subtle hover effect */}
+                                {Object.keys(row)
+                                  .filter((key) => !excludedFields.includes(key)) // Remove unwanted fields
+                                  .map((key, i) => (
+                                    <td key={i} className="border border-gray-300 p-3">
+                                      {row[key] !== null ? row[key].toString() : "N/A"}
+                                    </td>
+                                  ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      ) : (
+                        <p>No history data available.</p>
+                      )}
+                    </DialogContent>
+                  </Dialog>
 
-                  <Button variant="contained" startIcon={<Download />} onClick={generateCSV} sx={{ ml: 2 }}>
-                    Download Sample
-                  </Button>
-
-                  {/* <h2 class="text-red-600 text-center font-bold text-2xl mt-5">
-                      NOT AVAILABLE RIGHT NOW THESE FEATURE...!!!
-                  </h2> */}
 
 
 
-                  {checkingCsv && <Typography>Checking CSV...</Typography>}
-                  {csvValidationMessage && (
-                    <Typography style={{ color: csvValidationMessage.color }}>{csvValidationMessage.text}</Typography>
+
+
+
+
+
+                  {/* Month Dropdowns (Only appear when valid date range is selected) */}
+                  {monthsInRange.length > 0 ? (
+                    <div className="mt-4">
+                      {/* {[...monthsInRange, ...duplicatedMonths].map((entry, index) => {
+                          const month = entry.month || entry; // Handle both original and duplicated months
+                          const isDuplicate = !!entry.id; // Check if this is a duplicated month
+                          const entryId = entry.id || index; 
+                          
+                          const isPrevFormFilled = index === 0 || isFormFilled(index - 1); 
+
+                          console.log("month : ",month); */}
+
+
+
+                      {/* return ( */}
+                      <div className="mt-4">
+
+                        {/* {training_active?.section === "training"
+                          ? TrainingForm(monthsInRange, duplicatedMonths)
+                          : training_active?.section === "FIR"
+                            ? formSelecter(monthsInRange, duplicatedMonths)[formData.formType]
+                            : VisitOfForensicTeams(monthsInRange, duplicatedMonths)} */}
+
+
+                            {Modified(monthsInRange, duplicatedMonths)}
+
+                      </div>
+                      {/* ); */}
+                      {/* })} */}
+                    </div>
+                  ) : (
+                    <div className="mt-4 text-center font-semibold">Please select a Month/Year range.</div>
                   )}
 
-                  {csvData && (
-                    <Box
-                      sx={{
-                        marginTop: "1.5rem",
-                        maxHeight: "400px",
-                        width: "100%",
-                        overflowX: "auto",
-                        overflowY: "auto",
-                        border: "2px solid #ddd",
-                        backgroundColor: "#f3f8ff",
-                        padding: "8px",
-                        borderRadius: "4px",
-                        "&::-webkit-scrollbar": { display: "none" },
-                      }}
-                    >
 
 
-                      <Typography variant="subtitle1" sx={{ fontWeight: "bold", color: "#2d3748" }}>
-                        CSV Preview
+
+
+                </Box>
+              )}
+              {selectedTab === "upload" && (
+                <Box display="flex" flexDirection="column" gap={2} minHeight="60vh">
+
+
+                  <Box>
+
+                    <Button variant="contained" component="label" startIcon={<CloudUploadIcon />} sx={{ backgroundColor: "#4a5568", "&:hover": { backgroundColor: "#5a667a" } }}  >
+                      Upload File
+                      <input type="file" hidden accept=".csv,.xls,.xlsx" onChange={handleFileChange} />
+                    </Button>
+
+                    <Button variant="contained" startIcon={<Download />} onClick={generateCSV} sx={{ ml: 2, backgroundColor: "#4a5568", "&:hover": { backgroundColor: "#5a667a" } }}>
+                      Download Sample
+                    </Button>
+
+                    {checkingCsv && <Typography>Checking CSV...</Typography>}
+                    {csvValidationMessage && (
+                      <Typography style={{ color: csvValidationMessage.color, whiteSpace: "pre-line" }}>
+                        {csvValidationMessage.text}
                       </Typography>
+                    )}
 
-                      <Box component="table" sx={{
-                        width: "1000px",
-                        borderCollapse: "collapse",
-                        tableLayout: "fixed" // Ensures columns have a fixed size
-                      }}>
+                    {csvData && (
+                      <Box
+                        sx={{
+                          marginTop: "1.5rem",
+                          maxHeight: "400px",
+                          width: "100%",
+                          overflowX: "auto",
+                          overflowY: "auto",
+                          border: "2px solid #ddd",
+                          backgroundColor: "#f3f8ff",
+                          padding: "8px",
+                          borderRadius: "4px",
+                          "&::-webkit-scrollbar": { display: "none" },
+                        }}
+                      >
 
-                        <thead>
-                          <tr>
-                            {csvData[0].map((header, index) => (
-                              <th
-                                key={index}
-                                style={{
-                                  border: "1px solid #bbb",
-                                  padding: "8px",
-                                  background: "#c6e0b4",
-                                  color: "#2d3748",
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                  whiteSpace: "nowrap",
-                                  overflow: "hidden",
-                                  maxWidth: "140px", // Prevents excessive column width
-                                }}
-                              >
-                                {header}
-                              </th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {csvData.slice(1).map((row, rowIndex) => (
-                            <tr key={rowIndex} style={{ backgroundColor: rowIndex % 2 === 0 ? "#ffffff" : "#f7f7f7" }}>
-                              {row.map((cell, cellIndex) => (
-                                <td
-                                  key={cellIndex}
+
+                        <Typography variant="subtitle1" sx={{ fontWeight: "bold", color: "#2d3748" }}>
+                          CSV Preview
+                        </Typography>
+
+                        <Box component="table" sx={{
+                          width: "1000px",
+                          borderCollapse: "collapse",
+                          tableLayout: "fixed" // Ensures columns have a fixed size
+                        }}>
+
+                          <thead>
+                            <tr>
+                              {csvData[0].map((header, index) => (
+                                <th
+                                  key={index}
                                   style={{
-                                    border: "1px solid #ddd",
+                                    border: "1px solid #bbb",
                                     padding: "8px",
+                                    background: "#c6e0b4",
+                                    color: "#2d3748",
                                     textAlign: "center",
-                                    whiteSpace: "nowrap", // Prevents text wrapping
+                                    fontWeight: "bold",
+                                    whiteSpace: "nowrap",
                                     overflow: "hidden",
-                                    textOverflow: "ellipsis", // Shows "..." if text is too long
-                                    maxWidth: "150px", // Limits cell width
+                                    maxWidth: "140px", // Prevents excessive column width
                                   }}
                                 >
-                                  {cell}
-                                </td>
+                                  {header}
+                                </th>
                               ))}
                             </tr>
-                          ))}
-                        </tbody>
+                          </thead>
+                          <tbody>
+                            {csvData.slice(1).map((row, rowIndex) => (
+                              <tr key={rowIndex} style={{ backgroundColor: rowIndex % 2 === 0 ? "#ffffff" : "#f7f7f7" }}>
+                                {row.map((cell, cellIndex) => (
+                                  <td
+                                    key={cellIndex}
+                                    style={{
+                                      border: "1px solid #ddd",
+                                      padding: "8px",
+                                      textAlign: "center",
+                                      whiteSpace: "nowrap", // Prevents text wrapping
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis", // Shows "..." if text is too long
+                                      maxWidth: "150px", // Limits cell width
+                                    }}
+                                  >
+                                    {cell}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </Box>
+
                       </Box>
 
-                    </Box>
-
-                  )}
+                    )}
+                  </Box>
+                  {fileInfo && <Typography>File: {fileInfo.name} ({fileInfo.size})</Typography>}
                 </Box>
-                {fileInfo && <Typography>File: {fileInfo.name} ({fileInfo.size})</Typography>}
+              )}
+
+              {/* {showPreview && <TrainingDataTable     data={Object.entries(formValues).map(([month, values]) => ({ month_year: month, ...values }))}
+  onSubmit={handleSubmit} onEdit={handleEdit} />} */}
+
+              {formValues != {} && (<TrainingDataTable
+                open={dialogOpen}
+                onClose={() => {
+                  window.location.reload();
+                  setDialogOpen(false);
+                }}
+                data={formValues}
+                onSubmit={handleSubmit}
+                onEdit={handleEdit}
+              />)}
+
+
+              <Box sx={{ padding: 2, borderTop: "1px solid #ddd", backgroundColor: "#f9f9f9", display: 'flex', justifyContent: "center" }}>
+
+                <Button
+                  fullWidth
+                  variant="contained"
+                  sx={{ backgroundColor: "#2d3748", color: "white", width: "30%" }}
+                  // disabled={!verified}
+                  onClick={() => {
+                    handleSubmit();
+                    setDialogOpen(true); // Opens dialog
+                  }}
+
+                >
+                  Submit
+                </Button>
+                {/* <Button fullWidth variant="contained" disabled={!verified} sx={{ backgroundColor: "#2d3748", color: "white", width: "30%" }} onClick={handleSubmit}>
+                  Submit
+                </Button> */}
+
+
+
               </Box>
-            )}
+            </DialogContent>
+          </Box>
+        </Dialog>)
 
 
-            <Box sx={{ padding: 2, borderTop: "1px solid #ddd", backgroundColor: "#f9f9f9" }}>
-              <Button fullWidth variant="contained" sx={{ backgroundColor: "#2d3748", color: "white" }} onClick={handleSubmit}>
-                Submit
-              </Button>
-            </Box>
-          </DialogContent>
-        </Box>
-      </Dialog>
+
+
+
+      }
+
+
     </>
   );
 };
