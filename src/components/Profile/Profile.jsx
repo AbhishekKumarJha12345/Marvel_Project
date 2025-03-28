@@ -183,7 +183,8 @@ export default function ProfilePage() {
                 >
                     My Profile
                 </button>
-                <button
+                { activeTab != "profile" && (role == 'chief secretary' || role == 'ACS' || role == 'DGP' || sub_role == "IG/DIG") ?
+                (<button
                     className={`px-6 py-2 text-lg font-semibold ${activeTab === "history"
                         ? "border-b-4 border-blue-600 text-blue-600"
                         : "text-gray-600 hover:text-blue-600"
@@ -191,8 +192,8 @@ export default function ProfilePage() {
                     onClick={() => setActiveTab("history")}
                 >
                     Form History
-                </button>
-                
+                </button>) : null
+                }
             </div>
 
             {
@@ -206,7 +207,7 @@ export default function ProfilePage() {
             }
 
             {/* Content Area */}
-            <div className="mt-4">{activeTab === "profile" ? <ProfileSection /> : <FormHistory />}</div>
+            <div className="mt-4">{activeTab === "profile" ? <ProfileSection /> : role != 'admin' ? <FormHistory /> : null}</div>
 
 
             {/* Report Modal */}
