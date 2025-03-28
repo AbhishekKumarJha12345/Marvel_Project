@@ -19,6 +19,8 @@ import Select from "react-select";
 const downloadPDF = (newData) => {
     console.log("newData:", newData);
 
+    const role = localStorage.getItem("role")
+
     const doc = new jsPDF({ orientation: "landscape" });
     let pageHeight = doc.internal.pageSize.height;
     let pageWidth = doc.internal.pageSize.width;
@@ -93,7 +95,7 @@ const downloadPDF = (newData) => {
         y += 8;
 
         // ML Report Handling for "Police Training"
-        if (formattedFormType === "Police Training" && mlReportHTML) {
+        if (formattedFormType === "Police Training" && mlReportHTML && (role == 'chief secretary' || role == 'ACS' || role == 'DGP')) {
             doc.setFontSize(10);
             doc.setFont("helvetica", "bold");
             doc.setTextColor(0, 0, 150);
