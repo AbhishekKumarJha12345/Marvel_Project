@@ -28,6 +28,8 @@ import FluorescentIcon from '@mui/icons-material/Fluorescent';
 import logo from '../../dist/assets/logo22-DGid_2oD.png'
 import ModalComponent from './Police/ModalComponent'
 
+import Forms from './Police/all_forms';
+
 import Demo from '../components/Police/Demo'
 
 import MaharashtraPoliceMap from './CS/Csstartpage'
@@ -68,6 +70,7 @@ import PoliceTraining from "./Police/PoliceTraining";
 import { DialogActions } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
+// import 
 
 import Csdashboard from './Police/Home';
 
@@ -277,198 +280,198 @@ export default function Dashboard({ users }) {
     Pune: ["Kolhapur", "Pune Rural", "Sangli", "Satara", "Solapur Rural"],
   };
 
-    const downloadPDF = (newData, subrole) => {
-      console.log("newData:", newData);
-  
-      const doc = new jsPDF({ orientation: "landscape" });
-      let pageHeight = doc.internal.pageSize.height;
-      let pageWidth = doc.internal.pageSize.width;
-      let y = 15; // Start vertical position
-      let pageNumber = 1;
-  
-      const { timeStamp, submited_by, email, rang, district, sampleDataIN } = newData;
-     
-  
-      
-      // Function to add footer
-      const addFooter = () => {
-          doc.setFontSize(10);
-          doc.setTextColor(100);
-          doc.text(`Email: ${email}`, 14, pageHeight - 10);
-          doc.text(`Page ${pageNumber}`, pageWidth - 30, pageHeight - 10);
-      };
-  
-      // Add Header Logo
+  const downloadPDF = (newData, subrole) => {
+    console.log("newData:", newData);
 
-      
-      doc.addImage(logo, "PNG", pageWidth / 2 - 15, y, 30, 30);
-      y += 40;
-  
-      // Title
-      doc.setFontSize(22);
-      doc.setTextColor(30, 30, 120);
-      doc.setFont("helvetica", "bold");
-      doc.text("MARVEL CONSOLIDATED REPORT", pageWidth / 2 - 55, y);
-      y += 12;
-  
-      // Divider Line
-      doc.setDrawColor(100, 100, 100);
-      doc.line(10, y, pageWidth - 10, y);
-      y += 8;
-  
-      // Report Metadata
-      doc.setFontSize(12);
-      doc.setTextColor(0, 0, 0);
-      doc.setFont("helvetica", "bold");
-      doc.text(`Download On:`, 14, y);
-      doc.text(`Download by:`, 14, y + 8);
-      doc.text(`Email:`, 14, y + 16);
+    const doc = new jsPDF({ orientation: "landscape" });
+    let pageHeight = doc.internal.pageSize.height;
+    let pageWidth = doc.internal.pageSize.width;
+    let y = 15; // Start vertical position
+    let pageNumber = 1;
+
+    const { timeStamp, submited_by, email, rang, district, sampleDataIN } = newData;
 
 
 
-      // doc.setDrawColor(100, 100, 100);
-      // doc.line(10, y, pageWidth - 10, y);
-      // y += 8;
-  
-      doc.setFont("helvetica", "normal");
-      doc.text(timeStamp, 50, y);
-      doc.text(submited_by, 50, y + 8);
-      doc.text(email, 50, y + 16);
-      doc.text(subrole, 50, y + 24);
-      doc.text(rang, 50, y + 32);
-      doc.text(district, 50, y + 40);
-  
-      y += 50;
-  
-      if (Object.keys(sampleDataIN).length === 0) {
-          doc.setTextColor(255, 0, 0);
-          doc.setFontSize(14);
-          doc.text("⚠ No data available for the assigned zone/district.", 14, y);
-          addFooter();
-          doc.save("Marvel_Consolidated_Report.pdf");
-          return;
-      }
-  
-      // // Iterate Over Zones
-      // Object.entries(filteredData).forEach(([zone, districts]) => {
-      //     doc.setFontSize(14);
-      //     doc.setTextColor(200, 0, 0);
-      //     doc.setFont("helvetica", "bold");
-      //     y += 8;
-      //     doc.setDrawColor(200, 0, 0);
-      //     doc.line(14, y, pageWidth - 14, y);
-      //     y += 6;
-  
-      //     Object.entries(districts).forEach(([district, forms]) => {
-      //         doc.setFontSize(12);
-      //         doc.setTextColor(0, 0, 255);
-      //         doc.setFont("helvetica", "bold");
-      //         y += 5;
-  
-      const formatColumnName = (str) => {
-        return str
-            .split('_')  // Split by underscore
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
-            .join(' '); // Join with space
+    // Function to add footer
+    const addFooter = () => {
+      doc.setFontSize(10);
+      doc.setTextColor(100);
+      doc.text(`Email: ${email}`, 14, pageHeight - 10);
+      doc.text(`Page ${pageNumber}`, pageWidth - 30, pageHeight - 10);
     };
-    
-    Object.entries(sampleDataIN).forEach(([formType, records]) => {
-        doc.setFontSize(10);
-        doc.setTextColor(0, 0, 0);
-        doc.setFont("helvetica", "bold");
-    
-        // Format the form type title
-        const formattedFormType = formatColumnName(formType);
-        doc.text(`${formattedFormType}`, 10, y);  
-        y += 4;
-    
-        if (records.length > 0) {
-            // Convert keys to formatted headers
-            const tableColumn = Object.keys(records[0]).map(formatColumnName);
-            const tableRows = records.map(row => Object.values(row));
-    
-            doc.autoTable({
-                startY: y + 2,
-                head: [tableColumn],
-                body: tableRows,
-                theme: "grid",
-                margin: { left: 14, right: 14 },
-                styles: {
-                    fontSize: 9,
-                    cellPadding: 3,
-                    halign: "center",
-                    textColor: [50, 50, 50],
-                },
-                headStyles: {
-                    fillColor: [41, 128, 185],
-                    textColor: [255, 255, 255],
-                    fontSize: 10,
-                    fontStyle: "bold",
-                },
-                bodyStyles: {
-                    fillColor: (rowIndex) => (rowIndex % 2 === 0 ? [245, 245, 245] : [255, 255, 255]),
-                },
-                alternateRowStyles: {
-                    fillColor: [235, 235, 235],
-                },
-                didDrawPage: () => {
-                    addFooter();
-                },
-            });
-    
-            y = doc.autoTable.previous.finalY + 10;
-    
-            if (y > pageHeight - 20) {
-                doc.addPage();
-                pageNumber++;
-                y = 15;
-            }
-        } else {
-            doc.setFont("helvetica", "italic");
-            doc.setTextColor(150, 0, 0);
-            doc.text("No data available", 30, y);
-            y += 5;
-        }
-    });
-  
-      //         y += 8;
-      //     });
-  
-      //     y += 12;
-      // });
-  
+
+    // Add Header Logo
+
+
+    doc.addImage(logo, "PNG", pageWidth / 2 - 15, y, 30, 30);
+    y += 40;
+
+    // Title
+    doc.setFontSize(22);
+    doc.setTextColor(30, 30, 120);
+    doc.setFont("helvetica", "bold");
+    doc.text("MARVEL CONSOLIDATED REPORT", pageWidth / 2 - 55, y);
+    y += 12;
+
+    // Divider Line
+    doc.setDrawColor(100, 100, 100);
+    doc.line(10, y, pageWidth - 10, y);
+    y += 8;
+
+    // Report Metadata
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont("helvetica", "bold");
+    doc.text(`Download On:`, 14, y);
+    doc.text(`Download by:`, 14, y + 8);
+    doc.text(`Email:`, 14, y + 16);
+
+
+
+    // doc.setDrawColor(100, 100, 100);
+    // doc.line(10, y, pageWidth - 10, y);
+    // y += 8;
+
+    doc.setFont("helvetica", "normal");
+    doc.text(timeStamp, 50, y);
+    doc.text(submited_by, 50, y + 8);
+    doc.text(email, 50, y + 16);
+    doc.text(subrole, 50, y + 24);
+    doc.text(rang, 50, y + 32);
+    doc.text(district, 50, y + 40);
+
+    y += 50;
+
+    if (Object.keys(sampleDataIN).length === 0) {
+      doc.setTextColor(255, 0, 0);
+      doc.setFontSize(14);
+      doc.text("⚠ No data available for the assigned zone/district.", 14, y);
       addFooter();
       doc.save("Marvel_Consolidated_Report.pdf");
-  };
-  
+      return;
+    }
 
-// ---------------------------------------------------------------------------------------
+    // // Iterate Over Zones
+    // Object.entries(filteredData).forEach(([zone, districts]) => {
+    //     doc.setFontSize(14);
+    //     doc.setTextColor(200, 0, 0);
+    //     doc.setFont("helvetica", "bold");
+    //     y += 8;
+    //     doc.setDrawColor(200, 0, 0);
+    //     doc.line(14, y, pageWidth - 14, y);
+    //     y += 6;
+
+    //     Object.entries(districts).forEach(([district, forms]) => {
+    //         doc.setFontSize(12);
+    //         doc.setTextColor(0, 0, 255);
+    //         doc.setFont("helvetica", "bold");
+    //         y += 5;
+
+    const formatColumnName = (str) => {
+      return str
+        .split('_')  // Split by underscore
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
+        .join(' '); // Join with space
+    };
+
+    Object.entries(sampleDataIN).forEach(([formType, records]) => {
+      doc.setFontSize(10);
+      doc.setTextColor(0, 0, 0);
+      doc.setFont("helvetica", "bold");
+
+      // Format the form type title
+      const formattedFormType = formatColumnName(formType);
+      doc.text(`${formattedFormType}`, 10, y);
+      y += 4;
+
+      if (records.length > 0) {
+        // Convert keys to formatted headers
+        const tableColumn = Object.keys(records[0]).map(formatColumnName);
+        const tableRows = records.map(row => Object.values(row));
+
+        doc.autoTable({
+          startY: y + 2,
+          head: [tableColumn],
+          body: tableRows,
+          theme: "grid",
+          margin: { left: 14, right: 14 },
+          styles: {
+            fontSize: 9,
+            cellPadding: 3,
+            halign: "center",
+            textColor: [50, 50, 50],
+          },
+          headStyles: {
+            fillColor: [41, 128, 185],
+            textColor: [255, 255, 255],
+            fontSize: 10,
+            fontStyle: "bold",
+          },
+          bodyStyles: {
+            fillColor: (rowIndex) => (rowIndex % 2 === 0 ? [245, 245, 245] : [255, 255, 255]),
+          },
+          alternateRowStyles: {
+            fillColor: [235, 235, 235],
+          },
+          didDrawPage: () => {
+            addFooter();
+          },
+        });
+
+        y = doc.autoTable.previous.finalY + 10;
+
+        if (y > pageHeight - 20) {
+          doc.addPage();
+          pageNumber++;
+          y = 15;
+        }
+      } else {
+        doc.setFont("helvetica", "italic");
+        doc.setTextColor(150, 0, 0);
+        doc.text("No data available", 30, y);
+        y += 5;
+      }
+    });
+
+    //         y += 8;
+    //     });
+
+    //     y += 12;
+    // });
+
+    addFooter();
+    doc.save("Marvel_Consolidated_Report.pdf");
+  };
+
+
+  // ---------------------------------------------------------------------------------------
   const handleReport = async () => {
     try {
       const district = localStorage.getItem("district");
       const zone = localStorage.getItem("zone");
       // const type = "police_training";
-      const type = ['police_training','pendency_in_bns','offences_against_body','sections_in_bns','property_offenses',
-        'untraced_missing','esakshya_unit','itsso_compliance','esakshya_7_more','stolen_recovered_property',"conviction_rate_in_bns" ,'fir_and_zero_firs' ,
-        'e_firs','forensic_visits'];
+      const type = ['police_training', 'pendency_in_bns', 'offences_against_body', 'sections_in_bns', 'property_offenses',
+        'untraced_missing', 'esakshya_unit', 'itsso_compliance', 'esakshya_7_more', 'stolen_recovered_property', "conviction_rate_in_bns", 'fir_and_zero_firs',
+        'e_firs', 'forensic_visits'];
       const token = localStorage.getItem("token"); // Ensure token is available
-  
+
       const requestBody = {
         district,
         zone,
         type,
       };
-  
+
       const response = await axiosInstance.post("/get_reports", requestBody, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `${token}`, // Include token
         },
       });
-  
+
       console.log("Report Data:", response.data);
 
-      
+
 
       const subrole = localStorage.getItem('sub_role')
 
@@ -487,10 +490,10 @@ export default function Dashboard({ users }) {
         email: localStorage.getItem('email') || "",
         rang: localStorage.getItem('zone') || "",
         district: localStorage.getItem('district') || "",
-        sampleDataIN:response.data
+        sampleDataIN: response.data
       };
-      
-      downloadPDF(newData,subrole);
+
+      downloadPDF(newData, subrole);
 
     } catch (error) {
       console.error("Error fetching report:", error);
@@ -528,19 +531,19 @@ export default function Dashboard({ users }) {
 
   const contentMap = {
     "training": (
-    <div className="content">
-      <h1 className="heading" style={{ textAlign: "center" }}>New Criminal Laws Training</h1>
-      <GenerateReportButton />
-      <MaharashtraPoliceMap catogoryBar="Training" />
-    </div>
-  ),
-  "forensic/visits": (
-    <div className="content">
-      <h1 className="heading" style={{ textAlign: "center" }}>Forensic Visits</h1>
-      <GenerateReportButton />
-      <MaharashtraPoliceMap catogoryBar="FORENSIC" />
-    </div>
-  ),
+      <div className="content">
+        <h1 className="heading" style={{ textAlign: "center" }}>New Criminal Laws Training</h1>
+        <GenerateReportButton />
+        <MaharashtraPoliceMap catogoryBar="Training" />
+      </div>
+    ),
+    "forensic/visits": (
+      <div className="content">
+        <h1 className="heading" style={{ textAlign: "center" }}>Forensic Visits</h1>
+        <GenerateReportButton />
+        <MaharashtraPoliceMap catogoryBar="FORENSIC" />
+      </div>
+    ),
     "court": <div className="content"><h1 className="heading">Court Visits</h1><Dashboard2 /></div>,
     "science": <div className="content"><h1 className="heading">Forensic Science Department</h1><Dashboard1 /></div>,
     "prosecution": <div className="content"><h1 className="heading">Prosecution Visits</h1><CriminalPages /></div>,
@@ -579,22 +582,22 @@ export default function Dashboard({ users }) {
 
 
   useEffect(() => {
-  if (!localStorage.getItem("to_date")) {
-    localStorage.setItem("to_date", dateRange.toDate);
-  }
-}, [dateRange.toDate]);
+    if (!localStorage.getItem("to_date")) {
+      localStorage.setItem("to_date", dateRange.toDate);
+    }
+  }, [dateRange.toDate]);
 
-const handleDateSelection = () => {
-  setDateRange((prev) => {
-    const updatedToDate = prev.toDate || new Date().toISOString().split("T")[0]; // Ensure toDate is set
-    localStorage.setItem("to_date", updatedToDate); // Store in localStorage
+  const handleDateSelection = () => {
+    setDateRange((prev) => {
+      const updatedToDate = prev.toDate || new Date().toISOString().split("T")[0]; // Ensure toDate is set
+      localStorage.setItem("to_date", updatedToDate); // Store in localStorage
 
-    return { ...prev, toDate: updatedToDate };
-  });
+      return { ...prev, toDate: updatedToDate };
+    });
 
-  setShowDateRangeModal(false); // Close Date Picker
-  setShowModal(true); // Show Main Modal
-};
+    setShowDateRangeModal(false); // Close Date Picker
+    setShowModal(true); // Show Main Modal
+  };
 
 
 
@@ -638,7 +641,7 @@ const handleDateSelection = () => {
 
                 {isOpen && (
                   <div className="dropdown" style={{ zIndex: "999" }}>
-                    
+
                     <button
                       className="dropdown-item"
                       onClick={() => handleSectionClick("training")}
@@ -668,7 +671,7 @@ const handleDateSelection = () => {
                     className="bg-blue-500 text-white px-4 py-2 rounded-lg"
                     style={{ backgroundColor: "#2d3748", position: "absolute", right: "0", top: "70px" }}
                     onClick={() => {
-                      console.log("Open modal : ",activeSection);
+                      console.log("Open modal : ", activeSection);
                       // setShowDateRangeModal(true);
                       setShowModal(true);
                     }}
@@ -806,22 +809,22 @@ const handleDateSelection = () => {
       {
         contentMap[activeSection?.section] ||
         (users === "chief secretary"
-          ? contentMap["training"]:
-          users === "ACS"
           ? contentMap["training"] :
-          users === "DGP"
-          ? contentMap["training"]
-          : users === "police"
-            ? contentMap["training"] && setActiveSection({ section: "training" })
-            : users === "Court"
-              ? contentMap["court"]
-              : users === "Forensic"
-                ? contentMap["science"]
-                : users === "Prosecutor"
-                  ? contentMap["prosecution"]
-                  : users === "admin"
-                    ? contentMap["admin"]
-                    : contentMap["correctionalservices"])
+          users === "ACS"
+            ? contentMap["training"] :
+            users === "DGP"
+              ? contentMap["training"]
+              : users === "police"
+                ? contentMap["training"] && setActiveSection({ section: "training" })
+                : users === "Court"
+                  ? contentMap["court"]
+                  : users === "Forensic"
+                    ? contentMap["science"]
+                    : users === "Prosecutor"
+                      ? contentMap["prosecution"]
+                      : users === "admin"
+                        ? contentMap["admin"]
+                        : contentMap["correctionalservices"])
       }
 
       {/* <ModalComponent
@@ -876,6 +879,13 @@ const handleDateSelection = () => {
 
       {/* Main Modal (Opens after selecting Date Range) */}
       {showModal && (
+        // <Forms
+        //   open={showModal}
+        //   type="police"
+        //   training_active={activeSection} // Pass the selected section
+        //   onClose={() => setShowModal(false)}
+        //   dateRange={dateRange} // Pass selected date range
+        // />
         <ModalComponent
           open={showModal}
           type="police"

@@ -1097,7 +1097,7 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("Data inserted successfully");
+      alert("Failed to Insert Data");
     }
   };
 
@@ -1315,17 +1315,17 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
       const re_reg_firs = Number(updatedForm.re_reg_firs) || 0;
       const total_transferred_zero_firs_in_mh = Number(updatedForm.total_transferred_zero_firs_in_mh) || 0;
 
-      updatedForm.total_zero_firs =
-        total_no_zero_fir_transferred_outside_mh + total_no_zero_fir_transferred_outer_state_to_mh;
+      // updatedForm.total_zero_firs =
+      //   total_no_zero_fir_transferred_outside_mh + total_no_zero_fir_transferred_outer_state_to_mh;
 
-      updatedForm.pending_to_transfer_outside_mh =
-        Math.max(0, updatedForm.total_zero_firs - total_no_zero_fir_transferred_outside_mh);
+      // updatedForm.pending_to_transfer_outside_mh =
+      //   Math.max(0, updatedForm.total_zero_firs - total_no_zero_fir_transferred_outside_mh);
 
-      updatedForm.pending_for_transfer_within_mh =
-        Math.max(0, re_reg_firs - total_transferred_zero_firs_in_mh);
+      // updatedForm.pending_for_transfer_within_mh =
+      //   Math.max(0, re_reg_firs - total_transferred_zero_firs_in_mh);
 
-      updatedForm.pending_for_re_registration =
-        Math.max(0, total_no_zero_fir_transferred_outer_state_to_mh - re_reg_firs);
+      // updatedForm.pending_for_re_registration =
+      //   Math.max(0, total_no_zero_fir_transferred_outer_state_to_mh - re_reg_firs);
 
 
 
@@ -3054,7 +3054,14 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                     <input
                       type="number"
                       className="w-full p-2 border rounded"
-                      value={formValues[id]?.total_zero_firs || 0}
+                      value={formValues[id]?.total_zero_firs || ""}
+                      onChange={(e) =>
+                        handleInputChange(
+                          id,
+                          "total_zero_firs",
+                          e.target.value
+                        )
+                      }
 
                     />
                   </td>
@@ -3063,7 +3070,14 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
                       type="number"
                       className="w-full p-2 border rounded"
                       value={
-                        formValues[id]?.pending_to_transfer_outside_mh || 0
+                        formValues[id]?.pending_to_transfer_outside_mh || ""
+                      }
+                      onChange={(e) =>
+                        handleInputChange(
+                          id,
+                          "pending_to_transfer_outside_mh",
+                          e.target.value
+                        )
                       }
 
                     />
@@ -3229,8 +3243,6 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
 
   const ITSSOComplianceForm = (monthsInRange, duplicatedMonths) => {
-
-
 
     return (
       <div className="overflow-x-auto d-flex justify-center">
@@ -3664,7 +3676,9 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
 
                       type="number"
-                      value={formValues[month]?.total_cases_convicted || "0"}
+                      value={formValues[month]?.total_cases_convicted || " "}
+                      onChange={(e) => handleInputChange(id, "total_cases_convicted", e.target.value)}
+
 
                     />
 
@@ -3677,7 +3691,8 @@ const ModalComponent = ({ open, type, onClose, training_active, dateRange }) => 
 
 
                       type="number"
-                      value={formValues[month]?.total_cases_decided || "0"}
+                      value={formValues[month]?.total_cases_decided || " "}
+                      onChange={(e) => handleInputChange(id, "total_cases_decided", e.target.value)}
 
                     />
                   </td>
