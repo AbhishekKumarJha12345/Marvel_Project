@@ -13,6 +13,6 @@ export default defineConfig({
         host: '0.0.0.0',
         port: 5171,
         strictPort: true,
-        allowedHosts: ['mhmarvel.org'], // Add your domain here
+        allowedHosts: ['mhmarvel.org','test.bns.marvel.pinacalabs.com'], // Add your domain here
     },
 })
