@@ -365,7 +365,7 @@ const MaharashtraMap = (catogoryBar) => {
 
     const map = L.map("map", {
       center: [19.7515, 75.7139],
-      zoomControl: false,
+      zoomControl: true,
       dragging: false,
       scrollWheelZoom: false,
       touchZoom: false,
@@ -480,6 +480,11 @@ const MaharashtraMap = (catogoryBar) => {
           ? zonePercentages[districtName] || districtPercentages[districtName] || 0
           : zonePercentages[zoneName] || districtPercentages[zoneName] || 0;
 
+          console.log("a", Math.round(zonePercentages[districtName] * 100) / 100);
+ 
+
+          
+
 
 
 
@@ -495,7 +500,7 @@ const MaharashtraMap = (catogoryBar) => {
 
           // Add markers for each police station
           nagpurStations.forEach(station => {
-            const marker = L.marker([station.Latitude, station.Longitude], { icon: policeStationIcon })
+            const marker = L.marker([station.Latitude, station.Longitude],)
               .addTo(markersLayer)
 
               .on('mouseover', function () {
@@ -535,11 +540,11 @@ const MaharashtraMap = (catogoryBar) => {
               iconAnchor: [15, 30],
               popupAnchor: [0, -30]
             });
-
-            const marker = L.marker([station.latitude, station.longitude], { icon: policeCPIcon })
+            // { icon: policeCPIcon }
+            const marker = L.marker([station.latitude, station.longitude])
               .addTo(markersLayer)
               .on('mouseover', function () {
-                this.bindPopup(`<b>${station.city} CP</b></br>Percentage : ${percentage}%`, {
+                this.bindPopup(`<b>${station.city} CP</b></br>Percentage : ${Math.round(percentageDisplay)}%`, {
                   offset: L.point(2, 10) // Adjust offset
                 }).openPopup();
               })
@@ -645,15 +650,15 @@ const MaharashtraMap = (catogoryBar) => {
               if (zoneMapping[selectedZone]?.includes(districtName)) {
                 return `<div class="flex flex-col justify-center text-center">
                           <b>${districtName}</b>
-                          <b>${percent[districtName] || 0}%</b>
+                          <b>${Math.round(percent[districtName] || 0)}%</b>
                         </div>`;
               } else {
                 return ""; // Hide the label if the district does not belong to the selected zone
               }
             } else {
-              return `<div class="flex flex-col justify-center text-center">
+              return `<div class="flex flex-col justify-center text-center ml-[-30px] mt-[-28px]">
                         <b>${zoneName || district}</b>
-                        <b>${percent[zoneName] || percent[district] || 0}%</b>
+                        <b>${Math.round(percent[zoneName] || percent[district] || 0)}%</b>
                       </div>`;
             }
           })(),

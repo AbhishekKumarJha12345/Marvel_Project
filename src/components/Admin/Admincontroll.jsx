@@ -148,7 +148,7 @@ const Admincontroll = ({ onRegister, onClose }) => {
               </div>
             )}
       <CardContent>
-        <h2 className="text-xl font-semibold text-center mb-4">Register Admin</h2>
+        <h2 className="text-xl font-semibold text-center mb-4">Register User</h2>
         <div className="max-h-[700px] overflow-y-auto p-2">
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email */}

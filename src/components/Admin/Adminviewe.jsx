@@ -258,7 +258,7 @@ const AdminUserTable = () => {
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 px-3">
             <div className="bg-white p-6 rounded-lg shadow-lg w-[600px]">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">Register Admin</h3>
+                {/* <h3 className="text-lg font-semibold">Register User</h3> */}
                 <button className="text-gray-500 text-lg font-bold" onClick={() => setIsOpen(false)}>✖</button>
               </div>
               <AdminRegister onRegister={handleUserRegistered} onClose={() => setIsOpen(false)} />
